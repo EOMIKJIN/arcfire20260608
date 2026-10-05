@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>행성개발 — 아크파이어 온라인 위키</title>
+<title>행성개발 — 아크파이어 위키</title>
 <meta name="description" content="무역소·조선소·방위위성·연구소·바 5개 시설, 레벨 1~15 업그레이드 체계와 일일 스탯 넛지" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
@@ -13,7 +13,7 @@
 
 <header class="site-header">
   <button class="nav-toggle" type="button" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
-  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 온라인 <span class="sub">Game Wiki</span></a>
+  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 <span class="sub">Game Wiki</span></a>
   <div class="site-search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
     <input type="text" placeholder="함선, 무기, 세력, 스킬 검색…" autocomplete="off" />
@@ -45,6 +45,9 @@
       <a href="arccore.html" data-page="arccore"><span class="dot"></span>아크코어 AI</a>
       <a href="social.html" data-page="social"><span class="dot"></span>바 · 함장 · 플레이어</a>
       <a href="ui.html" data-page="ui"><span class="dot"></span>게임 UI</a>
+    </div>
+    <div class="sidebar-group"><h5>커뮤니티</h5>
+      <a href="community.html" data-page="community"><span class="dot"></span>커뮤니티 게시판</a>
     </div>
   </nav>
 
@@ -174,14 +177,19 @@
       </table></div>
       <p>지표 문턱 때문에 시설들은 서로 직접적인 선행조건은 없어도, <strong>같은 5대 지표 풀을 공유</strong>해 간접적으로 서로를 밀어준다 — 무역소·연구소가 올린 T·P가 바·연구소의 다음 단계 조건을 채워주는 식이다.</p>
 
-      <div class="source-note">정본: <code>tables/balance/facility_*.csv</code>(무역소·조선소·바·연구소 레벨정책, 소요시간, 즉시완료, 유지비, 설치조건) · <code>docs/_000_09_DESIGN_FACILITY_UPGRADE_SYSTEM_v2_0.md</code>(2026-06-19, 일부 항목은 실제 테이블에서 갱신됨)</div>
+      <div class="source-note">정본: <code>tables/balance/facility_*.csv</code>(무역소·조선소·바·연구소 레벨정책, 소요시간, 즉시완료, 유지비, 설치조건) · <code>docs/planet/_000_09_DESIGN_FACILITY_UPGRADE_SYSTEM_v2_0.md</code>(2026-06-19, 일부 항목은 실제 테이블에서 갱신됨)</div>
+          <section class="comments" id="comments">
+        <h2>이 문서에 대한 의견</h2>
+        <div class="giscus-thread" data-category="General"></div>
+      </section>
     </article>
     </div>
   </main>
 </div>
 
-<footer class="site-footer">아크파이어 온라인 게임 위키 · 비공식 정리본</footer>
+<footer class="site-footer">아크파이어 게임 위키 · 비공식 정리본</footer>
 <script src="assets/search-index.js"></script>
 <script src="assets/wiki.js"></script>
+<script src="assets/comments.js"></script>
 </body>
 </html>

@@ -22,7 +22,7 @@ export type { CombatResultOverlayViewModel } from './combatResultOverlayView';
 const COMBAT_RESULT_LEVEL_UP_OVERLAY_ID = 'combat-result-level-up';
 
 export type PresentCombatResultInput = {
-  outcome: 'win' | 'lose';
+  outcome: 'win' | 'lose' | 'draw';
   venue?: CombatResultVenue;
   wavesCleared?: number;
   totalWaves?: number;

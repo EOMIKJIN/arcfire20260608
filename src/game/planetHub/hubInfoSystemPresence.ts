@@ -50,6 +50,7 @@ export function applyQuestInfoMarkFlagsToRows<
     pinKind?: string;
     hasMainQuest?: boolean;
     hasSubQuest?: boolean;
+    hasInstantQuest?: boolean;
     showQuestMarks?: boolean;
   },
 >(
@@ -59,9 +60,12 @@ export function applyQuestInfoMarkFlagsToRows<
     mainQuestIds: ReadonlySet<string>;
     subQuestIds: ReadonlySet<string>;
     configuredQuestIds: ReadonlySet<string>;
+    /** 통신 즉석 개인 의뢰 — 마지막 육각 U */
+    instantQuestIds?: ReadonlySet<string>;
   },
 ): T[] {
   if (rows.length === 0) return rows;
+  const instantQuestIds = opts.instantQuestIds ?? EMPTY_CAPTAIN_IDS;
   let changed = false;
   const next = new Array<T>(rows.length);
   for (let i = 0; i < rows.length; i += 1) {
@@ -69,25 +73,30 @@ export function applyQuestInfoMarkFlagsToRows<
     const captainId = String(row.captainId ?? '').trim();
     const hasMainQuest = !!captainId && opts.mainQuestIds.has(captainId);
     const hasSubQuest = !!captainId && opts.subQuestIds.has(captainId);
+    const hasInstantQuest = !!captainId && instantQuestIds.has(captainId);
     const showQuestMarks =
       hasMainQuest
       || hasSubQuest
+      || hasInstantQuest
       || row.pinKind === 'quest'
       || (!!captainId
         && (opts.assignedQuestIds.has(captainId) || opts.configuredQuestIds.has(captainId)));
     if (
       row.hasMainQuest === hasMainQuest
       && row.hasSubQuest === hasSubQuest
+      && row.hasInstantQuest === hasInstantQuest
       && row.showQuestMarks === showQuestMarks
     ) {
       next[i] = row;
       continue;
     }
     changed = true;
-    next[i] = { ...row, hasMainQuest, hasSubQuest, showQuestMarks };
+    next[i] = { ...row, hasMainQuest, hasSubQuest, hasInstantQuest, showQuestMarks };
   }
   return changed ? next : rows;
 }
+
+const EMPTY_CAPTAIN_IDS: ReadonlySet<string> = new Set();
 
 /** @deprecated `applyQuestInfoMarkFlagsToRows` */
 export function applyMainQuestFlagsToRows<T extends { captainId?: string; hasMainQuest?: boolean }>(

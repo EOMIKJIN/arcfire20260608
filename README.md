@@ -28,10 +28,10 @@ npx expo run:ios --device
 ```
 
 **스토어/패키징 준비도 (2026-08-03 재조사):**  
-`docs/BUILD_PACKAGING_ANDROID_PLAY_RESCAN_2026-08-03.md`  
+`docs/ops/BUILD_PACKAGING_ANDROID_PLAY_RESCAN_2026-08-03.md`  
 — targetSdk · 16KB page · R8 · ABI 크기 · 상용 서명 · AAB · Play API 36(2026-08-31)  
 제품 출시 마일스톤: `docs/archive/RELEASE_READINESS_MILESTONE_2026-06-23.md`  
-Firestore 배포 순서: `docs/FIRESTORE_PRODUCTION_READINESS.md`
+Firestore 배포 순서: `docs/ops/FIRESTORE_PRODUCTION_READINESS.md`
 
 > 주의: 현재 로컬 prebuild `android/` 는 **`.gitignore` 대상**이며, release 빌드가 **debug keystore**를 쓰는 설정이면 **Play 제출 불가**. 상세는 위 보고서 참조.
 

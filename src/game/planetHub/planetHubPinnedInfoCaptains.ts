@@ -38,6 +38,7 @@ import { resolveNpcCapitalShipDisplayName } from '../../i18n/shipText';
 import type { ArcNpcTrafficShip } from '../../store/arcNpcTrafficStore';
 import { resolveSystemIdForPlanetId } from '../../world/resolvePlanetSystemId';
 import { isCaptainPresentInHubSystemForInfo } from './isCaptainPresentInHubSystem';
+import { captainHoldsInstantPersonalQuest } from '../../missions/captainPersonalQuestMark';
 import { applyQuestInfoMarkFlagsToRows } from './hubInfoSystemPresence';
 import { getConfiguredQuestCaptainIdSet } from './hubInfoQuestNpcIndex';
 import {
@@ -200,7 +201,22 @@ export function stampNearbyInfoMainQuestFlags(
     mainQuestIds: new Set(collectMainQuestRelatedCaptainIds(pid)),
     subQuestIds: new Set(collectSubQuestRelatedCaptainIds(pid)),
     configuredQuestIds: getConfiguredQuestCaptainIdSet(),
+    instantQuestIds: collectInstantPersonalQuestCaptainIds(pid, rows),
   });
+}
+
+/** 인포에 나온 함장만. 즉석 의뢰가 지금 만들어지거나 이미 진행 중이면 U. */
+function collectInstantPersonalQuestCaptainIds(
+  planetId: string,
+  rows: readonly { captainId?: string }[],
+): Set<string> {
+  const ids = new Set<string>();
+  for (let i = 0; i < rows.length; i += 1) {
+    const captainId = String(rows[i]?.captainId ?? '').trim();
+    if (!captainId || ids.has(captainId)) continue;
+    if (captainHoldsInstantPersonalQuest(captainId, planetId)) ids.add(captainId);
+  }
+  return ids;
 }
 
 export type PlanetHubPinnedInfoOpts = {

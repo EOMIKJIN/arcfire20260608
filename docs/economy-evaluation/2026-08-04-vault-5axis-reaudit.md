@@ -27,7 +27,7 @@
 | **4** | 중립국 금고 | 중립 행성의 수입 저장 | **없음** — `getVaultKeyByFaction`이 BLUE만 구분, **그 외 전부 arccore** | **신규 스토어 + 라우팅** 필요 |
 | **5** | 독립국 금고 | 플레이어 소유권 구매 행성 수입 · 추후 플레이어 관리 UI | **없음** — 유지비는 `player.credits` 직차감; 팩션 수수료는 **arccore 폴백**; `resolveFactionVaultForOccupierClanId(player_clan)` **null** | **신규 스토어 + hold kind/`player_independent` 연동** · purge 시 중립화 계약 |
 
-정본 문서(현행): `docs/ARC_CORE_ECONOMY_FABRIC.md` §9·§11-3 · 코드 `src/arcCore/economy/resolveFactionVault.ts`.
+정본 문서(현행): `docs/economy/ARC_CORE_ECONOMY_FABRIC.md` §9·§11-3 · 코드 `src/arcCore/economy/resolveFactionVault.ts`.
 
 ---
 
@@ -190,8 +190,8 @@ export function getVaultKeyByFaction(faction: string): string {
 
 ## 9. 교차 문서
 
-- `docs/ARC_CORE_ECONOMY_FABRIC.md` §9·§11  
-- `docs/PLAYER_INDEPENDENT_NATION_IMPLEMENTATION_SPEC.md` (지도 독립 · 금고 미포함)  
+- `docs/economy/ARC_CORE_ECONOMY_FABRIC.md` §9·§11  
+- `docs/expansion/PLAYER_INDEPENDENT_NATION_IMPLEMENTATION_SPEC.md` (지도 독립 · 금고 미포함)  
 - `docs/economy-evaluation/2026-08-03-economy-full-rescan.md` (3축 확인)  
 - `.cursor/rules` 플레이어 계정 purge · 경제 부트경로  
 

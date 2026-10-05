@@ -10,7 +10,7 @@ verdict=REVIEWED PARTIAL
 
 ## 김클로드 초안
 
-`docs/main_quest_template_v3_chapter1_complete.md` §11. 설정만. 코드·CSV 0.
+`docs/quest/main_quest_template_v3_chapter1_complete.md` §11. 설정만. 코드·CSV 0.
 
 ## 재검수
 

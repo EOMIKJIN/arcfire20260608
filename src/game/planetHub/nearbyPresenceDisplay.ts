@@ -47,6 +47,8 @@ export type NearbyInfoDetailRow = {
   hasMainQuest?: boolean;
   /** 서브퀘스트(sandbox_*) 연관 — INFO 육각 S */
   hasSubQuest?: boolean;
+  /** 통신 즉석 개인 의뢰 — INFO 육각 U */
+  hasInstantQuest?: boolean;
   /** 퀘스트 NPC·할당됨 — 육각 레일 표시(비어 있어도) */
   showQuestMarks?: boolean;
 };
@@ -59,6 +61,7 @@ export type NearbyInfoDetailRowIds = {
   commGuaranteed?: boolean;
   hasMainQuest?: boolean;
   hasSubQuest?: boolean;
+  hasInstantQuest?: boolean;
   showQuestMarks?: boolean;
 };
 
@@ -109,6 +112,7 @@ export function buildNearbyInfoDetailRow(
     commGuaranteed: ids?.commGuaranteed === true,
     hasMainQuest: ids?.hasMainQuest === true,
     hasSubQuest: ids?.hasSubQuest === true,
+    hasInstantQuest: ids?.hasInstantQuest === true,
     showQuestMarks: ids?.showQuestMarks === true,
   };
 }
@@ -166,6 +170,7 @@ export function localizeNearbyInfoDetailRow(
     commGuaranteed: row.commGuaranteed === true,
     hasMainQuest: row.hasMainQuest === true,
     hasSubQuest: row.hasSubQuest === true,
+    hasInstantQuest: row.hasInstantQuest === true,
     showQuestMarks: row.showQuestMarks === true,
   };
 }
@@ -189,6 +194,7 @@ export function normalizeNearbyInfoDetailRow(
     commGuaranteed: row.commGuaranteed,
     hasMainQuest: row.hasMainQuest,
     hasSubQuest: row.hasSubQuest,
+    hasInstantQuest: row.hasInstantQuest,
     showQuestMarks: row.showQuestMarks,
   });
 }
@@ -207,7 +213,11 @@ export function resolveNearbyInfoPanelCaptainName(row: NearbyInfoDetailRow): str
 }
 
 export function resolveNearbyInfoPanelPrimaryLabel(row: NearbyInfoDetailRow): string {
-  return formatPinnedInfoPrimaryLabel(row.pinKind, resolveNearbyInfoPanelCaptainName(row));
+  return formatPinnedInfoPrimaryLabel(
+    row.pinKind,
+    resolveNearbyInfoPanelCaptainName(row),
+    row.showQuestMarks,
+  );
 }
 
 export function buildPlayerFlagshipHubInfoDetailRow(

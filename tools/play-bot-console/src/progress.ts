@@ -23,6 +23,7 @@ import {
   pickBalancedDev,
 } from './facilityTwin';
 import { markSkillLearned, paintOf, sumDevLevels } from './world';
+import { gearCreditReserve } from './combatEfficiency';
 
 export function markQuestPlanet(world: WorldState, planetId: string | null | undefined): void {
   if (planetId && planetId.length > 0) world.lastQuestPlanetId = planetId;
@@ -69,6 +70,7 @@ export function nextPlayableMissionId(world: WorldState): string | null {
   for (let i = 0; i < ids.length; i += 1) {
     const id = ids[i];
     if (world.completedLookup[id]) continue;
+    if (world.parkedQuests.some((row) => row.missionId === id)) continue;
     if (missionHasUnresolvedPlaceholder(id)) continue;
     const m = getMission(id);
     if (!m) continue;
@@ -106,7 +108,7 @@ export function canLearnAny(world: WorldState): boolean {
 }
 
 export function bestAffordableGear(world: WorldState): ReturnType<typeof listGearCandidates>[number] | null {
-  const reserve = 800;
+  const reserve = gearCreditReserve(world);
   const budget = world.credits - reserve;
   if (budget < 200) return null;
   const rows = listGearCandidates();

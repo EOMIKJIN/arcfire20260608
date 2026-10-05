@@ -4,7 +4,12 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { buildDailyLearningReport, type DailySnapshot, type PlaybotStatusLite } from './src/dailyLearningReport';
+import {
+  buildDailyLearningReport,
+  type DailyLearningHealth,
+  type DailySnapshot,
+  type PlaybotStatusLite,
+} from './src/dailyLearningReport';
 import { buildDailyTriage } from './src/dailyUrgentTriage';
 import { formatHumanSeedLine, loadHumanSeed } from './src/humanSeed';
 import { loadLearning } from './src/learn';
@@ -52,6 +57,38 @@ function readPid(logs: string, name: string): number {
   }
 }
 
+type StallRow = { at?: string; level?: number; questCleared?: number; annexOk?: number; colonizeOk?: number; independent?: number };
+
+/** 정체 재시작·FQA 협의·실기 델타 — 18:00 판정에 학습 건강을 넣는다 */
+export function readLearningHealth(learned: string, nowMs = Date.now()): DailyLearningHealth {
+  const stall = readJson<{ restarts?: number; history?: StallRow[] }>(path.join(learned, 'stall-replay.json'));
+  const fqa = readJson<{ consultPending?: boolean; reviews?: number }>(path.join(learned, 'fqa-review-state.json'));
+  const delta = readJson<{ coveredKinds?: string[] }>(path.join(learned, 'human-delta.json'));
+  const history = stall?.history ?? [];
+  let in24h = 0;
+  let ceilingLevel = 0;
+  let ceilingQuest = 0;
+  let endgameZero = true;
+  for (let i = 0; i < history.length; i += 1) {
+    const h = history[i];
+    const t = Date.parse(h.at ?? '');
+    if (Number.isFinite(t) && nowMs - t <= 24 * 3_600_000) in24h += 1;
+    ceilingLevel = Math.max(ceilingLevel, h.level ?? 0);
+    ceilingQuest = Math.max(ceilingQuest, h.questCleared ?? 0);
+    if ((h.annexOk ?? 0) > 0 || (h.colonizeOk ?? 0) > 0 || (h.independent ?? 0) > 0) endgameZero = false;
+  }
+  return {
+    stallRestartsTotal: stall?.restarts ?? 0,
+    stallRestarts24h: in24h,
+    ceilingLevel,
+    ceilingQuest,
+    endgameZero,
+    fqaConsultPending: fqa?.consultPending === true,
+    fqaReviews: fqa?.reviews ?? 0,
+    humanDeltaKinds: delta?.coveredKinds ?? [],
+  };
+}
+
 function appendLedger(file: string, row: string): void {
   const header = 'date,verdict,runId,level,quest,skills,gear,dev,hold,recording\n';
   if (!fs.existsSync(file)) fs.writeFileSync(file, header, 'utf8');
@@ -93,6 +130,7 @@ export function writeDailyLearningReportFiles(root = toolRoot()): {
     nowIso: new Date().toISOString(),
     dateKey,
     humanSeedLine,
+    learningHealth: readLearningHealth(learned),
   });
 
   const findings = status?.lastAnalyze?.findings ?? [];

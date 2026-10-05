@@ -1,10 +1,10 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>바 · 함장 · 플레이어 — 아크파이어 온라인 위키</title>
-<meta name="description" content="사교 공간 바, NPC 함장 247명, 캐릭터 생성, 타로 운명 시스템, 튜토리얼" />
+<title>바 · 함장 · 플레이어 — 아크파이어 위키</title>
+<meta name="description" content="사교 공간 바, NPC 함장 298명, 캐릭터 생성, 타로 운명 시스템, 튜토리얼" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
 <link rel="stylesheet" href="assets/style.css" />
@@ -13,7 +13,7 @@
 
 <header class="site-header">
   <button class="nav-toggle" type="button" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
-  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 온라인 <span class="sub">Game Wiki</span></a>
+  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 <span class="sub">Game Wiki</span></a>
   <div class="site-search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
     <input type="text" placeholder="함선, 무기, 세력, 스킬 검색…" autocomplete="off" />
@@ -46,6 +46,9 @@
       <a href="social.html" data-page="social" class="active"><span class="dot"></span>바 · 함장 · 플레이어</a>
       <a href="ui.html" data-page="ui"><span class="dot"></span>게임 UI</a>
     </div>
+    <div class="sidebar-group"><h5>커뮤니티</h5>
+      <a href="community.html" data-page="community"><span class="dot"></span>커뮤니티 게시판</a>
+    </div>
   </nav>
 
   <main class="main">
@@ -54,7 +57,7 @@
       <div class="eyebrow">체제 · 사회</div>
       <h1 class="page-title">바 · 함장 · 플레이어</h1>
       <p class="page-lede">
-        싱글플레이 게임이지만 은하에는 247명의 이름 있는 NPC 함장과, 행성마다 문을 여는 사교 공간 「바」가 있다.
+        싱글플레이 게임이지만 은하에는 298명의 이름 있는 NPC 함장과, 행성마다 문을 여는 사교 공간 「바」가 있다.
         플레이어 자신도 시작부터 배경이 있는 파일럿으로 출발한다.
       </p>
 
@@ -84,9 +87,10 @@
       <p>행성·이름·태그라인으로 검색할 수 있다.</p>
       <div id="attendant-table"></div>
 
-      <h2 id="captains">NPC 함장 — 247명</h2>
+      <h2 id="captains">NPC 함장 — 298명</h2>
+      <p>2026-10 기준 298명 — 전투 진영은 블루 81 · 레드 74 · 비전투 143명이고, 이 중 <strong>38명은 퀘스트 전용 함장</strong>(서브 의뢰·본편에서만 등장)이다. 초상은 285종(일부 함장은 공유)이며 아래 표 첫 열에서 볼 수 있다. 바 종업원 103명은 초상 22종을 나눠 쓴다.</p>
       <p>
-        <code>npc_ai_captains.csv</code>에 등록된 247명은 계급(제독·대령·함대장·전쟁군주 등)·소속·AI 성향(신중~광폭)·
+        <code>npc_ai_captains.csv</code>에 등록된 298명은 계급(제독·대령·함대장·전쟁군주 등)·소속·AI 성향(신중~광폭)·
         역할(함대장·순찰·호위·수비대·사냥꾼·상인 호위)을 가진 독립 개체다. 관측된 유형:
       </p>
       <ul>
@@ -96,18 +100,18 @@
         <li>연구/과학 함장 — 예: <strong>벡터-7</strong>, 이상 에너지 신호에만 반응하는 실험용 AI 선체 함장</li>
         <li>적대 전쟁군주·해적 습격대 함장(베가 레드/블루 넘버링 다수)</li>
         <li>잔해지대 약탈자(아이언 크로스 잔당)</li>
-        <li>AI 클랜 기함 지도자 3인 — 안전지대(아델린 루크)·중립지대(린 켄달)·PvP지대(모라 섀이어) 각 구역형 함대 대표</li>
+        <li>AI 클랜 기함 지도자 3인 — 안전지대(아델린 루크)·중립지대(린 켄달)·분쟁지역(모라 섀이어) 각 구역형 함대 대표</li>
       </ul>
       <p>이 중 12명은 「민간 궤도 보충 라인」 — 이름은 있지만 순수 교통량 채우기용 함장이다.</p>
 
-      <h2 id="all-captains">전체 함장 목록 — 247명</h2>
+      <h2 id="all-captains">전체 함장 목록 — 298명</h2>
       <p>이름·계급·소속·역할·AI 클랜으로 검색할 수 있다.</p>
       <div id="captain-table"></div>
 
       <div class="callout warn">
         <strong>영구 사망 시스템 — 설계만, 아직 아무도 죽지 않는다</strong>
         일반 순찰·웨이브 스폰·접전지역 함장은 명시적으로 <strong>불사(면제)</strong> 처리된다 — 리스크가 너무 크다.
-        영구 사망은 오직 「메인 스토리 지정 함장」만 대상인데, 현재 247명 중 그렇게 지정된 함장은 <strong>0명</strong>이다.
+        영구 사망은 오직 「메인 스토리 지정 함장」만 대상인데, 현재 298명 중 그렇게 지정된 함장은 <strong>0명</strong>이다.
         시스템(원장·게이트)은 이미 구현돼 있지만 아직 누구도 「죽을 수 있는」 상태로 태그되지 않았다.
       </div>
 
@@ -146,18 +150,23 @@
         <li><strong>D. 마무리</strong> — 마무리 대사 → 출발 해금 → 이 시점에 첫 메인 임무가 실제로 시작된다</li>
       </ol>
 
-      <div class="source-note">정본: <code>tables/content/npc_ai_captains.csv</code>(247행) · <code>tables/content/bar_attendants.csv</code> · <code>docs/바_후원시스템_설계.md</code> · <code>docs/NPC_CAPTAIN_PERMANENT_DEATH_DESIGN.md</code> · <code>docs/CHARACTER_CREATION_REDEV_PLAN.md</code> · <code>docs/PLAYER_TAROT_DESTINY_SYSTEM_PLAN.md</code> · <code>docs/튜토리얼_시스템.md</code></div>
+      <div class="source-note">정본: <code>tables/content/npc_ai_captains.csv</code>(298행) · <code>tables/content/bar_attendants.csv</code> · <code>docs/economy/바_후원시스템_설계.md</code> · <code>docs/character/NPC_CAPTAIN_PERMANENT_DEATH_DESIGN.md</code> · <code>docs/character/CHARACTER_CREATION_REDEV_PLAN.md</code> · <code>docs/character/PLAYER_TAROT_DESTINY_SYSTEM_PLAN.md</code> · <code>docs/quest/튜토리얼_시스템.md</code></div>
+          <section class="comments" id="comments">
+        <h2>이 문서에 대한 의견</h2>
+        <div class="giscus-thread" data-category="General"></div>
+      </section>
     </article>
     </div>
   </main>
 </div>
 
-<footer class="site-footer">아크파이어 온라인 게임 위키 · 비공식 정리본</footer>
+<footer class="site-footer">아크파이어 게임 위키 · 비공식 정리본</footer>
 <script src="assets/search-index.js"></script>
 <script src="assets/data/attendants.js"></script>
 <script src="assets/data/captains.js"></script>
 <script src="assets/datatable.js"></script>
 <script src="assets/wiki.js"></script>
+<script src="assets/comments.js"></script>
 <script>
   mountWikiDataTable({
     mount: document.getElementById("attendant-table"),
@@ -165,6 +174,7 @@
     label: "종업원",
     searchKeys: ["id", "planet", "name", "nameEn", "tagline"],
     columns: [
+      { key: "img", label: "초상", render: function (r) { return wikiThumb(r.img, r.name); } },
       { key: "name", label: "이름" },
       { key: "nameEn", label: "영문명" },
       { key: "planet", label: "행성" },
@@ -178,6 +188,7 @@
     label: "함장",
     searchKeys: ["id", "name", "nameEn", "rank", "faction", "role", "bio", "clan", "planet"],
     columns: [
+      { key: "img", label: "초상", render: function (r) { return wikiThumb(r.img, r.name); } },
       { key: "name", label: "이름" },
       { key: "nameEn", label: "영문명" },
       { key: "rank", label: "계급" },

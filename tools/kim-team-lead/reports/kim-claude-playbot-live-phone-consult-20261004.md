@@ -4,7 +4,7 @@
 task_id=playbot-live-phone-design-20261004
 kind=CONSULT 답변 (코드 변경 0 · 커밋 금지 · 설계만)
 작성=김클로드 · 2026-10-04 KST
-대상 설계=docs/PLAYBOT_LIVE_PHONE_DESIGN.md
+대상 설계=docs/playbot/PLAYBOT_LIVE_PHONE_DESIGN.md
 검수 브리프=kim-team-lead-playbot-live-phone-brief-20261004.md
 재검수 방식=인용 소스를 직접 읽고 파일:줄로 판정. 받아쓰기 금지.
 ```
@@ -131,7 +131,7 @@ kind=CONSULT 답변 (코드 변경 0 · 커밋 금지 · 설계만)
 
 ## C. 최종 설계 초안 (김클로드 문장 · 8절)
 
-> 김팀장 검수 후 정본(`docs/PLAYBOT_LIVE_PHONE_DESIGN.md`) 반영용. 코드 착수 금지.
+> 김팀장 검수 후 정본(`docs/playbot/PLAYBOT_LIVE_PHONE_DESIGN.md`) 반영용. 코드 착수 금지.
 
 **1. 판정.** 가능하다. 조건은 하나 — 학습 파이프(대표님 실기→owner-auto→human-delta→adaptPolicy→learn-cycle, PC 트윈)와 봇 실기 세션을 **저장·수집에서 분리**한다. 머리는 PC 트윈에 두고, 폰은 읽기 전용 정책 가중으로 기존 게임 입구만 누른다. 대표님 플레이의 수집·시드·델타·학습 주기는 불변.
 

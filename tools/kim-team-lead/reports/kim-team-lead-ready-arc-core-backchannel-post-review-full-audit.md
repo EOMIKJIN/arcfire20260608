@@ -6,7 +6,7 @@ task_id=arc-core-backchannel-post-review-full-audit-20260814
 assignee=김팀장(글록 4.5)
 verdict=PASS
 reviewed_at=2026-08-14
-design_doc=docs/ARC_CORE_BACKCHANNEL_AND_HUB_TALK_ROSTER.md v0.4
+design_doc=docs/dialog/ARC_CORE_BACKCHANNEL_AND_HUB_TALK_ROSTER.md v0.4
 code=FORBIDDEN_UNTIL_IMPL_ORDER
 ```
 

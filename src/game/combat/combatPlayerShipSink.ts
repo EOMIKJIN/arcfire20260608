@@ -8,6 +8,7 @@ import { isSurvivalPodNpcShipId } from '../playerSurvivalPod';
 import { usePlayerStore } from '../../store/playerStore';
 
 export {
+  clearCombatPlayerShipSinkPending,
   consumeCombatPlayerShipSinkPending,
   markCombatPlayerShipSinkPending,
   peekCombatPlayerShipSinkPending,

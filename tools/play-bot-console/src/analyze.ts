@@ -179,6 +179,17 @@ export function formatAnalyzeMarkdown(reports: readonly AnalyzeReport[], world: 
   return lines.join('\n');
 }
 
+/**
+ * 크레딧 급감 — 3일 안에 2,500 이상 줄었고 **잔액도 2,500 아래로 떨어졌을 때만**.
+ * 잔액 3만~9만 중반에 개발비(2만8천 등)를 쓰는 정상 지출까지 세던 오탐(2026-10-05 증거 16,137회) 제거.
+ */
+export const CREDIT_DRAIN_MIN_DROP = 2500;
+export const CREDIT_DRAIN_LOW_BALANCE = 2500;
+
+export function isCreditDrain(startCredits: number, endCredits: number): boolean {
+  return startCredits - endCredits >= CREDIT_DRAIN_MIN_DROP && endCredits < CREDIT_DRAIN_LOW_BALANCE;
+}
+
 /** 3단계 — 기울기·파산·반복 HOLD 강화. */
 export function analyzeStronger(
   world: WorldState,
@@ -195,7 +206,7 @@ export function analyzeStronger(
         detail: `트윈전용 · 3일간 RED ${a.red}→${b.red} · adapt 제외`,
       });
     }
-    if (b.credits < a.credits - 2500) {
+    if (isCreditDrain(a.credits, b.credits)) {
       extra.push({
         severity: 'warn',
         code: 'CREDIT_DRAIN',

@@ -6,7 +6,7 @@ alwaysApply: true
 # Arcfire Global AI Agent Routing (Auto)
 
 원본 기획: `.cursor/rules/gemini-code-1781406772084.md`  
-메인 개발: **김팀장 에이전트** — `.cursor/rules/arcfire-main-lead-agent.mdc` · `docs/KIM_TEAM_LEAD_AGENT.md`  
+메인 개발: **김팀장 에이전트** — `.cursor/rules/arcfire-main-lead-agent.mdc` · `docs/team/KIM_TEAM_LEAD_AGENT.md`  
 스택: **React Native · Expo · Firebase** · 프로젝트 헌법: `Arcfire_Master_Spec_v4.0` · `arcfire-online.mdc`
 
 ## 🚨 개발규칙 1순위 (무조건 · 최우선 · 2026-07-01~)
@@ -19,7 +19,7 @@ alwaysApply: true
 
 **김팀장** = 개발 **총괄** + **모든 코드 수정**(경제·UI·Skia·arcCore 포함) + 김경제 **관측 리포트 검토·조치**.  
 **김경제** = **김팀장이 별도 세션/Task로만 배정** — 실시간 감시·`audit:balance-ops` 등 **점검·리포트만** · **코드 수정 금지**.  
-워크플로: `docs/KIM_TEAM_ECONOMY_WORKFLOW.md`
+워크플로: `docs/team/KIM_TEAM_ECONOMY_WORKFLOW.md`
 
 > **충돌 방지(2026-06-19)**: 사용자는 **김팀장 대화창 하나**에만 기능·코드 지시. 김경제 대화창에 직접 코드 지시 **하지 않음**.
 

@@ -4,7 +4,7 @@
 task_id=playbot-live-phone-design-20261004
 kind=CONSULT (코드 변경 0 · 커밋 금지 · 설계만)
 작성=김팀장 · 2026-10-04 11:06 KST
-대상=docs/PLAYBOT_LIVE_PHONE_DESIGN.md
+대상=docs/playbot/PLAYBOT_LIVE_PHONE_DESIGN.md
 선행 학습=playbot-human-learn-consult-conclusion-20261004.md
          playbot-learn-cycle-conclusion-20261004.md
 ```

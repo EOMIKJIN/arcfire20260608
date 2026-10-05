@@ -2,7 +2,7 @@
 // 아크파이어 온라인 - 조선소 화면
 // ============================================================
 
-import React, { useMemo, useState } from 'react';
+import React, { memo, useEffect, useMemo, useState } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet,
   ScrollView, Image,
@@ -17,6 +17,7 @@ import { showArcAlert } from '../../src/utils/showArcAlert';
 import { formatCredits } from '../../src/utils/formatCredits';
 import { ShipGridPlaceholder } from '../../src/components/ShipGridPlaceholder';
 import { usePlayerStore } from '../../src/store/playerStore';
+import { notifyStellaHubTutorial } from '../../src/game/hubTutorial/stellaHubTutorialGuide';
 import { SHIP_TEMPLATES } from '../../src/data/ships';
 import {
   CAPITAL_WEAPON_LIST_FROM_CSV,
@@ -74,6 +75,9 @@ import {
 import { resolveShipFinalStatResult } from '../../src/ship/shipStatPipeline';
 import { ShipyardMineralUpgradeTab } from '../../src/components/shipyard/ShipyardMineralUpgradeTab';
 import { TradeListingEmptySlot, TradeListingIcon } from '../../src/ui/trade/TradeListingIcon';
+import { PlanetHubActionIcon } from '../../src/ui/tactical/PlanetHubActionIcon';
+import { PLANET_HUB_ACTION_ICONS, type PlanetHubActionIconSpec } from '../../src/ui/tactical/planetHubActionIcons';
+import { resolveTradeListingIconSpec } from '../../src/ui/tactical/listingIconSpecs';
 import { normalizePlayerCombatProficiency } from '../../src/combat/playerCombatProficiency';
 import {
   normalizeInventorySlots,
@@ -98,6 +102,53 @@ import {
 } from '../../src/game/shipEquipment';
 /** 메인스테이지 기준 하단 공백과 동기 */
 const SHIPYARD_BOTTOM_STAGE_RESERVE_PX = PLANET_MAIN_BOTTOM_FEATURE_RESERVE_PX;
+
+const HERO_WEAPON_SLOTS = [
+  { code: 'L1', slotId: 'WEAPON_1' },
+  { code: 'L2', slotId: 'WEAPON_2' },
+  { code: 'L3', slotId: 'WEAPON_3' },
+] as const satisfies readonly { code: string; slotId: ShipyardEquipSlotId }[];
+
+const HERO_EQUIPMENT_SLOTS = [
+  { code: 'R1', slotId: 'ARMOR' },
+  { code: 'R2', slotId: 'ENGINE' },
+  { code: 'R3', slotId: 'SYSTEM' },
+] as const satisfies readonly { code: string; slotId: ShipyardEquipSlotId }[];
+
+const HERO_EMPTY_WEAPON_ICON: PlanetHubActionIconSpec = {
+  family: 'material-community',
+  name: 'sword-cross',
+};
+const HERO_EMPTY_EQUIPMENT_ICON: Record<'ARMOR' | 'ENGINE' | 'SYSTEM', PlanetHubActionIconSpec> = {
+  ARMOR: { family: 'material-community', name: 'shield-half-full' },
+  ENGINE: PLANET_HUB_ACTION_ICONS.departure,
+  SYSTEM: { family: 'material-community', name: 'chip' },
+};
+
+const ShipyardHeroSlotFace = memo(function ShipyardHeroSlotFace({
+  caption,
+  icon,
+  onPress,
+}: {
+  caption: string;
+  icon: PlanetHubActionIconSpec;
+  onPress?: () => void;
+}) {
+  return (
+    <TouchableOpacity
+      style={styles.heroEquipSlot}
+      disabled={!onPress}
+      onPress={onPress}
+      accessibilityRole={onPress ? 'button' : 'image'}
+      accessibilityLabel={caption}
+    >
+      <PlanetHubActionIcon spec={icon} size={26} color={TF.slotInk} />
+      <Text style={styles.heroEquipSlotName} numberOfLines={2}>
+        {caption}
+      </Text>
+    </TouchableOpacity>
+  );
+});
 function weaponIdFromSlotItemDef(itemDefId: string | null | undefined): string {
   const raw = String(itemDefId ?? '').trim();
   if (!raw || raw === UNEQUIPPED_WEAPON_ITEM_ID) return '';
@@ -137,6 +188,10 @@ export default function ShipyardScreen() {
   const shipyardSession = useHeavyUiDataSession(shipyardSessionConfig);
   const screenReady = shipyardSession.phase === 'ready' && stageFrameReady;
   useUiScreenShell('shipyard', screenReady);
+  useEffect(() => {
+    if (!screenReady) return;
+    notifyStellaHubTutorial('shipyard_opened', player?.currentPlanetId ?? null);
+  }, [screenReady, player?.currentPlanetId]);
 
   const hangarSorted = useMemo(() => {
     if (!player) return [];
@@ -295,6 +350,61 @@ export default function ShipyardScreen() {
   };
   const shipPortraitSource = resolveNpcCapitalShipPortraitSource(portraitRow?.portraitImageAssetKey);
 
+  const unequipHeroSlot = (slotId: ShipyardEquipSlotId) => {
+    if (isSurvivalPodNpcShipId(ship.portraitNpcCapitalShipId)) {
+      showArcAlert(t('shipyard.inventory.equipPodTitle'), t('shipyard.inventory.equipPodBody'));
+      return;
+    }
+    const cur = ship.equipSlots?.[slotId] ?? null;
+    if (!cur || !isEquipSlotFilled(cur)) return;
+    const displayName = resolveEquipSlotDisplayName(cur.itemDefId, cur.name, locale);
+    showArcAlert(displayName, t('shipyard.equip.unequipBody', { name: displayName }), [
+      { text: t('shipyard.btn.close'), style: 'cancel' },
+      {
+        text: t('shipyard.equip.doUnequip'),
+        onPress: async () => {
+          const nextSlots = { ...(ship.equipSlots ?? {}) };
+          if (isCombatWeaponEquipSlot(slotId)) {
+            nextSlots[slotId] = { itemDefId: UNEQUIPPED_WEAPON_ITEM_ID, name: tStatic('shipyard.unequipped') };
+          } else {
+            delete nextSlots[slotId];
+          }
+          const nextWeapons = COMBAT_WEAPON_SLOT_IDS
+            .map((id) => nextSlots[id]?.itemDefId ?? '')
+            .map((itemDefId) => weaponIdFromSlotItemDef(itemDefId))
+            .map((weaponId) => CAPITAL_WEAPON_LIST_FROM_CSV[weaponId])
+            .filter((w): w is NonNullable<typeof w> => Boolean(w))
+            .map((w) => buildWeaponDataFromCapitalRow(w));
+          updateShip({ ...ship, equipSlots: nextSlots, weapons: nextWeapons });
+          await persist();
+        },
+      },
+    ]);
+  };
+
+  const renderHeroEquipFace = (
+    code: string,
+    slotId: ShipyardEquipSlotId,
+    emptyIcon: PlanetHubActionIconSpec,
+  ) => {
+    const cur = ship.equipSlots?.[slotId];
+    const filled = isEquipSlotFilled(cur);
+    const caption = filled
+      ? resolveEquipSlotDisplayName(cur?.itemDefId, cur?.name, locale)
+      : code;
+    const icon = filled && cur?.itemDefId
+      ? resolveTradeListingIconSpec(cur.itemDefId, '')
+      : emptyIcon;
+    return (
+      <ShipyardHeroSlotFace
+        key={code}
+        caption={caption}
+        icon={icon}
+        onPress={filled ? () => unequipHeroSlot(slotId) : undefined}
+      />
+    );
+  };
+
   const renderShipOverview = (showEquipScaffold = false) => (
     <>
       <View style={[fs.stackCard, styles.shipHeroCard]}>
@@ -312,29 +422,23 @@ export default function ShipyardScreen() {
             </View>
           )}
           {showEquipScaffold ? (
-            <View style={styles.shipEquipOverlay} pointerEvents="none">
-              <View style={styles.shipEquipOverlayMidRow}>
-                <View style={styles.sideSlotCol}>
-                  {[1, 2, 3].map((n) => (
-                    <View key={`left-slot-${n}`} style={styles.sideEquipSlot}>
-                      <Text style={styles.sideEquipSlotText}>{`L${n}`}</Text>
-                    </View>
-                  ))}
+            <View style={styles.shipEquipOverlay} pointerEvents="box-none">
+              <View style={styles.shipEquipOverlayMidRow} pointerEvents="box-none">
+                <View style={styles.sideSlotCol} pointerEvents="box-none">
+                  {HERO_WEAPON_SLOTS.map((slot) => renderHeroEquipFace(slot.code, slot.slotId, HERO_EMPTY_WEAPON_ICON))}
                 </View>
-                <View style={styles.shipEquipOverlayCenterSpacer} />
-                <View style={styles.sideSlotCol}>
-                  {[1, 2, 3].map((n) => (
-                    <View key={`right-slot-${n}`} style={styles.sideEquipSlot}>
-                      <Text style={styles.sideEquipSlotText}>{`R${n}`}</Text>
-                    </View>
-                  ))}
+                <View style={styles.shipEquipOverlayCenterSpacer} pointerEvents="none" />
+                <View style={styles.sideSlotCol} pointerEvents="box-none">
+                  {HERO_EQUIPMENT_SLOTS.map((slot) => renderHeroEquipFace(slot.code, slot.slotId, HERO_EMPTY_EQUIPMENT_ICON[slot.slotId]))}
                 </View>
               </View>
-              <View style={styles.bottomEquipSlotRow}>
+              <View style={styles.bottomEquipSlotRow} pointerEvents="box-none">
                 {[1, 2, 3, 4].map((n) => (
-                  <View key={`bottom-slot-${n}`} style={styles.bottomEquipSlot}>
-                    <Text style={styles.bottomEquipSlotText}>{`S${n}`}</Text>
-                  </View>
+                  <ShipyardHeroSlotFace
+                    key={`S${n}`}
+                    caption={`S${n}`}
+                    icon={PLANET_HUB_ACTION_ICONS.skilltree}
+                  />
                 ))}
               </View>
             </View>
@@ -874,13 +978,9 @@ function ShipyardEquipSlotsBlock({
   );
 
   const openSlot = (slotId: ShipyardEquipSlotId, order: number) => {
-    if (order > equipCapacity) {
-      showArcAlert(t('shipyard.equip.lockTitle'), t('shipyard.equip.lockBody', { n: equipCapacity }));
-      return;
-    }
     const cur = map[slotId] ?? null;
-    if (isEquipSlotFilled(cur)) {
-      const displayName = resolveEquipSlotDisplayName(cur!.itemDefId, cur!.name, locale);
+    if (cur && isEquipSlotFilled(cur)) {
+      const displayName = resolveEquipSlotDisplayName(cur.itemDefId, cur.name, locale);
       showArcAlert(`[${order}.${slotId}]`, t('shipyard.equip.unequipBody', { name: displayName }), [
         { text: t('shipyard.btn.close'), style: 'cancel' },
         {
@@ -900,6 +1000,10 @@ function ShipyardEquipSlotsBlock({
       ]);
       return;
     }
+    if (isShipyardEquipSlotLockedByCapacity(order, slotId, equipCapacity)) {
+      showArcAlert(t('shipyard.equip.lockTitle'), t('shipyard.equip.lockBody', { n: equipCapacity }));
+      return;
+    }
     showArcAlert(`[${order}.${slotId}]`, t('shipyard.equip.emptyBody'), [
       { text: t('shipyard.btn.close'), style: 'cancel' },
     ]);
@@ -913,7 +1017,7 @@ function ShipyardEquipSlotsBlock({
         {SHIPYARD_EQUIP_SLOT_DEFS.map(({ order, id }) => {
           const cur = map[id];
           const filled = isEquipSlotFilled(cur);
-          const locked = isShipyardEquipSlotLockedByCapacity(order, id, equipCapacity);
+          const locked = !filled && isShipyardEquipSlotLockedByCapacity(order, id, equipCapacity);
           return (
             <TouchableOpacity
               key={id}
@@ -987,48 +1091,37 @@ const styles = StyleSheet.create({
   },
   bottomEquipSlotRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     justifyContent: 'center',
-    columnGap: SPACING.sm,
+    columnGap: 4,
   },
-  bottomEquipSlot: {
-    width: 40,
-    height: 30,
+  heroEquipSlot: {
+    width: 62,
+    minHeight: 64,
+    paddingVertical: 4,
+    paddingHorizontal: 2,
     borderWidth: 1,
-    borderRadius: 2,
-    borderColor: TF.insetBorder,
-    backgroundColor: TF.insetBg,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  bottomEquipSlotText: {
-    fontFamily: FONTS.mono,
-    fontSize: 9,
-    color: TF.mutedInk,
-    fontWeight: FONTS.weight.bold,
-  },
-  sideSlotCol: {
-    width: 44,
-    rowGap: SPACING.xs,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-  sideEquipSlot: {
-    width: 36,
-    height: 28,
-    borderWidth: 1,
-    borderRadius: 4,
+    borderRadius: 6,
     borderColor: TF.equipSlotBorder,
     backgroundColor: TF.equipSlotBg,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  sideEquipSlotText: {
+  heroEquipSlotName: {
+    marginTop: 2,
     fontFamily: FONTS.mono,
     fontSize: 9,
+    lineHeight: 11,
     color: TF.slotInk,
     fontWeight: FONTS.weight.bold,
+    textAlign: 'center',
+  },
+  sideSlotCol: {
+    width: 66,
+    rowGap: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
   },
   shipName: {
     fontFamily: FONTS.mono,

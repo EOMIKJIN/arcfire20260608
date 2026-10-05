@@ -61,7 +61,7 @@
  * - **순서**: `missionObjectiveSequence` — 앞 목표가 끝나야 완료.
  * - **인증(attest)**: 미구현 시스템(블랙마켓·회피 등)은 새 overlay/목표 타입을 만들지 않는다.
  *   마지막 페이지 `story_scene_pages.actionLabel` 동사 버튼 + 기존 `talk_npc` 완료만 쓴다.
- *   정본: `docs/MAIN_QUEST_FOUNDATION.md`.
+ *   정본: `docs/quest/MAIN_QUEST_FOUNDATION.md`.
  *
  * **MissionObjective.complete** 필드는 데이터 시드용이며, 런타임 진행은 `MissionProgress.objectives`가 우선한다.
  */

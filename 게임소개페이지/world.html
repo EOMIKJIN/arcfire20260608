@@ -1,10 +1,10 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>세계관 — 아크파이어 온라인 위키</title>
-<meta name="description" content="아크파이어 온라인의 배경 세계, 핵심 루프, 아크코어의 위치" />
+<title>세계관 — 아크파이어 위키</title>
+<meta name="description" content="아크파이어의 배경 세계, 핵심 루프, 아크코어의 위치" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
 <link rel="stylesheet" href="assets/style.css" />
@@ -13,7 +13,7 @@
 
 <header class="site-header">
   <button class="nav-toggle" type="button" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
-  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 온라인 <span class="sub">Game Wiki</span></a>
+  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 <span class="sub">Game Wiki</span></a>
   <div class="site-search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
     <input type="text" placeholder="함선, 무기, 세력, 스킬 검색…" autocomplete="off" />
@@ -46,6 +46,9 @@
       <a href="social.html" data-page="social"><span class="dot"></span>바 · 함장 · 플레이어</a>
       <a href="ui.html" data-page="ui"><span class="dot"></span>게임 UI</a>
     </div>
+    <div class="sidebar-group"><h5>커뮤니티</h5>
+      <a href="community.html" data-page="community"><span class="dot"></span>커뮤니티 게시판</a>
+    </div>
   </nav>
 
   <main class="main">
@@ -69,7 +72,7 @@
       </div>
       <p>
         본거지 행성은 자원·인구·방어·기술·환경 5개 지표로 발전하며, 이 지표들이 <a href="economy.html">경제 시스템</a>
-        전체의 기반이 된다. 경쟁 배제형 싱글플레이 샌드박스로 설계돼 있다 — 다른 유저와의 PvP 과금 압박 구조가 없다.
+        전체의 기반이 된다. 경쟁 배제형 싱글플레이 샌드박스로 설계돼 있다 — 다른 유저와 경쟁시키는 과금 압박 구조가 없다.
       </p>
 
       <h2>아크코어란 무엇인가</h2>
@@ -103,14 +106,19 @@
         <a href="story.html">스토리 · 미션</a>에서 이어진다.
       </div>
 
-      <div class="source-note">정본: <code>docs/_000_ARCFIRE_BM_REPORT_v2.0.md</code> · <code>docs/_000_Arcfire_Planet_Final_Master_Plan.md</code> · <code>docs/ARC_CORE_DUAL_MOUTH_OPERATOR_DESIGN.md</code></div>
+      <div class="source-note">정본: <code>docs/bm/_000_ARCFIRE_BM_REPORT_v2.0.md</code> · <code>docs/planet/_000_Arcfire_Planet_Final_Master_Plan.md</code> · <code>docs/dialog/ARC_CORE_DUAL_MOUTH_OPERATOR_DESIGN.md</code></div>
+          <section class="comments" id="comments">
+        <h2>이 문서에 대한 의견</h2>
+        <div class="giscus-thread" data-category="General"></div>
+      </section>
     </article>
     </div>
   </main>
 </div>
 
-<footer class="site-footer">아크파이어 온라인 게임 위키 · 비공식 정리본</footer>
+<footer class="site-footer">아크파이어 게임 위키 · 비공식 정리본</footer>
 <script src="assets/search-index.js"></script>
 <script src="assets/wiki.js"></script>
+<script src="assets/comments.js"></script>
 </body>
 </html>

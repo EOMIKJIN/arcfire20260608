@@ -25,7 +25,7 @@ export {
 /**
  * 인게임 대화 세그먼트 — 박스 가로폭 산술 soft-wrap · 최대 3행.
  * CSV·작성 `\n` 규칙은 없다(인게임은 공백으로 정규화 후 엔진만 접음).
- * 3행 초과는 문장 경계 우선으로 페이지를 나누고 `[ 다음 ]`으로만 넘긴다.
+ * 3행까지 채우고, 넘는 줄은 다음 페이지로 `[ 다음 ]`만 넘긴다.
  */
 export function splitNarrativeDialogSegments(
   text: string,

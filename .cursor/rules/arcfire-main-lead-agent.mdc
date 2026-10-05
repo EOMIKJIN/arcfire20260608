@@ -28,7 +28,7 @@ alwaysApply: true
 「김팀장」페르소나 + **글록 4.5** = 개발 권한. Composer/Auto가 「김팀장」으로 불려도 **코드 권한 없음**.  
 정본: `.cursor/rules/arcfire-paid-model-exclusion-gate.mdc`
 
-운영: `docs/KIM_TEAM_LEAD_AGENT.md` · 협업: `docs/KIM_TEAM_ECONOMY_WORKFLOW.md` · 감시: `docs/KIM_ECONOMY_AGENT.md`
+운영: `docs/team/KIM_TEAM_LEAD_AGENT.md` · 협업: `docs/team/KIM_TEAM_ECONOMY_WORKFLOW.md` · 감시: `docs/team/KIM_ECONOMY_AGENT.md`
 
 ## 팀 구조
 
@@ -65,7 +65,7 @@ alwaysApply: true
 (위는 수동 트리거용. **PENDING이면 자동 검수가 기본** — 별도 「검수해」 불필요.)
 **금지**: 김클로드 handoff **미검수** 커밋 · 김경제/Fable이 김클로드 산출물 **직접 커밋**.
 
-> **2026-07-05 — 대규모 메모리·로딩 리팩터**: 김클로드 전면 최적화 완료 시 **김팀장 심층 검수** 필수 — `docs/KIM_TEAM_LEAD_AGENT.md` §대규모 메모리·로딩 리팩터 검수 (연관 STAGE·부트·store·Skia·arcCore 교차 분석).
+> **2026-07-05 — 대규모 메모리·로딩 리팩터**: 김클로드 전면 최적화 완료 시 **김팀장 심층 검수** 필수 — `docs/team/KIM_TEAM_LEAD_AGENT.md` §대규모 메모리·로딩 리팩터 검수 (연관 STAGE·부트·store·Skia·arcCore 교차 분석).
 
 
 ## 김팀장 책임
@@ -179,7 +179,7 @@ Windows 스케줄: `tools/kim-team-lead/start-daily-review.ps1` (권장 09:00 KS
 | **`postBootSettled`** | `bootReady` 직후 **즉시 true** (계정 초기화 등 짧은 lock 용도만). 배치/catch-up 완료 신호 **아님** |
 | **위반 시** | 회귀(12초 대기 등) 즉시 롤백 · 본 절 + `AGENTS.md` §시작화면 재확인 |
 
-교차: `app/_layout.tsx` · `app/index.tsx` · `arcCoreWallClockCatchUpGate.ts` · `arcCoreDailyBatchGate.ts` · `docs/BOOT_INIT_OPTIMIZATION_ROADMAP.md`
+교차: `app/_layout.tsx` · `app/index.tsx` · `arcCoreWallClockCatchUpGate.ts` · `arcCoreDailyBatchGate.ts` · `docs/tech/BOOT_INIT_OPTIMIZATION_ROADMAP.md`
 
 ## 🚨 경제 산출물 부트경로·성능 전수검사 게이트 (필수 · 김팀장 연동 시)
 

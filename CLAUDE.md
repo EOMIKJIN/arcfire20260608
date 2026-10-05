@@ -52,6 +52,7 @@ self-check: `npx tsc --noEmit -p tsconfig.client.json` · Skia 변경 시 `npm r
 
 | 착수 대기 작업 | handoff | 명세 |
 |------|---------|------|
+| **플레이어 전함 무역 경로 검수 (코드 금지)** | `tools/kim-team-lead/reports/kim-claude-ready-player-ship-trade-progression-20261005.md` | task_id=`player-ship-trade-progression-20261005` · 정본=`docs/combat/PLAYER_SHIP_TRADE_PROGRESSION_PLAN.md` · 웨이브 함 제외 · **구현·CSV 금지** · 판정만 handoff |
 | ~~이동중 전투 Skia 배경 구현+자가검수~~ **REVIEWED PARTIAL** | 정본=`kim-team-lead-transit-backdrop-review-20260916.md` | task_id=`transit-combat-skia-backdrop-fix-20260916` · 구름 풀캔버스 수용 · 헤더 `TF.panelBg` · 크래시 P0 해제 · **재구현 금지** · 베가 TEMP 강제 조우 **해제** · 실기 후 커밋 |
 | ~~웨이브 전투 FPS 저하 독립 분석~~ **HOLD (2026-09-18)** | 정본=`HOLD_WAVE_COMBAT_FPS_20260918.md` · 분석=`kim-claude-wave-combat-fps-analysis-20260914.md` | task_id=`wave-combat-fps-improve-20260918` · **별도 관리** · 재지시 전 전투 틱·Skia 패치 **금지** · 1안=기록 Zero-Alloc |
 | **인게임 대사창 헤더·하단 크롬 정리 (P0)** | `tools/kim-team-lead/reports/kim-claude-ready-ingame-narrative-dialog-chrome-20260820.md` | task_id=`ingame-narrative-dialog-chrome-20260820` · 바 빗살 헤더 실측 · 하단 흰색 · 미실측 +20 · **commit 금지** · 김팀장 검수만 |

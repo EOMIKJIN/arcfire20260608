@@ -44,10 +44,11 @@
 | `vault-5axis` | `docs/economy-evaluation/2026-08-04-vault-5axis-reaudit.md` | **분석 정본 · F2/F4 금고는 안정화 후** | 점유 5축. 지금은 월드 금고 + operatorId |
 | `strategy-tactical` | `docs/strategy/README.md` | **설계 · 코드 미착수** | 1홉 전선. 선단 물량과 숫자 묶지 않음 |
 | `maginot-f2-f4-label` | `docs/strategy/ARC_CORE_TACTICAL_AUTOMATION_AND_GALAXY_STRATEGY.md` §6-5 | **라벨만** | F2\|F4 = 전투 가중. 선단 운영자 아님 |
-| `arc-core-chat` | `docs/대화형_아크코어_구현.md` v1.1.5 | **전역 핵심 잠금 · 셸 함** | 허브·전투후 실기. 부트이후·이벤트·퀘스트는 고도화. §0-D |
+| `arc-core-chat` | `docs/dialog/대화형_아크코어_구현.md` v1.1.5 | **전역 핵심 잠금 · 셸 함** | 허브·전투후 실기. 부트이후·이벤트·퀘스트는 고도화. §0-D |
 | `quad-nation-canon` | `src/world/megaFactionNationPolicy.ts` · `quadNationRouteCanon.ts` | **런타임 정렬 완료** | 확장의 지리 키. 운영자 축은 아님 |
 | `stellium-colonize` | [스텔리움_개척선_국가편입_설계.md](./스텔리움_개척선_국가편입_설계.md) | **v1 구현** (2026-09-19) | 블루만. 플레이어 관여 개척은 성공 국경도 purge. 크림슨 거울·남북은 컬럼 예약 |
-| `endgame-board` | [`docs/엔드콘텐츠_개발계획.md`](../엔드콘텐츠_개발계획.md) | **HOLD · v0.2 상세안 · 승인 전** | 캠페인 소진+L52+독립국≥1 후 인스턴스·주간전선. 21/21 블루·초반 로테이션 재삽입 금지 |
+| `independent-nation` | [PLAYER_INDEPENDENT_NATION_IMPLEMENTATION_SPEC.md](./PLAYER_INDEPENDENT_NATION_IMPLEMENTATION_SPEC.md) | 문서 내 상태 참조 | 플레이어 독립국 구현 명세 (2026-10-05 루트에서 이동) |
+| `endgame-board` | [`docs/expansion/엔드콘텐츠_개발계획.md`](./엔드콘텐츠_개발계획.md) | **HOLD · v0.2 상세안 · 승인 전** | 캠페인 소진+L52+독립국≥1 후 인스턴스·주간전선. 21/21 블루·초반 로테이션 재삽입 금지 |
 
 ---
 

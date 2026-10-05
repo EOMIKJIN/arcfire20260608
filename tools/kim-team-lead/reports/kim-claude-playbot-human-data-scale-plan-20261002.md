@@ -5,8 +5,8 @@ task_id=playbot-human-data-scale-plan-20261002
 kind=PLAN (설계안 · 코드 변경 0 · 구현은 대표님 승인 후)
 작성=김클로드 · 2026-10-02
 상위=kim-claude-playbot-learning-audit-20261002.md §5 (대표님 원칙)
-교차=docs/PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md · docs/ecosystem/ARCFIRE_CLOUD_SYNC_CONTRACT_v1.md
-     · docs/ARC_CORE_SUSTAINABLE_LEARNING_MODEL_v1.md
+교차=docs/playbot/PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md · docs/ecosystem/ARCFIRE_CLOUD_SYNC_CONTRACT_v1.md
+     · docs/arc-core/ARC_CORE_SUSTAINABLE_LEARNING_MODEL_v1.md
 ```
 
 ## 0. 한 줄 요약

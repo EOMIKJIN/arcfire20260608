@@ -1,9 +1,9 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>4대 세력 — 아크파이어 온라인 위키</title>
+<title>4대 세력 — 아크파이어 위키</title>
 <meta name="description" content="스텔리움 연합 · 머큐리움 연합 · 크림슨 레기온 · 아우렐리움 길드, 그리고 지역 세력·AI 클랜" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
@@ -13,7 +13,7 @@
 
 <header class="site-header">
   <button class="nav-toggle" type="button" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
-  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 온라인 <span class="sub">Game Wiki</span></a>
+  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 <span class="sub">Game Wiki</span></a>
   <div class="site-search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
     <input type="text" placeholder="함선, 무기, 세력, 스킬 검색…" autocomplete="off" />
@@ -45,6 +45,9 @@
       <a href="arccore.html" data-page="arccore"><span class="dot"></span>아크코어 AI</a>
       <a href="social.html" data-page="social"><span class="dot"></span>바 · 함장 · 플레이어</a>
       <a href="ui.html" data-page="ui"><span class="dot"></span>게임 UI</a>
+    </div>
+    <div class="sidebar-group"><h5>커뮤니티</h5>
+      <a href="community.html" data-page="community"><span class="dot"></span>커뮤니티 게시판</a>
     </div>
   </nav>
 
@@ -106,12 +109,12 @@
           <tbody>
             <tr><td>솔라무역 방위연합</td><td>스텔리움</td><td>솔라 항구 무역로 방위</td></tr>
             <tr><td>오메가 중립 회항단</td><td>스텔리움(중립지대)</td><td>오메가 허브 순환·통행료 중재</td></tr>
-            <tr><td>홍월 약탈 함대</td><td>크림슨(PvP)</td><td>크림슨존·나이트폴 약탈</td></tr>
+            <tr><td>홍월 약탈 함대</td><td>크림슨(분쟁지역)</td><td>크림슨존·나이트폴 약탈</td></tr>
             <tr><td>연방 순항대</td><td>스텔리움</td><td>연방군 소속 순찰</td></tr>
             <tr><td>변경 경계 수호단</td><td>스텔리움</td><td>시리우스·베가 변경 경계</td></tr>
             <tr><td>미네르바 광물 호송단</td><td>스텔리움</td><td>광물 호송 전문</td></tr>
             <tr><td>자유 중립 상단</td><td>스텔리움(중립)</td><td>독립 중립 무역 길드</td></tr>
-            <tr><td>공허 약탈단</td><td>크림슨(PvP)</td><td>해적·암시장 약탈</td></tr>
+            <tr><td>공허 약탈단</td><td>크림슨(분쟁지역)</td><td>해적·암시장 약탈</td></tr>
             <tr><td>고철 수집단</td><td>스텔리움(중립)</td><td>잔해지대 인양 전문</td></tr>
             <tr><td>학술 연구 순항단</td><td>스텔리움(중립)</td><td>과학·고고학 호위</td></tr>
           </tbody>
@@ -120,13 +123,18 @@
       <p style="font-size:0.85rem;color:var(--text-faint);">10개 클랜 모두 스텔리움 또는 크림슨 소속이며, 머큐리움·아우렐리움에 속한 클랜은 아직 없다.</p>
 
       <div class="source-note">정본: <code>src/world/megaFactionNationPolicy.ts</code> · <code>tables/content/ai_clan_registry.csv</code></div>
+          <section class="comments" id="comments">
+        <h2>이 문서에 대한 의견</h2>
+        <div class="giscus-thread" data-category="General"></div>
+      </section>
     </article>
     </div>
   </main>
 </div>
 
-<footer class="site-footer">아크파이어 온라인 게임 위키 · 비공식 정리본</footer>
+<footer class="site-footer">아크파이어 게임 위키 · 비공식 정리본</footer>
 <script src="assets/search-index.js"></script>
 <script src="assets/wiki.js"></script>
+<script src="assets/comments.js"></script>
 </body>
 </html>

@@ -26,6 +26,7 @@ import { reloadPlayIntelligence } from './src/playIntelligence';
 import { loadStallReplay, observeStall, resetStallStreak, stallRestartCount } from './src/stallReplay';
 import { reloadHumanSeedIfChanged } from './src/humanSeed';
 import { flushLearnedWrites } from './src/learnedIo';
+import { enableCombatEfficiencyMemory, rememberCombatDay } from './src/combatEfficiency';
 import { resetRawPlayData } from './src/housekeep';
 import { compareKpi, formatCompare } from './src/compare';
 import { runSimulation } from './src/simulate';
@@ -130,6 +131,7 @@ async function main(): Promise<void> {
   let stallRestart = false;
   loadStallReplay(learnedDir());
   loadGameIssues(learnedDir());
+  enableCombatEfficiencyMemory();
 
   while (isRecording()) {
     stallRestart = false;
@@ -186,6 +188,7 @@ async function main(): Promise<void> {
           }
         },
         onDay: (world, report, dayJournal) => {
+          rememberCombatDay(world);
           const intel = reloadPlayIntelligence(learnedDir());
           if (intel.changed) {
             emit(world, paths, mudTail, {

@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { syncEarlyWarImmersionTutorialComplete } from '../navigation/earlyWarImmersionGate';
+import { emitPlayVerb } from '../game/devPlayVerbLog';
 import {
   Player,
   PlayerHangarShip,
@@ -1052,6 +1053,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       inventorySlots: ensureInventorySlotCapacity(next.inventorySlots, cap),
     };
     set({ player: withSlots });
+    emitPlayVerb('skill', skillId);
     const skillDb = useSkillDbStore.getState();
     skillDb.ensureSkillDb(next.uid);
     skillDb.syncOwnedSkills({

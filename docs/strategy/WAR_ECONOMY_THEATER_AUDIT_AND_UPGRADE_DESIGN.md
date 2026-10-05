@@ -3,7 +3,7 @@
 > **상태**: Phase 0–1.5 구현 (여파/WDI/주둔/승리금) · Phase 2 UI 대기 · 김클로드 재검수 반영  
 > **일자**: 2026-09-14 (v0.2.1)  
 > **담당**: 김팀장  
-> **교차**: `docs/ARC_CORE_ECONOMY_FABRIC.md` · `docs/economy-evaluation/2026-08-25-arccore-fiscal-military-structure.md` · `tools/kim-team-lead/reports/WAR_ECONOMY_THEATER_V02_REVIEW_20260914.md`  
+> **교차**: `docs/economy/ARC_CORE_ECONOMY_FABRIC.md` · `docs/economy-evaluation/2026-08-25-arccore-fiscal-military-structure.md` · `tools/kim-team-lead/reports/WAR_ECONOMY_THEATER_V02_REVIEW_20260914.md`  
 > **전제 유지**: `price_elasticity=0` · 경제는 **12:00 KST 일 1회** · 플레이어 직접 웨이브 **현행** · 신규 서브코어 금지 · 수도 방위 레이어 유지 · 유지비 800·수수료율 무단 변경 금지  
 > **김클로드 v0.2 재검수**: 뼈대 AGREE · 쿨다운 예시 DISAGREE(정정) · 함수명·캐시 의존 문구 정정 · 주둔 배율은 **수비 화력만** (롤 가중 체인 비삽입)
 
@@ -455,7 +455,7 @@ NPC 전투
 | 지도 링 | `resolveContestedZonePreviewSystemIds.ts` |
 | 웨이브 이관 | `territorialPlayerWavePending.ts` · `app/(game)/planet.tsx` |
 | 수도 | `resolveCapitalDefenseContext.ts` |
-| 경제 헌법 | `docs/ARC_CORE_ECONOMY_FABRIC.md` |
+| 경제 헌법 | `docs/economy/ARC_CORE_ECONOMY_FABRIC.md` |
 | 재정·군사 프록시 | `docs/economy-evaluation/2026-08-25-arccore-fiscal-military-structure.md` · `runArcCoreFiscalOpexPass.ts` |
 | 함대 편성(스킨) | `tables/balance/arc_core_territorial_fleet_composition.csv` |
 | 행성 수수료 원장 | `planetTradeFeeLedgerStore` · `applyPlanetTradeTransactionFee.ts` |

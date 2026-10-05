@@ -8,7 +8,7 @@ import {
   omitPlayerFlagshipHubInfoRows,
   resolveNearbyInfoPanelCaptainName,
 } from '../../../game/planetHub/nearbyPresenceDisplay';
-import { PINNED_INFO_MARK_INK, resolvePinnedInfoMark } from '../../../game/planetHub/nearbyPresenceContract';
+import { PINNED_INFO_MARK_INK, resolveInfoRowQuestMark } from '../../../game/planetHub/nearbyPresenceContract';
 import { SPACING } from '../../../utils/theme';
 import { ArcOverlayCard } from '../ArcOverlayCard';
 import { ArcOverlayFooterActions } from '../ArcOverlayFooterActions';
@@ -71,7 +71,7 @@ export const NearbyPresenceInfoOverlayContent = memo(function NearbyPresenceInfo
             const action = row.commGuaranteed
               ? { kind: 'dialog' as const, label: t('nearbyPresence.action.commLink') }
               : (row.action ?? { kind: 'none' as const });
-            const pinMark = resolvePinnedInfoMark(row.pinKind);
+            const pinMark = resolveInfoRowQuestMark(row.pinKind, row.showQuestMarks);
             const name = resolveNearbyInfoPanelCaptainName(row);
             const title =
               row.pinKind === 'governor' ? t('nearbyPresence.role.governorName', { name }) : name;
@@ -95,6 +95,7 @@ export const NearbyPresenceInfoOverlayContent = memo(function NearbyPresenceInfo
                     marks={{
                       M: row.hasMainQuest === true,
                       S: row.hasSubQuest === true,
+                      U: row.hasInstantQuest === true,
                     }}
                   />
                   <NearbyPresenceRowActionButton

@@ -10,7 +10,7 @@ verdict=REVIEWED PARTIAL
 
 ## 김클로드 초안
 
-`docs/CHAPTER1_MAJOR_SIDE_QUESTS_DESIGN.md` v0.1. 키워드 5 · 가번호 `sandbox_034`~`038` · A/B안 · §8 수락 이동 제안.
+`docs/quest/CHAPTER1_MAJOR_SIDE_QUESTS_DESIGN.md` v0.1. 키워드 5 · 가번호 `sandbox_034`~`038` · A/B안 · §8 수락 이동 제안.
 
 ## 재검수
 

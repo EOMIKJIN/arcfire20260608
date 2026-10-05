@@ -5,7 +5,7 @@ status=REVIEWED
 verdict=AGREE (방향·진단 타당) · 설계 수정 1건 · 보완 3건
 date=2026-09-25
 reviewer=김클로드
-대상=docs/INGAME_DIALOG_ZERO_LOAD_DESIGN.md (v0.1 · 김팀장 · 2026-09-25)
+대상=docs/dialog/INGAME_DIALOG_ZERO_LOAD_DESIGN.md (v0.1 · 김팀장 · 2026-09-25)
 방법=문서 주장 전수를 실제 코드로 재검수 (CLAUDE.md 「김팀장 지시 재검수」)
 ```
 

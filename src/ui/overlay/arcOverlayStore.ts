@@ -157,7 +157,7 @@ export type ArcOverlayPlanetDevelopmentEntry = ArcOverlayBase & {
 /** 전투 결과창(웨이브 · 허브 궤도 · 이동중) — venue가 행 가림을 결정 */
 export type ArcOverlayWaveResultEntry = ArcOverlayBase & {
   kind: 'waveResult';
-  outcome: 'win' | 'lose';
+  outcome: 'win' | 'lose' | 'draw';
   /** wave 외 venue는 0 + UI 숨김 */
   wavesCleared: number;
   totalWaves: number;

@@ -6,6 +6,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { nextStoryLevelGate } from './catalog';
 import { atomicWriteFile } from './learnedIo';
 import { designPhase } from './learnCycle';
 
@@ -37,6 +38,10 @@ export type StallMemory = {
   sectionSig: string;
   sectionStreak: number;
   sectionWins: number;
+  /** 구간 연속일이 시작된 레벨 — 그 사이 레벨이 오르면 관문(본편 Lv 게이트)을 향해 진행 중이다 */
+  sectionLevel: number;
+  /** 구간 연속일이 시작된 경험치. 다음 본편 관문보다 레벨이 낮고 이게 오르면 수련이다 */
+  sectionExp: number;
 };
 
 export type StallMark = {
@@ -72,6 +77,8 @@ export function emptyStallMemory(): StallMemory {
     sectionSig: '',
     sectionStreak: 0,
     sectionWins: -1,
+    sectionLevel: 0,
+    sectionExp: 0,
   };
 }
 
@@ -82,16 +89,26 @@ export function stepStall(
   const hardSig = `${snap.level}|${snap.totalExp}|${snap.questCleared}|${snap.devSum}|${snap.annexOk}|${snap.colonizeOk}|${snap.independent}`;
   const sectionSig = `${snap.questCleared}|${snap.annexOk}|${snap.colonizeOk}|${snap.independent}`;
   const hardSame = mem.hardSig === hardSig && mem.hardStreak > 0;
-  const sectionSame = mem.sectionSig === sectionSig && mem.sectionStreak > 0;
+  // 퀘스트가 멈춰도 레벨이 오르면 다음 본편 Lv 관문(25·28·32…)을 향한 수련 — 구간 정체가 아니다.
+  // 이 조건 없이는 L26→28 수련 중 40일마다 세계를 재시드해 관문에 끝내 못 닿았다(2026-10-05 재시작 54회).
+  const gate = nextStoryLevelGate(snap.level);
+  const expUp = mem.sectionStreak > 0 && snap.totalExp > (mem.sectionExp ?? 0);
+  const gateTraining = gate > snap.level && expUp;
+  const sectionSame = mem.sectionSig === sectionSig
+    && mem.sectionStreak > 0
+    && snap.level <= mem.sectionLevel
+    && !gateTraining;
   const hardStreak = hardSame ? mem.hardStreak + 1 : 1;
   const sectionStreak = sectionSame ? mem.sectionStreak + 1 : 1;
   const sectionWins = sectionSame ? mem.sectionWins : snap.combatWins;
+  const sectionLevel = sectionSame ? mem.sectionLevel : snap.level;
+  const sectionExp = sectionSame ? (mem.sectionExp ?? snap.totalExp) : snap.totalExp;
   const fought = snap.combatWins > sectionWins;
   const hard = hardStreak >= HARD_STALL_DAYS && snap.day >= STALL_MIN_DAY;
   const section = sectionStreak >= SECTION_STALL_DAYS && snap.day >= SECTION_STALL_DAYS && fought;
   const reason: StallReason | '' = section ? 'section' : hard ? 'hard' : '';
   return {
-    mem: { hardSig, hardStreak, sectionSig, sectionStreak, sectionWins },
+    mem: { hardSig, hardStreak, sectionSig, sectionStreak, sectionWins, sectionLevel, sectionExp },
     restart: reason !== '',
     reason,
     sectionStreak,

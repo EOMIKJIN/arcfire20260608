@@ -2,7 +2,7 @@
 
 Dev-only markers live in `src/game/bootPerformance.ts`.
 
-> **초기화 단축 / 부트 최적화 로드맵 (보류)**: `docs/BOOT_INIT_OPTIMIZATION_ROADMAP.md`  
+> **초기화 단축 / 부트 최적화 로드맵 (보류)**: `docs/tech/BOOT_INIT_OPTIMIZATION_ROADMAP.md`  
 > 「초기화 단축」·「부트 최적화」·「타이틀까지 로딩」 재개 시 **해당 문서를 먼저 읽을 것**.
 
 ## How to capture a baseline

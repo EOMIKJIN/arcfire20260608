@@ -7,7 +7,7 @@ verdict=PARTIAL
 date=2026-09-23
 owner=김팀장
 code=0
-정본=docs/GOOGLE_PLAY_BILLING_IAP_FOUNDATION_DESIGN.md v1.0
+정본=docs/bm/GOOGLE_PLAY_BILLING_IAP_FOUNDATION_DESIGN.md v1.0
 ```
 
 김클로드: 결제 0% · UI/CSV 성숙 · 더미 증서 · 제출 게이트 선행 — AGREE.  

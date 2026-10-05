@@ -24,6 +24,8 @@ import {
 } from './catalog';
 import { EPOCH_MS, TICKS_PER_DAY } from './clock';
 import { starterGemBalance } from './bmWallet';
+import { hullFundGap } from './combatEfficiency';
+import { STARTER_HULL_SHIP_ID } from './liveCombat';
 
 function clanOfOwner(owner: string): { clan: string; kind: PlanetSlot['kind'] } {
   if (owner === 'BLUE') return { clan: BLUE_CLAN, kind: 'clan_hold' };
@@ -115,6 +117,7 @@ export function seedWorld(input: { runId: string; persona: PersonaId }): WorldSt
     completedLookup: {},
     learnedLookup: {},
     activeQuest: null,
+    parkedQuests: [],
     planets,
     dailyBatchCount: 0,
     flags: [],
@@ -127,6 +130,22 @@ export function seedWorld(input: { runId: string; persona: PersonaId }): WorldSt
     learnedSkills: [],
     equipped: {},
     gearScore: 0,
+    hullTierKey: 'frigate_default',
+    hullName: '프리깃(기본 지급)',
+    hullShipId: STARTER_HULL_SHIP_ID,
+    hullRank: 0,
+    hullSaveDay: 0,
+    hullJustBought: false,
+    questCombatLossStreak: 0,
+    trainPlanetId: '',
+    trainMissionId: '',
+    trainUntilLevel: 0,
+    salvageDay: 1,
+    salvageCount: 0,
+    effFights: 0,
+    effWins: 0,
+    effExp: 0,
+    effCredits: 0,
     focusPlanetId: FOCUS_PLANET_ID,
     focusSystemId: FOCUS_SYSTEM_ID,
     devLevels: seedDevLevels(),
@@ -231,6 +250,10 @@ export function snapshotKpi(world: WorldState): KpiSnapshot {
     gearScore: Math.round(world.gearScore),
     devSum: sumDevLevels(world),
     capitalDestroyed: world.capitalDestroyed ? 1 : 0,
+    hullTierKey: world.hullTierKey,
+    hullName: world.hullName,
+    hullShipId: world.hullShipId,
+    hullFundGap: hullFundGap(world),
   };
 }
 

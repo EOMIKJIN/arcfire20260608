@@ -324,7 +324,7 @@ npm run audit:team-lead:daily          # 오늘 1회 (PASS면 스킵)
 npm run audit:team-lead:daily -- --force
 \`\`\`
 
-워크플로: \`docs/KIM_TEAM_ECONOMY_WORKFLOW.md\`
+워크플로: \`docs/team/KIM_TEAM_ECONOMY_WORKFLOW.md\`
 `;
 
   fs.writeFileSync(REPORT_MD, md, 'utf8');

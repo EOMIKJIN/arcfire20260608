@@ -7,7 +7,7 @@ verdict=PARTIAL
 date=2026-09-23
 owner=김팀장
 code=0
-정본=docs/DEVICE_ADAPTIVE_UI_DESIGN.md  (v0.1 → v0.2)
+정본=docs/ui/DEVICE_ADAPTIVE_UI_DESIGN.md  (v0.1 → v0.2)
 김클로드=tools/kim-team-lead/reports/kim-claude-device-adaptive-ui-design-reinforcement-20260923.md
 ```
 

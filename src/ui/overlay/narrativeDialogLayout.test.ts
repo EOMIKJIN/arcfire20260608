@@ -131,7 +131,7 @@ test('text width uses full card width after portrait moved on top', () => {
   assert.equal(wide, 360 - 4 * 2 - L.hudHorizontalPadPx * 2 - L.dialogueIndentPx);
   assert.ok(wide - withSafe === 40);
   assert.equal(L.charWidthPx, L.fontSizeMd);
-  assert.equal(L.splitSafetyChars, 2);
+  assert.equal(L.splitSafetyChars, 4);
   const chars = resolveNarrativeDialogCharsPerLine(360);
   assert.equal(
     chars,

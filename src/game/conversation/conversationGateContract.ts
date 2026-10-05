@@ -1,6 +1,6 @@
 /**
  * 대화 2게이트 분류 — 순수 규칙. RN/스토어/오버레이 import 금지.
- * 정본: docs/CONVERSATION_TWO_GATE_DESIGN.md
+ * 정본: docs/dialog/CONVERSATION_TWO_GATE_DESIGN.md
  */
 
 export const CONVERSATION_GATE_COMM = 1 as const;

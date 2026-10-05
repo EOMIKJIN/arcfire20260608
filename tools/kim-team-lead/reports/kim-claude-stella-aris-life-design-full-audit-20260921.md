@@ -4,7 +4,7 @@
 status=PENDING
 task_id=stella-aris-life-design-full-audit-20260921
 kind=DESIGN_SELF_AUDIT
-대상=docs/STELLA_ARIS_PROJECT_LIFE_SYSTEM_v0.1.md
+대상=docs/character/STELLA_ARIS_PROJECT_LIFE_SYSTEM_v0.1.md
 감사자=김클로드 (자가 감사)
 date=2026-09-21
 verdict=PARTIAL — 골자 유지 · 중대 정정 4건 · 보강 4건 · 사실오류 4건
@@ -28,11 +28,11 @@ verdict=PARTIAL — 골자 유지 · 중대 정정 4건 · 보강 4건 · 사실
 
 | 정본 | 대조 결과 |
 |---|---|
-| `docs/대화형_아크코어_구현.md` §0-H·§0-I·§1(L1~L12)·§7·§8·§10·§11·§12-A | **C1 · C2 · B5 · B7 · A12 적발** |
-| `docs/CONVERSATION_TWO_GATE_DESIGN.md` v1.0 | **C2 적발** |
-| `docs/ARC_CORE_DUAL_MOUTH_OPERATOR_DESIGN.md` v0.4 | 정합 · **B6 정본충돌 발견** |
-| `docs/ARC_CORE_AGENT_WORLD_DOMAIN_DESIGN.md` v0.3.2 | 정합 (D6 = A잠금·B예약과 일치) |
-| `docs/ARC_CORE_SUSTAINABLE_LEARNING_MODEL_v1.md` | 정합 (단방향 소비) |
+| `docs/dialog/대화형_아크코어_구현.md` §0-H·§0-I·§1(L1~L12)·§7·§8·§10·§11·§12-A | **C1 · C2 · B5 · B7 · A12 적발** |
+| `docs/dialog/CONVERSATION_TWO_GATE_DESIGN.md` v1.0 | **C2 적발** |
+| `docs/dialog/ARC_CORE_DUAL_MOUTH_OPERATOR_DESIGN.md` v0.4 | 정합 · **B6 정본충돌 발견** |
+| `docs/arc-core/ARC_CORE_AGENT_WORLD_DOMAIN_DESIGN.md` v0.3.2 | 정합 (D6 = A잠금·B예약과 일치) |
+| `docs/arc-core/ARC_CORE_SUSTAINABLE_LEARNING_MODEL_v1.md` | 정합 (단방향 소비) |
 | `tools/…/STELLA_ARIS_OPERATOR_DIALOG_DEPTH_VERDICT_20260913.md` | 정합 (친밀도 미도입) |
 | `tools/…/ARC_CORE_CHAT_ZERO_BILL_REDESIGN.md` | 정합 · **A12 정본충돌 발견** |
 | `.cursor/rules/Arcfire_Master_Spec_v4.0` | 정합 (일 1회·onSnapshot 없음) |

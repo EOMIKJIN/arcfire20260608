@@ -62,7 +62,10 @@ test('player sink does not present destroy alert before combat result', () => {
   assert.match(hubSimSrc, /pendingDestroy \|\| winnerTeam !== 'blue'/);
   assert.doesNotMatch(hubSimSrc, /combat\.shipDestroyedTitle/);
   assert.match(planetSrc, /consumeCombatPlayerShipSinkPending/);
+  assert.match(planetSrc, /shouldApplyShipSinkForDirectCombat/);
   assert.match(planetSrc, /applyCapitalShipDestruction:\s*sunk/);
+  assert.match(hubSimSrc, /isDirectWaveWinLocked/);
+  assert.match(hubSimSrc, /wdOutcome\.phase !== 'ended'/);
   assert.match(planetSrc, /if \(sunk \|\| endedOutcome !== 'win'\) return false/);
 });
 

@@ -79,6 +79,7 @@ import {
   sanitizeActiveMissionId,
   sanitizeMissionProgresses,
 } from '../missions/missionProgressSanitize';
+import { emitPlayVerb } from '../game/devPlayVerbLog';
 
 export type PendingMissionClearDialog = {
   missionId: string;
@@ -870,6 +871,7 @@ export const useMissionStore = create<MissionState>((set, get) => ({
       });
       void get().persistMissions();
       noteMissionExpireWatch();
+      emitPlayVerb('quest', `accept:${missionId}`);
       return 'accepted';
     }
 
@@ -913,6 +915,7 @@ export const useMissionStore = create<MissionState>((set, get) => ({
       arcCoreInstanceMissionBoardStore().getState().markBoardEntryAccepted(missionId);
       void get().persistMissions();
       noteMissionExpireWatch();
+      emitPlayVerb('quest', `accept:${missionId}`);
       return 'accepted';
     }
 
@@ -960,6 +963,7 @@ export const useMissionStore = create<MissionState>((set, get) => ({
       }
       void get().persistMissions();
       noteMissionExpireWatch();
+      emitPlayVerb('quest', `accept:${missionId}`);
       return 'accepted';
     }
 
@@ -1000,6 +1004,7 @@ export const useMissionStore = create<MissionState>((set, get) => ({
     });
     void get().persistMissions();
     noteMissionExpireWatch();
+    emitPlayVerb('quest', `accept:${missionId}`);
     return 'accepted';
   },
 
@@ -1054,6 +1059,7 @@ export const useMissionStore = create<MissionState>((set, get) => ({
     });
     void get().persistMissions();
     noteMissionExpireWatch();
+    emitPlayVerb('quest', `accept:${missionId}`);
     return 'accepted';
   },
 
@@ -1069,6 +1075,7 @@ export const useMissionStore = create<MissionState>((set, get) => ({
     if (!prev || prev.status !== 'active') return;
     if (prev.objectives[objectiveId]) return;
     if (!canCompleteSequentialObjective(mission, prev, objectiveId)) return;
+    emitPlayVerb('quest', `objective:${objectiveId}`);
 
     const objectives = { ...prev.objectives, [objectiveId]: true };
     const allDone = mission.objectives.every((o) => objectives[o.id]);

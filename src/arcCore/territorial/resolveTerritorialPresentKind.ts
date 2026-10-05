@@ -1,6 +1,6 @@
 // ============================================================
 // 전선 알림 표현 — 전투 롤 불변. 틱/persist 없음.
-// docs/MOBILE_WAR_IMMERSION_v1.md
+// docs/strategy/MOBILE_WAR_IMMERSION_v1.md
 // ============================================================
 
 export type TerritorialPresentDecision =

@@ -16,13 +16,1039 @@
     {
       "close": {
         "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 44,
+        "detail": "",
+        "raw": "10-05 06:27:08.579 28883 29130 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=44",
+        "timeMs": 1791149228579,
+        "pid": "28883"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 44,
+        "detail": "",
+        "raw": "10-05 06:27:09.575 28883 29130 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=44",
+        "timeMs": 1791149229575,
+        "pid": "28883"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
         "stage": "planet_hub",
         "event": "route_blur",
         "hermesMb": 52,
+        "detail": "eden_city",
+        "raw": "10-05 06:33:36.687 28883 29130 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=52 detail=eden_city",
+        "timeMs": 1791149616687,
+        "pid": "28883"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 52,
+        "detail": "",
+        "raw": "10-05 06:33:48.040 28883 29130 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
+        "timeMs": 1791149628040,
+        "pid": "28883"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 52,
+        "detail": "",
+        "raw": "10-05 06:33:49.063 28883 29130 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
+        "timeMs": 1791149629063,
+        "pid": "28883"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 52,
+        "detail": "arcadia_prime",
+        "raw": "10-05 06:34:05.376 28883 29130 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=52 detail=arcadia_prime",
+        "timeMs": 1791149645376,
+        "pid": "28883"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 52,
+        "detail": "",
+        "raw": "10-05 06:34:55.348 28883 29130 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
+        "timeMs": 1791149695348,
+        "pid": "28883"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 52,
+        "detail": "",
+        "raw": "10-05 06:34:56.340 28883 29130 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
+        "timeMs": 1791149696340,
+        "pid": "28883"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 52,
+        "detail": "",
+        "raw": "10-05 06:42:42.792 28883 29130 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=52",
+        "timeMs": 1791150162792,
+        "pid": "28883"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 52,
+        "detail": "",
+        "raw": "10-05 06:42:42.793 28883 29130 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
+        "timeMs": 1791150162793,
+        "pid": "28883"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 52,
+        "detail": "arcadia_prime",
+        "raw": "10-05 06:44:29.052 28883 17182 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=52 detail=arcadia_prime",
+        "timeMs": 1791150269052,
+        "pid": "28883"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 52,
+        "detail": "",
+        "raw": "10-05 06:44:44.309 28883 17182 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
+        "timeMs": 1791150284309,
+        "pid": "28883"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "",
+        "raw": "10-05 06:50:03.770 28883 17182 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48",
+        "timeMs": 1791150603770,
+        "pid": "28883"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "",
+        "raw": "10-05 06:50:03.772 28883 17182 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48",
+        "timeMs": 1791150603772,
+        "pid": "28883"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 40,
+        "detail": "eden_city",
+        "raw": "10-05 06:50:10.252 28883 17182 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=40 detail=eden_city",
+        "timeMs": 1791150610252,
+        "pid": "28883"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 32,
+        "detail": "",
+        "raw": "10-05 06:51:03.093 28883 18049 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=32",
+        "timeMs": 1791150663093,
+        "pid": "28883"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 32,
+        "detail": "",
+        "raw": "10-05 06:51:03.096 28883 18049 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=32",
+        "timeMs": 1791150663096,
+        "pid": "28883"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 52,
+        "detail": "eden_city",
+        "raw": "10-05 07:53:33.892 28883 18122 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=52 detail=eden_city",
+        "timeMs": 1791154413892,
+        "pid": "28883"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "eden_city",
+        "raw": "10-05 08:22:06.091 22131 22235 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48 detail=eden_city",
+        "timeMs": 1791156126091,
+        "pid": "22131"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 0,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 40,
+        "detail": "eden_city",
+        "raw": "10-05 08:25:06.901 22131 22235 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=40 detail=eden_city",
+        "timeMs": 1791156306901,
+        "pid": "22131"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 60,
+        "detail": "",
+        "raw": "10-05 10:37:13.906 22131 22982 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=60",
+        "timeMs": 1791164233906,
+        "pid": "22131"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 60,
+        "detail": "",
+        "raw": "10-05 10:37:13.913 22131 22982 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=60",
+        "timeMs": 1791164233913,
+        "pid": "22131"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 56,
+        "detail": "eden_city",
+        "raw": "10-05 10:37:14.587 22131 22982 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=56 detail=eden_city",
+        "timeMs": 1791164234587,
+        "pid": "22131"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 28,
+        "detail": "",
+        "raw": "10-05 10:37:50.432 22131 31138 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=28",
+        "timeMs": 1791164270432,
+        "pid": "22131"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 28,
+        "detail": "",
+        "raw": "10-05 10:37:50.435 22131 31138 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=28",
+        "timeMs": 1791164270435,
+        "pid": "22131"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 52,
+        "detail": "",
+        "raw": "10-05 10:44:07.194 22131 31223 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=52",
+        "timeMs": 1791164647194,
+        "pid": "22131"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 52,
+        "detail": "",
+        "raw": "10-05 10:44:07.197 22131 31223 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
+        "timeMs": 1791164647197,
+        "pid": "22131"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "",
+        "raw": "10-05 10:57:18.485 22131 31507 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48",
+        "timeMs": 1791165438485,
+        "pid": "22131"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "",
+        "raw": "10-05 10:57:18.489 22131 31507 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48",
+        "timeMs": 1791165438489,
+        "pid": "22131"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "",
+        "raw": "10-05 10:57:18.506 22131 31507 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48",
+        "timeMs": 1791165438506,
+        "pid": "22131"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "",
+        "raw": "10-05 10:57:18.507 22131 31507 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48",
+        "timeMs": 1791165438507,
+        "pid": "22131"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "eden_city",
+        "raw": "10-05 10:57:19.513 22131 31507 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48 detail=eden_city",
+        "timeMs": 1791165439513,
+        "pid": "22131"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "",
+        "raw": "10-05 10:57:23.037 22131 31507 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48",
+        "timeMs": 1791165443037,
+        "pid": "22131"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "",
+        "raw": "10-05 10:57:23.038 22131 31507 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48",
+        "timeMs": 1791165443038,
+        "pid": "22131"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "eden_city",
+        "raw": "10-05 10:57:24.047 22131 31507 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48 detail=eden_city",
+        "timeMs": 1791165444047,
+        "pid": "22131"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 44,
+        "detail": "eden_city",
+        "raw": "10-05 10:57:27.666 22131 31507 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=44 detail=eden_city",
+        "timeMs": 1791165447666,
+        "pid": "22131"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "eden_city",
+        "raw": "10-05 11:21:48.855 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48 detail=eden_city",
+        "timeMs": 1791166908855,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "",
+        "raw": "10-05 11:21:59.604 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48",
+        "timeMs": 1791166919604,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 44,
+        "detail": "",
+        "raw": "10-05 11:25:58.086 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=44",
+        "timeMs": 1791167158086,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 44,
+        "detail": "",
+        "raw": "10-05 11:25:59.095 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=44",
+        "timeMs": 1791167159095,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 52,
+        "detail": "draco_haven",
+        "raw": "10-05 11:50:13.931 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=52 detail=draco_haven",
+        "timeMs": 1791168613931,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 0,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 52,
+        "detail": "",
+        "raw": "10-05 11:50:26.051 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
+        "timeMs": 1791168626051,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 0,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 52,
+        "detail": "",
+        "raw": "10-05 11:50:27.060 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
+        "timeMs": 1791168627060,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 0,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 52,
+        "detail": "",
+        "raw": "10-05 11:53:48.825 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=52",
+        "timeMs": 1791168828825,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 56,
         "detail": "arcadia_prime",
-        "raw": "10-04 03:32:31.717 19257 19365 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=52 detail=arcadia_prime",
-        "timeMs": 1791052351717,
-        "pid": "19257"
+        "raw": "10-05 11:57:14.656 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=56 detail=arcadia_prime",
+        "timeMs": 1791169034656,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 56,
+        "detail": "",
+        "raw": "10-05 11:57:32.880 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=56",
+        "timeMs": 1791169052880,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 56,
+        "detail": "",
+        "raw": "10-05 11:57:33.883 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=56",
+        "timeMs": 1791169053883,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 56,
+        "detail": "solar_station",
+        "raw": "10-05 11:59:12.095 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=56 detail=solar_station",
+        "timeMs": 1791169152095,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 56,
+        "detail": "",
+        "raw": "10-05 11:59:19.864 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=56",
+        "timeMs": 1791169159864,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 56,
+        "detail": "",
+        "raw": "10-05 12:02:41.754 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=56",
+        "timeMs": 1791169361754,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 56,
+        "detail": "",
+        "raw": "10-05 12:02:42.664 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=56",
+        "timeMs": 1791169362664,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 56,
+        "detail": "eden_city",
+        "raw": "10-05 12:02:48.758 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=56 detail=eden_city",
+        "timeMs": 1791169368758,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 56,
+        "detail": "",
+        "raw": "10-05 12:03:01.821 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=56",
+        "timeMs": 1791169381821,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 56,
+        "detail": "",
+        "raw": "10-05 12:03:02.796 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=56",
+        "timeMs": 1791169382796,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 56,
+        "detail": "omega_hub",
+        "raw": "10-05 12:03:07.920 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=56 detail=omega_hub",
+        "timeMs": 1791169387920,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 56,
+        "detail": "",
+        "raw": "10-05 12:03:26.292 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=56",
+        "timeMs": 1791169406292,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 68,
+        "detail": "arcadia_prime",
+        "raw": "10-05 13:56:42.268 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=68 detail=arcadia_prime",
+        "timeMs": 1791176202268,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 68,
+        "detail": "",
+        "raw": "10-05 13:56:51.253 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=68",
+        "timeMs": 1791176211253,
+        "pid": "32281"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
@@ -36,29 +1062,11 @@
         "kind": "logcat",
         "stage": "galaxy_map",
         "event": "route_blur",
-        "hermesMb": 52,
+        "hermesMb": 68,
         "detail": "",
-        "raw": "10-04 03:32:47.332 19257 19365 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
-        "timeMs": 1791052367332,
-        "pid": "19257"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 0,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 52,
-        "detail": "",
-        "raw": "10-04 03:32:48.362 19257 19365 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
-        "timeMs": 1791052368362,
-        "pid": "19257"
+        "raw": "10-05 13:56:52.245 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=68",
+        "timeMs": 1791176212245,
+        "pid": "32281"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
@@ -74,9 +1082,9 @@
         "event": "route_blur",
         "hermesMb": 72,
         "detail": "arcadia_prime",
-        "raw": "10-04 13:56:37.213 19257 19365 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=72 detail=arcadia_prime",
-        "timeMs": 1791089797213,
-        "pid": "19257"
+        "raw": "10-05 15:22:51.308 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=72 detail=arcadia_prime",
+        "timeMs": 1791181371308,
+        "pid": "32281"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
@@ -92,9 +1100,9 @@
         "event": "route_blur",
         "hermesMb": 72,
         "detail": "",
-        "raw": "10-04 13:56:53.326 19257 19365 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=72",
-        "timeMs": 1791089813326,
-        "pid": "19257"
+        "raw": "10-05 15:23:03.529 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=72",
+        "timeMs": 1791181383529,
+        "pid": "32281"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
@@ -110,9 +1118,9 @@
         "event": "route_blur",
         "hermesMb": 72,
         "detail": "",
-        "raw": "10-04 13:56:54.278 19257 19365 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=72",
-        "timeMs": 1791089814278,
-        "pid": "19257"
+        "raw": "10-05 15:23:04.554 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=72",
+        "timeMs": 1791181384554,
+        "pid": "32281"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
@@ -127,10 +1135,118 @@
         "stage": "planet_hub",
         "event": "route_blur",
         "hermesMb": 72,
+        "detail": "",
+        "raw": "10-05 15:40:38.689 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=72",
+        "timeMs": 1791182438689,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 72,
+        "detail": "",
+        "raw": "10-05 15:40:38.690 32281 32372 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=72",
+        "timeMs": 1791182438690,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 28,
+        "detail": "",
+        "raw": "10-05 15:41:23.435 32281 17521 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=28",
+        "timeMs": 1791182483435,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 28,
+        "detail": "",
+        "raw": "10-05 15:41:23.438 32281 17521 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=28",
+        "timeMs": 1791182483438,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 52,
+        "detail": "eden_city",
+        "raw": "10-05 18:01:13.338 32281 17578 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=52 detail=eden_city",
+        "timeMs": 1791190873338,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "",
+        "raw": "10-05 18:01:25.003 32281 17578 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48",
+        "timeMs": 1791190885003,
+        "pid": "32281"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 56,
         "detail": "arcadia_prime",
-        "raw": "10-04 13:57:10.348 19257 19365 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=72 detail=arcadia_prime",
-        "timeMs": 1791089830348,
-        "pid": "19257"
+        "raw": "10-05 18:16:27.574 32281 17578 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=56 detail=arcadia_prime",
+        "timeMs": 1791191787574,
+        "pid": "32281"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
@@ -144,11 +1260,11 @@
         "kind": "logcat",
         "stage": "galaxy_map",
         "event": "route_blur",
-        "hermesMb": 72,
+        "hermesMb": 56,
         "detail": "",
-        "raw": "10-04 13:57:30.082 19257 19365 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=72",
-        "timeMs": 1791089850082,
-        "pid": "19257"
+        "raw": "10-05 18:17:07.698 32281 17578 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=56",
+        "timeMs": 1791191827698,
+        "pid": "32281"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
@@ -162,11 +1278,11 @@
         "kind": "logcat",
         "stage": "galaxy_map",
         "event": "route_blur",
-        "hermesMb": 72,
+        "hermesMb": 56,
         "detail": "",
-        "raw": "10-04 13:57:30.971 19257 19365 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=72",
-        "timeMs": 1791089850971,
-        "pid": "19257"
+        "raw": "10-05 18:17:08.589 32281 17578 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=56",
+        "timeMs": 1791191828589,
+        "pid": "32281"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
@@ -180,11 +1296,11 @@
         "kind": "logcat",
         "stage": "planet_hub",
         "event": "route_blur",
-        "hermesMb": 80,
-        "detail": "vega_base",
-        "raw": "10-04 16:45:14.347 19257 19365 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=80 detail=vega_base",
-        "timeMs": 1791099914347,
-        "pid": "19257"
+        "hermesMb": 56,
+        "detail": "eden_city",
+        "raw": "10-05 18:17:13.823 32281 17578 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=56 detail=eden_city",
+        "timeMs": 1791191833823,
+        "pid": "32281"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
@@ -198,11 +1314,11 @@
         "kind": "logcat",
         "stage": "galaxy_map",
         "event": "route_blur",
-        "hermesMb": 80,
+        "hermesMb": 56,
         "detail": "",
-        "raw": "10-04 16:45:20.383 19257 19365 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=80",
-        "timeMs": 1791099920383,
-        "pid": "19257"
+        "raw": "10-05 18:18:39.430 32281 17578 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=56",
+        "timeMs": 1791191919430,
+        "pid": "32281"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
@@ -216,11 +1332,11 @@
         "kind": "logcat",
         "stage": "galaxy_map",
         "event": "route_blur",
-        "hermesMb": 80,
+        "hermesMb": 56,
         "detail": "",
-        "raw": "10-04 16:45:21.513 19257 19365 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=80",
-        "timeMs": 1791099921513,
-        "pid": "19257"
+        "raw": "10-05 18:18:40.363 32281 17578 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=56",
+        "timeMs": 1791191920363,
+        "pid": "32281"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
@@ -234,47 +1350,11 @@
         "kind": "logcat",
         "stage": "planet_hub",
         "event": "route_blur",
-        "hermesMb": 80,
-        "detail": "vega_base",
-        "raw": "10-04 17:02:34.465 19257 19365 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=80 detail=vega_base",
-        "timeMs": 1791100954465,
-        "pid": "19257"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 80,
-        "detail": "",
-        "raw": "10-04 17:02:39.952 19257 19365 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=80",
-        "timeMs": 1791100959952,
-        "pid": "19257"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 80,
-        "detail": "",
-        "raw": "10-04 17:02:40.920 19257 19365 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=80",
-        "timeMs": 1791100960920,
-        "pid": "19257"
+        "hermesMb": 56,
+        "detail": "eden_city",
+        "raw": "10-05 18:26:55.977 32281 17578 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=56 detail=eden_city",
+        "timeMs": 1791192415977,
+        "pid": "32281"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
@@ -288,65 +1368,11 @@
         "kind": "logcat",
         "stage": "planet_hub",
         "event": "route_blur",
-        "hermesMb": 88,
-        "detail": "",
-        "raw": "10-04 18:21:45.852 19257 19365 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=88",
-        "timeMs": 1791105705852,
-        "pid": "19257"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 88,
-        "detail": "",
-        "raw": "10-04 18:21:45.853 19257 19365 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=88",
-        "timeMs": 1791105705853,
-        "pid": "19257"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "planet_hub",
-        "event": "route_blur",
-        "hermesMb": 84,
-        "detail": "vega_base",
-        "raw": "10-04 18:21:46.634 19257 19365 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=84 detail=vega_base",
-        "timeMs": 1791105706634,
-        "pid": "19257"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "planet_hub",
-        "event": "route_blur",
-        "hermesMb": 52,
-        "detail": "",
-        "raw": "10-04 18:48:46.906  6540  6646 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=52",
-        "timeMs": 1791107326906,
-        "pid": "6540"
+        "hermesMb": 48,
+        "detail": "eden_city",
+        "raw": "10-05 18:46:29.688 32281 25960 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48 detail=eden_city",
+        "timeMs": 1791193589688,
+        "pid": "32281"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
@@ -360,11 +1386,11 @@
         "kind": "logcat",
         "stage": "galaxy_map",
         "event": "route_blur",
-        "hermesMb": 52,
+        "hermesMb": 48,
         "detail": "",
-        "raw": "10-04 18:48:46.910  6540  6646 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
-        "timeMs": 1791107326910,
-        "pid": "6540"
+        "raw": "10-05 18:46:44.536 32281 25960 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48",
+        "timeMs": 1791193604536,
+        "pid": "32281"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
@@ -379,14 +1405,32 @@
         "stage": "planet_hub",
         "event": "route_blur",
         "hermesMb": 52,
-        "detail": "vega_base",
-        "raw": "10-04 18:48:48.162  6540  6646 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=52 detail=vega_base",
-        "timeMs": 1791107328162,
-        "pid": "6540"
+        "detail": "",
+        "raw": "10-05 19:17:17.685 27314 27473 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=52",
+        "timeMs": 1791195437685,
+        "pid": "27314"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
-      "before": 0,
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 52,
+        "detail": "",
+        "raw": "10-05 19:17:17.688 27314 27473 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
+        "timeMs": 1791195437688,
+        "pid": "27314"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
       "after": 1,
       "flags": [],
       "verdict": "SKIP"
@@ -398,13 +1442,13 @@
         "event": "route_blur",
         "hermesMb": 32,
         "detail": "",
-        "raw": "10-04 18:49:25.572  6540  6975 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=32",
-        "timeMs": 1791107365572,
-        "pid": "6540"
+        "raw": "10-05 19:17:48.946 27314 29696 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=32",
+        "timeMs": 1791195468946,
+        "pid": "27314"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
-      "before": 0,
+      "before": 1,
       "after": 1,
       "flags": [],
       "verdict": "SKIP"
@@ -416,13 +1460,13 @@
         "event": "route_blur",
         "hermesMb": 32,
         "detail": "",
-        "raw": "10-04 18:49:25.575  6540  6975 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=32",
-        "timeMs": 1791107365575,
-        "pid": "6540"
+        "raw": "10-05 19:17:48.949 27314 29696 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=32",
+        "timeMs": 1791195468949,
+        "pid": "27314"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
-      "before": 0,
+      "before": 1,
       "after": 1,
       "flags": [],
       "verdict": "SKIP"
@@ -434,13 +1478,13 @@
         "event": "route_blur",
         "hermesMb": 32,
         "detail": "",
-        "raw": "10-04 18:50:01.107  6540  7019 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=32",
-        "timeMs": 1791107401107,
-        "pid": "6540"
+        "raw": "10-05 19:18:45.752 27314 29740 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=32",
+        "timeMs": 1791195525752,
+        "pid": "27314"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
-      "before": 0,
+      "before": 1,
       "after": 1,
       "flags": [],
       "verdict": "SKIP"
@@ -452,13 +1496,13 @@
         "event": "route_blur",
         "hermesMb": 32,
         "detail": "",
-        "raw": "10-04 18:50:01.110  6540  7019 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=32",
-        "timeMs": 1791107401110,
-        "pid": "6540"
+        "raw": "10-05 19:18:45.754 27314 29740 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=32",
+        "timeMs": 1791195525754,
+        "pid": "27314"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
-      "before": 0,
+      "before": 1,
       "after": 1,
       "flags": [],
       "verdict": "SKIP"
@@ -469,50 +1513,32 @@
         "stage": "planet_hub",
         "event": "route_blur",
         "hermesMb": 44,
-        "detail": "vega_base",
-        "raw": "10-04 18:59:53.982  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=44 detail=vega_base",
-        "timeMs": 1791107993982,
-        "pid": "6540"
+        "detail": "",
+        "raw": "10-05 19:32:14.013 27314 29855 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=44",
+        "timeMs": 1791196334013,
+        "pid": "27314"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
       "before": 1,
-      "after": 1,
+      "after": 0,
       "flags": [],
       "verdict": "SKIP"
     },
     {
       "close": {
         "kind": "logcat",
-        "stage": "galaxy_map",
+        "stage": "planet_hub",
         "event": "route_blur",
-        "hermesMb": 48,
+        "hermesMb": 52,
         "detail": "",
-        "raw": "10-04 19:00:18.347  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48",
-        "timeMs": 1791108018347,
-        "pid": "6540"
+        "raw": "10-05 19:41:24.488 27314 29855 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=52",
+        "timeMs": 1791196884488,
+        "pid": "27314"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 48,
-        "detail": "",
-        "raw": "10-04 19:00:19.322  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48",
-        "timeMs": 1791108019322,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
+      "before": 0,
       "after": 1,
       "flags": [],
       "verdict": "SKIP"
@@ -523,784 +1549,10 @@
         "stage": "planet_hub",
         "event": "route_blur",
         "hermesMb": 48,
-        "detail": "solar_station",
-        "raw": "10-04 19:01:42.527  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48 detail=solar_station",
-        "timeMs": 1791108102527,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 48,
         "detail": "",
-        "raw": "10-04 19:01:52.404  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48",
-        "timeMs": 1791108112404,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 52,
-        "detail": "",
-        "raw": "10-04 19:01:53.556  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
-        "timeMs": 1791108113556,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "planet_hub",
-        "event": "route_blur",
-        "hermesMb": 52,
-        "detail": "minerva_deep",
-        "raw": "10-04 19:02:12.675  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=52 detail=minerva_deep",
-        "timeMs": 1791108132675,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 52,
-        "detail": "",
-        "raw": "10-04 19:02:25.087  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
-        "timeMs": 1791108145087,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 52,
-        "detail": "",
-        "raw": "10-04 19:02:26.050  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
-        "timeMs": 1791108146050,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "planet_hub",
-        "event": "route_blur",
-        "hermesMb": 48,
-        "detail": "eden_city",
-        "raw": "10-04 19:02:41.550  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48 detail=eden_city",
-        "timeMs": 1791108161550,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 48,
-        "detail": "",
-        "raw": "10-04 19:02:53.469  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48",
-        "timeMs": 1791108173469,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 48,
-        "detail": "",
-        "raw": "10-04 19:02:54.426  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48",
-        "timeMs": 1791108174426,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "planet_hub",
-        "event": "route_blur",
-        "hermesMb": 52,
-        "detail": "omega_hub",
-        "raw": "10-04 19:06:06.111  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=52 detail=omega_hub",
-        "timeMs": 1791108366111,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 52,
-        "detail": "",
-        "raw": "10-04 19:06:22.961  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
-        "timeMs": 1791108382961,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "planet_hub",
-        "event": "route_blur",
-        "hermesMb": 52,
-        "detail": "arcadia_prime",
-        "raw": "10-04 19:06:55.177  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=52 detail=arcadia_prime",
-        "timeMs": 1791108415177,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 52,
-        "detail": "",
-        "raw": "10-04 19:07:04.970  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
-        "timeMs": 1791108424970,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "planet_hub",
-        "event": "route_blur",
-        "hermesMb": 56,
-        "detail": "solar_station",
-        "raw": "10-04 19:07:53.990  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=56 detail=solar_station",
-        "timeMs": 1791108473990,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 56,
-        "detail": "",
-        "raw": "10-04 19:08:04.329  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=56",
-        "timeMs": 1791108484329,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 56,
-        "detail": "",
-        "raw": "10-04 19:08:05.228  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=56",
-        "timeMs": 1791108485228,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "planet_hub",
-        "event": "route_blur",
-        "hermesMb": 68,
-        "detail": "arcadia_prime",
-        "raw": "10-04 19:22:34.977  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=68 detail=arcadia_prime",
-        "timeMs": 1791109354977,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 68,
-        "detail": "",
-        "raw": "10-04 19:22:44.821  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=68",
-        "timeMs": 1791109364821,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 68,
-        "detail": "",
-        "raw": "10-04 19:22:45.641  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=68",
-        "timeMs": 1791109365641,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "planet_hub",
-        "event": "route_blur",
-        "hermesMb": 80,
-        "detail": "",
-        "raw": "10-04 20:04:57.961  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=80",
-        "timeMs": 1791111897961,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "planet_hub",
-        "event": "route_blur",
-        "hermesMb": 80,
-        "detail": "arcadia_prime",
-        "raw": "10-04 20:21:01.559  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=80 detail=arcadia_prime",
-        "timeMs": 1791112861559,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 0,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "planet_hub",
-        "event": "route_blur",
-        "hermesMb": 76,
-        "detail": "",
-        "raw": "10-04 20:25:57.964  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=76",
-        "timeMs": 1791113157964,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 0,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 76,
-        "detail": "",
-        "raw": "10-04 20:25:57.965  6540  7095 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=76",
-        "timeMs": 1791113157965,
-        "pid": "6540"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 0,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "planet_hub",
-        "event": "route_blur",
-        "hermesMb": 56,
-        "detail": "arcadia_prime",
-        "raw": "10-04 20:32:43.952 16777 16897 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=56 detail=arcadia_prime",
-        "timeMs": 1791113563952,
-        "pid": "16777"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 0,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "planet_hub",
-        "event": "route_blur",
-        "hermesMb": 48,
-        "detail": "arcadia_prime",
-        "raw": "10-04 21:24:05.781 16777 16897 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48 detail=arcadia_prime",
-        "timeMs": 1791116645781,
-        "pid": "16777"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 48,
-        "detail": "",
-        "raw": "10-04 21:24:09.919 16777 16897 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48",
-        "timeMs": 1791116649919,
-        "pid": "16777"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 48,
-        "detail": "",
-        "raw": "10-04 21:24:11.041 16777 16897 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48",
-        "timeMs": 1791116651041,
-        "pid": "16777"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "planet_hub",
-        "event": "route_blur",
-        "hermesMb": 48,
-        "detail": "arcadia_prime",
-        "raw": "10-04 21:24:42.063 16777 16897 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48 detail=arcadia_prime",
-        "timeMs": 1791116682063,
-        "pid": "16777"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 48,
-        "detail": "",
-        "raw": "10-04 21:25:12.654 16777 16897 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48",
-        "timeMs": 1791116712654,
-        "pid": "16777"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "planet_hub",
-        "event": "route_blur",
-        "hermesMb": 52,
-        "detail": "",
-        "raw": "10-04 21:44:03.257 16777 16897 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=52",
-        "timeMs": 1791117843257,
-        "pid": "16777"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 0,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 52,
-        "detail": "",
-        "raw": "10-04 21:44:03.258 16777 16897 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
-        "timeMs": 1791117843258,
-        "pid": "16777"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 0,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "planet_hub",
-        "event": "route_blur",
-        "hermesMb": 52,
-        "detail": "draco_haven",
-        "raw": "10-04 21:44:04.010 16777 16897 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=52 detail=draco_haven",
-        "timeMs": 1791117844010,
-        "pid": "16777"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 0,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "planet_hub",
-        "event": "route_blur",
-        "hermesMb": 52,
-        "detail": "draco_haven",
-        "raw": "10-04 22:18:36.471 21762 21872 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=52 detail=draco_haven",
-        "timeMs": 1791119916471,
-        "pid": "21762"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 52,
-        "detail": "",
-        "raw": "10-04 22:18:45.490 21762 21872 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
-        "timeMs": 1791119925490,
-        "pid": "21762"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 52,
-        "detail": "",
-        "raw": "10-04 22:18:46.377 21762 21872 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
-        "timeMs": 1791119926377,
-        "pid": "21762"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "planet_hub",
-        "event": "route_blur",
-        "hermesMb": 56,
-        "detail": "",
-        "raw": "10-04 22:25:41.533 21762 21872 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=56",
-        "timeMs": 1791120341533,
-        "pid": "21762"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 0,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 56,
-        "detail": "",
-        "raw": "10-04 22:25:41.534 21762 21872 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=56",
-        "timeMs": 1791120341534,
-        "pid": "21762"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 0,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "planet_hub",
-        "event": "route_blur",
-        "hermesMb": 32,
-        "detail": "",
-        "raw": "10-04 22:26:18.327 21762 23801 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=32",
-        "timeMs": 1791120378327,
-        "pid": "21762"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 0,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 32,
-        "detail": "",
-        "raw": "10-04 22:26:18.329 21762 23801 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=32",
-        "timeMs": 1791120378329,
-        "pid": "21762"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 0,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "planet_hub",
-        "event": "route_blur",
-        "hermesMb": 32,
-        "detail": "",
-        "raw": "10-04 22:26:59.754 21762 23859 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=32",
-        "timeMs": 1791120419754,
-        "pid": "21762"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 0,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 32,
-        "detail": "",
-        "raw": "10-04 22:26:59.756 21762 23859 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=32",
-        "timeMs": 1791120419756,
-        "pid": "21762"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 0,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "planet_hub",
-        "event": "route_blur",
-        "hermesMb": 32,
-        "detail": "",
-        "raw": "10-04 22:27:44.261 21762 23925 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=32",
-        "timeMs": 1791120464261,
-        "pid": "21762"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 0,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 32,
-        "detail": "",
-        "raw": "10-04 22:27:44.263 21762 23925 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=32",
-        "timeMs": 1791120464263,
-        "pid": "21762"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 0,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "planet_hub",
-        "event": "route_blur",
-        "hermesMb": 56,
-        "detail": "vega_base",
-        "raw": "10-04 22:38:35.882 24508 24624 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=56 detail=vega_base",
-        "timeMs": 1791121115882,
-        "pid": "24508"
+        "raw": "10-05 19:48:01.944 27314 29855 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48",
+        "timeMs": 1791197281944,
+        "pid": "27314"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
@@ -1314,11 +1566,623 @@
         "kind": "logcat",
         "stage": "galaxy_map",
         "event": "route_blur",
-        "hermesMb": 60,
+        "hermesMb": 48,
         "detail": "",
-        "raw": "10-04 22:38:46.664 24508 24624 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=60",
-        "timeMs": 1791121126664,
-        "pid": "24508"
+        "raw": "10-05 19:48:01.948 27314 29855 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48",
+        "timeMs": 1791197281948,
+        "pid": "27314"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 0,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 32,
+        "detail": "",
+        "raw": "10-05 19:48:31.370 27314 31674 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=32",
+        "timeMs": 1791197311370,
+        "pid": "27314"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 0,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 32,
+        "detail": "",
+        "raw": "10-05 19:48:31.373 27314 31674 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=32",
+        "timeMs": 1791197311373,
+        "pid": "27314"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 0,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 24,
+        "detail": "",
+        "raw": "10-05 19:49:10.086 27314 31722 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=24",
+        "timeMs": 1791197350086,
+        "pid": "27314"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 0,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 24,
+        "detail": "",
+        "raw": "10-05 19:49:10.089 27314 31722 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=24",
+        "timeMs": 1791197350089,
+        "pid": "27314"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 0,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 32,
+        "detail": "",
+        "raw": "10-05 19:53:57.096 27314 31772 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=32",
+        "timeMs": 1791197637096,
+        "pid": "27314"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 32,
+        "detail": "",
+        "raw": "10-05 19:53:57.099 27314 31772 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=32",
+        "timeMs": 1791197637099,
+        "pid": "27314"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 32,
+        "detail": "",
+        "raw": "10-05 19:54:23.979 27314 31953 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=32",
+        "timeMs": 1791197663979,
+        "pid": "27314"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 32,
+        "detail": "",
+        "raw": "10-05 19:54:23.982 27314 31953 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=32",
+        "timeMs": 1791197663982,
+        "pid": "27314"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 108,
+        "detail": "arcadia_prime",
+        "raw": "10-05 20:00:50.993 27314 31982 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=108 detail=arcadia_prime",
+        "timeMs": 1791198050993,
+        "pid": "27314"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 108,
+        "detail": "",
+        "raw": "10-05 20:00:52.505 27314 31982 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=108",
+        "timeMs": 1791198052505,
+        "pid": "27314"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 108,
+        "detail": "",
+        "raw": "10-05 20:00:52.509 27314 31982 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=108",
+        "timeMs": 1791198052509,
+        "pid": "27314"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "",
+        "raw": "10-05 20:05:18.686 27314 32356 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48",
+        "timeMs": 1791198318686,
+        "pid": "27314"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "",
+        "raw": "10-05 20:05:18.688 27314 32356 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48",
+        "timeMs": 1791198318688,
+        "pid": "27314"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "arcadia_prime",
+        "raw": "10-05 20:30:45.607  2726  2945 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48 detail=arcadia_prime",
+        "timeMs": 1791199845607,
+        "pid": "2726"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "",
+        "raw": "10-05 20:32:44.751  2726  2945 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48",
+        "timeMs": 1791199964751,
+        "pid": "2726"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 44,
+        "detail": "",
+        "raw": "10-05 20:41:39.392  2726  2945 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=44",
+        "timeMs": 1791200499392,
+        "pid": "2726"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 44,
+        "detail": "",
+        "raw": "10-05 20:41:39.395  2726  2945 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=44",
+        "timeMs": 1791200499395,
+        "pid": "2726"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 32,
+        "detail": "",
+        "raw": "10-05 20:42:08.782  2726  4296 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=32",
+        "timeMs": 1791200528782,
+        "pid": "2726"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 32,
+        "detail": "",
+        "raw": "10-05 20:42:08.785  2726  4296 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=32",
+        "timeMs": 1791200528785,
+        "pid": "2726"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 32,
+        "detail": "",
+        "raw": "10-05 20:42:36.375  2726  4388 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=32",
+        "timeMs": 1791200556375,
+        "pid": "2726"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 32,
+        "detail": "",
+        "raw": "10-05 20:42:36.378  2726  4388 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=32",
+        "timeMs": 1791200556378,
+        "pid": "2726"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 32,
+        "detail": "",
+        "raw": "10-05 20:44:14.648  2726  4429 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=32",
+        "timeMs": 1791200654648,
+        "pid": "2726"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 32,
+        "detail": "",
+        "raw": "10-05 20:44:14.650  2726  4429 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=32",
+        "timeMs": 1791200654650,
+        "pid": "2726"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 32,
+        "detail": "",
+        "raw": "10-05 20:44:47.450  2726  4577 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=32",
+        "timeMs": 1791200687450,
+        "pid": "2726"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 32,
+        "detail": "",
+        "raw": "10-05 20:44:47.453  2726  4577 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=32",
+        "timeMs": 1791200687453,
+        "pid": "2726"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 80,
+        "detail": "arcadia_prime",
+        "raw": "10-05 20:53:38.104  5924  6121 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=80 detail=arcadia_prime",
+        "timeMs": 1791201218104,
+        "pid": "5924"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 0,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 80,
+        "detail": "",
+        "raw": "10-05 20:54:01.632  5924  6121 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=80",
+        "timeMs": 1791201241632,
+        "pid": "5924"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 0,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 68,
+        "detail": "",
+        "raw": "10-05 20:55:11.237  5924  6121 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=68",
+        "timeMs": 1791201311237,
+        "pid": "5924"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 0,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 52,
+        "detail": "arcadia_prime",
+        "raw": "10-05 21:03:45.020  5924  6121 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=52 detail=arcadia_prime",
+        "timeMs": 1791201825020,
+        "pid": "5924"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 52,
+        "detail": "",
+        "raw": "10-05 21:04:03.147  5924  6121 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
+        "timeMs": 1791201843147,
+        "pid": "5924"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 52,
+        "detail": "",
+        "raw": "10-05 21:04:04.184  5924  6121 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
+        "timeMs": 1791201844184,
+        "pid": "5924"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 56,
+        "detail": "",
+        "raw": "10-05 22:35:19.588  5924  6121 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=56",
+        "timeMs": 1791207319588,
+        "pid": "5924"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 56,
+        "detail": "",
+        "raw": "10-05 22:35:19.589  5924  6121 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=56",
+        "timeMs": 1791207319589,
+        "pid": "5924"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "",
+        "raw": "10-05 22:39:30.904 14584 14684 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48",
+        "timeMs": 1791207570904,
+        "pid": "14584"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
@@ -1334,13 +2198,13 @@
         "event": "route_blur",
         "hermesMb": 56,
         "detail": "arcadia_prime",
-        "raw": "10-04 22:46:10.407 24508 24624 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=56 detail=arcadia_prime",
-        "timeMs": 1791121570407,
-        "pid": "24508"
+        "raw": "10-05 22:41:25.160 14584 14684 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=56 detail=arcadia_prime",
+        "timeMs": 1791207685160,
+        "pid": "14584"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
-      "before": 1,
+      "before": 0,
       "after": 1,
       "flags": [],
       "verdict": "SKIP"
@@ -1352,13 +2216,13 @@
         "event": "route_blur",
         "hermesMb": 56,
         "detail": "",
-        "raw": "10-04 22:46:30.636 24508 24624 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=56",
-        "timeMs": 1791121590636,
-        "pid": "24508"
+        "raw": "10-05 22:41:33.909 14584 14684 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=56",
+        "timeMs": 1791207693909,
+        "pid": "14584"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
-      "before": 1,
+      "before": 0,
       "after": 1,
       "flags": [],
       "verdict": "SKIP"
@@ -1370,13 +2234,13 @@
         "event": "route_blur",
         "hermesMb": 56,
         "detail": "",
-        "raw": "10-04 22:46:31.508 24508 24624 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=56",
-        "timeMs": 1791121591508,
-        "pid": "24508"
+        "raw": "10-05 22:41:34.934 14584 14684 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=56",
+        "timeMs": 1791207694934,
+        "pid": "14584"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
-      "before": 1,
+      "before": 0,
       "after": 1,
       "flags": [],
       "verdict": "SKIP"
@@ -1387,14 +2251,230 @@
         "stage": "planet_hub",
         "event": "route_blur",
         "hermesMb": 52,
+        "detail": "",
+        "raw": "10-05 22:48:45.801 14584 14684 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=52",
+        "timeMs": 1791208125801,
+        "pid": "14584"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 52,
+        "detail": "",
+        "raw": "10-05 22:48:45.803 14584 14684 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
+        "timeMs": 1791208125803,
+        "pid": "14584"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "vega_base",
+        "raw": "10-05 22:48:46.760 14584 14684 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48 detail=vega_base",
+        "timeMs": 1791208126760,
+        "pid": "14584"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 32,
+        "detail": "",
+        "raw": "10-05 22:49:14.273 14584 15281 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=32",
+        "timeMs": 1791208154273,
+        "pid": "14584"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 32,
+        "detail": "",
+        "raw": "10-05 22:49:14.276 14584 15281 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=32",
+        "timeMs": 1791208154276,
+        "pid": "14584"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 48,
         "detail": "arcadia_prime",
-        "raw": "10-04 22:47:27.653 24508 24624 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=52 detail=arcadia_prime",
-        "timeMs": 1791121647653,
-        "pid": "24508"
+        "raw": "10-05 23:02:44.384 14584 15317 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48 detail=arcadia_prime",
+        "timeMs": 1791208964384,
+        "pid": "14584"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
       "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "",
+        "raw": "10-05 23:02:53.649 14584 15317 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48",
+        "timeMs": 1791208973649,
+        "pid": "14584"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 40,
+        "detail": "vega_base",
+        "raw": "10-05 23:04:21.144 16402 16512 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=40 detail=vega_base",
+        "timeMs": 1791209061144,
+        "pid": "16402"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 44,
+        "detail": "",
+        "raw": "10-05 23:04:31.892 16402 16512 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=44",
+        "timeMs": 1791209071892,
+        "pid": "16402"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "",
+        "raw": "10-05 23:04:32.745 16402 16512 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=48",
+        "timeMs": 1791209072745,
+        "pid": "16402"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 68,
+        "detail": "",
+        "raw": "10-05 23:11:50.542 16402 16512 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=68",
+        "timeMs": 1791209510542,
+        "pid": "16402"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "galaxy_map",
+        "event": "route_blur",
+        "hermesMb": 68,
+        "detail": "",
+        "raw": "10-05 23:11:50.544 16402 16512 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=68",
+        "timeMs": 1791209510544,
+        "pid": "16402"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 1,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "arcadia_prime",
+        "raw": "10-05 23:29:40.905 17717 17816 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48 detail=arcadia_prime",
+        "timeMs": 1791210580905,
+        "pid": "17717"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 0,
       "after": 1,
       "flags": [],
       "verdict": "SKIP"
@@ -1406,31 +2486,13 @@
         "event": "route_blur",
         "hermesMb": 52,
         "detail": "",
-        "raw": "10-04 22:47:44.022 24508 24624 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
-        "timeMs": 1791121664022,
-        "pid": "24508"
+        "raw": "10-05 23:31:19.770 17717 17816 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
+        "timeMs": 1791210679770,
+        "pid": "17717"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
-      "before": 1,
-      "after": 1,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 52,
-        "detail": "",
-        "raw": "10-04 22:47:45.055 24508 24624 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=52",
-        "timeMs": 1791121665055,
-        "pid": "24508"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
+      "before": 0,
       "after": 1,
       "flags": [],
       "verdict": "SKIP"
@@ -1440,47 +2502,11 @@
         "kind": "logcat",
         "stage": "planet_hub",
         "event": "route_blur",
-        "hermesMb": 60,
-        "detail": "eden_city",
-        "raw": "10-04 23:18:43.551 24508 24624 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=60 detail=eden_city",
-        "timeMs": 1791123523551,
-        "pid": "24508"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 0,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 60,
-        "detail": "",
-        "raw": "10-04 23:19:15.291 24508 24624 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=60",
-        "timeMs": 1791123555291,
-        "pid": "24508"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 0,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 60,
-        "detail": "",
-        "raw": "10-04 23:19:16.321 24508 24624 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=60",
-        "timeMs": 1791123556321,
-        "pid": "24508"
+        "hermesMb": 48,
+        "detail": "vega_base",
+        "raw": "10-05 23:58:22.294 17717 17816 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48 detail=vega_base",
+        "timeMs": 1791212302294,
+        "pid": "17717"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
@@ -1494,29 +2520,11 @@
         "kind": "logcat",
         "stage": "planet_hub",
         "event": "route_blur",
-        "hermesMb": 60,
-        "detail": "",
-        "raw": "10-04 23:19:28.029 24508 24624 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=60",
-        "timeMs": 1791123568029,
-        "pid": "24508"
-      },
-      "status": "INSUFFICIENT_SAMPLES",
-      "reason": "window",
-      "before": 1,
-      "after": 0,
-      "flags": [],
-      "verdict": "SKIP"
-    },
-    {
-      "close": {
-        "kind": "logcat",
-        "stage": "galaxy_map",
-        "event": "route_blur",
-        "hermesMb": 60,
-        "detail": "",
-        "raw": "10-04 23:19:28.030 24508 24624 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=60",
-        "timeMs": 1791123568030,
-        "pid": "24508"
+        "hermesMb": 48,
+        "detail": "vega_base",
+        "raw": "10-05 23:58:24.138 17717 17816 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48 detail=vega_base",
+        "timeMs": 1791212304138,
+        "pid": "17717"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
@@ -1530,11 +2538,65 @@
         "kind": "logcat",
         "stage": "planet_hub",
         "event": "route_blur",
-        "hermesMb": 56,
-        "detail": "eden_city",
-        "raw": "10-04 23:19:28.760 24508 24624 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=56 detail=eden_city",
-        "timeMs": 1791123568760,
-        "pid": "24508"
+        "hermesMb": 48,
+        "detail": "vega_base",
+        "raw": "10-05 23:58:30.865 17717 17816 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48 detail=vega_base",
+        "timeMs": 1791212310865,
+        "pid": "17717"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "vega_base",
+        "raw": "10-05 23:58:58.766 17717 17816 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48 detail=vega_base",
+        "timeMs": 1791212338766,
+        "pid": "17717"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "vega_base",
+        "raw": "10-05 23:59:13.231 17717 17816 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48 detail=vega_base",
+        "timeMs": 1791212353231,
+        "pid": "17717"
+      },
+      "status": "INSUFFICIENT_SAMPLES",
+      "reason": "window",
+      "before": 1,
+      "after": 0,
+      "flags": [],
+      "verdict": "SKIP"
+    },
+    {
+      "close": {
+        "kind": "logcat",
+        "stage": "planet_hub",
+        "event": "route_blur",
+        "hermesMb": 48,
+        "detail": "vega_base",
+        "raw": "10-06 00:01:06.645 17717 17816 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_blur hermes_mb=48 detail=vega_base",
+        "timeMs": 1791212466645,
+        "pid": "17717"
       },
       "status": "INSUFFICIENT_SAMPLES",
       "reason": "window",
@@ -1544,5 +2606,5 @@
       "verdict": "SKIP"
     }
   ],
-  "generatedAt": "2026-10-04T14:22:07.973Z"
+  "generatedAt": "2026-10-05T15:01:51.415Z"
 }

@@ -66,7 +66,7 @@
 
 ### 3.2 단절·갭 (구조적)
 
-출처: `docs/ARC_CORE_ECONOMY_FABRIC.md` · 구현 스냅샷
+출처: `docs/economy/ARC_CORE_ECONOMY_FABRIC.md` · 구현 스냅샷
 
 | # | 문제 | 영향 |
 |---|------|------|
@@ -165,7 +165,7 @@
 
 | 경로 | 용도 |
 |------|------|
-| `docs/ARC_CORE_ECONOMY_FABRIC.md` | 구현 정본·로드맵 |
+| `docs/economy/ARC_CORE_ECONOMY_FABRIC.md` | 구현 정본·로드맵 |
 | `tools/planet-economy-3h-audit/reports/latest.md` | 행성별 수수료·convoy 스냅샷 |
 | `tools/balance-ops-audit/reports/latest.md` | 일배치·KPI·3h 통합 |
 | `src/arcCore/schedule/runArcCoreDailyOpsBatch.ts` | 일일 배치 정본 |

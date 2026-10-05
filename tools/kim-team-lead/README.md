@@ -5,7 +5,7 @@
 - **김팀장** — **유일한 사용자 지시** · **모든 코드**(경제·UI·Skia 포함)
 - **김경제** — **김팀장 배정만** · 실시간 감시 · `audit:balance-ops` **점검·리포트** · **코드 수정 없음**
 
-워크플로: `docs/KIM_TEAM_ECONOMY_WORKFLOW.md`
+워크플로: `docs/team/KIM_TEAM_ECONOMY_WORKFLOW.md`
 
 ## 일 1회 총괄 검수
 

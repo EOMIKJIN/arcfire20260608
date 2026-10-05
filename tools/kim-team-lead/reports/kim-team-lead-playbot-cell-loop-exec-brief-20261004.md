@@ -5,7 +5,7 @@ task_id=playbot-cell-loop-exec-20261004
 kind=CONSULT 후 김팀장이 코드 반영 (김클로드는 이 턴에 코드 0)
 작성=김팀장 · 2026-10-04 14:06 KST
 요청=대표님 — 최종 학습 프로세스를 협의하고, 협의 완료 후 개발 반영·프로세스 재가동 또는 업데이트
-정본=docs/PLAYBOT_CELL_LEARNING_DESIGN.md §0 · §0-1 · §0-2 · §3 · §4 · §5 · §6
+정본=docs/playbot/PLAYBOT_CELL_LEARNING_DESIGN.md §0 · §0-1 · §0-2 · §3 · §4 · §5 · §6
 ```
 
 김클로드는 초안을 그대로 받지 말 것. 정본과 `tools/play-bot-console/src/intent.ts` `actions.ts` `run-harness.ts` `watch-owner-playlog-auto.ts` `memProfileToSessionTrace.ts` 를 읽고 AGREE / PARTIAL / DISAGREE 를 파일:줄로 적어 달라.

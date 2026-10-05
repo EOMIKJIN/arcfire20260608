@@ -1,9 +1,9 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>아크코어 AI — 아크파이어 온라인 위키</title>
+<title>아크코어 AI — 아크파이어 위키</title>
 <meta name="description" content="세계를 운영하는 AI 아크코어, 12좌 범신전, 오퍼레이터 스텔라 아리스, 두 개의 게이트 대화 시스템" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
@@ -13,7 +13,7 @@
 
 <header class="site-header">
   <button class="nav-toggle" type="button" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
-  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 온라인 <span class="sub">Game Wiki</span></a>
+  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 <span class="sub">Game Wiki</span></a>
   <div class="site-search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
     <input type="text" placeholder="함선, 무기, 세력, 스킬 검색…" autocomplete="off" />
@@ -45,6 +45,9 @@
       <a href="arccore.html" data-page="arccore" class="active"><span class="dot"></span>아크코어 AI</a>
       <a href="social.html" data-page="social"><span class="dot"></span>바 · 함장 · 플레이어</a>
       <a href="ui.html" data-page="ui"><span class="dot"></span>게임 UI</a>
+    </div>
+    <div class="sidebar-group"><h5>커뮤니티</h5>
+      <a href="community.html" data-page="community"><span class="dot"></span>커뮤니티 게시판</a>
     </div>
   </nav>
 
@@ -203,14 +206,19 @@
         인덱스·일일 배치 결과를 재사용하는 것을 원칙으로 한다.
       </p>
 
-      <div class="source-note">정본: <code>docs/ARC_CORE_DUAL_MOUTH_OPERATOR_DESIGN.md</code> · <code>docs/CONVERSATION_TWO_GATE_DESIGN.md</code> · <code>docs/세축_반응_잔상_세계변화_설계.md</code> · <code>tables/content/arc_core_world_nodes.csv</code></div>
+      <div class="source-note">정본: <code>docs/dialog/ARC_CORE_DUAL_MOUTH_OPERATOR_DESIGN.md</code> · <code>docs/dialog/CONVERSATION_TWO_GATE_DESIGN.md</code> · <code>docs/arc-core/세축_반응_잔상_세계변화_설계.md</code> · <code>tables/content/arc_core_world_nodes.csv</code></div>
+          <section class="comments" id="comments">
+        <h2>이 문서에 대한 의견</h2>
+        <div class="giscus-thread" data-category="General"></div>
+      </section>
     </article>
     </div>
   </main>
 </div>
 
-<footer class="site-footer">아크파이어 온라인 게임 위키 · 비공식 정리본</footer>
+<footer class="site-footer">아크파이어 게임 위키 · 비공식 정리본</footer>
 <script src="assets/search-index.js"></script>
 <script src="assets/wiki.js"></script>
+<script src="assets/comments.js"></script>
 </body>
 </html>

@@ -85,7 +85,7 @@ import {
   localizeNearbyInfoDetailRow,
   resolveNearbyInfoPanelCaptainName,
 } from '../../../game/planetHub/nearbyPresenceDisplay';
-import { resolvePinnedInfoMark } from '../../../game/planetHub/nearbyPresenceContract';
+import { resolveInfoRowQuestMark } from '../../../game/planetHub/nearbyPresenceContract';
 import type { NearbyInfoDetailRow } from '../../../game/planetHub/nearbyPresenceDisplay';
 import { presentNearbyPresenceInfoOverlay } from '../../../ui/overlay/arcOverlayStore';
 
@@ -127,7 +127,7 @@ export function NearbyShipInfoPanel({
       </Text>
       <View style={styles.infoLogContent} pointerEvents="none">
         {localizedRows.slice(0, INFO_LOG_VIEWPORT_ROWS).map((row) => {
-          const pinMark = resolvePinnedInfoMark(row.pinKind);
+          const pinMark = resolveInfoRowQuestMark(row.pinKind, row.showQuestMarks);
           return (
           <View key={`info-slot-${row.keySlot}`} style={styles.infoTableRow}>
             <Text style={styles.infoRowBullet}>

@@ -11,7 +11,7 @@ export const AUTO_MIN_USER_ACTIONS = 3;
  * 사용자 조작으로만 생기는 [MEM_PROFILE] 마커 — 허브 진입(행성 상세 포함)·지도 출항·성계 이동.
  * 주기 reclaim·ingress 정리·dodge 등 자동 마커는 제외.
  */
-const USER_ACTION_RE = /\[MEM_PROFILE\]\s+stage=\S+\s+event=(route_focus|transit_hop_start|system_change|planet_change)\b/;
+const USER_ACTION_RE = /\[MEM_PROFILE\]\s+stage=\S+\s+event=(route_focus|transit_hop_start|system_change|planet_change)\b|\[PLAY_VERB\]\s+verb=\S+/;
 
 export function countUserActionMarkers(text: string): number {
   let n = 0;

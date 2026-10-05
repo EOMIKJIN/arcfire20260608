@@ -39,7 +39,7 @@
 - `mainStageEventTriggerId` string|null — 대화 시작과 함께 발동할 이벤트 트리거 id(미설정 가능)
 - `deathEligible` bool — 영구 사망 **자격**(Table-First). 기본 `FALSE`. 플레이 결과 사망 여부는 CSV에 쓰지 않음 → 런타임 원장
 - `deathClass` enum: `none|main_story` — v0.2는 `main_story`만 스토리 사망 경로 활성. 일반 트래픽·웨이브는 `none`
-- `questOnly` bool — 본편 퀘스트 전용 함장. `TRUE`면 궤도 트래픽·수송 풀·주둔 배정·AABS 재배치에서 제외. `assignedShipId` 비워도 됨(`talk_npc`만). **행은 추후 등록** — 지금은 컬럼만. 정본: `docs/MAIN_QUEST_FOUNDATION.md`
+- `questOnly` bool — 본편 퀘스트 전용 함장. `TRUE`면 궤도 트래픽·수송 풀·주둔 배정·AABS 재배치에서 제외. `assignedShipId` 비워도 됨(`talk_npc`만). **행은 추후 등록** — 지금은 컬럼만. 정본: `docs/quest/MAIN_QUEST_FOUNDATION.md`
 
 ### `npc_ai_ships.csv`
 - `npcMode` enum: `general|combat` (`general`은 행성 INFO 궤도 표시 전용, 전투 미진입)
@@ -56,8 +56,7 @@
 - `arcTrafficDwellRadPerSec` number — 아크코어 행성 궤도 수송선 체류 각속도(rad/s)
 - `arcTrafficPhaseDurationMul` number — 접근·체류·이탈 위상 지속시간 랜덤에 곱함(예: 2 ≈ 2배 길이)
 - `arcTrafficPlanetDwellSecMin`, `arcTrafficPlanetDwellSecMax` number — 행성 **체류(dwell)** 지속(초) 균등 샘플 구간; 엔진 상한 **600초(10분)**
-- `portraitImageAssetKey` string (선택) — 전함 실사 이미지 경로(레거시·조선소 등). 번들: `src/game/npcCapitalShipPortraitAssets.ts`.
-- `tradePortPortraitUniqueId` int (선택) — **무역소 BUY 구매정보창** 전용. 고유숫자 N → `assets/images/ship/trade_ship_{N}.png` (`trade_` 접두사 필수). N은 전함 영구 식별 번호(예: **100** = 기본전함 Mk.I). 번들: `src/game/tradePortShipPortraitAssets.ts`. 미설정 시 코드 레지스트리·`portraitImageAssetKey` 순 폴백. 기존 `ship_*` 네이밍은 추후 이전.
+- `portraitImageAssetKey` string (선택) — 전함 실사 이미지 정본. 조선소·격납고·무역소 BUY 구매창이 이 키 하나만 사용한다. 번들: `src/game/npcCapitalShipPortraitAssets.ts`.
 - `topViewImageAssetKey` string (선택) — 전투 탑뷰 스프라이트(예: `assets/images/ship/ship_top_001.png`). `build-content-from-csv`·궤도 전투 렌더가 우선 참조한다.
 - `tradePortListed` bool — `true`이면 `item_defs`에 `capital_ship_<id>`가 병합되고, 무역소(`hasTradePort`) 진열에 포함된다. 플레이어 기함(`Player_` id) 등 무역 비노출은 `false`.
 - `strStat`, `dexStat`, `sizeClass`, `expReward` — 전투 스탯·보상
@@ -122,7 +121,7 @@
 - `description_en` string (i18n)
 - **타입 계약**: `reach_planet` · `reach_system` · `defeat_enemy` · `buy_goods` · `deliver_cargo`(v1 미연동) · `talk_npc`
 - **카테고리 파생**: `defeat_enemy`만 → 전투 · `buy_goods`+`reach_system` → 배달 · `reach_*` → 이동
-- `talk_npc` 인증: 미구현 플레이는 새 타입 없이 마지막 페이지 `actionLabel` 동사로 처리 (`docs/MAIN_QUEST_FOUNDATION.md`)
+- `talk_npc` 인증: 미구현 플레이는 새 타입 없이 마지막 페이지 `actionLabel` 동사로 처리 (`docs/quest/MAIN_QUEST_FOUNDATION.md`)
 
 ### `mission_combat_captains.csv`
 - `id` string PK
@@ -155,7 +154,7 @@
 - **분기 슬롯** 챕터당 4 (`story_cXX_b01`…`b04`) — `main_story_branches.enabled=1`일 때만 진입
 - **연퀘 스텝** `main_story_chain_steps` — 부모 퀘스트 아래 순차 하위 미션. 보상 정본은 이후 `missions.csv`
 - **기존값** `missions.csv` `story_001` 제목·보상·목표는 변경하지 않음
-- **기반만 (2026-09-14)**: 스토리 본문·퀘스트 전용 함장 행·q02+ bind는 추후. 계약 `docs/MAIN_QUEST_FOUNDATION.md`
+- **기반만 (2026-09-14)**: 스토리 본문·퀘스트 전용 함장 행·q02+ bind는 추후. 계약 `docs/quest/MAIN_QUEST_FOUNDATION.md`
 
 ### `story_scene_pages.csv`
 - `sceneId` FK → `story_scenes.id` · `pageIndex` int

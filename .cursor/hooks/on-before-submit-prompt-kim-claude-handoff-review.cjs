@@ -37,7 +37,7 @@ function main() {
     '3. (해당 시) `npm run audit:skia-memory` / `npm run audit:memory:all`',
     '4. verdict 기록 → status `REVIEWED` → `IDLE` · **커밋은 대표님 명시 요청 시만**',
     '',
-    '정본: `docs/KIM_TEAM_LEAD_AGENT.md` §김클로드 검수 게이트',
+    '정본: `docs/team/KIM_TEAM_LEAD_AGENT.md` §김클로드 검수 게이트',
     extraDutyForPending(pending),
     '',
     '--- handoff (head) ---',

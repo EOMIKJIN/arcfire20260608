@@ -264,7 +264,7 @@ function closeSession(active: Active, reason: string): void {
     const arr = text.split(/\r?\n/);
     lines = arr.length;
     for (let i = 0; i < arr.length; i += 1) {
-      if (arr[i].includes('[MEM_PROFILE]')) markers += 1;
+      if (arr[i].includes('[MEM_PROFILE]') || arr[i].includes('[PLAY_VERB]')) markers += 1;
     }
   } catch {
     /* ignore */

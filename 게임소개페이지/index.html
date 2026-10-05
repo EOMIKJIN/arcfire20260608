@@ -1,10 +1,10 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>아크파이어 온라인 위키</title>
-<meta name="description" content="아크파이어 온라인 — 세계관·세력·은하·함선·무기·경제·전투·아크코어 AI를 정리한 게임 소개 위키" />
+<title>아크파이어 위키</title>
+<meta name="description" content="아크파이어 — 세계관·세력·은하·함선·무기·경제·전투·아크코어 AI를 정리한 게임 소개 위키" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
 <link rel="stylesheet" href="assets/style.css" />
@@ -13,7 +13,7 @@
 
 <header class="site-header">
   <button class="nav-toggle" type="button" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
-  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 온라인 <span class="sub">Game Wiki</span></a>
+  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 <span class="sub">Game Wiki</span></a>
   <div class="site-search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
     <input type="text" placeholder="함선, 무기, 세력, 스킬 검색…" autocomplete="off" />
@@ -52,12 +52,15 @@
       <a href="social.html" data-page="social"><span class="dot"></span>바 · 함장 · 플레이어</a>
       <a href="ui.html" data-page="ui"><span class="dot"></span>게임 UI</a>
     </div>
+    <div class="sidebar-group"><h5>커뮤니티</h5>
+      <a href="community.html" data-page="community"><span class="dot"></span>커뮤니티 게시판</a>
+    </div>
   </nav>
 
   <main class="main">
     <section class="hero">
       <div class="eyebrow">게임 소개 위키 · 비공식 정리본</div>
-      <h1>아크파이어 온라인</h1>
+      <h1>아크파이어</h1>
       <p class="lede">
         AI가 세계를 대신 운영하는 은하에서, 플레이어는 단 한 척의 함선으로 무역·전투·세력전을 헤쳐 나가는
         <strong>싱글플레이 우주 전략 게임</strong>이다. 서버에 다른 사람은 없지만, 은하는 <strong>아크코어(ArcCore)</strong>라는
@@ -69,6 +72,8 @@
         <div class="stat-item"><span class="num">21+</span><span class="label">핵심 성계</span></div>
         <div class="stat-item"><span class="num">103</span><span class="label">무기 항목</span></div>
         <div class="stat-item"><span class="num">45</span><span class="label">스킬</span></div>
+        <div class="stat-item"><span class="num">298</span><span class="label">NPC 함장</span></div>
+        <div class="stat-item"><span class="num">30</span><span class="label">1장 메인 퀘스트</span></div>
         <div class="stat-item"><span class="num">1</span><span class="label">척, 오직 나의 함선</span></div>
       </div>
     </section>
@@ -161,17 +166,25 @@
         <p>단일 오버레이 호스트, 인게임 대화창 3단 팝업, 두 가지 비주얼 테마.</p>
         <span class="count">UI 구조 →</span>
       </a>
+      <a class="category-card" href="community.html">
+        <span class="idx">15 · 커뮤니티</span>
+        <h3>커뮤니티 게시판</h3>
+        <p>공지·자유·건의·질문·투표·자랑. 읽기는 누구나, 글쓰기는 GitHub 로그인.</p>
+        <span class="count">게시판 →</span>
+      </a>
     </div>
 
     <div class="callout note">
       <strong>이 위키에 대하여</strong>
       이 문서는 저장소 내 기획·설계 문서와 콘텐츠 테이블(CSV)을 전수 조사해 정리한 <strong>비공식 게임 소개 위키</strong>다.
-      실제 코드·수치는 계속 바뀔 수 있으며, 여기 실린 내용은 조사 시점(2026-09-18)의 스냅샷이다.
+      실제 코드·수치는 계속 바뀔 수 있으며, 여기 실린 내용은 조사 시점(<strong>2026-10-05 갱신</strong>, 최초 2026-09-18)의 스냅샷이다.
+        함장·함선·아이템·무기·미션·종업원·행성 표는 <code>node tools/wiki/build-wiki-data.mjs</code>로 게임 CSV에서 다시 생성하며,
+        초상·함선·행성 이미지는 게임 에셋(<code>assets/images/</code>)을 그대로 연결한다 — 위키 폴더를 저장소 안에서 열어야 이미지가 보인다.
     </div>
   </main>
 </div>
 
-<footer class="site-footer">아크파이어 온라인 게임 위키 · 비공식 정리본 · 저장소 기획 문서·콘텐츠 테이블 기반</footer>
+<footer class="site-footer">아크파이어 게임 위키 · 비공식 정리본 · 저장소 기획 문서·콘텐츠 테이블 기반</footer>
 
 <script src="assets/search-index.js"></script>
 <script src="assets/wiki.js"></script>

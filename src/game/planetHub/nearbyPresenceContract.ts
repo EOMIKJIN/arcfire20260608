@@ -7,7 +7,7 @@ export const PLAYER_BENCH_CAPTAIN_ID = 'Player_pilot';
 /** 플레이어 기함 INFO 행 슬롯 키(궤도 테이블 슬롯과 분리) */
 export const PLAYER_FLAGSHIP_HUB_INFO_SLOT = -1;
 
-/** 퀘스트 핀 마크 — 저채도 진한 녹색. 총사령관은 마크 없음 */
+/** 퀘스트 보유 마크 — 저채도 진한 녹색. 미보유 총사령관 행에는 없음 */
 export const PINNED_INFO_MARK_INK = '#2F5C45';
 export const PINNED_INFO_MARK_QUEST = '◈';
 
@@ -18,11 +18,24 @@ export function resolvePinnedInfoMark(
   return null;
 }
 
+/**
+ * 인포에 나온 NPC가 퀘스트를 보유하면 핀 종류와 무관하게 ◈.
+ * 총사령관·궤도 행도 보유 시에만 표시한다.
+ */
+export function resolveInfoRowQuestMark(
+  pinKind: 'governor' | 'quest' | undefined,
+  showQuestMarks?: boolean,
+): string | null {
+  if (showQuestMarks === true || pinKind === 'quest') return PINNED_INFO_MARK_QUEST;
+  return null;
+}
+
 export function formatPinnedInfoPrimaryLabel(
   pinKind: 'governor' | 'quest' | undefined,
   name: string,
+  showQuestMarks?: boolean,
 ): string {
-  const mark = resolvePinnedInfoMark(pinKind);
+  const mark = resolveInfoRowQuestMark(pinKind, showQuestMarks);
   return mark ? `${mark} ${name}` : name;
 }
 

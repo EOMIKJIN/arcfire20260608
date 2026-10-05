@@ -1,10 +1,10 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>스킬 — 아크파이어 온라인 위키</title>
-<meta name="description" content="아크파이어 온라인의 전투·항법·무역·함대 4개 계열, 45개 스킬 전체 목록과 효과" />
+<title>스킬 — 아크파이어 위키</title>
+<meta name="description" content="아크파이어의 전투·항법·무역·함대 4개 계열, 45개 스킬 전체 목록과 효과" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
 <link rel="stylesheet" href="assets/style.css" />
@@ -13,7 +13,7 @@
 
 <header class="site-header">
   <button class="nav-toggle" type="button" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
-  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 온라인 <span class="sub">Game Wiki</span></a>
+  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 <span class="sub">Game Wiki</span></a>
   <div class="site-search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
     <input type="text" placeholder="함선, 무기, 세력, 스킬 검색…" autocomplete="off" />
@@ -52,6 +52,9 @@
       <a href="social.html" data-page="social"><span class="dot"></span>바 · 함장 · 플레이어</a>
       <a href="ui.html" data-page="ui"><span class="dot"></span>게임 UI</a>
     </div>
+    <div class="sidebar-group"><h5>커뮤니티</h5>
+      <a href="community.html" data-page="community"><span class="dot"></span>커뮤니티 게시판</a>
+    </div>
   </nav>
 
   <main class="main">
@@ -71,11 +74,11 @@
         R&amp;D 해금 타이머 속도·대테러 탐지 스탯만 바꾸는 별개의 시설이다. 이름이 같아 혼동하기 쉽다.
       </div>
 
-      <div class="callout warn">
-        <strong>가동 상태 참고</strong>
-        조사 시점 기준, 45개 중 <strong>5개</strong>(대테러 스캐너·Arc 위협 분석·워프 안정기·궤도 슬링 증폭·성계 개척자)만
-        실제 수치가 전투/이동 계산에 반영되어 있다(<span class="pill accent">가동</span> 표시). 나머지는 트리에서
-        배울 수 있고 설명 문구도 있지만, 아직 수치가 게임플레이에 연결되지 않았다 — 기획 의도 그대로 이 위키에도 함께 싣는다.
+      <div class="callout note">
+        <strong>가동 상태 (2026-10-05 갱신)</strong>
+        게임 안 스킬 트리 배지(<code>skillRuntimeStatus.ts</code>) 기준 <strong>45개 중 44개가 「완료」</strong> — 배우면 전투·이동·무역·함대
+        수치가 실제로 바뀐다. 자동전투 스킬의 쿨다운·지속시간은 <code>skill_auto_combat_policy.csv</code>(1턴 = 8초)로 조정된다.
+        <strong>웜홀 생성기</strong>만 「부분」 <span class="pill warm">부분</span> — 워프 시 1홉 건너뛰기는 동작하고, 영구 포탈은 보류 중이다.
       </div>
 
       <h2 id="combat">전투 (Combat) — 12개</h2>
@@ -87,8 +90,8 @@
             <tr><td>이중 사격</td><td class="num">1</td><td class="num">2</td><td>—</td><td>무기 재장전 −12% · 미사일 제파 +1 <span class="pill accent">기본 지급</span></td></tr>
             <tr><td>실드 과부하</td><td class="num">1</td><td class="num">3</td><td>—</td><td>최대 실드 +20%</td></tr>
             <tr><td>EMP 폭발</td><td class="num">2</td><td class="num">5</td><td>이중 사격</td><td>쿨다운 시 적 최대 실드 25% 소모</td></tr>
-            <tr><td>장갑 관통</td><td class="num">2</td><td class="num">6</td><td>이중 사격</td><td>적 장갑 −5 <span class="pill accent">가동</span></td></tr>
-            <tr><td>반응 장갑</td><td class="num">2</td><td class="num">5</td><td>실드 과부하</td><td>피격 데미지 −15% <span class="pill accent">가동</span></td></tr>
+            <tr><td>장갑 관통</td><td class="num">2</td><td class="num">6</td><td>이중 사격</td><td>적 장갑 −5</td></tr>
+            <tr><td>반응 장갑</td><td class="num">2</td><td class="num">5</td><td>실드 과부하</td><td>피격 데미지 −15%</td></tr>
             <tr><td>집중 타격</td><td class="num">3</td><td class="num">10</td><td>장갑 관통</td><td>치명타 범위 19~20</td></tr>
             <tr><td>플라즈마 포</td><td class="num">3</td><td class="num">12</td><td>EMP 폭발</td><td>실드 관통 10%</td></tr>
             <tr><td>요새화 모드</td><td class="num">3</td><td class="num">15</td><td>반응 장갑</td><td>기동 불가, 방어력 +50%</td></tr>
@@ -101,24 +104,24 @@
       </div>
 
       <h2 id="navigation">항법 (Navigation) — 13개</h2>
-      <p>이동·은신·연료 효율 계열. 현재 실제 수치가 붙은 5개 스킬 중 4개가 이 계열에 몰려 있다.</p>
+      <p>이동·은신·연료 효율 계열. 연료 절감 3종은 합산 상한 50%가 걸린다(성계 개척자의 +100%도 50%로 잘림).</p>
       <div class="table-wrap">
         <table>
           <thead><tr><th>이름</th><th class="num">티어</th><th class="num">요구 Lv</th><th>선행</th><th>효과</th></tr></thead>
           <tbody>
             <tr><td>점프 가속</td><td class="num">1</td><td class="num">2</td><td>—</td><td>초공간 점프 속도 +30%</td></tr>
             <tr><td>정찰 센서</td><td class="num">1</td><td class="num">2</td><td>—</td><td>탐지 범위 +20%</td></tr>
-            <tr><td>대테러 스캐너</td><td class="num">2</td><td class="num">8</td><td>정찰 센서</td><td>스파이·테러 침투 탐지 +15% <span class="pill accent">가동</span></td></tr>
+            <tr><td>대테러 스캐너</td><td class="num">2</td><td class="num">8</td><td>정찰 센서</td><td>스파이·테러 침투 탐지 +15%</td></tr>
             <tr><td>스텔스 드라이브</td><td class="num">2</td><td class="num">5</td><td>점프 가속</td><td>3턴 탐지 회피 은신</td></tr>
-            <tr><td>워프 안정기</td><td class="num">2</td><td class="num">6</td><td>정찰 센서</td><td>항행 연료 소모 −20% <span class="pill accent">가동</span></td></tr>
-            <tr><td>Arc 위협 분석</td><td class="num">3</td><td class="num">18</td><td>대테러 스캐너</td><td>아크코어 드론·백도어 테러 피해 경감 +12% <span class="pill accent">가동</span></td></tr>
+            <tr><td>워프 안정기</td><td class="num">2</td><td class="num">6</td><td>정찰 센서</td><td>항행 연료 소모 −20%</td></tr>
+            <tr><td>Arc 위협 분석</td><td class="num">3</td><td class="num">18</td><td>대테러 스캐너</td><td>아크코어 드론·백도어 테러 피해 경감 +12%</td></tr>
             <tr><td>유령선</td><td class="num">3</td><td class="num">11</td><td>스텔스 드라이브</td><td>은신 해제 후 첫 공격 피해 +100%</td></tr>
             <tr><td>웜홀 탐색기</td><td class="num">3</td><td class="num">13</td><td>워프 안정기</td><td>웜홀 발견 확률 +15%</td></tr>
             <tr><td>중력 가속</td><td class="num">3</td><td class="num">18</td><td>점프 가속</td><td>전투 구역 내 일시 최대 속도 +50%</td></tr>
             <tr><td>차원 도약</td><td class="num">4</td><td class="num">30</td><td>유령선</td><td>전투 중 무적 순간이동</td></tr>
-            <tr><td>궤도 슬링 증폭</td><td class="num">4</td><td class="num">34</td><td>중력 가속</td><td>연료 효율 +15% <span class="pill accent">가동</span></td></tr>
-            <tr><td>성계 개척자</td><td class="num">4</td><td class="num">35</td><td>웜홀 탐색기</td><td>미탐사 항로 연료 효율 +100%(상한 50%) <span class="pill accent">가동</span></td></tr>
-            <tr><td>웜홀 생성기</td><td class="num">5</td><td class="num">52</td><td>웜홀 탐색기</td><td>워프 시 1홉 스킵(보류 시 영구 포탈)</td></tr>
+            <tr><td>궤도 슬링 증폭</td><td class="num">4</td><td class="num">34</td><td>중력 가속</td><td>연료 효율 +15%</td></tr>
+            <tr><td>성계 개척자</td><td class="num">4</td><td class="num">35</td><td>웜홀 탐색기</td><td>미탐사 항로 연료 효율 +100%(상한 50%)</td></tr>
+            <tr><td>웜홀 생성기</td><td class="num">5</td><td class="num">52</td><td>웜홀 탐색기</td><td>워프 시 1홉 스킵(보류 시 영구 포탈) <span class="pill warm">부분</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -161,14 +164,19 @@
         </table>
       </div>
 
-      <div class="source-note">정본: <code>tables/content/skills.csv</code> · <code>docs/스킬구현내역.md</code> · <code>docs/연구소_스킬_구현상태_재조사_20260913.md</code></div>
+      <div class="source-note">정본: <code>tables/content/skills.csv</code> · <code>docs/combat/스킬구현내역.md</code> · <code>docs/combat/연구소_스킬_구현상태_재조사_20260913.md</code></div>
+          <section class="comments" id="comments">
+        <h2>이 문서에 대한 의견</h2>
+        <div class="giscus-thread" data-category="General"></div>
+      </section>
     </article>
     </div>
   </main>
 </div>
 
-<footer class="site-footer">아크파이어 온라인 게임 위키 · 비공식 정리본</footer>
+<footer class="site-footer">아크파이어 게임 위키 · 비공식 정리본</footer>
 <script src="assets/search-index.js"></script>
 <script src="assets/wiki.js"></script>
+<script src="assets/comments.js"></script>
 </body>
 </html>

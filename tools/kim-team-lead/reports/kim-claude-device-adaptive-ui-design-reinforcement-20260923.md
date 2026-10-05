@@ -4,7 +4,7 @@
 status=REVIEWED
 task_id=device-adaptive-ui-design-reinforcement-20260923
 kind=DESIGN_REVIEW + EXTERNAL_REFERENCE (코드 변경 0 — 설계 보강 자료만)
-대상=docs/DEVICE_ADAPTIVE_UI_DESIGN.md v0.1 → v0.2 (김팀장 반영 완료)
+대상=docs/ui/DEVICE_ADAPTIVE_UI_DESIGN.md v0.1 → v0.2 (김팀장 반영 완료)
 verdict=PARTIAL (김팀장)
 방법=WebSearch·WebFetch로 안드로이드 공식 개발가이드 + 업계(Unity/모바일게임 스튜디오) 관행 전수 참고
 김팀장=tools/kim-team-lead/reports/kim-team-lead-device-adaptive-ui-v02-20260923.md

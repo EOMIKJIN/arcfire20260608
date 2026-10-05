@@ -5,10 +5,10 @@
 > **근거 코드/감사**: balance-ops · planet-economy-3h (2026-08-02T15:05Z) · `weapon_list`/`level_band_targets` 실측  
 > **컨셉 정본**:  
 > - `Arcfire_Master_Spec_v4.0` (§0 컨셉 · §10 경제/배치 · §14 금지)  
-> - `docs/_001_Arcfire_Combined_Master_Balancing_Spec.md`  
-> - `docs/_000_ARCFIRE_PLANET_COMPENDIUM_v1.0_20260619.md`  
-> - `docs/SAMPLE_SCENARIO_EARLY_ROUTE_Lv1_10.md`  
-> - `docs/ARC_CORE_ECONOMY_FABRIC.md` · `docs/_000_ARCFIRE_BM_REPORT_v2.0.md`  
+> - `docs/combat/_001_Arcfire_Combined_Master_Balancing_Spec.md`  
+> - `docs/planet/_000_ARCFIRE_PLANET_COMPENDIUM_v1.0_20260619.md`  
+> - `docs/quest/SAMPLE_SCENARIO_EARLY_ROUTE_Lv1_10.md`  
+> - `docs/economy/ARC_CORE_ECONOMY_FABRIC.md` · `docs/bm/_000_ARCFIRE_BM_REPORT_v2.0.md`  
 > - `docs/economy-evaluation/*` · READY `kim-claude-ready-economy-p0-band-cph-p1-convoy.md`
 
 ---

@@ -649,6 +649,8 @@ export const EN_DICTIONARY: I18nDictionary = {
   // ── Wave Result (waveResult) ──
   'waveResult.win': '✦ VICTORY ✦',
   'waveResult.lose': '✕ DEFEAT ✕',
+  'waveResult.draw': '✦ DRAW ✦',
+  'waveResult.subtitleDraw': 'Orbit Combat — Enemy Withdrawal',
   'waveResult.subtitle': 'Wave Defense — Final Result',
   'waveResult.subtitleHubOrbit': 'Orbit Combat — Result',
   'waveResult.subtitleQuestOrbit': 'Quest Combat — Result',
@@ -831,6 +833,7 @@ export const EN_DICTIONARY: I18nDictionary = {
   'nearbyPresence.action.commLink': 'Link Comms',
   'nearbyPresence.tag.mainQuest': 'Main Quest',
   'nearbyPresence.tag.subQuest': 'Side Quest',
+  'nearbyPresence.tag.instantQuest': 'Personal errand',
   'nearbyPresence.tag.questMarks': 'Quest types',
   'nearbyPresence.role.governorName': 'Commander · {name}',
   'nearbyPresence.action.mission': 'Mission',

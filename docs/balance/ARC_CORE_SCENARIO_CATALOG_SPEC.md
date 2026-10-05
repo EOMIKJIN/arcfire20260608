@@ -42,4 +42,4 @@ economy_trade_eden_loop,true,economy_loop,에덴 무역 루프,,,,eden_city,20,,
 
 ---
 
-*Parent: [ARC_CORE_SUSTAINABLE_LEARNING_MODEL_v1.md](../ARC_CORE_SUSTAINABLE_LEARNING_MODEL_v1.md)*
+*Parent: [ARC_CORE_SUSTAINABLE_LEARNING_MODEL_v1.md](../arc-core/ARC_CORE_SUSTAINABLE_LEARNING_MODEL_v1.md)*

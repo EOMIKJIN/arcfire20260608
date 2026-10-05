@@ -4,7 +4,7 @@
 status=PENDING
 task_id=quest-system-audit-and-redesign-review-20260922
 kind=AUDIT + DESIGN_REVIEW   (코드 변경 0 · 임시 스크립트 전량 삭제)
-대상 정본=docs/코드작업을_위한_퀘스트_시스템_리팩토링.md (김팀장 · 2026-09-22 04:07 · 코드 미착수)
+대상 정본=docs/quest/코드작업을_위한_퀘스트_시스템_리팩토링.md (김팀장 · 2026-09-22 04:07 · 코드 미착수)
 self-check=코드 diff 없음 → tsc 해당 없음
 ```
 

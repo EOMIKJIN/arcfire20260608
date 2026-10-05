@@ -1,8 +1,8 @@
 /**
  * NPC·바 종업원 초상 PNG 범용 픽셀 규격.
  * 정본 샘플: `assets/images/npc/noname_char007.png` (대표님 정사각 기준)
- * 톤·군복 제작: `docs/NPC_PORTRAIT_PRODUCTION_CANON.md`
- * 교차: `docs/NPC_CAPTAIN_PORTRAIT_ASSET_CONTRACT.md`
+ * 톤·군복 제작: `docs/portrait/NPC_PORTRAIT_PRODUCTION_CANON.md`
+ * 교차: `docs/portrait/NPC_CAPTAIN_PORTRAIT_ASSET_CONTRACT.md`
  */
 export const NPC_PORTRAIT_CANONICAL_WIDTH_PX = 240;
 export const NPC_PORTRAIT_CANONICAL_HEIGHT_PX = 240;

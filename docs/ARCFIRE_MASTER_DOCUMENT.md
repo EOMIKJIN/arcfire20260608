@@ -59,7 +59,7 @@
 
 ## **5. 챕터1 — 은폐된 진실**   아크파이어_메인스토리.md 전문 반영
 
-근거: docs/main_quest_template_v3_chapter1_complete.md · 실기 대사 tables/content/story_scene_pages.csv (story_001~story_006)  /  보강: docs/temp/arcfire_chapter1_novel_수정중.md — 업데이트 가능분만, 제1부 사실관계는 실기가 이긴다.  /  제1부(q01~q06)는 인게임 본편과 같다. 제2부 이하(q07~q22)도 정본 슬롯에 맞춰 인게임 대사·미션이 있다. 고도화 대상이며, 클로저는 q22다.  /  넣지 않음: 피해자명 「에릭」 · 대타 출정·베가 전멸 생략 · 코발을 미네르바 직후로 당김 · 「다렐」 표기(함장명) · 챕터1 독립 선언·건국 · 슬롯 1~30 · 챕터 제목 「프론티어의 깃발」  /  지명: 아이언워치=iron_remnant · 캘리스=omega_hub · 하벤포드=eden_city · 도피 거점=섀도우 넥서스(shadow_nexus / 행성 shadow_market) · 세렌 벨트=미매핑
+근거: docs/quest/main_quest_template_v3_chapter1_complete.md · 실기 대사 tables/content/story_scene_pages.csv (story_001~story_006)  /  보강: docs/temp/arcfire_chapter1_novel_수정중.md — 업데이트 가능분만, 제1부 사실관계는 실기가 이긴다.  /  제1부(q01~q06)는 인게임 본편과 같다. 제2부 이하(q07~q22)도 정본 슬롯에 맞춰 인게임 대사·미션이 있다. 고도화 대상이며, 클로저는 q22다.  /  넣지 않음: 피해자명 「에릭」 · 대타 출정·베가 전멸 생략 · 코발을 미네르바 직후로 당김 · 「다렐」 표기(함장명) · 챕터1 독립 선언·건국 · 슬롯 1~30 · 챕터 제목 「프론티어의 깃발」  /  지명: 아이언워치=iron_remnant · 캘리스=omega_hub · 하벤포드=eden_city · 도피 거점=섀도우 넥서스(shadow_nexus / 행성 shadow_market) · 세렌 벨트=미매핑
 
 은하 동부를 크림슨 레기온이 거머쥐고, 그 깊은 어둠 속에 아크코어가 잠들어 있다는 말은 이미 세상에 퍼져 있었다.
 

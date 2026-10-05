@@ -1,9 +1,9 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>전투 · 분쟁 — 아크파이어 온라인 위키</title>
+<title>전투 · 분쟁 — 아크파이어 위키</title>
 <meta name="description" content="4개 전투 축, 전투레벨(TCL) 체계, 접전지역 로테이션, 수도 방위" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
@@ -13,7 +13,7 @@
 
 <header class="site-header">
   <button class="nav-toggle" type="button" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
-  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 온라인 <span class="sub">Game Wiki</span></a>
+  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 <span class="sub">Game Wiki</span></a>
   <div class="site-search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
     <input type="text" placeholder="함선, 무기, 세력, 스킬 검색…" autocomplete="off" />
@@ -45,6 +45,9 @@
       <a href="arccore.html" data-page="arccore"><span class="dot"></span>아크코어 AI</a>
       <a href="social.html" data-page="social"><span class="dot"></span>바 · 함장 · 플레이어</a>
       <a href="ui.html" data-page="ui"><span class="dot"></span>게임 UI</a>
+    </div>
+    <div class="sidebar-group"><h5>커뮤니티</h5>
+      <a href="community.html" data-page="community"><span class="dot"></span>커뮤니티 게시판</a>
     </div>
   </nav>
 
@@ -87,10 +90,9 @@
 
       <h2>드론·함재기 전투</h2>
       <p>
-        설계 문서 기준(코드 구현 진행 중) 드론은 <strong>접근→목표 주위 궤도 선회→최종 돌격 1회 후 소멸</strong>,
-        함재기는 <strong>모함에서 발진→8자 궤적으로 여러 차례 공격→시간 만료 시 모함(이동한 현재 위치)으로 귀환</strong>하는
-        전용 거동을 가진다. 기존 미사일 베지어 곡선으로는 표현할 수 없어 드론 8기·함재기 8기 고정 슬롯 풀로
-        별도 구현된다 — <a href="weapons.html">무기체계</a> 참고.
+        드론은 함 앞에 미리 떠 있지 않고 대기하다가 <strong>함구에서 한 기씩 순차 사출 → 적 쪽으로 직진 → 목표 근처에서 한 바퀴 선회 → 돌입 충돌</strong>하며,
+        충돌 순간 화염 폭발 이펙트가 난다(2026-10-03 개선 반영). 함재기는 <strong>모함에서 발진→8자 궤적으로 여러 차례 공격→시간 만료 시 모함(이동한 현재 위치)으로 귀환</strong>한다.
+        기존 미사일 베지어 곡선으로는 표현할 수 없어 드론 8기·함재기 8기 고정 슬롯 풀로 별도 구현돼 있다 — <a href="weapons.html">무기체계</a> 참고.
       </p>
 
       <h2 id="territorial">접전지역 — 「분쟁」이 세 가지로 갈라진 이유</h2>
@@ -121,14 +123,33 @@
         플레이어가 직접 벌이는 웨이브 전투 승패 규칙에는 영향을 주지 않는다.
       </p>
 
-      <div class="source-note">정본: <code>docs/PLAY_SCENARIO_COMBAT_LEVEL_ADVANCEMENT.md</code> · <code>docs/strategy/WAR_ECONOMY_THEATER_AUDIT_AND_UPGRADE_DESIGN.md</code> · <code>docs/strategy/ROUTE_CAPITAL_DEFENSE_ADVANTAGE_DESIGN.md</code> · <code>docs/드론_함재기_전투연출_설계.md</code></div>
+      <h2 id="annex">스텔리움 편입 — 중립 행성을 블루로</h2>
+      <p>
+        플레이어가 <strong>중립 핵심 행성</strong>을 스텔리움 연합(블루) 영토로 편입시키는 기능이 가동 중이다(2026-10-03 재활성).
+        조건을 모두 채우면 행성 정보창에 「스텔리움 연합 편입」 버튼이 열린다.
+      </p>
+      <ul>
+        <li>그 행성에 <strong>착륙</strong>해 있을 것</li>
+        <li>행성 <strong>방위위성 Lv 1 이상</strong> 설치</li>
+        <li>인접 성계에 <strong>블루 아군 영토</strong>가 1곳 이상</li>
+        <li>블루 공유 금고에서 <strong>8,000cr</strong> 지불 (플레이어 지갑 아님)</li>
+        <li>엔드게임 행성(이터니티 스론·제네시스 오리진)은 제외</li>
+      </ul>
+      <p>편입은 정보창에서 확정할 때 1회만 적용되고(틱·부트 자동 실행 없음), 실패하면 금고 지불이 환불된다. 정책 값은 <code>tables/balance/stellium_annex_policy.csv</code>에서 조정한다.</p>
+
+      <div class="source-note">정본: <code>docs/combat/PLAY_SCENARIO_COMBAT_LEVEL_ADVANCEMENT.md</code> · <code>docs/strategy/WAR_ECONOMY_THEATER_AUDIT_AND_UPGRADE_DESIGN.md</code> · <code>docs/strategy/ROUTE_CAPITAL_DEFENSE_ADVANTAGE_DESIGN.md</code> · <code>docs/combat/드론_함재기_전투연출_설계.md</code></div>
+          <section class="comments" id="comments">
+        <h2>이 문서에 대한 의견</h2>
+        <div class="giscus-thread" data-category="General"></div>
+      </section>
     </article>
     </div>
   </main>
 </div>
 
-<footer class="site-footer">아크파이어 온라인 게임 위키 · 비공식 정리본</footer>
+<footer class="site-footer">아크파이어 게임 위키 · 비공식 정리본</footer>
 <script src="assets/search-index.js"></script>
 <script src="assets/wiki.js"></script>
+<script src="assets/comments.js"></script>
 </body>
 </html>

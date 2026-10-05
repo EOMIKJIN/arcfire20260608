@@ -1,6 +1,6 @@
 /**
  * 함장 개인미션 오퍼 게이트 — 순수 함수. 스토어/RN 금지.
- * 정본: docs/CAPTAIN_PERSONAL_MISSION_DESIGN.md
+ * 정본: docs/quest/CAPTAIN_PERSONAL_MISSION_DESIGN.md
  */
 
 import {

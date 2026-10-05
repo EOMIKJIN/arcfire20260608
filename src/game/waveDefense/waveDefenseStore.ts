@@ -6,6 +6,7 @@
 
 import { create } from 'zustand';
 import type { CombatFleetSeedSlot } from '../../combat/capitalRealtimeCombatGate';
+import { clearCombatPlayerShipSinkPending } from '../combat/combatPlayerShipSinkFlag';
 import { resolveCombatEnemyLeader } from '../combat/resolveCombatEnemyLeader';
 import { waveDefenseWaveExpReward } from './waveDefenseFleet';
 
@@ -75,7 +76,8 @@ const INITIAL = {
 
 export const useWaveDefenseStore = create<WaveDefenseState>((set) => ({
   ...INITIAL,
-  startRun: (planetId, systemId) =>
+  startRun: (planetId, systemId) => {
+    clearCombatPlayerShipSinkPending();
     set({
       active: true,
       planetId,
@@ -89,7 +91,8 @@ export const useWaveDefenseStore = create<WaveDefenseState>((set) => ({
       endHoldActive: false,
       pendingOutcome: null,
       leaderCaptainId: null,
-    }),
+    });
+  },
   setWave: (waveIndex, fleet) =>
     set((s) => {
       const leader = resolveCombatEnemyLeader(

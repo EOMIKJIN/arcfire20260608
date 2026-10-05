@@ -62,17 +62,16 @@ export const TradeQuantityOverlayContent = memo(function TradeQuantityOverlayCon
         value={formatCredits(entry.unitPrice, { suffix: true })}
         visualTheme={visualTheme}
       />
-      {entry.stock != null ? (
+      {entry.stock != null || entry.demandLabel ? (
         <ArcOverlayInfoRow
-          label={t('tradeQty.stockLabel')}
-          value={t('tradeQty.stockValue', { n: entry.stock })}
-          visualTheme={visualTheme}
-        />
-      ) : null}
-      {entry.demandLabel ? (
-        <ArcOverlayInfoRow
-          label={t('tradeQty.demandLabelShort')}
-          value={entry.demandLabel}
+          label={[
+            entry.stock != null ? t('tradeQty.stockLabel') : '',
+            entry.demandLabel ? t('tradeQty.demandLabelShort') : '',
+          ].filter(Boolean).join(' / ')}
+          value={[
+            entry.stock != null ? t('tradeQty.stockValue', { n: entry.stock }) : '',
+            entry.demandLabel ?? '',
+          ].filter(Boolean).join(' / ')}
           visualTheme={visualTheme}
         />
       ) : null}

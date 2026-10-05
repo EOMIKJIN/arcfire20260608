@@ -27,6 +27,9 @@ export const FQA_FIGHT_ISSUE_IDS = [
 const CASH = new Set<string>(FQA_CASH_ISSUE_IDS);
 const FIGHT = new Set<string>(FQA_FIGHT_ISSUE_IDS);
 
+/** 새 전투 모델 증거가 쌓이기 전에는 옛 패배 증거로 수련선·채굴 상한을 올리지 않는다. */
+export const FQA_CARD_RAISE_HOLD = true;
+
 export type FqaReviewState = {
   version: 1;
   updatedAt: string;
@@ -100,10 +103,10 @@ export function planFqaReview(
   }
   const mineBefore = next.mineCap;
   const fairBefore = next.fairFightMin;
-  if (cashGrew && next.mineCap < PLAY_INTEL_MINE_CAP_MAX) {
+  if (!FQA_CARD_RAISE_HOLD && cashGrew && next.mineCap < PLAY_INTEL_MINE_CAP_MAX) {
     next.mineCap = Math.min(PLAY_INTEL_MINE_CAP_MAX, next.mineCap + 4);
   }
-  if (fightGrew && next.fairFightMin < PLAY_INTEL_FAIR_MAX) {
+  if (!FQA_CARD_RAISE_HOLD && fightGrew && next.fairFightMin < PLAY_INTEL_FAIR_MAX) {
     next.fairFightMin = bumpFair(next.fairFightMin);
   }
   if (next.mineCap < PLAY_INTEL_MINE_CAP_MIN) next.mineCap = PLAY_INTEL_MINE_CAP_MIN;

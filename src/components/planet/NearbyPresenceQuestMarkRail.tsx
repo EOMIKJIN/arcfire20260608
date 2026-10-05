@@ -1,7 +1,7 @@
 /**
  * INFO 네임카드 퀘스트 타입 — 독립 육각 뱃지 4개 (M S N U).
  * 바탕 있는 마크만 글자 표시. M=메인(주황) · S=서브(녹색) · N=파랑 · U=보라.
- * N/U는 아직 빈 외곽(이후 분류). 틱/Skia 없음. SVG Polygon 1회.
+ * N은 빈 외곽. U는 통신 즉석 개인 의뢰(버퍼). 틱/Skia 없음. SVG Polygon 1회.
  */
 
 import React, { memo } from 'react';
@@ -26,6 +26,7 @@ function resolveQuestMarkRailA11yLabel(
   const parts: string[] = [];
   if (marks.M) parts.push(t('nearbyPresence.tag.mainQuest'));
   if (marks.S) parts.push(t('nearbyPresence.tag.subQuest'));
+  if (marks.U) parts.push(t('nearbyPresence.tag.instantQuest'));
   return parts.length > 0 ? parts.join(', ') : t('nearbyPresence.tag.questMarks');
 }
 

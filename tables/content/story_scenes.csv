@@ -322,3 +322,6 @@ npc_dialog_anomaly_researcher_abandon,이상현상 연구원 포기,manual,,repe
 story_dialog_obj_story_011_b,메인스토리·미라와 결재를 역추적하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_011_d,메인스토리·미라에게 이면 합의 날짜를 대조하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
 story_dialog_obj_story_016_b,메인스토리·세렌에게 크림슨 표식을 확인하라,manual,,repeat,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+hub_tut_e1_cut,스텔라 통신 두절,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+hub_tut_e2_dead,드론미사일 급보,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0
+hub_tut_e3_retreat,홍월 퇴각,manual,,once,4,none,/(game)/planet,TRUE,80,FALSE,0,FALSE,0

@@ -1,9 +1,9 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>함선 — 아크파이어 온라인 위키</title>
+<title>함선 — 아크파이어 위키</title>
 <meta name="description" content="플레이어 함급 12종과 6개 선체 원형, NPC 함대 구조" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
@@ -13,7 +13,7 @@
 
 <header class="site-header">
   <button class="nav-toggle" type="button" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
-  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 온라인 <span class="sub">Game Wiki</span></a>
+  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 <span class="sub">Game Wiki</span></a>
   <div class="site-search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
     <input type="text" placeholder="함선, 무기, 세력, 스킬 검색…" autocomplete="off" />
@@ -48,6 +48,9 @@
       <a href="social.html" data-page="social"><span class="dot"></span>바 · 함장 · 플레이어</a>
       <a href="ui.html" data-page="ui"><span class="dot"></span>게임 UI</a>
     </div>
+    <div class="sidebar-group"><h5>커뮤니티</h5>
+      <a href="community.html" data-page="community"><span class="dot"></span>커뮤니티 게시판</a>
+    </div>
   </nav>
 
   <main class="main">
@@ -61,23 +64,30 @@
       </p>
 
       <h2>플레이어 함급 사다리</h2>
+      <p>조선소 상점 12등급(<code>capital_ship_trade_listing_policy.csv</code>). 구축함부터는 <strong>격투형(기본 라인)과 정찰형(대체 라인)</strong>이 같은 등급에 함께 진열된다 — 정찰형은 HP·실드가 낮은 대신 기동형 선체를 쓴다. 가격·요구 레벨은 <code>capital_hull_purchase_policy.csv</code>.</p>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>함급</th><th class="num">요구 Lv</th><th class="num">HP</th><th class="num">실드</th><th class="num">장갑</th><th>선체</th><th class="num">가격(cr)</th></tr></thead>
+          <thead><tr><th>이미지</th><th>함급 (기본 / 대체)</th><th class="num">요구 Lv</th><th class="num">HP</th><th class="num">실드</th><th class="num">장갑</th><th>선체</th><th class="num">가격(cr)</th></tr></thead>
           <tbody>
-            <tr><td>레인저 CM.I <span class="pill accent">시작함</span></td><td class="num">2</td><td class="num">72</td><td class="num">88</td><td class="num">11</td><td>patrol</td><td class="num">0</td></tr>
-            <tr><td>스트라이커 Mk.II</td><td class="num">7</td><td class="num">400</td><td class="num">95</td><td class="num">9</td><td>raider</td><td class="num">250,000</td></tr>
-            <tr><td>파이터 Mk.I</td><td class="num">13</td><td class="num">560</td><td class="num">210</td><td class="num">16</td><td>line</td><td class="num">무료 전환</td></tr>
-            <tr><td>가디언 구축함 / 헌터 구축함</td><td class="num">15</td><td class="num">600 / 450</td><td class="num">250 / 125</td><td class="num">18 / 10</td><td>patrol / raider</td><td class="num">1,200,000</td></tr>
-            <tr><td>오라클 순양함 / 섀도우 순양함</td><td class="num">31</td><td class="num">600 / 470</td><td class="num">235 / 140</td><td class="num">17 / 11</td><td>siege / patrol</td><td class="num">5,000,000</td></tr>
-            <tr><td>소버린 순양전함 / 랩터 순양전함</td><td class="num">52</td><td class="num">620 / 500</td><td class="num">245 / 155</td><td class="num">18 / 12</td><td>siege / raider</td><td class="num">15,000,000</td></tr>
-            <tr><td>드레드노트</td><td class="num">65</td><td class="num">680</td><td class="num">265</td><td class="num">19</td><td>siege</td><td class="num">25,000,000</td></tr>
-            <tr><td>슈퍼캐피털</td><td class="num">72</td><td class="num">800</td><td class="num">295</td><td class="num">20</td><td>line</td><td class="num">50,000,000</td></tr>
-            <tr><td>아펙스 레전드 <span class="pill purple">최상위</span></td><td class="num">80</td><td class="num">880</td><td class="num">320</td><td class="num">21</td><td>line</td><td class="num">100,000,000</td></tr>
+            <tr><td class="thumbs"><img class="dt-thumb dt-thumb-ship" loading="lazy" src="../assets/images/ship/Player_scout_ship.png" alt="기본전함 레인저 CM.I" /></td><td>기본전함 레인저 CM.I</td><td class="num">1</td><td class="num">72</td><td class="num">88</td><td class="num">11</td><td>patrol</td><td class="num">0 (기본 지급)</td></tr>
+            <tr><td class="thumbs"><img class="dt-thumb dt-thumb-ship" loading="lazy" src="../assets/images/ship/ship_001.png" alt="기본전함 파이터 Mk.I" /></td><td>기본전함 파이터 Mk.I</td><td class="num">1</td><td class="num">560</td><td class="num">210</td><td class="num">16</td><td>line</td><td class="num">0 (기본 지급)</td></tr>
+            <tr><td class="thumbs"><img class="dt-thumb dt-thumb-ship" loading="lazy" src="../assets/images/ship/Player_frigate_mk2.png" alt="스트라이커 Mk.II" /></td><td>스트라이커 Mk.II</td><td class="num">7</td><td class="num">400</td><td class="num">95</td><td class="num">9</td><td>raider</td><td class="num">250,000</td></tr>
+            <tr><td class="thumbs"><img class="dt-thumb dt-thumb-ship" loading="lazy" src="../assets/images/ship/Player_destroyer_mk1.png" alt="가디언 구축함" /><img class="dt-thumb dt-thumb-ship" loading="lazy" src="../assets/images/ship/Player_hunter_mk1.png" alt="헌터 구축함" /></td><td>가디언 구축함 / 헌터 구축함</td><td class="num">15</td><td class="num">600 / 450</td><td class="num">250 / 125</td><td class="num">18 / 10</td><td>patrol / raider</td><td class="num">1,200,000</td></tr>
+            <tr><td class="thumbs"><img class="dt-thumb dt-thumb-ship" loading="lazy" src="../assets/images/ship/Player_destroyer_mk2.png" alt="가디언 구축함 Mk.II" /><img class="dt-thumb dt-thumb-ship" loading="lazy" src="../assets/images/ship/Player_hunter_mk2.png" alt="헌터 구축함 Mk.II" /></td><td>가디언 구축함 Mk.II / 헌터 구축함 Mk.II</td><td class="num">25</td><td class="num">580 / 480</td><td class="num">220 / 135</td><td class="num">17 / 11</td><td>line / raider</td><td class="num">1,800,000</td></tr>
+            <tr><td class="thumbs"><img class="dt-thumb dt-thumb-ship" loading="lazy" src="../assets/images/ship/Player_cruiser_mk1.png" alt="오라클 순양함" /><img class="dt-thumb dt-thumb-ship" loading="lazy" src="../assets/images/ship/Player_shadow_cruiser_mk1.png" alt="섀도우 순양함" /></td><td>오라클 순양함 / 섀도우 순양함</td><td class="num">31</td><td class="num">600 / 470</td><td class="num">235 / 140</td><td class="num">17 / 11</td><td>siege / patrol</td><td class="num">5,000,000</td></tr>
+            <tr><td class="thumbs"><img class="dt-thumb dt-thumb-ship" loading="lazy" src="../assets/images/ship/Player_cruiser_mk2.png" alt="오라클 순양함 Mk.II" /><img class="dt-thumb dt-thumb-ship" loading="lazy" src="../assets/images/ship/Player_shadow_cruiser_mk2.png" alt="섀도우 순양함 Mk.II" /></td><td>오라클 순양함 Mk.II / 섀도우 순양함 Mk.II</td><td class="num">40</td><td class="num">610 / 490</td><td class="num">240 / 148</td><td class="num">17 / 12</td><td>siege / patrol</td><td class="num">7,500,000</td></tr>
+            <tr><td class="thumbs"><img class="dt-thumb dt-thumb-ship" loading="lazy" src="../assets/images/ship/Player_battlecruiser_mk1.png" alt="소버린 순양전함" /><img class="dt-thumb dt-thumb-ship" loading="lazy" src="../assets/images/ship/Player_raptor_bc_mk1.png" alt="랩터 순양전함" /></td><td>소버린 순양전함 / 랩터 순양전함</td><td class="num">52</td><td class="num">620 / 500</td><td class="num">245 / 155</td><td class="num">18 / 12</td><td>siege / raider</td><td class="num">15,000,000</td></tr>
+            <tr><td class="thumbs"><img class="dt-thumb dt-thumb-ship" loading="lazy" src="../assets/images/ship/Player_battlecruiser_apex.png" alt="소버린 순양전함·완성형" /><img class="dt-thumb dt-thumb-ship" loading="lazy" src="../assets/images/ship/Player_raptor_bc_apex.png" alt="랩터 순양전함·완성형" /></td><td>소버린 순양전함·완성형 / 랩터 순양전함·완성형</td><td class="num">60</td><td class="num">640 / 520</td><td class="num">255 / 165</td><td class="num">18 / 13</td><td>siege / raider</td><td class="num">강화 정점</td></tr>
+            <tr><td class="thumbs"><img class="dt-thumb dt-thumb-ship" loading="lazy" src="../assets/images/ship/Player_dreadnought_mk1.png" alt="드레드노트" /><img class="dt-thumb dt-thumb-ship" loading="lazy" src="../assets/images/ship/Player_phantom_dreadnought_mk1.png" alt="팬텀 드레드노트" /></td><td>드레드노트 / 팬텀 드레드노트</td><td class="num">65</td><td class="num">680 / 540</td><td class="num">265 / 175</td><td class="num">19 / 13</td><td>siege / patrol</td><td class="num">25,000,000</td></tr>
+            <tr><td class="thumbs"><img class="dt-thumb dt-thumb-ship" loading="lazy" src="../assets/images/ship/Player_super_capital_mk1.png" alt="슈퍼캐피털" /><img class="dt-thumb dt-thumb-ship" loading="lazy" src="../assets/images/ship/Player_phantom_super_capital_mk1.png" alt="팬텀 슈퍼캐피털" /></td><td>슈퍼캐피털 / 팬텀 슈퍼캐피털</td><td class="num">72</td><td class="num">800 / 580</td><td class="num">295 / 190</td><td class="num">20 / 14</td><td>line / raider</td><td class="num">50,000,000</td></tr>
+            <tr><td class="thumbs"><img class="dt-thumb dt-thumb-ship" loading="lazy" src="../assets/images/ship/Player_apex_legend_mk1.png" alt="아펙스 레전드" /><img class="dt-thumb dt-thumb-ship" loading="lazy" src="../assets/images/ship/Player_phantom_apex_legend_mk1.png" alt="팬텀 레전드" /></td><td>아펙스 레전드 / 팬텀 레전드</td><td class="num">80</td><td class="num">880 / 620</td><td class="num">320 / 205</td><td class="num">21 / 15</td><td>line / patrol</td><td class="num">100,000,000</td></tr>
           </tbody>
         </table>
       </div>
-      <p>각 등급마다 동일 스탯의 「팬텀/섀도우」 이명 함선이 한 척씩 짝을 이룬다 — 능력치는 같고 외형·명칭만 다른 파생형이다. 별도로 웨이브 디펜스 미니게임 전용 「웨이브 디펜스 전함」(HP 3,700·실드 1,500)이 존재한다.</p>
+      <p>「완성형」은 구매가 아니라 순양전함을 끝까지 강화한 정점 단계다. 별도로 웨이브 디펜스 테스트 전용 「웨이브 디펜스 전함」(HP 3,700·실드 1,500)이 상점에 상시 진열된다.</p>
+
+      <h2>플레이어 함선 갤러리</h2>
+      <div id="player-ship-gallery" class="gallery ships"></div>
 
       <h2>선체 6원형</h2>
       <p>플레이어·NPC 함선 293척 전체가 아래 6개 선체 중 하나를 공유한다.</p>
@@ -94,7 +104,7 @@
       <p>
         NPC 함선은 소속 본성계별로 Invader / Interdictor / Pursuer / Raider / Hunter 등 역할별 이름 변형을 갖는다.
         아르카디아·드라코 성운·솔라 항구·미네르바·베가 전초기지·뉴에덴·아이언 크로스·오메가 스테이션·헬리오스·시리우스,
-        그리고 PvP 클랜 「나이트폴(홍월/Crimson Moon)」까지 총 11개 본성계 소속이 등록돼 있다.
+        그리고 분쟁지역 클랜 「나이트폴(홍월/Crimson Moon)」까지 총 11개 본성계 소속이 등록돼 있다.
       </p>
 
       <h2 id="all-ships">전체 함선 목록 — 293척</h2>
@@ -111,17 +121,22 @@
       <h2>장비 슬롯</h2>
       <p>모든 함선은 <code>ARMOR · ENGINE · SYSTEM · EX_01</code> 4개 기본 슬롯을 가지며, <a href="items.html#equipment">57종 장비 카탈로그</a>에 따라 최대 <code>EX_04</code>·<code>FIGHTER</code>까지 확장된다.</p>
 
-      <div class="source-note">정본: <code>tables/content/npc_ai_ships.csv</code>(293행) · <code>npc_capital_ship_equip_slots.csv</code> · <code>docs/_000_ARCFIRE_SHIPYARD_UPGRADE_UI_SPEC_v1.md</code></div>
+      <div class="source-note">정본: <code>tables/content/npc_ai_ships.csv</code>(293행) · <code>npc_capital_ship_equip_slots.csv</code> · <code>docs/planet/_000_ARCFIRE_SHIPYARD_UPGRADE_UI_SPEC_v1.md</code></div>
+          <section class="comments" id="comments">
+        <h2>이 문서에 대한 의견</h2>
+        <div class="giscus-thread" data-category="General"></div>
+      </section>
     </article>
     </div>
   </main>
 </div>
 
-<footer class="site-footer">아크파이어 온라인 게임 위키 · 비공식 정리본</footer>
+<footer class="site-footer">아크파이어 게임 위키 · 비공식 정리본</footer>
 <script src="assets/search-index.js"></script>
 <script src="assets/data/ships.js"></script>
 <script src="assets/datatable.js"></script>
 <script src="assets/wiki.js"></script>
+<script src="assets/comments.js"></script>
 <script>
   mountWikiDataTable({
     mount: document.getElementById("ship-table"),
@@ -129,6 +144,7 @@
     label: "함선",
     searchKeys: ["id", "name", "nameEn", "homeSystem", "hull", "archetype"],
     columns: [
+      { key: "img", label: "이미지", render: function (r) { return wikiThumb(r.img, r.name, "ship"); } },
       { key: "name", label: "이름" },
       { key: "nameEn", label: "영문명" },
       { key: "homeSystem", label: "본성계" },
@@ -140,6 +156,17 @@
       { key: "archetype", label: "아키타입" },
     ],
   });
+</script>
+<script>
+  (function () {
+    var host = document.getElementById("player-ship-gallery");
+    if (!host) return;
+    var list = (window.SHIP_DATA || []).filter(function (s) { return /^player_/i.test(s.id) && s.img; });
+    list.sort(function (a, b) { return (+a.lvl || 0) - (+b.lvl || 0); });
+    host.innerHTML = list.map(function (s) {
+      return '<figure><img loading="lazy" src="' + s.img + '" alt="' + s.name + '" /><figcaption>' + s.name + ' · Lv ' + s.lvl + '</figcaption></figure>';
+    }).join("");
+  })();
 </script>
 </body>
 </html>

@@ -6,7 +6,7 @@ alwaysApply: false
 
 # Arcfire Overlay UI Contract
 
-**상세 로드맵**: `docs/OVERLAY_UI_UNIVERSAL_SPEC.md`
+**상세 로드맵**: `docs/ui/OVERLAY_UI_UNIVERSAL_SPEC.md`
 
 ## 필수 구조
 

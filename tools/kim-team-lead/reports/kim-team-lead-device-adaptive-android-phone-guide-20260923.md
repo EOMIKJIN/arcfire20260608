@@ -5,7 +5,7 @@ status=DESIGN_ONLY
 date=2026-09-23
 owner=김팀장
 code=0
-정본=docs/DEVICE_ADAPTIVE_UI_DESIGN.md v0.3
+정본=docs/ui/DEVICE_ADAPTIVE_UI_DESIGN.md v0.3
 ```
 
 대표님 지시: 안드로이드 폰 대응 공식 개발 가이드를 찾아 참고·보강. **가능. 반영 완료.**

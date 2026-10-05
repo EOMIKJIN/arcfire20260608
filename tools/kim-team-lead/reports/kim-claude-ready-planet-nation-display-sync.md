@@ -180,4 +180,4 @@ Skia/Reanimated **비해당**.
 - 지도 side: `planetOwnershipModel` · `mapFactionSideCore`
 - 국가명 정책: `megaFactionNationPolicy.ts`
 - 행성정보: `resolvePlanetTableDescription.ts` · `planetEconomyInfoSnapshot.ts` · `PlanetEconomyInfoOverlayContent.tsx`
-- 명세: `docs/PLAYER_INDEPENDENT_NATION_IMPLEMENTATION_SPEC.md` (국경은 완료 · **본 태스크=표시 연동 잔여**)
+- 명세: `docs/expansion/PLAYER_INDEPENDENT_NATION_IMPLEMENTATION_SPEC.md` (국경은 완료 · **본 태스크=표시 연동 잔여**)

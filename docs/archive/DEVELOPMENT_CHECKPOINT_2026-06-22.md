@@ -185,7 +185,7 @@ Get-Content tools/long-run-monitor/logs/mem-timeline.csv -Tail 5
 ## 8. 관련 문서·이전 체크포인트
 
 - 안정화 기준 (2026-06-16): `docs/STABILIZATION_CHECKPOINT_2026-06-16.md`
-- i18n 로드맵: `docs/I18N_MIGRATION_ROADMAP.md`
+- i18n 로드맵: `docs/i18n/I18N_MIGRATION_ROADMAP.md`
 - 김경제 handoff: `tools/kim-team-lead/reports/kim-economy-handoff.md`
 - 대화 전체 맥락: agent transcript `ff8d069a-e2d4-47f3-8376-70b565a93d60`
 

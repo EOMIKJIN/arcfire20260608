@@ -25,7 +25,7 @@ post_review=김팀장 전수 조사 (메모리·누적·채팅기록) — 구현
 | 빠진 충돌·잘못된 전제·구현 시 구멍 지적 | 구현 착수 · git commit · 「완료」 선언 |
 | handoff `PENDING` + 판정·근거(파일:줄) | 김팀장 문장을 그대로 동의만 하고 끝 |
 
-**정본**: `docs/ARC_CORE_BACKCHANNEL_AND_HUB_TALK_ROSTER.md` **v0.3.1** (§11 포함)
+**정본**: `docs/dialog/ARC_CORE_BACKCHANNEL_AND_HUB_TALK_ROSTER.md` **v0.3.1** (§11 포함)
 
 ---
 
@@ -98,7 +98,7 @@ verdict=AGREE|PARTIAL|DISAGREE
 
 ```text
 @김클로드 tools/kim-team-lead/reports/kim-claude-ready-arc-core-backchannel-joint-review.md 읽고
-docs/ARC_CORE_BACKCHANNEL_AND_HUB_TALK_ROSTER.md v0.3.1 아크코어 대화 에이전트 기획을
+docs/dialog/ARC_CORE_BACKCHANNEL_AND_HUB_TALK_ROSTER.md v0.3.1 아크코어 대화 에이전트 기획을
 김팀장과 공동 검수하라. 코드·CSV 수정 금지. git commit 금지.
 §10 C1~C20과 §11 메모리·누적·채팅기록을 코드로 재확인한 뒤
 kim-claude-handoff-pending.md 맨 위에

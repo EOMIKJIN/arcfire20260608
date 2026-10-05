@@ -5,9 +5,9 @@ task_id=playbot-cell-pattern-20261004
 kind=CONSULT (코드 변경 0 · 커밋 금지 · 하니스 재시작 금지)
 작성=김팀장 · 2026-10-04 13:50 KST
 요청=대표님 — 의도를 다시 정리하고 협의 후 최종 고도화 설계안을 만든다. 이번 턴의 산출은 설계 문서다.
-선행=docs/PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md
+선행=docs/playbot/PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md
      tools/kim-team-lead/reports/playbot-learn-cycle-conclusion-20261004.md
-     docs/PLAYBOT_LIVE_PHONE_DESIGN.md (실기 버튼은 PB-LIVE HOLD. 이번 설계가 그 구현을 열지 않는다)
+     docs/playbot/PLAYBOT_LIVE_PHONE_DESIGN.md (실기 버튼은 PB-LIVE HOLD. 이번 설계가 그 구현을 열지 않는다)
 ```
 
 김클로드는 이 초안을 그대로 받지 말 것. 인용한 파일을 직접 읽고 AGREE / PARTIAL / DISAGREE 를 근거(파일:줄)와 함께 적어 달라.
@@ -35,7 +35,7 @@ kind=CONSULT (코드 변경 0 · 커밋 금지 · 하니스 재시작 금지)
 - `memProfileToSessionTrace.ts` `verbOf`는 depart / combat / land / travel 만 만든다. `humanSeed.ts`의 `mine→quest` 매핑은 이 파서가 mine 비트를 만들지 않으면 도달하지 않는다.
 - 오늘 13:42 KST 열린 세션 `owner-auto-2026-10-04T0438` 로그에는 `[MEM]`·`route_focus`·`[stelliumColonize]`·경제 카탈로그 줄이 있었다. 광물 개수, 100개 매도, 연료 소모, 개발, 전투 방식은 세포로 파싱되지 않았다.
 - `learn-cycle-latest.json`은 10:43 KST 1회 기록, `botPatchLoaded=false`. 러닝 하니스 LEARN 줄은 여전히 학습대기다. 재시작은 세계를 L1으로 되돌리므로 이번 설계 턴에서 재시작하지 않는다.
-- 실기 폰 버튼 설계는 `docs/PLAYBOT_LIVE_PHONE_DESIGN.md`. 코드는 `docs/차기_업무_목록.md` PB-LIVE HOLD.
+- 실기 폰 버튼 설계는 `docs/playbot/PLAYBOT_LIVE_PHONE_DESIGN.md`. 코드는 `docs/ops/차기_업무_목록.md` PB-LIVE HOLD.
 
 ## 3. 김팀장 설계 초안 (채택·축소·기각)
 

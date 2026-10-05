@@ -8,7 +8,7 @@
 > - `AGENTS.md` §시작 화면 버튼 최소 활성  
 > - `.cursor/rules/arcfire-main-lead-agent.mdc` §시작 화면 버튼 최소 활성  
 > - `.cursor/rules/arcfire-memory-leak-audit-first.mdc` §1 항목4  
-> - `docs/BOOT_INIT_OPTIMIZATION_ROADMAP.md` Stage 0 / 0.5
+> - `docs/tech/BOOT_INIT_OPTIMIZATION_ROADMAP.md` Stage 0 / 0.5
 
 ---
 

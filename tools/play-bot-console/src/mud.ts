@@ -15,7 +15,7 @@ export function formatHud(world: WorldState): string {
     `플레이봇 ${world.persona}  run=${world.runId}`,
     `D${world.day} tick=${world.tick}  ${world.currentPlanetId}  L${world.level} exp=${world.totalExp} cr=${world.credits} 보석=${world.gems} vault=${world.blueVault}  격납고 ${world.hangarShips}/${world.hangarMax}`,
     `국경 B${p.blue}/R${p.red}/N${p.neutral}/I${p.independent}  전투 ${world.combatWins}W/${world.combatLosses}L  파괴 ${world.shipDestroys} 재탑승 ${world.reboards}  무역 ${world.trades}  편입 ${world.annexOk}  퀘 ${world.questCleared}  HOLD ${world.holdCount}`,
-    `스킬 ${world.learnedSkills.length} SP${world.skillPoints}  장비${Math.round(world.gearScore)}  개발${sumDevLevels(world)}  수도격파 ${world.capitalDestroyed ? 'Y' : 'N'}  집중 ${world.focusPlanetId}`,
+    `스킬 ${world.learnedSkills.length} SP${world.skillPoints}  장비${Math.round(world.gearScore)}  함선 ${world.hullName}(r${world.hullRank})  개발${sumDevLevels(world)}  수도격파 ${world.capitalDestroyed ? 'Y' : 'N'}  집중 ${world.focusPlanetId}`,
     `퀘스트 ${q}  직전=${world.lastAction}`,
   ].join('\n');
 }

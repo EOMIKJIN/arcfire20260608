@@ -1,6 +1,6 @@
 /**
  * 회신 화자 1명 — 턴당 클라우드 1. 창을 나누지 않는다.
- * 정본: docs/ARC_CORE_DUAL_MOUTH_OPERATOR_DESIGN.md
+ * 정본: docs/dialog/ARC_CORE_DUAL_MOUTH_OPERATOR_DESIGN.md
  */
 
 import type { NlMouthId } from '../../game/conversation/conversationGateContract';

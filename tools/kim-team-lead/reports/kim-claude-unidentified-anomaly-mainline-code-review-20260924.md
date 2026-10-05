@@ -141,7 +141,7 @@ closeAnomalyMission(snap.instanceId, reason === 'failed' ? 'failed' : 'expired')
 
 ## 4. 연구원 대사 — 신규 집필 가이드 기준 점검
 
-`docs/QUEST_DIALOGUE_AUTHORING_GUIDE.md`(2026-09-24 정본) 기준.
+`docs/dialog/QUEST_DIALOGUE_AUTHORING_GUIDE.md`(2026-09-24 정본) 기준.
 
 **규격은 통과** — 전 페이지 3줄 이내 · 전 줄 21자 이내. ✅
 

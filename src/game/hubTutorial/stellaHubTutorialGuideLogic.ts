@@ -14,6 +14,9 @@ export const STELLA_HUB_TUTORIAL_SCENE_IDS = {
   d1: 'hub_tut_d1_wrap',
   d2: 'hub_tut_d2_depart',
   barViewed: 'hub_tut_bar_viewed',
+  e1: 'hub_tut_e1_cut',
+  e2: 'hub_tut_e2_dead',
+  e3: 'hub_tut_e3_retreat',
 } as const;
 
 export type StellaHubTutorialEvent =
@@ -33,7 +36,7 @@ export type StellaHubTutorialEvent =
 export type StellaHubTutorialPresent = {
   sceneId: string;
   skipSeenCheck?: boolean;
-  chainOnDismiss?: 'a4' | 'd2' | 'start_first_mission';
+  chainOnDismiss?: 'a4' | 'd2' | 'start_first_mission' | 'e2' | 'start_opening_raid';
   markOnly?: string;
 };
 
@@ -54,6 +57,14 @@ export function isStellaHubTutorialInProgress(seen: readonly string[]): boolean 
 /** 조선소 이후 · 바 안내 전 — [대화]는 본기능 2게이트. */
 export function isStellaHubTutorialAwaitingTalk(seen: readonly string[]): boolean {
   return hasSeen(seen, S.b1) && !hasSeen(seen, S.c2) && !hasSeen(seen, S.d2);
+}
+
+/** E2까지 봤고 퇴각 대사 전. A2를 이미 본 저장은 예전 채굴 체인을 유지한다. */
+export function shouldResumeTutorialOpeningRaid(seen: readonly string[]): boolean {
+  return hasSeen(seen, S.e2)
+    && !hasSeen(seen, S.e3)
+    && !hasSeen(seen, S.a2)
+    && !hasSeen(seen, S.d2);
 }
 
 export function resolveStellaHubTutorialPresent(
@@ -86,7 +97,11 @@ export function resolveStellaHubTutorialPresent(
   }
 
   if (event === 'a1_dismissed' || event === 'hub_focused') {
-    if (hasSeen(seen, S.a1) && !hasSeen(seen, S.a2)) return { sceneId: S.a2 };
+    if (hasSeen(seen, S.a1) && !hasSeen(seen, S.a2) && !hasSeen(seen, S.e3)) {
+      if (!hasSeen(seen, S.e1)) return { sceneId: S.e1, chainOnDismiss: 'e2' };
+      if (!hasSeen(seen, S.e2)) return { sceneId: S.e2, chainOnDismiss: 'start_opening_raid' };
+    }
+    if (hasSeen(seen, S.e3) && !hasSeen(seen, S.a2)) return { sceneId: S.a2 };
     if (hasSeen(seen, S.b1) && !hasSeen(seen, S.c1)) return { sceneId: S.c1 };
     if (hasSeen(seen, S.c2) && hasSeen(seen, S.barViewed) && !hasSeen(seen, S.d1)) {
       return { sceneId: S.d1, chainOnDismiss: 'd2' };

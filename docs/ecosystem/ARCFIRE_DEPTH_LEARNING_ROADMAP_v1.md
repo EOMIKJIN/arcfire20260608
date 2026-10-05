@@ -4,11 +4,11 @@
 > **상태**: **조사·우선순위 정본** (코드 착수 전 게이트 포함)  
 > **전제**: `.cursor/rules/arcfire-memory-leak-audit-first.mdc` **1순위** · 중복 시스템·이중 store **금지**  
 > **교차 참조**:  
-> - Fabric: `docs/ARC_CORE_ECONOMY_FABRIC.md` §8  
+> - Fabric: `docs/economy/ARC_CORE_ECONOMY_FABRIC.md` §8  
 > - Active Ecosystem (채택 범위): `docs/ecosystem/ARCFIRE_ACTIVE_ECOSYSTEM_ADOPTION_v1.md`  
 > - Territorial: `docs/strategy/ARC_CORE_TACTICAL_AUTOMATION_AND_GALAXY_STRATEGY.md`  
-> - Learning: `docs/ARC_CORE_SUSTAINABLE_LEARNING_MODEL_v1.md` (런타임 DORMANT)  
-- 인간형 플레이 코퍼스 정본: `docs/PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md` v1.1 — C-1 KPI와 섞지 않음 · 코드 전
+> - Learning: `docs/arc-core/ARC_CORE_SUSTAINABLE_LEARNING_MODEL_v1.md` (런타임 DORMANT)  
+- 인간형 플레이 코퍼스 정본: `docs/playbot/PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md` v1.1 — C-1 KPI와 섞지 않음 · 코드 전
 
 ---
 

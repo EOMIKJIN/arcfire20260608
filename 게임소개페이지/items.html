@@ -1,10 +1,10 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>아이템 · 강화 — 아크파이어 온라인 위키</title>
-<meta name="description" content="289종 아이템 분류, 57종 함선 장비, 10종 광물, 조선소 강화 시스템" />
+<title>아이템 · 강화 — 아크파이어 위키</title>
+<meta name="description" content="290종 아이템 분류, 57종 함선 장비, 10종 광물, 조선소 강화 시스템" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
 <link rel="stylesheet" href="assets/style.css" />
@@ -13,7 +13,7 @@
 
 <header class="site-header">
   <button class="nav-toggle" type="button" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
-  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 온라인 <span class="sub">Game Wiki</span></a>
+  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 <span class="sub">Game Wiki</span></a>
   <div class="site-search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
     <input type="text" placeholder="함선, 무기, 세력, 스킬 검색…" autocomplete="off" />
@@ -46,6 +46,9 @@
       <a href="social.html" data-page="social"><span class="dot"></span>바 · 함장 · 플레이어</a>
       <a href="ui.html" data-page="ui"><span class="dot"></span>게임 UI</a>
     </div>
+    <div class="sidebar-group"><h5>커뮤니티</h5>
+      <a href="community.html" data-page="community"><span class="dot"></span>커뮤니티 게시판</a>
+    </div>
   </nav>
 
   <main class="main">
@@ -54,13 +57,13 @@
       <div class="eyebrow">전력 · 장비</div>
       <h1 class="page-title">아이템 · 강화</h1>
       <p class="page-lede">
-        아이템 289종은 분류상 사치품(행성 소유권 증서 중심)·기술·광물·식료품·무역용 무기 화물·밀수품으로 나뉜다.
+        아이템 290종은 분류상 사치품(행성 소유권 증서 중심)·기술·광물·식료품·무역용 무기 화물·밀수품으로 나뉜다.
         함선을 실제로 강하게 만드는 축은 셋 — <strong>함급 구매</strong>·<strong>장비 장착</strong>·<strong>광물 강화</strong>가 동시에 쌓인다.
       </p>
 
       <h2>아이템 분류</h2>
       <div class="card-grid">
-        <div class="card"><span class="card-eyebrow">128</span><h4>사치품</h4><p>행성 소유권 증서 100여 종이 대부분</p></div>
+        <div class="card"><span class="card-eyebrow">129</span><h4>사치품</h4><p>행성 소유권 증서 100여 종이 대부분</p></div>
         <div class="card"><span class="card-eyebrow">86</span><h4>기술</h4><p>장비·모듈류</p></div>
         <div class="card"><span class="card-eyebrow">36</span><h4>광물</h4><p>강화 원료</p></div>
         <div class="card"><span class="card-eyebrow">19</span><h4>식료품</h4><p>교역 상품</p></div>
@@ -68,7 +71,7 @@
         <div class="card"><span class="card-eyebrow">8</span><h4>밀수품</h4><p>고위험 고수익 교역 품목</p></div>
       </div>
 
-      <h2 id="all-items">전체 아이템 목록 — 289종</h2>
+      <h2 id="all-items">전체 아이템 목록 — 290종</h2>
       <p><code>item_defs.csv</code> 전체다. 사치품(행성 증서 다수)·기술·광물·식료품·무기(화물)·밀수품을 모두 포함한다.</p>
       <div id="item-table"></div>
 
@@ -104,7 +107,7 @@
 
       <div class="callout note">
         <strong>행성 소유권 증서(102종)</strong>
-        아이템 카테고리 중 가장 큰 비중(128개 사치품의 대부분)을 차지하는 특수 품목으로, 21개 핵심 행성 + 약 45개
+        아이템 카테고리 중 가장 큰 비중(129개 사치품의 대부분)을 차지하는 특수 품목으로, 21개 핵심 행성 + 약 45개
         신스(Synth) 행성마다 하나씩 존재한다. 고정 12,000cr, 재판매 불가 — 구매 시 해당 행성이 플레이어 클랜 소유로 귀속된다.
       </div>
 
@@ -114,17 +117,22 @@
         전투·경제 효과는 없고, 난파선 인양으로만 얻으며 도감(코덱스) 항목만 해금한다 — 수집형 세계관 아이템.
       </p>
 
-      <div class="source-note">정본: <code>tables/content/item_defs.csv</code>(289행) · <code>mineral_upgrade_stats.csv</code> · <code>mineral_upgrade_level_caps.csv</code></div>
+      <div class="source-note">정본: <code>tables/content/item_defs.csv</code>(290행) · <code>mineral_upgrade_stats.csv</code> · <code>mineral_upgrade_level_caps.csv</code></div>
+          <section class="comments" id="comments">
+        <h2>이 문서에 대한 의견</h2>
+        <div class="giscus-thread" data-category="General"></div>
+      </section>
     </article>
     </div>
   </main>
 </div>
 
-<footer class="site-footer">아크파이어 온라인 게임 위키 · 비공식 정리본</footer>
+<footer class="site-footer">아크파이어 게임 위키 · 비공식 정리본</footer>
 <script src="assets/search-index.js"></script>
 <script src="assets/data/items.js"></script>
 <script src="assets/datatable.js"></script>
 <script src="assets/wiki.js"></script>
+<script src="assets/comments.js"></script>
 <script>
   mountWikiDataTable({
     mount: document.getElementById("item-table"),

@@ -1,0 +1,12 @@
+[
+  {
+    "id": "npc_arc_seed_ship_minerva",
+    "name": "세라 호송급 ARC시드",
+    "hint": "세라 호송급 ARC시드. escort transport with a single tall beacon mast. medium, hangar floor still visible. thin armor skin. modest blue shield emitters. white and pale-grey metal, dark panel seams."
+  },
+  {
+    "id": "npc_arc_seed_ship_titan_gate",
+    "name": "윈드 호송급 ARC시드",
+    "hint": "윈드 호송급 ARC시드. escort transport with a single tall beacon mast. medium, hangar floor still visible. thin armor skin. modest blue shield emitters. white and pale-grey metal, dark panel seams."
+  }
+]

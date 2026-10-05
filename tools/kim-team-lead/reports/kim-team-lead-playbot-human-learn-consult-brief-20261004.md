@@ -5,7 +5,7 @@ task_id=playbot-human-learn-consult-20261004
 kind=CONSULT (코드 변경 0 · 커밋 금지)
 작성=김팀장 · 2026-10-04 02:49 KST
 요청=대표님 — 의도·최종목표·학습방법을 김클로드에게 설명하고, 김팀장 분석도 공유한 뒤 협의 결론을 정리
-교차=docs/PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md (v1.1 · 설계 정본 · 코드 착수 금지)
+교차=docs/playbot/PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md (v1.1 · 설계 정본 · 코드 착수 금지)
      tools/kim-team-lead/reports/kim-claude-playbot-learning-audit-20261002.md
      tools/kim-team-lead/reports/kim-claude-playbot-human-data-scale-plan-20261002.md
 ```

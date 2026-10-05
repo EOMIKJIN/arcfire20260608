@@ -7,7 +7,7 @@ kind=RE_VERIFICATION (CLAUDE.md 「김팀장 지시 재검수」)
 code_changes=NO (대표님 지시 — "코드 작업 없이 분석 후 김팀장이 향후 확인 가능하게")
 author=김클로드
 date=2026-09-09
-scope=docs/대화형_아크코어_구현.md §0-H·§0-H-2, arcCoreChatCasualTalk.ts, arcCoreChatDialogueDrive.ts, localConversationalReplySpec.ts, arcCoreChatWorldProposal.ts, arcCoreChatTableIndex.ts, aws/arc-core-chat/src/pack.ts, tables/content/arc_core_chat_*.csv, src/data/generated/csvArcCoreChat*.ts
+scope=docs/dialog/대화형_아크코어_구현.md §0-H·§0-H-2, arcCoreChatCasualTalk.ts, arcCoreChatDialogueDrive.ts, localConversationalReplySpec.ts, arcCoreChatWorldProposal.ts, arcCoreChatTableIndex.ts, aws/arc-core-chat/src/pack.ts, tables/content/arc_core_chat_*.csv, src/data/generated/csvArcCoreChat*.ts
 ```
 
 ## 0. 결론 먼저
@@ -100,7 +100,7 @@ src/i18n/locales/ko.ts:838  'arcCoreChat.reply.smalltalk': '그래. 여긴 잠�
 src/i18n/locales/ko.ts:839  'arcCoreChat.reply.smalltalkAgain': '응, 이어서 말해.'
 ```
 
-"오늘 기분 어때"·"심심해"·"고마워"·"오늘 힘들었어"·"사랑해" 등 **완전히 다른 감정·화제의 문장이 전부 이 두 줄 중 하나로 귀결**된다. `docs/대화형_아크코어_구현.md` §3-2가 스스로 정의한 불합격 기준 — "매 턴 같은 브리핑 3줄 = 접수 창구" — 이 정확히 이 경로에 해당한다(브리핑이 아니라 잡담이라는 점만 다를 뿐, "매 턴 같은 문장"이라는 본질은 같다).
+"오늘 기분 어때"·"심심해"·"고마워"·"오늘 힘들었어"·"사랑해" 등 **완전히 다른 감정·화제의 문장이 전부 이 두 줄 중 하나로 귀결**된다. `docs/dialog/대화형_아크코어_구현.md` §3-2가 스스로 정의한 불합격 기준 — "매 턴 같은 브리핑 3줄 = 접수 창구" — 이 정확히 이 경로에 해당한다(브리핑이 아니라 잡담이라는 점만 다를 뿐, "매 턴 같은 문장"이라는 본질은 같다).
 
 클라우드(F1)가 매번 성공하면 안 드러나지만, 이 프로젝트는 스스로 "로컬이 하한"(§3-3 "LIVE 전 로컬 복도가 하한")이라고 못박아 왔다 — 캐주얼 축만은 이 하한이 사실상 거의 없는 셈이다. 무료 티어 쿼터 초과(429)·타임아웃·검역 실패 등 클라우드가 매 턴 100%를 보장 못 하는 상황이 이미 여러 차례 이 세션에서 확인된 바 있어(라운드 2~4 참고), 캐주얼 대화 도중 한 번이라도 폴백이 뜨면 "그래. 여긴 잠잠하다…"가 튀어나와 몰입이 바로 깨진다.
 

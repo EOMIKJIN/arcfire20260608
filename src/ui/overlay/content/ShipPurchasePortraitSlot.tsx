@@ -2,10 +2,6 @@ import React, { memo, useMemo } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { getNpcCapitalShip } from '../../../npc/npcFleetRegistry';
 import { resolveNpcCapitalShipPortraitSource } from '../../../game/npcCapitalShipPortraitAssets';
-import {
-  resolveTradePortPortraitUniqueIdForNpcShip,
-  resolveTradePortShipPortraitSource,
-} from '../../../game/tradePortShipPortraitAssets';
 import { useT } from '../../../i18n';
 import { FONTS, OVERLAY_TOKENS } from '../../../utils/theme';
 
@@ -15,9 +11,7 @@ type Props = {
 
 /**
  * 무역소 전함 구매창 — 헤더 바로 아래 카드 전폭 정사각형 슬롯.
- * 무역소 BUY 구매정보창 — `trade_ship_{고유숫자}.png` 규칙 우선
- * (`tradePortShipPortraitAssets.ts` · SCHEMA.md).
- * 미등록 trade_ 이미지는 `portraitImageAssetKey` 폴백, 없으면 "이미지 준비중".
+ * 조선소·격납고와 동일하게 `npc_ai_ships.portraitImageAssetKey` 한 장만 쓴다.
  */
 export const ShipPurchasePortraitSlot = memo(function ShipPurchasePortraitSlot({
   npcCapitalShipId,
@@ -25,9 +19,6 @@ export const ShipPurchasePortraitSlot = memo(function ShipPurchasePortraitSlot({
   const t = useT();
   const imageSource = useMemo(() => {
     const row = getNpcCapitalShip(npcCapitalShipId);
-    const tradeUniqueId = resolveTradePortPortraitUniqueIdForNpcShip(npcCapitalShipId);
-    const tradeSource = resolveTradePortShipPortraitSource(tradeUniqueId);
-    if (tradeSource) return tradeSource;
     return resolveNpcCapitalShipPortraitSource(row?.portraitImageAssetKey);
   }, [npcCapitalShipId]);
 
@@ -37,7 +28,7 @@ export const ShipPurchasePortraitSlot = memo(function ShipPurchasePortraitSlot({
         <Image
           source={imageSource}
           style={styles.image}
-          resizeMode="contain"
+          resizeMode="cover"
           resizeMethod="resize"
           accessibilityRole="image"
           accessibilityLabel={t('tradeQty.shipImageA11y')}

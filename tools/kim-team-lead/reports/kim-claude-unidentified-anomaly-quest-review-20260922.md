@@ -4,7 +4,7 @@
 status=PENDING
 task_id=unidentified-anomaly-quest-design-review-20260922
 kind=DESIGN_REVIEW (코드 변경 0 — 설계 문서만 검토. 구현 없음)
-대상=docs/UNIDENTIFIED_ANOMALY_QUEST_DESIGN.md (김팀장 · 2026-09-22 13:14 · 코드 미착수)
+대상=docs/quest/UNIDENTIFIED_ANOMALY_QUEST_DESIGN.md (김팀장 · 2026-09-22 13:14 · 코드 미착수)
 초점=대표님 지시 — 유지조건·퀘스트 유지시간 보완
 ```
 

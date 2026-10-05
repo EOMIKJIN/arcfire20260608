@@ -1,6 +1,6 @@
 // ============================================================
 // 메인스토리 함장 영구 사망 — 자격 게이트 + mark API
-// docs/NPC_CAPTAIN_PERMANENT_DEATH_DESIGN.md v0.2
+// docs/character/NPC_CAPTAIN_PERMANENT_DEATH_DESIGN.md v0.2
 // ============================================================
 
 import { getNpcCaptain } from './npcFleetRegistry';

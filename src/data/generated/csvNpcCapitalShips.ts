@@ -29,7 +29,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: true,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/Player_scout_ship.png",
   },
   {
     id: "Player_freighter",
@@ -116,7 +116,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: true,
-    portraitImageAssetKey: "assets/images/ship/ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/Player_frigate_mk2.png",
   },
   {
     id: "Player_destroyer_mk1",
@@ -145,7 +145,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: true,
-    portraitImageAssetKey: "assets/images/ship/ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/Player_destroyer_mk1.png",
   },
   {
     id: "Player_destroyer_mk2",
@@ -174,7 +174,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: true,
-    portraitImageAssetKey: "assets/images/ship/ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/Player_destroyer_mk2.png",
   },
   {
     id: "Player_cruiser_mk1",
@@ -203,7 +203,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: true,
-    portraitImageAssetKey: "assets/images/ship/ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/Player_cruiser_mk1.png",
   },
   {
     id: "Player_cruiser_mk2",
@@ -232,7 +232,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: true,
-    portraitImageAssetKey: "assets/images/ship/ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/Player_cruiser_mk2.png",
   },
   {
     id: "Player_battlecruiser_mk1",
@@ -261,7 +261,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: true,
-    portraitImageAssetKey: "assets/images/ship/ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/Player_battlecruiser_mk1.png",
   },
   {
     id: "Player_battlecruiser_apex",
@@ -290,7 +290,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: true,
-    portraitImageAssetKey: "assets/images/ship/ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/Player_battlecruiser_apex.png",
   },
   {
     id: "Player_dreadnought_mk1",
@@ -319,7 +319,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: true,
-    portraitImageAssetKey: "assets/images/ship/ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/Player_dreadnought_mk1.png",
   },
   {
     id: "Player_super_capital_mk1",
@@ -348,7 +348,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: true,
-    portraitImageAssetKey: "assets/images/ship/ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/Player_super_capital_mk1.png",
   },
   {
     id: "Player_apex_legend_mk1",
@@ -377,7 +377,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: true,
-    portraitImageAssetKey: "assets/images/ship/ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/Player_apex_legend_mk1.png",
   },
   {
     id: "player_wave_ship",
@@ -406,7 +406,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: true,
-    portraitImageAssetKey: "assets/images/ship/ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/player_wave_ship.png",
   },
   {
     id: "Player_hunter_mk1",
@@ -435,7 +435,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: true,
-    portraitImageAssetKey: "assets/images/ship/ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/Player_hunter_mk1.png",
   },
   {
     id: "Player_hunter_mk2",
@@ -464,7 +464,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: true,
-    portraitImageAssetKey: "assets/images/ship/ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/Player_hunter_mk2.png",
   },
   {
     id: "Player_shadow_cruiser_mk1",
@@ -493,7 +493,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: true,
-    portraitImageAssetKey: "assets/images/ship/ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/Player_shadow_cruiser_mk1.png",
   },
   {
     id: "Player_shadow_cruiser_mk2",
@@ -522,7 +522,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: true,
-    portraitImageAssetKey: "assets/images/ship/ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/Player_shadow_cruiser_mk2.png",
   },
   {
     id: "Player_raptor_bc_mk1",
@@ -551,7 +551,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: true,
-    portraitImageAssetKey: "assets/images/ship/ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/Player_raptor_bc_mk1.png",
   },
   {
     id: "Player_raptor_bc_apex",
@@ -580,7 +580,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: true,
-    portraitImageAssetKey: "assets/images/ship/ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/Player_raptor_bc_apex.png",
   },
   {
     id: "Player_phantom_dreadnought_mk1",
@@ -609,7 +609,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: true,
-    portraitImageAssetKey: "assets/images/ship/ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/Player_phantom_dreadnought_mk1.png",
   },
   {
     id: "Player_phantom_super_capital_mk1",
@@ -638,7 +638,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: true,
-    portraitImageAssetKey: "assets/images/ship/ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/Player_phantom_super_capital_mk1.png",
   },
   {
     id: "Player_phantom_apex_legend_mk1",
@@ -667,7 +667,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: true,
-    portraitImageAssetKey: "assets/images/ship/ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/Player_phantom_apex_legend_mk1.png",
   },
   {
     id: "npc_wave_invader_t1",
@@ -696,7 +696,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t2",
@@ -725,7 +725,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t3",
@@ -754,7 +754,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t4",
@@ -783,7 +783,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t5",
@@ -812,7 +812,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t6",
@@ -841,7 +841,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t7",
@@ -870,7 +870,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t8",
@@ -899,7 +899,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t9",
@@ -928,7 +928,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t10",
@@ -957,7 +957,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t11",
@@ -986,7 +986,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t12",
@@ -1015,7 +1015,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t13",
@@ -1044,7 +1044,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t14",
@@ -1073,7 +1073,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t15",
@@ -1102,7 +1102,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t16",
@@ -1131,7 +1131,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t17",
@@ -1160,7 +1160,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t18",
@@ -1189,7 +1189,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t19",
@@ -1218,7 +1218,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t20",
@@ -1247,7 +1247,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t21",
@@ -1276,7 +1276,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t22",
@@ -1305,7 +1305,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t23",
@@ -1334,7 +1334,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t24",
@@ -1363,7 +1363,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t25",
@@ -1392,7 +1392,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t26",
@@ -1421,7 +1421,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t27",
@@ -1450,7 +1450,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t28",
@@ -1479,7 +1479,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t29",
@@ -1508,7 +1508,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_wave_invader_t30",
@@ -1537,7 +1537,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_wave_invader_t1.png",
   },
   {
     id: "npc_enemy_arcadia_01",
@@ -1566,7 +1566,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_arcadia_01.png",
   },
   {
     id: "npc_enemy_arcadia_02",
@@ -1595,7 +1595,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_arcadia_02.png",
   },
   {
     id: "npc_enemy_arcadia_03",
@@ -1624,7 +1624,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_arcadia_01.png",
   },
   {
     id: "npc_enemy_draco_01",
@@ -1653,7 +1653,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_draco_01.png",
   },
   {
     id: "npc_enemy_draco_02",
@@ -1682,7 +1682,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_draco_02.png",
   },
   {
     id: "npc_enemy_solar_01",
@@ -1711,7 +1711,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_solar_01.png",
   },
   {
     id: "npc_enemy_draco_03",
@@ -1740,7 +1740,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_draco_01.png",
   },
   {
     id: "npc_enemy_minerva_01",
@@ -1769,7 +1769,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_minerva_01.png",
   },
   {
     id: "npc_enemy_vega_01",
@@ -1798,7 +1798,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_vega_01.png",
   },
   {
     id: "npc_enemy_eden_01",
@@ -1827,7 +1827,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_eden_01.png",
   },
   {
     id: "npc_blue_fleet_2",
@@ -1856,7 +1856,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_blue_fleet_1.png",
   },
   {
     id: "npc_enemy_iron_01",
@@ -1885,7 +1885,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_iron_01.png",
   },
   {
     id: "npc_enemy_iron_02",
@@ -1914,7 +1914,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_iron_01.png",
   },
   {
     id: "npc_enemy_iron_03",
@@ -1943,7 +1943,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_iron_01.png",
   },
   {
     id: "npc_blue_fleet_3",
@@ -1972,7 +1972,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_blue_fleet_1.png",
   },
   {
     id: "npc_ai_clan_pvp_flagship",
@@ -2001,7 +2001,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ai_clan_pvp_flagship.png",
   },
   {
     id: "npc_red_fleet_3",
@@ -2030,7 +2030,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_red_fleet_3.png",
   },
   {
     id: "npc_mock_ai_ship_15",
@@ -2059,7 +2059,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_mock_ai_ship_01.png",
   },
   {
     id: "npc_mock_ai_ship_04",
@@ -2088,7 +2088,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_mock_ai_ship_01.png",
   },
   {
     id: "npc_mock_ai_ship_11",
@@ -2117,7 +2117,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_mock_ai_ship_01.png",
   },
   {
     id: "npc_enemy_omega_01",
@@ -2146,7 +2146,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_omega_01.png",
   },
   {
     id: "npc_enemy_omega_02",
@@ -2175,7 +2175,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_omega_02.png",
   },
   {
     id: "npc_enemy_omega_03",
@@ -2204,7 +2204,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_omega_01.png",
   },
   {
     id: "npc_enemy_helios_01",
@@ -2233,7 +2233,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_helios_01.png",
   },
   {
     id: "npc_enemy_helios_02",
@@ -2262,7 +2262,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_helios_01.png",
   },
   {
     id: "npc_enemy_helios_03",
@@ -2291,7 +2291,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_helios_01.png",
   },
   {
     id: "npc_blue_fleet_1",
@@ -2320,7 +2320,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_blue_fleet_1.png",
   },
   {
     id: "npc_vega_blue_10",
@@ -2349,7 +2349,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_vega_blue_7.png",
   },
   {
     id: "npc_mock_ai_ship_10",
@@ -2378,7 +2378,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_mock_ai_ship_01.png",
   },
   {
     id: "npc_mock_ai_ship_16",
@@ -2407,7 +2407,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_mock_ai_ship_01.png",
   },
   {
     id: "npc_mock_ai_ship_09",
@@ -2436,7 +2436,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_mock_ai_ship_01.png",
   },
   {
     id: "npc_mock_ai_ship_19",
@@ -2465,7 +2465,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_mock_ai_ship_01.png",
   },
   {
     id: "npc_blue_fleet_4",
@@ -2494,7 +2494,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_blue_fleet_1.png",
   },
   {
     id: "npc_mock_ai_ship_06",
@@ -2523,7 +2523,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_mock_ai_ship_01.png",
   },
   {
     id: "npc_mock_ai_ship_14",
@@ -2552,7 +2552,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_mock_ai_ship_01.png",
   },
   {
     id: "npc_mock_ai_ship_18",
@@ -2581,7 +2581,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_mock_ai_ship_01.png",
   },
   {
     id: "npc_mock_ai_ship_07",
@@ -2610,7 +2610,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_mock_ai_ship_01.png",
   },
   {
     id: "npc_vega_blue_11",
@@ -2639,7 +2639,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_vega_blue_7.png",
   },
   {
     id: "npc_vega_blue_7",
@@ -2668,7 +2668,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_vega_blue_7.png",
   },
   {
     id: "npc_mock_ai_ship_01",
@@ -2697,7 +2697,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_mock_ai_ship_01.png",
   },
   {
     id: "npc_red_fleet_2",
@@ -2726,7 +2726,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_red_fleet_1.png",
   },
   {
     id: "npc_vega_blue_8",
@@ -2755,7 +2755,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_vega_blue_7.png",
   },
   {
     id: "npc_neweden_blue_7",
@@ -2784,7 +2784,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_neweden_blue_7.png",
   },
   {
     id: "npc_mock_ai_ship_02",
@@ -2813,7 +2813,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_mock_ai_ship_01.png",
   },
   {
     id: "npc_blue_fleet_6",
@@ -2842,7 +2842,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_blue_fleet_1.png",
   },
   {
     id: "npc_enemy_sirius_01",
@@ -2871,7 +2871,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_sirius_01.png",
   },
   {
     id: "npc_enemy_sirius_02",
@@ -2900,7 +2900,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_sirius_02.png",
   },
   {
     id: "npc_enemy_sirius_03",
@@ -2929,7 +2929,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_sirius_01.png",
   },
   {
     id: "npc_enemy_titan_01",
@@ -2958,7 +2958,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_titan_01.png",
   },
   {
     id: "npc_enemy_titan_02",
@@ -2987,7 +2987,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_titan_01.png",
   },
   {
     id: "npc_enemy_titan_03",
@@ -3016,7 +3016,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_titan_01.png",
   },
   {
     id: "npc_vega_red_10",
@@ -3045,7 +3045,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_vega_red_5.png",
   },
   {
     id: "npc_mock_ai_ship_08",
@@ -3074,7 +3074,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_mock_ai_ship_01.png",
   },
   {
     id: "npc_vega_red_4",
@@ -3103,7 +3103,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_vega_red_4.png",
   },
   {
     id: "npc_mock_ai_ship_17",
@@ -3132,7 +3132,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_mock_ai_ship_01.png",
   },
   {
     id: "npc_vega_red_5",
@@ -3161,7 +3161,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_vega_red_5.png",
   },
   {
     id: "npc_mock_ai_ship_12",
@@ -3190,7 +3190,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_mock_ai_ship_01.png",
   },
   {
     id: "npc_vega_blue_9",
@@ -3219,7 +3219,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_vega_blue_7.png",
   },
   {
     id: "npc_blue_fleet_5",
@@ -3248,7 +3248,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_blue_fleet_1.png",
   },
   {
     id: "npc_mock_ai_ship_03",
@@ -3277,7 +3277,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_mock_ai_ship_01.png",
   },
   {
     id: "npc_mock_ai_ship_13",
@@ -3306,7 +3306,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_mock_ai_ship_01.png",
   },
   {
     id: "npc_mock_ai_ship_05",
@@ -3335,7 +3335,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_mock_ai_ship_01.png",
   },
   {
     id: "npc_red_fleet_1",
@@ -3364,7 +3364,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_red_fleet_1.png",
   },
   {
     id: "npc_enemy_perseus_01",
@@ -3393,7 +3393,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_perseus_01.png",
   },
   {
     id: "npc_enemy_perseus_02",
@@ -3422,7 +3422,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_perseus_02.png",
   },
   {
     id: "npc_enemy_perseus_03",
@@ -3451,7 +3451,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_perseus_01.png",
   },
   {
     id: "npc_neweden_red_7",
@@ -3480,7 +3480,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_neweden_red_7.png",
   },
   {
     id: "npc_vega_red_6",
@@ -3509,7 +3509,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_vega_red_4.png",
   },
   {
     id: "npc_vega_red_11",
@@ -3538,7 +3538,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_vega_red_4.png",
   },
   {
     id: "npc_vega_red_7",
@@ -3567,7 +3567,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_vega_red_5.png",
   },
   {
     id: "npc_vega_red_8",
@@ -3596,7 +3596,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_vega_red_4.png",
   },
   {
     id: "npc_vega_red_9",
@@ -3625,7 +3625,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_vega_red_5.png",
   },
   {
     id: "npc_vega_red_12",
@@ -3654,7 +3654,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_vega_red_5.png",
   },
   {
     id: "npc_enemy_crimson_01",
@@ -3683,7 +3683,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_crimson_01.png",
   },
   {
     id: "npc_enemy_crimson_02",
@@ -3712,7 +3712,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_crimson_02.png",
   },
   {
     id: "npc_enemy_crimson_03",
@@ -3741,7 +3741,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_crimson_01.png",
   },
   {
     id: "npc_enemy_shadow_01",
@@ -3770,7 +3770,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_shadow_01.png",
   },
   {
     id: "npc_enemy_shadow_02",
@@ -3799,7 +3799,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_shadow_01.png",
   },
   {
     id: "npc_enemy_shadow_03",
@@ -3828,7 +3828,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_shadow_01.png",
   },
   {
     id: "npc_enemy_dark_01",
@@ -3857,7 +3857,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_dark_01.png",
   },
   {
     id: "npc_enemy_dark_02",
@@ -3886,7 +3886,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_dark_02.png",
   },
   {
     id: "npc_enemy_dark_03",
@@ -3915,7 +3915,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_dark_01.png",
   },
   {
     id: "npc_enemy_blood_01",
@@ -3944,7 +3944,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_blood_01.png",
   },
   {
     id: "npc_enemy_blood_02",
@@ -3973,7 +3973,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_blood_01.png",
   },
   {
     id: "npc_enemy_blood_03",
@@ -4002,7 +4002,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_blood_01.png",
   },
   {
     id: "npc_enemy_nightfall_01",
@@ -4031,7 +4031,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_nightfall_01.png",
   },
   {
     id: "npc_enemy_nightfall_02",
@@ -4060,7 +4060,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_nightfall_02.png",
   },
   {
     id: "npc_enemy_nightfall_03",
@@ -4089,7 +4089,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_nightfall_01.png",
   },
   {
     id: "npc_enemy_abyss_01",
@@ -4118,7 +4118,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_abyss_01.png",
   },
   {
     id: "npc_enemy_abyss_02",
@@ -4147,7 +4147,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_abyss_01.png",
   },
   {
     id: "npc_enemy_abyss_03",
@@ -4176,7 +4176,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_abyss_01.png",
   },
   {
     id: "npc_enemy_core_01",
@@ -4205,7 +4205,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_core_01.png",
   },
   {
     id: "npc_enemy_core_02",
@@ -4234,7 +4234,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_core_01.png",
   },
   {
     id: "npc_enemy_core_03",
@@ -4263,7 +4263,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_core_01.png",
   },
   {
     id: "npc_enemy_eternity_01",
@@ -4292,7 +4292,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_eternity_01.png",
   },
   {
     id: "npc_enemy_eternity_02",
@@ -4321,7 +4321,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_eternity_01.png",
   },
   {
     id: "npc_enemy_eternity_03",
@@ -4350,7 +4350,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_enemy_eternity_01.png",
   },
   {
     id: "npc_ai_clan_neutral_flagship",
@@ -4379,7 +4379,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ai_clan_neutral_flagship.png",
   },
   {
     id: "npc_ai_clan_safe_flagship",
@@ -4408,7 +4408,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ai_clan_safe_flagship.png",
   },
   {
     id: "npc_arc_presence_ship_01",
@@ -4437,7 +4437,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_presence_ship_01.png",
   },
   {
     id: "npc_arc_presence_ship_02",
@@ -4466,7 +4466,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_presence_ship_02.png",
   },
   {
     id: "npc_arc_presence_ship_03",
@@ -4495,7 +4495,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_presence_ship_03.png",
   },
   {
     id: "npc_arc_presence_ship_04",
@@ -4524,7 +4524,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_presence_ship_04.png",
   },
   {
     id: "npc_arc_presence_ship_05",
@@ -4553,7 +4553,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_presence_ship_05.png",
   },
   {
     id: "npc_arc_presence_ship_06",
@@ -4582,7 +4582,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_presence_ship_06.png",
   },
   {
     id: "npc_arc_presence_ship_07",
@@ -4611,7 +4611,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_presence_ship_07.png",
   },
   {
     id: "npc_arc_presence_ship_08",
@@ -4640,7 +4640,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_presence_ship_08.png",
   },
   {
     id: "npc_arc_presence_ship_09",
@@ -4669,7 +4669,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_presence_ship_09.png",
   },
   {
     id: "npc_arc_presence_ship_10",
@@ -4698,7 +4698,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_presence_ship_10.png",
   },
   {
     id: "npc_arc_presence_ship_11",
@@ -4727,7 +4727,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_presence_ship_11.png",
   },
   {
     id: "npc_arc_presence_ship_12",
@@ -4756,7 +4756,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_presence_ship_12.png",
   },
   {
     id: "npc_arcadia_orbit_1",
@@ -4785,7 +4785,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arcadia_orbit_1.png",
   },
   {
     id: "npc_arcadia_orbit_2",
@@ -4814,7 +4814,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arcadia_orbit_1.png",
   },
   {
     id: "npc_draco_escort_01",
@@ -4843,7 +4843,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_draco_escort_01.png",
   },
   {
     id: "npc_draco_patrol_01",
@@ -4872,7 +4872,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_draco_patrol_01.png",
   },
   {
     id: "npc_eden_orbit_4",
@@ -4901,7 +4901,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_eden_orbit_4.png",
   },
   {
     id: "npc_faction_cargo_ship_e_01",
@@ -4930,7 +4930,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_e_01.png",
   },
   {
     id: "npc_faction_cargo_ship_e_02",
@@ -4959,7 +4959,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_e_01.png",
   },
   {
     id: "npc_faction_cargo_ship_e_03",
@@ -4988,7 +4988,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_e_01.png",
   },
   {
     id: "npc_faction_cargo_ship_e_04",
@@ -5017,7 +5017,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_e_01.png",
   },
   {
     id: "npc_faction_cargo_ship_e_05",
@@ -5046,7 +5046,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_e_01.png",
   },
   {
     id: "npc_faction_cargo_ship_e_06",
@@ -5075,7 +5075,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_e_01.png",
   },
   {
     id: "npc_faction_cargo_ship_e_07",
@@ -5104,7 +5104,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_e_01.png",
   },
   {
     id: "npc_faction_cargo_ship_e_08",
@@ -5133,7 +5133,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_e_01.png",
   },
   {
     id: "npc_faction_cargo_ship_e_09",
@@ -5162,7 +5162,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_e_01.png",
   },
   {
     id: "npc_faction_cargo_ship_e_10",
@@ -5191,7 +5191,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_e_01.png",
   },
   {
     id: "npc_faction_cargo_ship_e_11",
@@ -5220,7 +5220,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_e_01.png",
   },
   {
     id: "npc_faction_cargo_ship_e_12",
@@ -5249,7 +5249,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_e_01.png",
   },
   {
     id: "npc_faction_cargo_ship_n_01",
@@ -5278,7 +5278,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_n_01.png",
   },
   {
     id: "npc_faction_cargo_ship_n_02",
@@ -5307,7 +5307,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_n_01.png",
   },
   {
     id: "npc_faction_cargo_ship_n_03",
@@ -5336,7 +5336,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_n_01.png",
   },
   {
     id: "npc_faction_cargo_ship_n_04",
@@ -5365,7 +5365,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_n_01.png",
   },
   {
     id: "npc_faction_cargo_ship_n_05",
@@ -5394,7 +5394,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_n_01.png",
   },
   {
     id: "npc_faction_cargo_ship_n_06",
@@ -5423,7 +5423,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_n_01.png",
   },
   {
     id: "npc_faction_cargo_ship_n_07",
@@ -5452,7 +5452,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_n_01.png",
   },
   {
     id: "npc_faction_cargo_ship_n_08",
@@ -5481,7 +5481,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_n_01.png",
   },
   {
     id: "npc_faction_cargo_ship_n_09",
@@ -5510,7 +5510,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_n_01.png",
   },
   {
     id: "npc_faction_cargo_ship_n_10",
@@ -5539,7 +5539,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_n_01.png",
   },
   {
     id: "npc_faction_cargo_ship_n_11",
@@ -5568,7 +5568,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_n_01.png",
   },
   {
     id: "npc_faction_cargo_ship_n_12",
@@ -5597,7 +5597,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_n_01.png",
   },
   {
     id: "npc_faction_cargo_ship_s_01",
@@ -5626,7 +5626,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_s_01.png",
   },
   {
     id: "npc_faction_cargo_ship_s_02",
@@ -5655,7 +5655,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_s_01.png",
   },
   {
     id: "npc_faction_cargo_ship_s_03",
@@ -5684,7 +5684,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_s_01.png",
   },
   {
     id: "npc_faction_cargo_ship_s_04",
@@ -5713,7 +5713,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_s_01.png",
   },
   {
     id: "npc_faction_cargo_ship_s_05",
@@ -5742,7 +5742,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_s_01.png",
   },
   {
     id: "npc_faction_cargo_ship_s_06",
@@ -5771,7 +5771,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_s_01.png",
   },
   {
     id: "npc_faction_cargo_ship_s_07",
@@ -5800,7 +5800,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_s_01.png",
   },
   {
     id: "npc_faction_cargo_ship_s_08",
@@ -5829,7 +5829,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_s_01.png",
   },
   {
     id: "npc_faction_cargo_ship_s_09",
@@ -5858,7 +5858,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_s_01.png",
   },
   {
     id: "npc_faction_cargo_ship_s_10",
@@ -5887,7 +5887,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_s_01.png",
   },
   {
     id: "npc_faction_cargo_ship_s_11",
@@ -5916,7 +5916,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_s_01.png",
   },
   {
     id: "npc_faction_cargo_ship_s_12",
@@ -5945,7 +5945,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_s_01.png",
   },
   {
     id: "npc_faction_cargo_ship_w_01",
@@ -5974,7 +5974,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_w_01.png",
   },
   {
     id: "npc_faction_cargo_ship_w_02",
@@ -6003,7 +6003,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_w_01.png",
   },
   {
     id: "npc_faction_cargo_ship_w_03",
@@ -6032,7 +6032,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_w_01.png",
   },
   {
     id: "npc_faction_cargo_ship_w_04",
@@ -6061,7 +6061,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_w_01.png",
   },
   {
     id: "npc_faction_cargo_ship_w_05",
@@ -6090,7 +6090,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_w_01.png",
   },
   {
     id: "npc_faction_cargo_ship_w_06",
@@ -6119,7 +6119,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_w_01.png",
   },
   {
     id: "npc_faction_cargo_ship_w_07",
@@ -6148,7 +6148,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_w_01.png",
   },
   {
     id: "npc_faction_cargo_ship_w_08",
@@ -6177,7 +6177,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_w_01.png",
   },
   {
     id: "npc_faction_cargo_ship_w_09",
@@ -6206,7 +6206,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_w_01.png",
   },
   {
     id: "npc_faction_cargo_ship_w_10",
@@ -6235,7 +6235,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_w_01.png",
   },
   {
     id: "npc_faction_cargo_ship_w_11",
@@ -6264,7 +6264,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_w_01.png",
   },
   {
     id: "npc_faction_cargo_ship_w_12",
@@ -6293,7 +6293,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_faction_cargo_ship_w_01.png",
   },
   {
     id: "npc_solar_guard_1",
@@ -6322,7 +6322,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_solar_guard_1.png",
   },
   {
     id: "npc_solar_guard_2",
@@ -6351,7 +6351,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_solar_guard_1.png",
   },
   {
     id: "npc_vega_guard_1",
@@ -6380,7 +6380,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_vega_guard_1.png",
   },
   {
     id: "npc_vega_guard_2",
@@ -6409,7 +6409,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_vega_guard_1.png",
   },
   {
     id: "npc_vega_test_ship_a",
@@ -6438,7 +6438,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_vega_test_ship_a.png",
   },
   {
     id: "npc_vega_test_ship_b",
@@ -6467,7 +6467,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_vega_test_ship_b.png",
   },
   {
     id: "npc_gov_minerva_flagship",
@@ -6496,7 +6496,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_gov_minerva_flagship.png",
   },
   {
     id: "npc_gov_iron_flagship",
@@ -6525,7 +6525,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_gov_iron_flagship.png",
   },
   {
     id: "npc_gov_helios_flagship",
@@ -6554,7 +6554,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_gov_helios_flagship.png",
   },
   {
     id: "npc_gov_genesis_flagship",
@@ -6583,7 +6583,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_gov_genesis_flagship.png",
   },
   {
     id: "npc_ship_gov_reserve_blue_01",
@@ -6612,7 +6612,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_blue_01.png",
   },
   {
     id: "npc_ship_gov_reserve_blue_02",
@@ -6641,7 +6641,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_blue_02.png",
   },
   {
     id: "npc_ship_gov_reserve_blue_03",
@@ -6670,7 +6670,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_blue_03.png",
   },
   {
     id: "npc_ship_gov_reserve_blue_04",
@@ -6699,7 +6699,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_blue_04.png",
   },
   {
     id: "npc_ship_gov_reserve_blue_05",
@@ -6728,7 +6728,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_blue_05.png",
   },
   {
     id: "npc_ship_gov_reserve_blue_06",
@@ -6757,7 +6757,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_blue_06.png",
   },
   {
     id: "npc_ship_gov_reserve_blue_07",
@@ -6786,7 +6786,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_blue_07.png",
   },
   {
     id: "npc_ship_gov_reserve_blue_08",
@@ -6815,7 +6815,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_blue_08.png",
   },
   {
     id: "npc_ship_gov_reserve_blue_09",
@@ -6844,7 +6844,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_blue_09.png",
   },
   {
     id: "npc_ship_gov_reserve_blue_10",
@@ -6873,7 +6873,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_blue_10.png",
   },
   {
     id: "npc_ship_gov_reserve_blue_11",
@@ -6902,7 +6902,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_blue_11.png",
   },
   {
     id: "npc_ship_gov_reserve_blue_12",
@@ -6931,7 +6931,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_blue_12.png",
   },
   {
     id: "npc_ship_gov_reserve_blue_13",
@@ -6960,7 +6960,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_blue_13.png",
   },
   {
     id: "npc_ship_gov_reserve_blue_14",
@@ -6989,7 +6989,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_blue_14.png",
   },
   {
     id: "npc_ship_gov_reserve_blue_15",
@@ -7018,7 +7018,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_blue_15.png",
   },
   {
     id: "npc_ship_gov_reserve_blue_16",
@@ -7047,7 +7047,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_blue_16.png",
   },
   {
     id: "npc_ship_gov_reserve_blue_17",
@@ -7076,7 +7076,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_blue_17.png",
   },
   {
     id: "npc_ship_gov_reserve_blue_18",
@@ -7105,7 +7105,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_blue_18.png",
   },
   {
     id: "npc_ship_gov_reserve_blue_19",
@@ -7134,7 +7134,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_blue_19.png",
   },
   {
     id: "npc_ship_gov_reserve_blue_20",
@@ -7163,7 +7163,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_blue_20.png",
   },
   {
     id: "npc_ship_gov_reserve_red_01",
@@ -7192,7 +7192,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_red_01.png",
   },
   {
     id: "npc_ship_gov_reserve_red_02",
@@ -7221,7 +7221,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_red_02.png",
   },
   {
     id: "npc_ship_gov_reserve_red_03",
@@ -7250,7 +7250,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_red_03.png",
   },
   {
     id: "npc_ship_gov_reserve_red_04",
@@ -7279,7 +7279,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_red_04.png",
   },
   {
     id: "npc_ship_gov_reserve_red_05",
@@ -7308,7 +7308,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_red_05.png",
   },
   {
     id: "npc_ship_gov_reserve_red_06",
@@ -7337,7 +7337,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_red_06.png",
   },
   {
     id: "npc_ship_gov_reserve_red_07",
@@ -7366,7 +7366,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_red_07.png",
   },
   {
     id: "npc_ship_gov_reserve_red_08",
@@ -7395,7 +7395,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_red_08.png",
   },
   {
     id: "npc_ship_gov_reserve_red_09",
@@ -7424,7 +7424,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_red_09.png",
   },
   {
     id: "npc_ship_gov_reserve_red_10",
@@ -7453,7 +7453,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_red_10.png",
   },
   {
     id: "npc_ship_gov_reserve_red_11",
@@ -7482,7 +7482,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_red_11.png",
   },
   {
     id: "npc_ship_gov_reserve_red_12",
@@ -7511,7 +7511,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_red_12.png",
   },
   {
     id: "npc_ship_gov_reserve_red_13",
@@ -7540,7 +7540,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_red_13.png",
   },
   {
     id: "npc_ship_gov_reserve_red_14",
@@ -7569,7 +7569,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_red_14.png",
   },
   {
     id: "npc_ship_gov_reserve_red_15",
@@ -7598,7 +7598,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_red_15.png",
   },
   {
     id: "npc_ship_gov_reserve_red_16",
@@ -7627,7 +7627,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_red_16.png",
   },
   {
     id: "npc_ship_gov_reserve_red_17",
@@ -7656,7 +7656,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_red_17.png",
   },
   {
     id: "npc_ship_gov_reserve_red_18",
@@ -7685,7 +7685,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_red_18.png",
   },
   {
     id: "npc_ship_gov_reserve_red_19",
@@ -7714,7 +7714,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_red_19.png",
   },
   {
     id: "npc_ship_gov_reserve_red_20",
@@ -7743,7 +7743,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_red_20.png",
   },
   {
     id: "npc_ship_gov_reserve_neutral_01",
@@ -7772,7 +7772,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_neutral_01.png",
   },
   {
     id: "npc_ship_gov_reserve_neutral_02",
@@ -7801,7 +7801,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_neutral_02.png",
   },
   {
     id: "npc_ship_gov_reserve_neutral_03",
@@ -7830,7 +7830,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_neutral_03.png",
   },
   {
     id: "npc_ship_gov_reserve_neutral_04",
@@ -7859,7 +7859,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_neutral_04.png",
   },
   {
     id: "npc_ship_gov_reserve_neutral_05",
@@ -7888,7 +7888,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 60,
     arcTrafficPlanetDwellSecMax: 600,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_ship_gov_reserve_neutral_05.png",
   },
   {
     id: "npc_arc_seed_ship_abyss",
@@ -7917,7 +7917,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 55,
     arcTrafficPlanetDwellSecMax: 180,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_seed_ship_abyss.png",
   },
   {
     id: "npc_arc_seed_ship_arcadia",
@@ -7946,7 +7946,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 55,
     arcTrafficPlanetDwellSecMax: 180,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_seed_ship_arcadia.png",
   },
   {
     id: "npc_arc_seed_ship_arcfire_core",
@@ -7975,7 +7975,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 55,
     arcTrafficPlanetDwellSecMax: 180,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_seed_ship_arcfire_core.png",
   },
   {
     id: "npc_arc_seed_ship_blood_field",
@@ -8004,7 +8004,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 55,
     arcTrafficPlanetDwellSecMax: 180,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_seed_ship_blood_field.png",
   },
   {
     id: "npc_arc_seed_ship_crimson_zone",
@@ -8033,7 +8033,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 55,
     arcTrafficPlanetDwellSecMax: 180,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_seed_ship_crimson_zone.png",
   },
   {
     id: "npc_arc_seed_ship_dark_rift",
@@ -8062,7 +8062,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 55,
     arcTrafficPlanetDwellSecMax: 180,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_seed_ship_dark_rift.png",
   },
   {
     id: "npc_arc_seed_ship_draco_nebula",
@@ -8091,7 +8091,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 55,
     arcTrafficPlanetDwellSecMax: 180,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_seed_ship_draco_nebula.png",
   },
   {
     id: "npc_arc_seed_ship_eternity",
@@ -8120,7 +8120,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 55,
     arcTrafficPlanetDwellSecMax: 180,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_seed_ship_eternity.png",
   },
   {
     id: "npc_arc_seed_ship_genesis",
@@ -8149,7 +8149,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 55,
     arcTrafficPlanetDwellSecMax: 180,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_seed_ship_genesis.png",
   },
   {
     id: "npc_arc_seed_ship_helios",
@@ -8178,7 +8178,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 55,
     arcTrafficPlanetDwellSecMax: 180,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_seed_ship_helios.png",
   },
   {
     id: "npc_arc_seed_ship_iron_cross",
@@ -8207,7 +8207,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 55,
     arcTrafficPlanetDwellSecMax: 180,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_seed_ship_iron_cross.png",
   },
   {
     id: "npc_arc_seed_ship_minerva",
@@ -8236,7 +8236,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 55,
     arcTrafficPlanetDwellSecMax: 180,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_seed_ship_minerva.png",
   },
   {
     id: "npc_arc_seed_ship_new_eden",
@@ -8265,7 +8265,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 55,
     arcTrafficPlanetDwellSecMax: 180,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_seed_ship_new_eden.png",
   },
   {
     id: "npc_arc_seed_ship_nightfall",
@@ -8294,7 +8294,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 55,
     arcTrafficPlanetDwellSecMax: 180,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_seed_ship_nightfall.png",
   },
   {
     id: "npc_arc_seed_ship_omega_station",
@@ -8323,7 +8323,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 55,
     arcTrafficPlanetDwellSecMax: 180,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_seed_ship_omega_station.png",
   },
   {
     id: "npc_arc_seed_ship_perseus",
@@ -8352,7 +8352,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 55,
     arcTrafficPlanetDwellSecMax: 180,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_seed_ship_perseus.png",
   },
   {
     id: "npc_arc_seed_ship_shadow_nexus",
@@ -8381,7 +8381,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 55,
     arcTrafficPlanetDwellSecMax: 180,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_seed_ship_shadow_nexus.png",
   },
   {
     id: "npc_arc_seed_ship_sirius",
@@ -8410,7 +8410,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 55,
     arcTrafficPlanetDwellSecMax: 180,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_seed_ship_sirius.png",
   },
   {
     id: "npc_arc_seed_ship_solar_port",
@@ -8439,7 +8439,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 55,
     arcTrafficPlanetDwellSecMax: 180,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_seed_ship_solar_port.png",
   },
   {
     id: "npc_arc_seed_ship_titan_gate",
@@ -8468,7 +8468,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 55,
     arcTrafficPlanetDwellSecMax: 180,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_seed_ship_titan_gate.png",
   },
   {
     id: "npc_arc_seed_ship_vega_outpost",
@@ -8497,7 +8497,7 @@ export const NPC_CAPITAL_SHIPS_FROM_CSV: readonly NpcCapitalShip[] = [
     arcTrafficPlanetDwellSecMin: 55,
     arcTrafficPlanetDwellSecMax: 180,
     tradePortListed: false,
-    portraitImageAssetKey: "assets/images/ship/npc_test_ship_001.png",
+    portraitImageAssetKey: "assets/images/ship/npc_arc_seed_ship_vega_outpost.png",
   }
 ];
 

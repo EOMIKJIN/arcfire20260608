@@ -1,5 +1,5 @@
 // 세축 세계 변화 — digest 한 줄. 틱/배치 패스 없음. 소비자만.
-// 정본: docs/세축_반응_잔상_세계변화_설계.md v1.1 §8
+// 정본: docs/arc-core/세축_반응_잔상_세계변화_설계.md v1.1 §8
 
 import { translate } from '../../i18n';
 import type { AppLocale } from '../../i18n/types';

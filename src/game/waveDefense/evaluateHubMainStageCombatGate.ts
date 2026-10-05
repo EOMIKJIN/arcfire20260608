@@ -21,6 +21,8 @@ export type HubMainStageCombatGateInput = {
   dracoCombatTestVenue?: boolean;
   /** hub_orbit 퀘스트 — 분쟁 pending·허브 OFF여도 퀘스트 1척 Ready */
   questHubOrbitActive?: boolean;
+  /** 오프닝 습격 1회 — 쿨다운·분쟁 pending과 별개. 웨이브 세션만 막는다 */
+  tutorialOpeningRaidActive?: boolean;
 };
 
 export function evaluateHubMainStageCombatEntered(
@@ -29,6 +31,10 @@ export function evaluateHubMainStageCombatEntered(
   if (input.waveDefenseActiveHere) return true;
   if (input.dracoCombatTestVenue) return false;
   if (input.questHubOrbitActive) {
+    if (input.waveDefenseSessionHere) return false;
+    return true;
+  }
+  if (input.tutorialOpeningRaidActive) {
     if (input.waveDefenseSessionHere) return false;
     return true;
   }

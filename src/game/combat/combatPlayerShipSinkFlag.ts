@@ -17,3 +17,8 @@ export function consumeCombatPlayerShipSinkPending(): boolean {
   sinkPending = false;
   return next;
 }
+
+/** 새 직접 전투가 시작되면 이전 전투가 남긴 격침은 버린다. */
+export function clearCombatPlayerShipSinkPending(): void {
+  sinkPending = false;
+}

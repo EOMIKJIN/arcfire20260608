@@ -1,6 +1,6 @@
 // ============================================================
 // 메인스토리 주요 함장 — 영구 사망 원장 (계정 귀속)
-// 정본 설계: docs/NPC_CAPTAIN_PERMANENT_DEATH_DESIGN.md v0.2
+// 정본 설계: docs/character/NPC_CAPTAIN_PERMANENT_DEATH_DESIGN.md v0.2
 // CSV deathEligible/deathClass = 자격 · 본 스토어 = 플레이 결과
 // ============================================================
 

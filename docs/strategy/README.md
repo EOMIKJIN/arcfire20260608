@@ -9,19 +9,19 @@
 
 | 문서 | 상태 | 요약 |
 |------|------|------|
-| **[ARC_CORE_SUSTAINABLE_LEARNING_MODEL_v1.md](../ARC_CORE_SUSTAINABLE_LEARNING_MODEL_v1.md)** | **설계 완료 · C-1 부분 · ScenarioRunner HOLD** | World/Learning/Player 3계층 · Observation Bus · Policy Pack · Firebase Spark · SubCore 확장 · Phase 0~4 |
-| **[PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md](../PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md)** | **v1.1 정본 · 코드 전** | 최종 산출=인간형 PlaySession 코퍼스. 봇=공장 · 아크코어=무대 · 가상일=감시 |
+| **[ARC_CORE_SUSTAINABLE_LEARNING_MODEL_v1.md](../arc-core/ARC_CORE_SUSTAINABLE_LEARNING_MODEL_v1.md)** | **설계 완료 · C-1 부분 · ScenarioRunner HOLD** | World/Learning/Player 3계층 · Observation Bus · Policy Pack · Firebase Spark · SubCore 확장 · Phase 0~4 |
+| **[PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md](../playbot/PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md)** | **v1.1 정본 · 코드 전** | 최종 산출=인간형 PlaySession 코퍼스. 봇=공장 · 아크코어=무대 · 가상일=감시 |
 | **[WAR_ECONOMY_THEATER_AUDIT_AND_UPGRADE_DESIGN.md](./WAR_ECONOMY_THEATER_AUDIT_AND_UPGRADE_DESIGN.md)** | **v0.2.1 · Phase 0–1.5 착수** | 분쟁 삼중 정의 · 전선 주둔 군비·점령 승리금 · 여파/WDI theater 합류 |
-| **[엔드콘텐츠_개발계획.md](../엔드콘텐츠_개발계획.md)** | **HOLD · v0.2 상세안 · 승인 전** | 캠페인 소진+L52+독립국≥1 후 인스턴스·주간전선. 21/21 블루·`draco_front` 재삽입 금지 |
+| **[엔드콘텐츠_개발계획.md](../expansion/엔드콘텐츠_개발계획.md)** | **HOLD · v0.2 상세안 · 승인 전** | 캠페인 소진+L52+독립국≥1 후 인스턴스·주간전선. 21/21 블루·`draco_front` 재삽입 금지 |
 | **[ROUTE_CAPITAL_DEFENSE_ADVANTAGE_DESIGN.md](./ROUTE_CAPITAL_DEFENSE_ADVANTAGE_DESIGN.md)** | **자동 프로세스 반영 · 웨이브 현행** | 4대 항로 수도 방위 우세 · 포위문 · 점유/반란/분쟁 배율 |
-| **[MOBILE_WAR_IMMERSION_v1.md](../MOBILE_WAR_IMMERSION_v1.md)** | **v1.0 P0+P1 반영** | 모바일 전쟁 몰입. 국호 문장 · 블루/레드는 색 · 접수/선언/전투 · 편입 여운 · 일 1줄 뉴스. 초반 overlay 잠금 |
+| **[MOBILE_WAR_IMMERSION_v1.md](./MOBILE_WAR_IMMERSION_v1.md)** | **v1.0 P0+P1 반영** | 모바일 전쟁 몰입. 국호 문장 · 블루/레드는 색 · 접수/선언/전투 · 편입 여운 · 일 1줄 뉴스. 초반 overlay 잠금 |
 | **[ARC_CORE_TACTICAL_AUTOMATION_AND_GALAXY_STRATEGY.md](./ARC_CORE_TACTICAL_AUTOMATION_AND_GALAXY_STRATEGY.md)** | **분석 완료 · 구현 대기** | 성계 그래프 1홉 공격 규칙 · 접전 자동전투 갭 · 목표 아키텍처 · Phase 0~5 로드맵 |
 | **[ARC_CORE_RECON_LURK_SCAN_DESIGN.md](./ARC_CORE_RECON_LURK_SCAN_DESIGN.md)** | **설계 완료 · 구현 대기** | 스캔으로 정찰매복 전함 발견·격파·도주 · 스파이와 별 축 · Phase 0~5 |
 | **[ARCFIRE_ACTIVE_ECOSYSTEM_ADOPTION_v1.md](../ecosystem/ARCFIRE_ACTIVE_ECOSYSTEM_ADOPTION_v1.md)** | **검토 완료 · P1 backlog** | Active Ecosystem v1.0 **적용 가능 항목만** · 중복 제거 · 메모리 1차 감사 |
 | **[ARCFIRE_CLOUD_SYNC_CONTRACT_v1.md](../ecosystem/ARCFIRE_CLOUD_SYNC_CONTRACT_v1.md)** | **RTDB·Firestore 정본** | policy/learning boot 1× read · ingest 우선순위 · 금지 목록 |
 | **[PLANET_DEVELOPMENT_ARC_BRIDGE_SPEC_v0.md](../ecosystem/PLANET_DEVELOPMENT_ARC_BRIDGE_SPEC_v0.md)** | **Tier 0.2 스펙** | 행성개발 bridge · arcContributionCr · opt-in 자동 투자 (구현 전) |
 | **[ARCFIRE_DEPTH_LEARNING_ROADMAP_v1.md](../ecosystem/ARCFIRE_DEPTH_LEARNING_ROADMAP_v1.md)** | **조사·우선순위 정본** | Tier 0~4 · MEM/UX 게이트 |
-| 원본 (참고 전용) | `docs/ARCFIRE_ACTIVE_ECOSYSTEM_SPEC_v1_0.md` | 능동형 생태계 **전체 제안** — **엔진·PEV·RTDB는 비채택** |
+| 원본 (참고 전용) | `docs/ecosystem/ARCFIRE_ACTIVE_ECOSYSTEM_SPEC_v1_0.md` | 능동형 생태계 **전체 제안** — **엔진·PEV·RTDB는 비채택** |
 
 ---
 
@@ -31,14 +31,14 @@
 
 - 「정찰매복」「잠복 적」「스캔 고도화」「recon lurk」
 - 「전쟁 경제」「분쟁 연동」「로테이션 타임」「여파 스탯」
-- 「엔드콘텐츠」「종반 보드」「인스턴스」「지역분쟁」「편입 확대」「중립 보호창」→ **`docs/엔드콘텐츠_개발계획.md` v0.2** (초반 로테이션에 꽂지 말 것)
+- 「엔드콘텐츠」「종반 보드」「인스턴스」「지역분쟁」「편입 확대」「중립 보호창」→ **`docs/expansion/엔드콘텐츠_개발계획.md` v0.2** (초반 로테이션에 꽂지 말 것)
 - 「수도 방위」「수도 어드밴티지」「포위문」「4대 항로 수도」
 - 「전술 자동화」「그래프 공격」「1홉 공격」「전선 확장」
 - 「아크코어 자동전투」「접전지역」「draco_front」
-- 「몰입」「블루팀」「편입 여운」「접수·선언」「전쟁 뉴스」→ **`docs/MOBILE_WAR_IMMERSION_v1.md`**
+- 「몰입」「블루팀」「편입 여운」「접수·선언」「전쟁 뉴스」→ **`docs/strategy/MOBILE_WAR_IMMERSION_v1.md`**
 - 「시리우스→드라코」「노드·라인 규칙」
 - 「아크코어 학습」「Observation Bus」「Policy Pack」「World Memory」
-- 「플레이봇 학습」「초반 3분」「인간패턴」「연동학습」→ **`docs/PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md`**
+- 「플레이봇 학습」「초반 3분」「인간패턴」「연동학습」→ **`docs/playbot/PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md`**
 - 「능동형 생태계」「Active Ecosystem」「BotEcosystem」「PEV」
 - 「확장시스템」「남부·북부 선단」「국가 수송선단」「운영자 병렬」→ **`docs/expansion/README.md`**
 - 「Fabric §8」「행성개발 bridge」「Territorial graph」「Learning ingest」→ **`docs/ecosystem/ARCFIRE_DEPTH_LEARNING_ROADMAP_v1.md`**
@@ -62,10 +62,10 @@
 | 플레이어 이동 1홉 | `app/(game)/worldmap.tsx` (`reachableIds`) |
 | 무역 그래프 BFS | `src/arcCore/economy/tradeRouteDistanceProfit.ts` |
 | 점유·작전 | `src/store/clanWarFoundationStore.ts` |
-| 미션·인스턴스 전투 | `docs/MISSION_SYSTEM_HANDOFF.md` |
-| 경제·월드 fabric | `docs/ARC_CORE_ECONOMY_FABRIC.md` |
+| 미션·인스턴스 전투 | `docs/quest/MISSION_SYSTEM_HANDOFF.md` |
+| 경제·월드 fabric | `docs/economy/ARC_CORE_ECONOMY_FABRIC.md` |
 | **확장시스템(남·북 선단 병렬 등)** | **`docs/expansion/README.md`** · [아크파이어_확장시스템_설계안.md](../expansion/아크파이어_확장시스템_설계안.md) |
-| **지속 학습 모델 v1** | `docs/ARC_CORE_SUSTAINABLE_LEARNING_MODEL_v1.md` |
+| **지속 학습 모델 v1** | `docs/arc-core/ARC_CORE_SUSTAINABLE_LEARNING_MODEL_v1.md` |
 | 시나리오 catalog spec | `docs/balance/ARC_CORE_SCENARIO_CATALOG_SPEC.md` |
 
 ---

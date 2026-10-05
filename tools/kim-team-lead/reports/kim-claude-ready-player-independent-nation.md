@@ -4,14 +4,14 @@
 > **updated**: 2026-07-07 18:10 KST  
 > **assigned_by**: 김팀장 (Cursor 본창) — 대표님 지시 대기  
 > **task_id**: `player-independent-nation-m1-m2-20260707`  
-> **구현 명세 정본**: `docs/PLAYER_INDEPENDENT_NATION_IMPLEMENTATION_SPEC.md`
+> **구현 명세 정본**: `docs/expansion/PLAYER_INDEPENDENT_NATION_IMPLEMENTATION_SPEC.md`
 
 ---
 
 ## 대표님이 김클로드에게 전달할 한 줄 지시 (복사용)
 
 ```text
-@김클로드 docs/PLAYER_INDEPENDENT_NATION_IMPLEMENTATION_SPEC.md 와 tools/kim-team-lead/reports/kim-claude-ready-player-independent-nation.md 를 읽고 M1+M2 구현해. 완료 후 kim-claude-handoff-pending.md status=PENDING. 커밋 금지.
+@김클로드 docs/expansion/PLAYER_INDEPENDENT_NATION_IMPLEMENTATION_SPEC.md 와 tools/kim-team-lead/reports/kim-claude-ready-player-independent-nation.md 를 읽고 M1+M2 구현해. 완료 후 kim-claude-handoff-pending.md status=PENDING. 커밋 금지.
 ```
 
 ---

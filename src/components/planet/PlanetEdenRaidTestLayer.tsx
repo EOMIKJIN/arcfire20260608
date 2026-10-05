@@ -198,12 +198,24 @@ export {
   hasCapitalRealtimeCombatSlotsForPlanet,
   isCapitalRealtimeCombatOrbitPlanet,
 } from '../../combat/capitalRealtimeCombatGate';
+import { isDirectWaveWinLocked } from '../../game/waveDefense/directWaveCombatPriority';
 import { getWaveFleetSeedOverride, useWaveDefenseStore } from '../../game/waveDefense/waveDefenseStore';
 import { resolvePlanetWaveDefenseMaxWaves } from '../../game/waveDefense/waveDefenseFleet';
 import { markWaveCombatVictoryCooldown } from '../../game/waveDefense/waveCombatCooldownStore';
 import { applyDefeatEnemyMissionObjectives } from '../../missions/applyDefeatEnemyMissionObjectives';
 import { tryPresentPendingMissionClearDialog } from '../../missions/missionPlanetHubSync';
 import { runCombatEndOutcomeFlow } from '../../game/combat/runCombatEndOutcomeFlow';
+import {
+  armTutorialOpeningRaidDraw,
+  consumeTutorialOpeningRaidDraw,
+  holdTutorialOpeningRaidCanvasForEnd,
+  isTutorialOpeningRaidLatched,
+  noteTutorialOpeningRaidPlayerDefeat,
+  presentTutorialOpeningRaidDrawOutcome,
+  releaseTutorialOpeningRaidCanvasAfterEnd,
+  shouldTutorialOpeningRaidDraw,
+  takeTutorialOpeningRaidSeedSlots,
+} from '../../game/hubTutorial/tutorialOpeningRaid';
 import {
   consumeCombatPlayerShipSinkPending,
   markCombatPlayerShipSinkPending,
@@ -266,6 +278,13 @@ function resolveStageFleetSeedSlotsForPlanet(
       ]);
     }
     return withDracoTestAllies(waveOverride);
+  }
+  const tutorialRaidSlots = takeTutorialOpeningRaidSeedSlots(
+    planetId,
+    resolveCurrentPlayerFlagshipNpcShipId(),
+  );
+  if (tutorialRaidSlots && tutorialRaidSlots.length > 0) {
+    return tutorialRaidSlots;
   }
   const missionState = useMissionStore.getState();
   const questHubSlots = buildQuestHubOrbitSeedSlots(
@@ -2140,7 +2159,7 @@ function finalizeShipDestroyed(victim: Agent, owner: Agent | undefined, elapsedM
   if (!victim.alive) return;
   victim.alive = false;
   victim.lastDestroyedAtMs = elapsedMs;
-  if (owner && isPlayerCombatAgent(owner)) {
+  if (owner && isPlayerCombatAgent(owner) && !isTutorialOpeningRaidLatched()) {
     // 웨이브 디펜스 중엔 per-kill 플레이어 exp 미지급 — exp는 전투 종료 후 결과창(인게임 대화 뒤)에서
     // 1회만 지급한다. (전투 종료 즉시 + 결과창 후 레벨업창이 두 번 뜨던 현상 방지)
     if (!useWaveDefenseStore.getState().active) {
@@ -2149,7 +2168,7 @@ function finalizeShipDestroyed(victim: Agent, owner: Agent | undefined, elapsedM
       if (amount > 0) hubOrbitCombatResultSession.expEarned += amount;
     }
   }
-  if (owner?.captainId) {
+  if (owner?.captainId && !isTutorialOpeningRaidLatched()) {
     const s = useNpcCaptainProgressStore.getState();
     s.grantCaptainDelta(owner.captainId, {
       exp: NPC_CAPTAIN_PROGRESS_EXP.kill,
@@ -3227,16 +3246,19 @@ export function usePlanetEdenRaidSim(
           clampSkillPos,
         );
         if (autoTick.emergencyWarpFlee) {
-          playerCapitalDestroyedRef.current = true;
-          respawnAtWallRef.current = null;
-          respawnCountdownSecRef.current = null;
-          for (let wi = 0; wi < agents.length; wi += 1) {
-            if (agents[wi]!.captainId === PLAYER_WINGMAN_CAPTAIN_ID) {
-              agents[wi]!.alive = false;
+          const waveNow = useWaveDefenseStore.getState();
+          if (!isDirectWaveWinLocked(waveNow.pendingOutcome, waveNow.outcome)) {
+            playerCapitalDestroyedRef.current = true;
+            respawnAtWallRef.current = null;
+            respawnCountdownSecRef.current = null;
+            for (let wi = 0; wi < agents.length; wi += 1) {
+              if (agents[wi]!.captainId === PLAYER_WINGMAN_CAPTAIN_ID) {
+                agents[wi]!.alive = false;
+              }
             }
-          }
-          if (useWaveDefenseStore.getState().active) {
-            useWaveDefenseStore.getState().requestEndRun('lose');
+            if (waveNow.active) {
+              waveNow.requestEndRun('lose');
+            }
           }
         }
       }
@@ -3247,18 +3269,21 @@ export function usePlanetEdenRaidSim(
         && !playerAgent.skillAuto?.emergencyUsed
         && !isSurvivalPodNpcShipId(usePlayerStore.getState().player?.ship?.portraitNpcCapitalShipId)
       ) {
+        const waveNow = useWaveDefenseStore.getState();
         playerCapitalDestroyedRef.current = true;
         respawnAtWallRef.current = null;
         respawnCountdownSecRef.current = null;
-        // 웨이브 디펜스: 플레이어 격파 = 패배 종료(홀드 후 오퍼레이터 대사)
-        if (useWaveDefenseStore.getState().active) {
-          useWaveDefenseStore.getState().requestEndRun('lose');
-        }
-        markCombatPlayerShipSinkPending();
-        hubOrbitCombatResultSession.pendingDestroyAlert = true;
-        if (!playerDurabilityWearAppliedRef.current) {
-          playerDurabilityWearAppliedRef.current = true;
-          void usePlayerStore.getState().applyPostCombatDurabilityWear(elapsed);
+        // 직접 전투 승리가 잠긴 뒤의 사망은 다른 전투 결과로 격침을 올리지 않는다.
+        if (!isDirectWaveWinLocked(waveNow.pendingOutcome, waveNow.outcome)) {
+          if (waveNow.active) {
+            waveNow.requestEndRun('lose');
+          }
+          markCombatPlayerShipSinkPending();
+          hubOrbitCombatResultSession.pendingDestroyAlert = true;
+          if (!playerDurabilityWearAppliedRef.current) {
+            playerDurabilityWearAppliedRef.current = true;
+            void usePlayerStore.getState().applyPostCombatDurabilityWear(elapsed);
+          }
         }
       }
       // 자동 리스폰 재교전 삭제(2026-07-27) — 전멸 후 재개는 쿨다운(waveCombatCooldownStore) 경유
@@ -3280,7 +3305,47 @@ export function usePlanetEdenRaidSim(
             combatPlanetId,
           );
         }
+        if (
+          isTutorialOpeningRaidLatched()
+          && battleEngageStartMsRef.current !== null
+          && shouldTutorialOpeningRaidDraw(
+            elapsed - battleEngageStartMsRef.current,
+            playerAgent?.alive === true,
+          )
+        ) {
+          for (let ri = 0; ri < agents.length; ri += 1) {
+            const foe = agents[ri]!;
+            if ((foe.team === 'red' || foe.team === 'orange') && foe.alive) {
+              // 퇴각. lastDestroyedAtMs를 찍으면 파괴 화염이 나온다.
+              foe.alive = false;
+            }
+          }
+          armTutorialOpeningRaidDraw();
+        }
       } else if (!waveOutcomeAwardedRef.current && (aliveRed || aliveBlue || aliveOrange)) {
+        const tutorialLatched = isTutorialOpeningRaidLatched();
+        const tutorialTimeDraw = tutorialLatched && consumeTutorialOpeningRaidDraw();
+        const tutorialRetreat =
+          tutorialTimeDraw
+          || (tutorialLatched && playerAgent?.alive === true && !aliveRed && !aliveOrange);
+        if (tutorialRetreat) {
+          holdTutorialOpeningRaidCanvasForEnd('draw');
+          waveOutcomeAwardedRef.current = true;
+          battleEngageStartMsRef.current = null;
+          if (!playerDurabilityWearAppliedRef.current) {
+            playerDurabilityWearAppliedRef.current = true;
+            void usePlayerStore.getState().applyPostCombatDurabilityWear(elapsed);
+          }
+          const retreatEnemyName = resolveHubOrbitEnemyName(agents);
+          const retreatLeaderId = resolveHubOrbitLeaderCaptainId(agents);
+          queueMicrotask(() => {
+            void presentTutorialOpeningRaidDrawOutcome({
+              enemyName: retreatEnemyName,
+              leaderCaptainId: retreatLeaderId,
+            });
+          });
+        } else {
+        if (tutorialLatched) noteTutorialOpeningRaidPlayerDefeat();
         const participants = agents
           .map(a => a.captainId)
           .filter((id): id is string => Boolean(id));
@@ -3355,6 +3420,9 @@ export function usePlanetEdenRaidSim(
           }
         } else if (
           hadPlayerCombat
+          && wdOutcome.pendingOutcome == null
+          && wdOutcome.outcome == null
+          && wdOutcome.phase !== 'ended'
           && isHubOrbitCombatResultVenue(combatPlanetId)
           && !hubOrbitCombatResultSession.presented
         ) {
@@ -3369,6 +3437,7 @@ export function usePlanetEdenRaidSim(
               useOrbitCapitalCombatUiStore.getState().setEndHoldActive(true);
               await waitCombatEndHold();
               useOrbitCapitalCombatUiStore.getState().setEndHoldActive(false);
+              releaseTutorialOpeningRaidCanvasAfterEnd();
               if (pendingDestroy) consumeCombatPlayerShipSinkPending();
               if (outcome === 'win') {
                 await presentCombatEndLeaderDialog({
@@ -3392,6 +3461,7 @@ export function usePlanetEdenRaidSim(
               });
             })();
           });
+        }
         }
       }
       for (const ag of agents) {

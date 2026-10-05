@@ -1,6 +1,6 @@
 // ============================================================
 // ArcCore Observation Bus — 이벤트 envelope (v1 · 경제 축 우선)
-// @see docs/ARC_CORE_SUSTAINABLE_LEARNING_MODEL_v1.md §4
+// @see docs/arc-core/ARC_CORE_SUSTAINABLE_LEARNING_MODEL_v1.md §4
 // ============================================================
 
 export type ArcCoreObservationKind =

@@ -1,6 +1,6 @@
 # 2026-08-05 — i18n KO↔EN 재검수·보완
 
-> **담당**: 김팀장 · 기준 감사 `docs/I18N_FULL_RESCAN_2026-08-03.md`
+> **담당**: 김팀장 · 기준 감사 `docs/i18n/I18N_FULL_RESCAN_2026-08-03.md`
 
 ## [pss-pre-dev]
 

@@ -1,6 +1,6 @@
 // ============================================================
 // ArcCore Firebase RTDB — 스키마 v1 (read-once · daily write · no listeners)
-// @see docs/ARC_CORE_SUSTAINABLE_LEARNING_MODEL_v1.md §8
+// @see docs/arc-core/ARC_CORE_SUSTAINABLE_LEARNING_MODEL_v1.md §8
 // ============================================================
 
 import type { BalanceOverlayDelta } from '../arcCore/economy/balanceOverlayDeltaTypes';

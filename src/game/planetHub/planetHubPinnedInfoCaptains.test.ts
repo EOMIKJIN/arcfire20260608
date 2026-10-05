@@ -3,7 +3,11 @@
  */
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { formatPinnedInfoPrimaryLabel, resolvePinnedInfoMark } from './nearbyPresenceContract';
+import {
+  formatPinnedInfoPrimaryLabel,
+  resolveInfoRowQuestMark,
+  resolvePinnedInfoMark,
+} from './nearbyPresenceContract';
 import { mergePinnedHubInfoRows } from './mergePinnedHubInfoRows';
 import { applyQuestInfoMarkFlagsToRows, isCaptainHintPresentInHubSystem } from './hubInfoSystemPresence';
 import type { NearbyInfoDetailRow } from './nearbyPresenceDisplay';
@@ -150,13 +154,34 @@ test('applyQuestInfoMarkFlagsToRows — 퀘스트 NPC만 레일 · 메인 M · �
   assert.equal(sideOnly[0]?.showQuestMarks, true);
   assert.equal(sideOnly[0]?.hasSubQuest, true);
   assert.equal(sideOnly[0]?.hasMainQuest, false);
+
+  const instantOnly = applyQuestInfoMarkFlagsToRows(
+    [row({ keySlot: 5, captainId: 'npc_cpt_gov_reserve_blue_04' })],
+    {
+      assignedQuestIds: new Set(),
+      mainQuestIds: new Set(),
+      subQuestIds: new Set(),
+      configuredQuestIds: new Set(),
+      instantQuestIds: new Set(['npc_cpt_gov_reserve_blue_04']),
+    },
+  );
+  assert.equal(instantOnly[0]?.showQuestMarks, true);
+  assert.equal(instantOnly[0]?.hasInstantQuest, true);
+  assert.equal(instantOnly[0]?.hasMainQuest, false);
+  assert.equal(instantOnly[0]?.hasSubQuest, false);
 });
 
-test('compact label — 총사령관 마크 없음 · 퀘스트 ◈', () => {
+test('compact label — 퀘스트 보유면 핀 종류와 무관하게 ◈', () => {
   assert.equal(resolvePinnedInfoMark('governor'), null);
   assert.equal(resolvePinnedInfoMark('quest'), '◈');
   assert.equal(resolvePinnedInfoMark(undefined), null);
+  assert.equal(resolveInfoRowQuestMark('governor', false), null);
+  assert.equal(resolveInfoRowQuestMark('governor', true), '◈');
+  assert.equal(resolveInfoRowQuestMark(undefined, true), '◈');
+  assert.equal(resolveInfoRowQuestMark('quest', false), '◈');
   assert.equal(formatPinnedInfoPrimaryLabel('governor', '엘렌 드 코르'), '엘렌 드 코르');
+  assert.equal(formatPinnedInfoPrimaryLabel('governor', '엘렌 드 코르', true), '◈ 엘렌 드 코르');
   assert.equal(formatPinnedInfoPrimaryLabel('quest', '엘렌 드 코르'), '◈ 엘렌 드 코르');
+  assert.equal(formatPinnedInfoPrimaryLabel(undefined, '궤도함장', true), '◈ 궤도함장');
   assert.equal(formatPinnedInfoPrimaryLabel(undefined, '궤도함장'), '궤도함장');
 });

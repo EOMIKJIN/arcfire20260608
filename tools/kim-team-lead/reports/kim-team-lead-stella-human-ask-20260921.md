@@ -4,7 +4,7 @@
 status=REVIEWED
 task_id=stella-aris-human-ask-s6-20260921
 kind=DESIGN_REVIEW
-정본=docs/STELLA_ARIS_PROJECT_LIFE_SYSTEM_v0.2.md §16
+정본=docs/character/STELLA_ARIS_PROJECT_LIFE_SYSTEM_v0.2.md §16
 date=2026-09-21
 verdict=반영 가능 · S6 operator_life · inbound 타이머 재사용 불가
 ```

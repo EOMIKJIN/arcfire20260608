@@ -2,7 +2,7 @@
 
 Generated: 2026-08-06 KST · 김팀장 정적 전수
 
-정본: `.cursor/rules/arcfire-overlay-ui-contract.mdc` · `docs/OVERLAY_UI_UNIVERSAL_SPEC.md`
+정본: `.cursor/rules/arcfire-overlay-ui-contract.mdc` · `docs/ui/OVERLAY_UI_UNIVERSAL_SPEC.md`
 
 ## Verdict
 

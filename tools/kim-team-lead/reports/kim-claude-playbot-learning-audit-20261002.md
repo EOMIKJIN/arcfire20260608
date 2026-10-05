@@ -4,7 +4,7 @@
 task_id=playbot-learning-audit-20261002
 kind=AUDIT (코드 변경 0 · commit 없음 · 가동 중인 봇 무접촉)
 범위=tools/play-bot-console 전 모듈(src 24개·하니스·스케줄러·18:00 리포트/트리아지) + logs/learned 산출물
-   + docs/PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md · PLAYBOT_DAILY_LOOP.md
+   + docs/playbot/PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md · PLAYBOT_DAILY_LOOP.md
 실측 시점=13:54 KST · 런 pb-2026-10-01T1501-mixed_ref (00:01 시작, 가동 중)
 ```
 

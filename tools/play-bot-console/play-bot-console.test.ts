@@ -28,9 +28,9 @@ import {
   lookupHasTrade,
   listGearCandidates,
 } from './src/catalog';
-import { questFightPlanet, nextPlayableMissionId, canLearnAny, isCapitalAssaultReady, approachCapitalPlanet } from './src/progress';
+import { questFightPlanet, nextPlayableMissionId, canLearnAny, isCapitalAssaultReady, approachCapitalPlanet, bestAffordableGear } from './src/progress';
 import { nextDevCost, durationTicks } from './src/facilityTwin';
-import { buildDailyLearningReport } from './src/dailyLearningReport';
+import { buildDailyLearningReport, learningHealthWarnings } from './src/dailyLearningReport';
 import { decideIntentKind, pickStepKind } from './src/intent';
 import { seedWorld, snapshotKpi, toHolds, addExp, countPaints, paintOf } from './src/world';
 import { assessLearnCycle, nextLearnCycleWrite, LEARN_CYCLE_FLUSH_MIN_MS } from './src/learnCycle';
@@ -68,10 +68,11 @@ import { planFqaReview, reviewNeeded, emptyFqaReviewState } from './src/fqaRevie
 import { clampPlayIntelligence, defaultPlayIntelligence } from './src/playIntelligence';
 import type { GameIssue } from './src/gameIssues';
 import { pickCreditExchange, starterGemBalance, takeCreditExchange, gemExchangeCap } from './src/bmWallet';
-import { alreadyLanded, stepAction, fightHere, earnCredits, trainOrRelocate } from './src/actions';
+import { alreadyLanded, stepAction, fightHere, earnCredits, trainOrRelocate, winChance } from './src/actions';
+import { fightOdds, hopFuelCredits, transitEncounterChance } from './src/liveCombat';
 import { buildDailyTriage } from './src/dailyUrgentTriage';
 import { createRng } from './src/rng';
-import { analyzeDay, analyzeStronger } from './src/analyze';
+import { analyzeDay, analyzeStronger, isCreditDrain } from './src/analyze';
 import { compareKpi } from './src/compare';
 import { runSimulation } from './src/simulate';
 import { TICKS_PER_DAY } from './src/clock';
@@ -84,7 +85,8 @@ import {
   USER_FEEL_WINDOW_SEC,
 } from './src/earlyFeel';
 import { recordLearning, loadLearning, resetLearningCacheForTest } from './src/learn';
-import { adaptPolicy, decideAdaptPeriodDays, getLearnExploreRate, getLiveWeights, getPolicyHealth, loadPolicy, resetPolicyForTest, savePolicy, setLearnedRootForTest } from './src/policy';
+import { adaptPolicy, decideAdaptPeriodDays, getLearnExploreRate, getLiveWeights, getPolicyHealth, learnedDir, loadPolicy, resetPolicyForTest, savePolicy, setLearnedRootForTest } from './src/policy';
+import { enableCombatEfficiencyMemory, needsHullFund, nextHullStep, rememberCombatDay, tryBuyNextHull } from './src/combatEfficiency';
 import { campaignDaysForHarness, inCampaignLearnWindow, isAdaptExcludedCode, isNewRunForScore, isTwinLearnCode, nextCampaignSeed, shouldLoopNextCampaign, shouldRollbackScore, windowHangarDelta } from './src/learnGate';
 import {
   ADB_DATE_ARGS,
@@ -1220,6 +1222,54 @@ test('D2 사용자 조작 마커만 센다 · 미만이면 profiler(시드 제�
   }), false);
 });
 
+test('18:00 학습 건강 — 정체 반복·FQA 미응답·이동만 실기면 WARN 사유', () => {
+  assert.deepEqual(learningHealthWarnings(null), []);
+  const healthy = {
+    stallRestartsTotal: 0, stallRestarts24h: 0, ceilingLevel: 0, ceilingQuest: 0,
+    endgameZero: true, fqaConsultPending: false, fqaReviews: 0, humanDeltaKinds: ['quest', 'travel'],
+  };
+  assert.deepEqual(learningHealthWarnings(healthy), []);
+  const sick = learningHealthWarnings({
+    ...healthy, stallRestartsTotal: 54, stallRestarts24h: 8, ceilingLevel: 27, ceilingQuest: 66,
+    fqaConsultPending: true, fqaReviews: 25, humanDeltaKinds: ['travel'],
+  });
+  assert.equal(sick.length, 4);
+  assert.ok(sick[0].includes('24시간 8회'));
+});
+
+test('크레딧 급감은 잔액이 바닥 근처로 떨어질 때만 (중반 정상 지출 오탐 제외)', () => {
+  assert.equal(isCreditDrain(35_000, 6_200), false);
+  assert.equal(isCreditDrain(94_000, 60_000), false);
+  assert.equal(isCreditDrain(4_000, 1_200), true);
+  assert.equal(isCreditDrain(3_000, 1_000), false);
+});
+
+test('A2 [PLAY_VERB] 핵심 동작 마커 → 퀘스트·전투·무역·편입·스킬 비트 · 조작 수로 셈', () => {
+  const log = [
+    '10-05 10:00:00.000 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_focus hermes_mb=32 detail=arcadia_prime',
+    '10-05 10:00:10.000 I ReactNativeJS: [PLAY_VERB] verb=quest detail=accept:sandbox_001',
+    '10-05 10:00:30.000 I ReactNativeJS: [PLAY_VERB] verb=trade detail=buy:arcadia_prime',
+    '10-05 10:01:00.000 I ReactNativeJS: [PLAY_VERB] verb=combat detail=hub_orbit:win',
+    '10-05 10:01:20.000 I ReactNativeJS: [PLAY_VERB] verb=annex detail=draco_haven',
+    '10-05 10:01:40.000 I ReactNativeJS: [PLAY_VERB] verb=skill detail=smuggler_route',
+    '10-05 10:02:00.000 I ReactNativeJS: [PLAY_VERB] verb=unknown_x',
+    '10-05 10:02:20.000 I ReactNativeJS: [PLAY_VERB] verb=ship detail=Player_frigate_mk2',
+  ].join('\n');
+  assert.equal(countUserActionMarkers(log), 8);
+  const traces = memProfileToTraces(log, 'owner-play', { defaultKind: 'human' });
+  assert.equal(traces.length, 1);
+  const verbs = traces[0].beats.map((b) => b.verb);
+  assert.deepEqual(verbs, ['land', 'quest', 'trade', 'combat', 'annex', 'skill', 'ship']);
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pb-verb-'));
+  const delta = planHumanDelta(dir, traces);
+  assert.ok(delta);
+  for (const k of ['annex_path', 'combat', 'gear', 'quest', 'skill', 'trade', 'travel'] as const) {
+    assert.ok(delta!.coveredKinds.includes(k), k);
+  }
+  assert.deepEqual(delta!.missingVerbs, []);
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
 test('T2 owner-playlog는 pull보다 항상 우선 · pending은 human 아님', () => {
   const picked = pickMemProfileInput([
     { file: 'pull.txt', owner: false, hasMem: true },
@@ -1578,6 +1628,37 @@ test('퀘스트가 40일 멈추고 전투가 있으면 구간 정체다', () => 
   assert.equal(quietLast.restart, false);
 });
 
+test('퀘스트가 멈춰도 레벨이 오르면 관문 수련 — 구간 정체로 재시작하지 않는다', () => {
+  let last = stepStall(emptyStallMemory(), stallSnap({ day: 1, totalExp: 1, combatWins: 1, questCleared: 64, level: 26 }));
+  // 실측처럼 25~30일마다 1레벨 — 퀘스트 64 고정 80일
+  for (let day = 2; day <= 80; day += 1) {
+    last = stepStall(last.mem, stallSnap({
+      day,
+      totalExp: day * 1000,
+      combatWins: day,
+      questCleared: 64,
+      level: 26 + Math.floor(day / 30),
+    }));
+    assert.equal(last.restart, false, `day ${day}`);
+  }
+  // 레벨은 29에 머물고 경험치가 오르면 story_023(L32) 관문 수련 — 구간 정체로 끊지 않는다
+  for (let day = 81; day <= 125; day += 1) {
+    last = stepStall(last.mem, stallSnap({ day, totalExp: day * 1000, combatWins: day, questCleared: 64, level: 29 }));
+    assert.equal(last.restart, false, `gate day ${day}`);
+  }
+  // 다음 본편 관문보다 레벨이 높은데 퀘스트만 멈추고 경험치는 오르면 구간 정체
+  let capped = stepStall(emptyStallMemory(), stallSnap({
+    day: 1, totalExp: 1, combatWins: 1, questCleared: 64, level: 50,
+  }));
+  for (let day = 2; day <= 50; day += 1) {
+    capped = stepStall(capped.mem, stallSnap({
+      day, totalExp: day * 1000, combatWins: day, questCleared: 64, level: 50,
+    }));
+  }
+  assert.equal(capped.restart, true);
+  assert.equal(capped.reason, 'section');
+});
+
 test('정체 재분석은 같은 축이 반복되면 재발이라고 적는다', () => {
   const first = reanalysisText(null, {
     reason: 'section', day: 40, level: 49, questCleared: 96, independent: 0,
@@ -1776,7 +1857,7 @@ test('승률이 낮은 수련은 전함을 깨지 않는다', () => {
   let hard = '';
   for (let i = 0; i < ids.length; i += 1) {
     const slot = w.planets[ids[i]];
-    if (slot?.combatEnabled && slot.tcl >= 5) {
+    if (slot?.combatEnabled && winChance(w, slot.tcl, slot.planetId) < 0.5) {
       hard = slot.planetId;
       break;
     }
@@ -1786,7 +1867,7 @@ test('승률이 낮은 수련은 전함을 깨지 않는다', () => {
   const hardSystem = lookupSystemId(hard);
   assert.ok(hardSystem);
   w.currentSystemId = hardSystem;
-  const row = trainOrRelocate(w, () => 0, '수련');
+  const row = trainOrRelocate(w, () => 0.99, '수련');
   assert.notEqual(row.kind, 'DESTROY');
   assert.notEqual(row.kind, 'COMBAT');
 });
@@ -1829,7 +1910,76 @@ function fqaIssue(id: string, evidence: number): GameIssue {
   };
 }
 
-test('FQA 정기 검토는 첫 증거에서 카드를 올리지 않고 늘어난 뒤에만 한 단계 올린다', () => {
+test('연료가 없으면 채굴하고, 채굴이 불가하면 수색한다', () => {
+  const broke = seedWorld({ runId: 'fuel-mine', persona: 'mixed_ref' });
+  const story = getMission('story_001');
+  assert.ok(story);
+  const reach = story.objectives.findIndex((o) => o.type === 'reach_planet' || o.type === 'reach_system');
+  assert.ok(reach >= 0);
+  broke.credits = 0;
+  broke.currentPlanetId = 'arcadia_prime';
+  broke.currentSystemId = 'arcadia';
+  broke.activeQuest = { missionId: 'story_001', title: story.title, objIndex: reach, acceptedDay: 1 };
+  const row = stepAction(broke, () => 0, 'mixed_ref', { allowSides: true });
+  assert.notEqual(row.reason, 'fuel');
+  assert.ok(row.kind === 'MINE' || row.kind === 'TRADE' || row.kind === 'SEARCH' || row.kind === 'QUEST', `${row.kind} ${row.line}`);
+  const dryWorld = seedWorld({ runId: 'fuel-search', persona: 'mixed_ref' });
+  dryWorld.credits = 0;
+  dryWorld.mineralCargo = 0;
+  dryWorld.currentPlanetId = 'no_orbital_deposit';
+  dryWorld.currentSystemId = 'minerva';
+  dryWorld.activeQuest = { missionId: 'story_001', title: story.title, objIndex: reach, acceptedDay: 1 };
+  const searched = stepAction(dryWorld, () => 0, 'mixed_ref', { allowSides: true });
+  assert.equal(searched.kind, 'SEARCH');
+});
+
+test('기본 함선 무장이 화력에 포함된다', () => {
+  const w = seedWorld({ runId: 'hull-guns', persona: 'mixed_ref' });
+  w.level = 2;
+  w.equipped = {};
+  w.hullShipId = 'Player_npc_red_fleet_1';
+  const odds = fightOdds(w, 'solar_station', 5);
+  assert.ok(odds.playerDps > 20, String(odds.playerDps));
+});
+
+test('우회한 퀘스트는 보류하고 본편을 진행한다', () => {
+  const w = seedWorld({ runId: 'park-story', persona: 'mixed_ref' });
+  w.level = 10;
+  w.hullRank = 1;
+  w.credits = 9_000_000;
+  w.earlyFeelClosed = true;
+  w.questCleared = 1;
+  w.completedMissionIds = ['story_001'];
+  w.completedLookup = { story_001: true };
+  w.currentPlanetId = 'eternal_throne';
+  w.currentSystemId = lookupSystemId('eternal_throne') ?? w.currentSystemId;
+  w.lastQuestPlanetId = 'eternal_throne';
+  w.activeQuest = { missionId: 'sandbox_001', title: '관문', objIndex: 0, acceptedDay: 1 };
+  let last = '';
+  for (let i = 0; i < 40; i += 1) {
+    last = stepAction(w, () => 0.99, 'mixed_ref', { allowSides: true }).line;
+    if (w.activeQuest?.missionId.startsWith('story_')) break;
+  }
+  assert.ok(w.parkedQuests.some((q) => q.missionId === 'sandbox_001'), last);
+  assert.ok(w.activeQuest?.missionId.startsWith('story_'), `${w.activeQuest?.missionId ?? 'none'} · ${last}`);
+});
+
+test('궤도 퀘스트를 들고 있으면 안전 구역 조우 보정이 꺼진다', () => {
+  const bare = seedWorld({ runId: 'encounter-bare', persona: 'mixed_ref' });
+  const quiet = transitEncounterChance(bare, 'solar_port');
+  const held = seedWorld({ runId: 'encounter-lock', persona: 'mixed_ref' });
+  held.activeQuest = {
+    missionId: 'sandbox_001',
+    title: '솔라 궤도',
+    objIndex: 0,
+    acceptedDay: 1,
+  };
+  const locked = transitEncounterChance(held, 'solar_port');
+  assert.equal(locked, quiet);
+  assert.ok(locked < quiet + 0.4);
+});
+
+test('FQA 카드 상승은 새 전투 모델 재검수 전까지 멈춘다', () => {
   const card = defaultPlayIntelligence();
   const first = planFqaReview([
     fqaIssue('balance:insolvency', 4),
@@ -1845,8 +1995,9 @@ test('FQA 정기 검토는 첫 증거에서 카드를 올리지 않고 늘어난
     fqaIssue('balance:credit-drain', 11),
     fqaIssue('balance:early-combat', 3),
   ], first.card, first.seenEvidence);
-  assert.equal(again.card.mineCap, 12);
-  assert.equal(again.card.fairFightMin, 0.55);
+  assert.equal(again.card.mineCap, 8);
+  assert.equal(again.card.fairFightMin, 0.5);
+  assert.equal(again.cardChanged, false);
   assert.equal(again.card.cashFloor, 400);
   const held = emptyFqaReviewState();
   held.lastSig = again.signature;
@@ -1903,6 +2054,110 @@ test('보석 지갑은 부족분이 채굴로 안 될 때만 크레딧으로 바
   blocked.gemsSpentDay = 460;
   assert.equal(takeCreditExchange(blocked, 30000), null);
   assert.equal(blocked.gems, 200);
+});
+
+test('구간 함선은 한 단계씩 사고 웨이브 시험 무기는 후보에서 뺀다', () => {
+  const gear = listGearCandidates();
+  assert.equal(gear.some((g) => g.id.includes('_wave')), false);
+  assert.ok(gear.some((g) => g.slot.startsWith('weapon_')));
+  const w = seedWorld({ runId: 'hull-step', persona: 'mixed_ref' });
+  w.currentPlanetId = 'solar_station';
+  w.level = 6;
+  w.credits = 999999;
+  assert.equal(tryBuyNextHull(w), null);
+  w.level = 7;
+  w.credits = 10000;
+  assert.equal(nextHullStep(w)?.price, 250000);
+  assert.equal(needsHullFund(w), true);
+  assert.equal(bestAffordableGear(w), null);
+  assert.equal(tryBuyNextHull(w), null);
+  w.credits = 20000;
+  assert.equal(tryBuyNextHull(w), null);
+  w.credits = 250800;
+  const line = tryBuyNextHull(w);
+  assert.ok(line);
+  assert.match(line, /프리깃 개량형/);
+  assert.match(line, /-250000cr/);
+  assert.equal(w.hullRank, 1);
+  assert.equal(w.credits, 800);
+  const boughtShip = w.hullShipId;
+  assert.ok(boughtShip && !boughtShip.includes('wave'));
+  const hi = winChance(w, 8);
+  w.hullRank = 0;
+  const sameShip = winChance(w, 8);
+  assert.equal(sameShip, hi);
+  w.hullRank = 1;
+  w.hullShipId = boughtShip;
+  w.day = 10;
+  w.effFights = 6;
+  w.effWins = 5;
+  w.effExp = 600;
+  w.effCredits = 900;
+  enableCombatEfficiencyMemory();
+  rememberCombatDay(w);
+  const fp = path.join(learnedDir(), 'combat-efficiency.json');
+  assert.equal(fs.existsSync(fp), true);
+  const saved = JSON.parse(fs.readFileSync(fp, 'utf8')) as { bands: { hull: string; fights: number }[] };
+  assert.equal(saved.bands[0].hull, 'frigate_upgraded');
+  assert.equal(saved.bands[0].fights, 6);
+  const broke = seedWorld({ runId: 'hull-fund', persona: 'mixed_ref' });
+  broke.level = 7;
+  broke.credits = 5000;
+  broke.earlyFeelClosed = true;
+  broke.tick = 0;
+  broke.currentPlanetId = 'arcadia_prime';
+  const ids = listPlayableMissionIds();
+  for (let i = 0; i < ids.length; i += 1) broke.completedLookup[ids[i]] = true;
+  broke.activeQuest = null;
+  const fund = stepAction(broke, () => 0.99, 'mixed_ref', { allowSides: true });
+  assert.ok(
+    fund.kind === 'COMBAT' || fund.kind === 'MINE' || fund.kind === 'TRADE' || fund.kind === 'TRAVEL' || fund.kind === 'LAND',
+    `${fund.kind} ${fund.line}`,
+  );
+  broke.hullRank = 1;
+  broke.hullTierKey = 'frigate_upgraded';
+  broke.hullName = '프리깃 개량형';
+  broke.hullShipId = 'Player_frigate_mk2';
+  broke.hangarShips = 3;
+  broke.currentPlanetId = 'solar_station';
+  broke.currentSystemId = lookupSystemId('solar_station') ?? broke.currentSystemId;
+  const crBefore = broke.credits;
+  const expBefore = broke.totalExp;
+  const effBefore = broke.effExp;
+  const lost = fightHere(broke, () => 0.99, '자금');
+  assert.equal(broke.hullRank, 0);
+  assert.equal(broke.hullTierKey, 'frigate_default');
+  assert.equal(broke.hullShipId, 'Player_npc_red_fleet_1');
+  assert.match(lost.line, /기본 프리깃/);
+  assert.equal(broke.credits, crBefore);
+  assert.equal(broke.totalExp - expBefore, broke.effExp - effBefore);
+  const bare = seedWorld({ runId: 'gun-sum', persona: 'mixed_ref' });
+  bare.level = 7;
+  bare.currentPlanetId = 'solar_station';
+  const unarmed = winChance(bare, 5, 'solar_station');
+  const gun = gear.find((g) => g.slot.startsWith('weapon_'));
+  assert.ok(gun);
+  bare.equipped[gun.slot] = gun.id;
+  const armed = winChance(bare, 5, 'solar_station');
+  assert.ok(armed >= unarmed, `unarmed ${unarmed} armed ${armed}`);
+  const throne = seedWorld({ runId: 'throne', persona: 'mixed_ref' });
+  throne.level = 30;
+  throne.currentPlanetId = 'eternal_throne';
+  const throneBare = winChance(throne, 60, 'eternal_throne');
+  assert.ok(throneBare >= 0 && throneBare <= 0.92);
+  throne.equipped[gun.slot] = gun.id;
+  assert.ok(winChance(throne, 60, 'eternal_throne') >= throneBare);
+  const miner = seedWorld({ runId: 'hangar-mine', persona: 'mixed_ref' });
+  miner.hangarShips = 0;
+  miner.tick = 1;
+  miner.earlyFeelClosed = true;
+  miner.credits = 100;
+  miner.activeQuest = null;
+  for (let i = 0; i < ids.length; i += 1) miner.completedLookup[ids[i]] = true;
+  const mined = earnCredits(miner, () => 0.99);
+  assert.equal(mined.kind, 'MINE');
+  const fuel = hopFuelCredits('arcadia', 'solar_port', 'frigate_default', 1);
+  assert.ok(fuel >= 50);
 });
 
 console.log('play-bot-console tests done');

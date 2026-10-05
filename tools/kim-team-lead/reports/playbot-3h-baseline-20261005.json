@@ -1,0 +1,88 @@
+{
+    "at":  "2026-10-05T11:50:47",
+    "harness":  {
+                    "startedAt":  "2026-10-05T10:54:18",
+                    "pid":  28784,
+                    "privMB":  3,
+                    "alive":  true
+                },
+    "ownerDaemon":  {
+                        "startedAt":  "2026-10-05T10:41:16",
+                        "pid":  23112,
+                        "privMB":  137,
+                        "alive":  true
+                    },
+    "fqaLoop":  {
+                    "startedAt":  "2026-10-04T17:43:16",
+                    "pid":  12488,
+                    "privMB":  3,
+                    "alive":  true
+                },
+    "watchdog":  {
+                     "startedAt":  "2026-10-05T04:01:22",
+                     "pid":  17240,
+                     "privMB":  240,
+                     "alive":  true
+                 },
+    "device":  "device",
+    "appPid":  "32281",
+    "run":  {
+                "id":  "pb-2026-10-05T0154-mixed_ref-c1",
+                "day":  397,
+                "annex":  0,
+                "level":  25,
+                "quest":  65,
+                "credits":  122260,
+                "updatedAt":  "2026-10-05T02:50:23.036Z"
+            },
+    "stall":  {
+                  "restarts":  59,
+                  "lastLevel":  28,
+                  "lastReason":  "section",
+                  "lastAt":  "2026-10-05T02:26:36.228Z",
+                  "lastQuest":  61
+              },
+    "learn":  {
+                  "generation":  65801,
+                  "cycleSig":  "P2|BLUE_BELOW_RED,COMBAT_METHOD_ABSENT,DESIGN_BLANK,INDEPENDENT_ZERO,MARKER_TRAVEL_ONLY,QUEST_COUNT_NOT_CLOSE,READ_OFFSET_BEFORE_AWAKE",
+                  "cycleUpdatedAt":  "2026-10-05T02:43:32.100Z",
+                  "policyUpdatedAt":  "2026-10-05T02:46:25.833Z",
+                  "notes":  [
+                                "실기델타 owner-auto-2026-10-05T0200-1 · 신규순서 없음 · 전투방식 없음"
+                            ]
+              },
+    "human":  {
+                  "playVerbLines":  0,
+                  "deltaKinds":  [
+                                     "combat",
+                                     "travel"
+                                 ],
+                  "recentCloses":  [
+                                       "[2026-10-05T01:26:06.492Z] close owner-auto-2026-10-05T0105 reason=idle markers=33 lines=185 userActions=0 kind=profiler",
+                                       "[2026-10-05T02:00:14.312Z] close owner-auto-2026-10-05T0126 reason=app_pid markers=67 lines=366 userActions=8 kind=human",
+                                       "[2026-10-05T02:46:22.187Z] close owner-auto-2026-10-05T0200 reason=idle markers=90 lines=455 userActions=8 kind=human"
+                                   ],
+                  "memProfileLines":  0,
+                  "lastSessionLog":  "mud.log",
+                  "deltaConsumed":  true,
+                  "recentImports":  [
+                                        "[2026-10-04T23:51:10.860Z] import owner-auto-2026-10-04T2313 status=0 human_seed=D:\\arcfire20260607\\tools\\play-bot-console\\logs\\learned\\human-seed-v0.json sessions=1 human=1 beats=3 ",
+                                        "[2026-10-05T02:00:17.019Z] import owner-auto-2026-10-05T0126 status=0 human_seed=D:\\arcfire20260607\\tools\\play-bot-console\\logs\\learned\\human-seed-v0.json sessions=1 human=1 beats=3 ",
+                                        "[2026-10-05T02:46:25.402Z] import owner-auto-2026-10-05T0200 status=0 human_seed=D:\\arcfire20260607\\tools\\play-bot-console\\logs\\learned\\human-seed-v0.json sessions=1 human=1 beats=6 "
+                                    ],
+                  "seedSessions":  32,
+                  "deltaSession":  "owner-auto-2026-10-05T0200-1"
+              },
+    "fqa":  {
+                "reviews":  26,
+                "evidence":  {
+                                 "balance:credit-drain":  16290,
+                                 "balance:insolvency":  1,
+                                 "balance:early-combat":  5,
+                                 "balance:early-hangar-wipe":  2,
+                                 "balance:opening-insolvency":  2,
+                                 "section:quest-end-before-endgame":  1219
+                             },
+                "consultPending":  true
+            }
+}

@@ -6,7 +6,6 @@
  * 폭을 넘는 줄은 시각 행으로 접고, 3행을 넘는 페이지는 만들지 않는다.
  */
 
-const MIN_LINES_PER_PAGE = 2;
 const ASCII_UNIT = 0.62;
 const SPACE_UNIT = 0.35;
 
@@ -107,7 +106,7 @@ export function isNarrativeDialogContextBreak(line: string): boolean {
   return false;
 }
 
-/** 라틴 대사는 3칸을 채운다. 한글 2+2·문장경계 조기넘김은 유지. */
+/** 라틴·한글 모두 3칸까지 채운다. 넘치면 다음 페이지. */
 export function isLatinNarrativeDialogScript(visualLines: string[]): boolean {
   let wide = 0;
   let latin = 0;
@@ -135,27 +134,11 @@ export function countNarrativeDialogVisualLines(chunk: string, charsPerLine: num
 function packVisualLines(visualLines: string[], maxLines: number, joinWith: string): string[] {
   if (visualLines.length === 0) return [''];
   const safeMax = Math.max(1, maxLines | 0);
-  const fillToMax = isLatinNarrativeDialogScript(visualLines);
   const chunks: string[] = [];
   let i = 0;
   while (i < visualLines.length) {
     const remaining = visualLines.length - i;
-    if (remaining <= safeMax) {
-      chunks.push(visualLines.slice(i).join(joinWith));
-      break;
-    }
-
-    let take = safeMax;
-    if (!fillToMax && safeMax >= MIN_LINES_PER_PAGE) {
-      const endAtMin = isNarrativeDialogContextBreak(visualLines[i + MIN_LINES_PER_PAGE - 1] ?? '');
-      const endAtMax = isNarrativeDialogContextBreak(visualLines[i + safeMax - 1] ?? '');
-      if (remaining === safeMax + 1 && !endAtMax) {
-        take = MIN_LINES_PER_PAGE;
-      } else if (endAtMin && !endAtMax) {
-        take = MIN_LINES_PER_PAGE;
-      }
-    }
-
+    const take = Math.min(safeMax, remaining);
     chunks.push(visualLines.slice(i, i + take).join(joinWith));
     i += take;
   }

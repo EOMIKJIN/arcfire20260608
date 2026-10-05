@@ -1,3 +1,4 @@
+import { LevelBandTargets_FROM_BALANCE_CSV } from '../../../src/data/balance/generated/csvLevelBandTargets';
 import type { LearningState } from './learn';
 import type { PolicyFile } from './policy';
 import type { AnalyzeFinding, KpiSnapshot } from './types';
@@ -44,6 +45,40 @@ export type PlaybotStatusLite = {
 
 export type DailyLearningVerdict = 'OK' | 'WARN' | 'FAIL';
 
+/**
+ * 학습 건강 — 프로세스가 살아 있어도 학습이 안 도는 상태를 판정에 넣는다(2026-10-05).
+ * 정체 재시작이 잦으면 1일 델타는 서로 다른 세계 비교라 의미가 없다.
+ */
+export type DailyLearningHealth = {
+  stallRestartsTotal: number;
+  stallRestarts24h: number;
+  ceilingLevel: number;
+  ceilingQuest: number;
+  /** 최근 정체 기록 전부에서 편입·개척·독립국이 0 */
+  endgameZero: boolean;
+  fqaConsultPending: boolean;
+  fqaReviews: number;
+  /** 최신 실기 델타가 덮은 행동 종류 */
+  humanDeltaKinds: string[];
+};
+
+/** 하루 3회 이상 정체 재시작 = 같은 천장 반복으로 본다 */
+export const STALL_RESTARTS_WARN_24H = 3;
+
+export function learningHealthWarnings(h: DailyLearningHealth | null | undefined): string[] {
+  if (!h) return [];
+  const out: string[] = [];
+  if (h.stallRestarts24h >= STALL_RESTARTS_WARN_24H) {
+    out.push(`정체 재시작 24시간 ${h.stallRestarts24h}회 (누적 ${h.stallRestartsTotal}) · 천장 L${h.ceilingLevel}·퀘 ${h.ceilingQuest}`);
+  }
+  if (h.endgameZero && h.stallRestartsTotal > 0) out.push('엔드게임(편입·개척·독립국) 0');
+  if (h.fqaConsultPending) out.push(`FQA 협의 미응답 (검토 ${h.fqaReviews}회)`);
+  if (h.humanDeltaKinds.length > 0 && h.humanDeltaKinds.every((k) => k === 'travel')) {
+    out.push('실기 델타가 이동만 — 사람 기반 학습 입력 부족');
+  }
+  return out;
+}
+
 export type DailyLearningReport = {
   verdict: DailyLearningVerdict;
   markdown: string;
@@ -62,6 +97,26 @@ function delta(cur: number, prev: number | undefined): string {
   const d = cur - prev;
   const sign = d > 0 ? '+' : '';
   return `${cur} (${sign}${d})`;
+}
+
+/** 벽시계 목표와 가상일 관측을 같이 보여 자금 공백을 숨기지 않는다. */
+export function levelBandPaceLine(kpi: Partial<KpiSnapshot> | null | undefined): string {
+  const level = Number(kpi?.level) || 1;
+  const day = Math.max(0, Number(kpi?.day) || 0);
+  const credits = Number(kpi?.credits) || 0;
+  // 생성 TS가 행마다 리터럴 타입이라 첫 행 타입으로 고정되면 대입 불가(TS2322) — 행 유니온으로 넓힌다
+  let band: (typeof LevelBandTargets_FROM_BALANCE_CSV)[number] | undefined = LevelBandTargets_FROM_BALANCE_CSV[0];
+  for (let i = 0; i < LevelBandTargets_FROM_BALANCE_CSV.length; i += 1) {
+    const row = LevelBandTargets_FROM_BALANCE_CSV[i];
+    if (level >= Number(row.minLevel) && level <= Number(row.maxLevel)) band = row;
+  }
+  const perDay = day > 0 ? Math.round(credits / day) : credits;
+  const gap = Number(kpi?.hullFundGap) || 0;
+  const hull = kpi?.hullTierKey
+    ? `${kpi.hullTierKey} ${kpi.hullShipId ?? ''}`.trim()
+    : '함선 미기록';
+  const short = gap > 0 ? `다음 함선까지 ${gap}cr 부족` : '다음 함선 자금 공백 없음';
+  return `구간목표 ${band?.bandId ?? '-'} ${band?.targetMinutesPerLevel ?? '-'}분/레벨 · ${band?.targetCreditsPerHour ?? '-'}cr/시간. 관측 L${level} 가상 ${day}일 잔액 ${credits}cr (가상일당 ${perDay}cr). ${hull}. ${short}. 목표표는 벽시계이고 관측은 가상일이라 단위가 다르다. 부족을 가격 할인으로 메우지 않는다.`;
 }
 
 function topCodes(counts: Record<string, number>, cap: number): string[] {
@@ -109,10 +164,12 @@ function decideVerdict(input: {
   dLevel: number;
   staleHours: number;
   policyStuck?: boolean;
+  healthWarnings?: readonly string[];
 }): DailyLearningVerdict {
   if (!input.hasLearning && !input.botAlive) return 'FAIL';
   if (input.staleHours >= 8 && !input.botAlive) return 'FAIL';
   if (input.policyStuck) return 'WARN';
+  if ((input.healthWarnings?.length ?? 0) > 0) return 'WARN';
   const risk = input.findings.some((f) => f.severity === 'risk');
   const plateau = input.findings.some((f) => f.code === 'QUEST_PLATEAU' || f.code === 'QUEST_STUCK');
   if (risk || (plateau && input.dQuest <= 0 && input.dLevel <= 0)) return 'WARN';
@@ -130,7 +187,9 @@ export function buildDailyLearningReport(input: {
   nowIso: string;
   dateKey: string;
   humanSeedLine?: string;
+  learningHealth?: DailyLearningHealth | null;
 }): DailyLearningReport {
+  const healthWarnings = learningHealthWarnings(input.learningHealth);
   const kpi = kpiFromStatus(input.status, input.learning);
   const prevK = input.prev?.kpi;
   const dQuest = kpi.questCleared - (prevK?.questCleared ?? kpi.questCleared);
@@ -154,6 +213,7 @@ export function buildDailyLearningReport(input: {
     dLevel: prevK ? dLevel : (last && first ? last.level - first.level : 0),
     staleHours,
     policyStuck,
+    healthWarnings,
   });
 
   const snapshot: DailySnapshot = {
@@ -168,6 +228,8 @@ export function buildDailyLearningReport(input: {
   const quest = input.status?.quest;
   const rec = verdict === 'FAIL'
     ? '학습 데이터·콘솔 상태를 확인하고 `npm run playbot:ensure-daily-18` 후 콘솔 재기동'
+    : healthWarnings.length > 0
+      ? '학습 건강 경고 — 정체 원인(봇 동사 미사용 vs 퀘스트 공급)·FQA 협의를 김팀장·김클로드가 처리'
     : verdict === 'WARN'
       ? '퀘스트 정체·HOLD·전투열세를 ANALYZE 코드 기준으로 다음날 정책 바닥값 유지'
       : '1일 학습 추이 정상 — 18:00 스케줄 유지';
@@ -210,6 +272,17 @@ export function buildDailyLearningReport(input: {
     `- 행성 ${input.status?.planet ?? '-'} · 퀘스트 ${quest?.missionId ?? '-'}#${(quest?.objIndex ?? 0) + 1} · HOLD ${input.status?.lastHold || '-'}`,
     `- 정책 generation ${input.policy?.generation ?? 0} · 적응주기 ${input.policy?.adaptEveryDays ?? '-'}일 · 고착 ${policyStuck ? 'YES' : 'NO'}`,
     `- ${input.humanSeedLine ?? '대표님 시드 없음'}`,
+    '',
+    '## 성장 속도 대 구간 목표',
+    '',
+    levelBandPaceLine(input.status?.kpi),
+    '',
+    '## 학습 건강',
+    '',
+    ...(healthWarnings.length ? healthWarnings.map((w) => `- ⚠ ${w}`) : ['- 경고 없음']),
+    ...(input.learningHealth?.stallRestarts24h
+      ? ['', '> 정체 재시작이 있으면 아래 1일 델타는 서로 다른 세계 비교다.']
+      : []),
     '',
     '## 벽시계 1일 델타 (직전 18:00 스냅샷 대비)',
     '',
@@ -260,6 +333,7 @@ export function buildDailyLearningReport(input: {
     `| 레벨·퀘 | L${kpi.level} · 퀘 ${prevK ? delta(kpi.questCleared, prevK.questCleared) : kpi.questCleared} |`,
     `| 스킬·장비·개발 | ${kpi.skills} / ${kpi.gearScore} / ${kpi.devSum} |`,
     `| ANALYZE | ${findings.map((f) => f.code).join(', ') || '-'} |`,
+    `| 학습 건강 | ${healthWarnings.join(' · ') || '경고 없음'} |`,
     `| 상세 | \`tools/play-bot-console/logs/DAILY_18_PLAYBOT_LEARNING_LATEST.md\` |`,
     '',
     '## 권장 (김팀장 1안)',

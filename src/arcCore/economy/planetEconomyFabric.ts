@@ -10,6 +10,7 @@ import type {
   PlanetEconomyFabricEvent,
 } from '../../store/planetCoreMetricTypes';
 import { planetAttackKstDayKey } from '../planetAttack/planetAttackKstDayKey';
+import { emitPlayVerb } from '../../game/devPlayVerbLog';
 
 const MAX_RECENT_EVENTS = 24;
 
@@ -163,6 +164,7 @@ export function recordPlanetEconomyPlayerTrade(
   const units = Math.max(0, Math.floor(qty));
   const gross = Math.max(0, Math.floor(grossCredits));
   if (!planetId || units <= 0 || gross <= 0) return;
+  emitPlayVerb('trade', `${side}:${planetId}`);
 
   patchPlanetFabricDetail(planetId, (detail) => {
     const next: PlanetEconomyFabricDetail = {

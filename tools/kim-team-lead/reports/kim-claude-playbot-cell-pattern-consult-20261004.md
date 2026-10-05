@@ -11,7 +11,7 @@ kind=CONSULT (코드 변경 0 · 커밋 금지 · 하니스 재시작 안 함)
   tools/play-bot-console/src/humanSeed.ts
   tools/play-bot-console/src/policy.ts
   tools/play-bot-console/logs/learned/learn-cycle-latest.json
-  docs/PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md
+  docs/playbot/PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md
 ```
 
 이 답은 브리프 초안을 그대로 받지 않았다. 인용 파일을 직접 읽고 판정했다. 파일은 수정하지 않았다(`kim-claude-handoff-pending.md`·`src/`·`app/`·`tables/`·`logs/` 무변경, 하니스 미중단).

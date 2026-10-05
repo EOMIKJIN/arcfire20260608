@@ -2,7 +2,7 @@
 
 ```text
 task_id=review-quest-ally-coop-protect-design-20261004
-대상=docs/QUEST_ALLY_COOP_PROTECT_OUTCOME_DESIGN.md (김팀장 2026-10-03 · 설계만)
+대상=docs/quest/QUEST_ALLY_COOP_PROTECT_OUTCOME_DESIGN.md (김팀장 2026-10-03 · 설계만)
 kind=REVIEW (코드 변경 0)
 판정=PARTIAL — 현황 진단은 정확. 구현 전 설계 보완 2건(P0) 필요
 ```

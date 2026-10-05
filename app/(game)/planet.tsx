@@ -118,6 +118,12 @@ import {
   tryPresentScanToMainQuestDialog,
 } from '../../src/game/ingameDialog';
 import { notifyStellaHubTutorial } from '../../src/game/hubTutorial/stellaHubTutorialGuide';
+import {
+  getTutorialOpeningRaidGateOpen,
+  rearmTutorialOpeningRaidAfterDefeat,
+  subscribeTutorialOpeningRaidGate,
+} from '../../src/game/hubTutorial/tutorialOpeningRaid';
+import { useArcOverlayStore } from '../../src/ui/overlay/arcOverlayStore';
 import { hasAnyActiveMissionBundle } from '../../src/missions/missionActiveBundles';
 import { applyDefeatEnemyMissionObjectives } from '../../src/missions/applyDefeatEnemyMissionObjectives';
 import {
@@ -293,6 +299,10 @@ import { CombatEndHoldVeil } from '../../src/components/combat/CombatEndHoldVeil
 import { useWaveDefenseStore } from '../../src/game/waveDefense/waveDefenseStore';
 import { useWaveDefenseController } from '../../src/game/waveDefense/useWaveDefenseController';
 import { resolvePlanetWaveDefenseMaxWaves } from '../../src/game/waveDefense/waveDefenseFleet';
+import { shouldApplyShipSinkForDirectCombat } from '../../src/game/waveDefense/directWaveCombatPriority';
+import { resolvePlayerWaveDefeatDisposition } from '../../src/game/waveDefense/playerWaveDefeatDisposition';
+import { scheduleReleasePlanetUniqueDeedLocks } from '../../src/firebase/planetUniqueDeedLock';
+import { resolvePlayerHomePlanetId } from '../../src/game/playerSurvivalPod';
 import { presentSettingsOverlay, presentBmShopOverlay, presentPlanetOwnershipRosterOverlay } from '../../src/ui/overlay/showArcOverlay';
 import { runCombatEndOutcomeFlow } from '../../src/game/combat/runCombatEndOutcomeFlow';
 import {
@@ -600,8 +610,8 @@ export default function PlanetScreen() {
       const path = String(href);
       const pid = usePlayerStore.getState().player?.currentPlanetId ?? resolvedPlanetId ?? null;
       if (path.includes('/trade')) notifyStellaHubTutorial('trade_opened', pid);
-      else if (path.includes('/shipyard')) notifyStellaHubTutorial('shipyard_opened', pid);
       else if (path.includes('/bar')) notifyStellaHubTutorial('bar_opened', pid);
+      // 조선소 B1은 여기서 열면 바로 아래 이탈 abort가 닫는다. shipyard 준비 후 연다.
       beginPlanetHubSuspendingNavigation(() => router.push(href));
     },
     [beginPlanetHubSuspendingNavigation, resolvedPlanetId],
@@ -746,7 +756,12 @@ export default function PlanetScreen() {
     resolveQuestCombatLock(missionProgresses, activeMissionId),
     planet?.id,
   );
-  /** 퀘스트 hub_orbit · 웨이브 세션 · 상주 함장 허브 교전 게이트. */
+  const tutorialOpeningRaidOpen = useSyncExternalStore(
+    subscribeTutorialOpeningRaidGate,
+    getTutorialOpeningRaidGateOpen,
+    getTutorialOpeningRaidGateOpen,
+  );
+  /** 퀘스트 hub_orbit · 웨이브 세션 · 상주 함장 · 오프닝 습격 게이트. */
   const enemyFleetEntered = Boolean(
     player
     && planet
@@ -754,6 +769,7 @@ export default function PlanetScreen() {
     && isPlayerShipCombatCapable(player.ship)
     && evaluateHubMainStageCombatEntered({
       hubOrbitHostileEntered: hasEnemyFleetEnteredPlanetOrbit(planet.id, system.id) || questHubOrbitActive,
+      tutorialOpeningRaidActive: tutorialOpeningRaidOpen,
       mainStageCombatEnabled: resolveMainStageCombatEnabled(planet.id),
       cooldownActive: isWaveCombatCooldownActive(planet.id),
       territorialTurnPending: territorialTurnPendingHere,
@@ -1223,6 +1239,31 @@ export default function PlanetScreen() {
     onDailyAllowanceExhausted: handleMiningDailyAllowanceExhausted,
   });
   const ingameDialogActive = useIngameDialogStore((s) => s.session != null);
+  const waveResultOverlayOpen = useArcOverlayStore((s) => {
+    const stack = s.stack;
+    for (let i = 0; i < stack.length; i += 1) {
+      if (stack[i]?.kind === 'waveResult') return true;
+    }
+    return false;
+  });
+  useEffect(() => {
+    if (
+      capitalCombatOrbitActive
+      || battleReadyVisible
+      || hubCombatEndHold
+      || waveResultOverlayOpen
+      || ingameDialogActive
+    ) {
+      return;
+    }
+    rearmTutorialOpeningRaidAfterDefeat();
+  }, [
+    capitalCombatOrbitActive,
+    battleReadyVisible,
+    hubCombatEndHold,
+    waveResultOverlayOpen,
+    ingameDialogActive,
+  ]);
 
   /** 웨이브 디펜스 전체 종료 → 오퍼레이터 종료 대사 1회 · RED 점유 행성이면 승리=중립화 / 패배=퇴거 */
   const waveEndDialogShownRef = useRef(false);
@@ -1283,26 +1324,31 @@ export default function PlanetScreen() {
         });
       }
     }
-    // 분쟁 차례 웨이브면 승/패 모두 패스 완료 → 다음 순차. 플레이어 웨이브는 블루 점령을 쓰지 않음.
+    // 분쟁 차례 웨이브면 승/패 모두 패스 완료 → 다음 순차.
+    // 승리의 블루 유지는 점유를 쓰지 않는다. 크림슨 공격 패배의 RED 기록은 결과창이 닫힌 뒤.
     // 관측만 기록 — 주둔·승리금은 applyOnPlayerWave=false.
+    const pendingSnap = endedPlanetId ? getTerritorialPlayerWavePending() : null;
+    const territorialAttack = Boolean(pendingSnap && pendingSnap.planetId === endedPlanetId);
+    const territorialAttackLoss = territorialAttack && endedOutcome === 'lose';
+    const passDecision = waveHoldChanged || territorialAttackLoss ? 'battle' : 'status_quo';
+    const passHoldChanged = waveHoldChanged || territorialAttackLoss;
     if (endedPlanetId) {
       applyTheaterNpcPassSideEffects({
         planetId: endedPlanetId,
-        decision: waveHoldChanged ? 'battle' : 'status_quo',
-        holdChanged: waveHoldChanged,
+        decision: passDecision,
+        holdChanged: passHoldChanged,
         source: 'player_wave',
       });
-      const pendingSnap = getTerritorialPlayerWavePending();
       void completeTerritorialPassAfterPlayerWave(endedPlanetId).then((ok) => {
         if (!ok || !pendingSnap || pendingSnap.planetId !== endedPlanetId) return;
         publishTerritorialPassLearning({
           planetId: pendingSnap.planetId,
           systemId: pendingSnap.systemId,
           campaignGroup: pendingSnap.campaignGroup,
-          decision: waveHoldChanged ? 'battle' : 'status_quo',
-          holdChanged: waveHoldChanged,
+          decision: passDecision,
+          holdChanged: passHoldChanged,
           previousSide: wavePreviousSide ?? 'unknown',
-          newSide: waveNewSide ?? 'unknown',
+          newSide: territorialAttackLoss ? 'red' : (waveNewSide ?? 'unknown'),
           source: 'player_wave',
           attackerWon: endedOutcome === 'win',
         });
@@ -1311,21 +1357,68 @@ export default function PlanetScreen() {
     const presentWaveEndResult = () => {
       const s = useWaveDefenseStore.getState();
       const expEarned = s.expEarned;
-      const sunk = consumeCombatPlayerShipSinkPending();
+      const outcome = (s.outcome ?? endedOutcome) === 'lose' ? 'lose' : 'win';
+      const rawSunk = consumeCombatPlayerShipSinkPending();
+      const sunk = shouldApplyShipSinkForDirectCombat(outcome, rawSunk);
+      const defeat = resolvePlayerWaveDefeatDisposition({
+        outcome,
+        territorialAttack,
+        wasRedOccupied,
+        sunk,
+      });
       runCombatEndOutcomeFlow({
         result: {
           venue: 'wave',
-          outcome: s.outcome ?? 'win',
+          outcome,
           wavesCleared: s.wavesCleared,
           totalWaves: resolvePlanetWaveDefenseMaxWaves(endedPlanetId),
           expEarned,
         },
         onResultClosed: () => {
           if (expEarned > 0) usePlayerStore.getState().addExp(expEarned);
+          // 기함을 먼저 모항으로 옮긴 뒤 점유를 기록한다. 적성으로 바뀐 행성에 서 있으면 퇴거가 겹친다.
+          if (defeat.destroyShip) {
+            void usePlayerStore.getState().applyCapitalShipDestruction();
+          } else if (defeat.sendHome) {
+            const player = usePlayerStore.getState().player;
+            if (player) {
+              const homeId = resolvePlayerHomePlanetId(player);
+              usePlayerStore.getState().landOnPlanet(homeId);
+              void usePlayerStore.getState().persist();
+            }
+          }
+          if (defeat.occupyCrimson && endedPlanetId && endedSystemId) {
+            const result = useClanWarFoundationStore.getState().applyArcCoreTerritorialHold({
+              planetId: endedPlanetId,
+              systemId: endedSystemId,
+              factionSide: 'RED',
+              operationMeta: {
+                source: 'player_wave_defense_loss',
+                attackerSide: 'RED',
+              },
+            });
+            scheduleReleasePlanetUniqueDeedLocks([endedPlanetId]);
+            void promoteDynamicContestedZone({
+              planetId: endedPlanetId,
+              systemId: endedSystemId,
+              source: 'player_wave_defense_loss',
+            });
+            if (result.changed) {
+              const seed = getPlanetOccupationSeedRow(endedPlanetId);
+              showTerritorialOccupationChangeAlert({
+                planetLabelKo: seed?.alertLabelKo?.trim() || planet?.name?.trim() || endedPlanetId,
+                planetLabelEn: seed?.alertLabelEn?.trim() || endedPlanetId,
+                previousSide: result.previousSide,
+                newSide: result.newSide,
+                decision: 'battle',
+                attackerWon: false,
+              });
+            }
+          }
           useWaveDefenseStore.getState().reset();
         },
         notice: sunk ? resolveCombatShipDestroyedNotice() : null,
-        applyCapitalShipDestruction: sunk,
+        applyCapitalShipDestruction: sunk && !defeat.sendHome,
         // RED 퇴거 — 미션 대사는 건너뛰고 레벨업(4순위) 뒤에 월드맵으로
         shouldSkipMissionClear: () => {
           const pid = usePlayerStore.getState().player?.currentPlanetId?.trim() ?? '';

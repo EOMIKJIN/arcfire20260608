@@ -20,7 +20,7 @@ free_tier_path=tools/kim-team-lead/reports/READY_ARC_CORE_CHAT_FREE_TIER_NL.md
 | **대체** | **Free-tier NL** (`READY_ARC_CORE_CHAT_FREE_TIER_NL.md`) |
 | 재개 조건 | 대표님 **「종량 요금 허용」** + `ARC_CORE_CHAT_METERED_ACK=1` |
 
-정본: `ARC_CORE_CHAT_ZERO_BILL_REDESIGN.md` · `docs/대화형_아크코어_구현.md` §12-A
+정본: `ARC_CORE_CHAT_ZERO_BILL_REDESIGN.md` · `docs/dialog/대화형_아크코어_구현.md` §12-A
 
 ---
 

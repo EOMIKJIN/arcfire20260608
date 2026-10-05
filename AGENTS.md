@@ -26,7 +26,7 @@ Skia/STAGE/틱/persist/부트/**memo·cache·store 순환** 전부 해당 · **1
 
 - **`postBootSettled`**: `bootReady` 직후 즉시 true (배치 완료 신호 아님)
 - 정본 규칙 상세: `.cursor/rules/arcfire-main-lead-agent.mdc` §시작 화면 버튼 최소 활성
-- 부트 방향: `docs/BOOT_INIT_OPTIMIZATION_ROADMAP.md`
+- 부트 방향: `docs/tech/BOOT_INIT_OPTIMIZATION_ROADMAP.md`
 
 ### Cursor 훅 — 개발 프로세스 상시 강제 (2026-07-04~)
 
@@ -86,18 +86,18 @@ npm run audit:mem-post-dev-recheck    # 개발 반영 후 handoff·status 갱신
 
 handoff `PENDING` 시 김팀장 sessionStart 훅이 검수 리마인드.
 
-- **협업 워크플로**: `docs/KIM_TEAM_ECONOMY_WORKFLOW.md`
+- **협업 워크플로**: `docs/team/KIM_TEAM_ECONOMY_WORKFLOW.md`
 - **김팀장 일일 검수**: `npm run audit:team-lead:daily` → `tools/kim-team-lead/reports/daily-review-latest.md`
 - **김경제 handoff**: `tools/kim-team-lead/reports/kim-economy-handoff.md` — **`## [관측]`** · retention FAIL → **김팀장 본 세션 코드 반영**
 - **프로파일러**: `tools/memory-profiler/` · `npm run audit:memory:retention` · `npm run audit:memory:session-floor` (최근 7일 STAIRCASE만 FAIL · `audit:memory:all` 미포함)
-- **김팀장 규칙**: `.cursor/rules/arcfire-main-lead-agent.mdc` · `docs/KIM_TEAM_LEAD_AGENT.md`
-- **김경제 규칙**: `.cursor/rules/arcfire-economy-specialist-agent.mdc` · `docs/KIM_ECONOMY_AGENT.md`
+- **김팀장 규칙**: `.cursor/rules/arcfire-main-lead-agent.mdc` · `docs/team/KIM_TEAM_LEAD_AGENT.md`
+- **김경제 규칙**: `.cursor/rules/arcfire-economy-specialist-agent.mdc` · `docs/team/KIM_ECONOMY_AGENT.md`
 
 ## 장기 메모리·안정화 감시 (상시 · 개발과 독립) — **기본 장기앱 실행 테스트 (2026-06-19)**
 
 > **`ensure-always-on-watch-stack.ps1`** 멱등 가동 — **앱 무영향**: PC(adb) 전용 · `MONITOR_APP_ZERO_IMPACT.md`
 > 이상 시 **코드 자동픽스 핸드오프**(incident·retention) → 김팀장 P0 · 앱 force-stop은 `monitor-paused.flag` 없을 때만(throttle)
-> 정본: `tools/long-run-monitor/logs/WATCH_README.md` · `docs/KIM_ECONOMY_AGENT.md`
+> 정본: `tools/long-run-monitor/logs/WATCH_README.md` · `docs/team/KIM_ECONOMY_AGENT.md`
 
 ```powershell
 npm run monitor:ensure-always-on   # watch-30m + retention(60m) + 08:00 보고 (멱등)
@@ -155,20 +155,20 @@ Cursor 및 기타 코딩 에이전트는 **`.cursor/rules/Arcfire_Master_Spec_v4
 
 - **아크코어**: `src/arcCore` — **세계 전체를 구축·유지하는 근원 마스터 AI(최종 시스템 축)**로 둔다. 인간 플레이 계정은 그 위에서 플레이·경험·행성 환경 상호작용을 한다. 신규 AI 시계·틱·세계 규칙은 가능하면 **`arcCoreHub`·명령 버스·서브코어**로 수렴시키고, 화면 전용 백그라운드 루프를 남발하지 않는다.
 - **아크코어 일일 운영**: 벽시계 **24h 관측** 후 **하루 1회**(기본 12:00 `Asia/Seoul`) `ArcCoreDailyOpsSubCore`가 행성 코어·경제·AABS·성계 개방을 일괄 재배치한다. 정책: `tables/balance/arc_core_daily_ops_policy.csv`. 궤도 수송·연출은 실시간 틱 유지.
-- **세축 체감 (2026-09-17)**: 멀티플레이 체감 코드 정본 = **반응 · 잔상 · 세계 변화**. 투자자 8종 카탈로그 직접 구현 금지. 정본 `docs/세축_반응_잔상_세계변화_설계.md`.
-- **아크코어 엔티티 대화(전역 핵심 · 2026-08-16 잠금)**: 플레이어와 이어 가는 대화 채널이 **게임 전반 핵심**. **1차 통신**(`NarrativeDialogRow`)으로 연락받은 뒤 **2차 메신저**(`presentArcCoreBackchannel`)로 이어 말한다. NPC(NL 없음)는 1차만. 허브·웨이브 `combat_end`는 실기. **이중 입 D1–D5**: 일상 기본 입=오퍼레이터(스텔라·동료, 플레이어·스텔리움 보호), 본체=근원체(적의 입·크림슨 정복). 창 1개 · 턴당 LLM 1. 정본 `docs/ARC_CORE_DUAL_MOUTH_OPERATOR_DESIGN.md` v0.4. **스텔라 현장 메모(1안)**: 활성 의뢰·본편 세부는 동료 입. 근원체는 정체·12좌·리빌·운명. 표=`stella_quest_*.csv` · 정본 `docs/STELLA_QUEST_FIELD_NOTE_v0.1.md`. 고도화는 **일상 대화가 기본**, 시스템 연동은 그 위(§0-H). 메신저 입구는 `presentArcCoreBackchannel`만. 정본: `docs/CONVERSATION_TWO_GATE_DESIGN.md` · `docs/대화형_아크코어_구현.md` §0-D·§0-H·§0-I. 타이틀 버튼에 채널 대기 금지.
-- **아크코어 GM 기반(2026-08-22)**: 입은 스토리 비트·의도로 대화를 이끈다. 수락·클리어·신설은 `missionStore`/바/NPC. 정본: `docs/대화형_아크코어_구현.md` §0-G. 입 write · 대화 퀘스트 생성 금지. 일상 기본(§0-H)보다 스토리 줄기를 일상 말에 끼워 넣지 않는다.
+- **세축 체감 (2026-09-17)**: 멀티플레이 체감 코드 정본 = **반응 · 잔상 · 세계 변화**. 투자자 8종 카탈로그 직접 구현 금지. 정본 `docs/arc-core/세축_반응_잔상_세계변화_설계.md`.
+- **아크코어 엔티티 대화(전역 핵심 · 2026-08-16 잠금)**: 플레이어와 이어 가는 대화 채널이 **게임 전반 핵심**. **1차 통신**(`NarrativeDialogRow`)으로 연락받은 뒤 **2차 메신저**(`presentArcCoreBackchannel`)로 이어 말한다. NPC(NL 없음)는 1차만. 허브·웨이브 `combat_end`는 실기. **이중 입 D1–D5**: 일상 기본 입=오퍼레이터(스텔라·동료, 플레이어·스텔리움 보호), 본체=근원체(적의 입·크림슨 정복). 창 1개 · 턴당 LLM 1. 정본 `docs/dialog/ARC_CORE_DUAL_MOUTH_OPERATOR_DESIGN.md` v0.4. **스텔라 현장 메모(1안)**: 활성 의뢰·본편 세부는 동료 입. 근원체는 정체·12좌·리빌·운명. 표=`stella_quest_*.csv` · 정본 `docs/quest/STELLA_QUEST_FIELD_NOTE_v0.1.md`. 고도화는 **일상 대화가 기본**, 시스템 연동은 그 위(§0-H). 메신저 입구는 `presentArcCoreBackchannel`만. 정본: `docs/dialog/CONVERSATION_TWO_GATE_DESIGN.md` · `docs/dialog/대화형_아크코어_구현.md` §0-D·§0-H·§0-I. 타이틀 버튼에 채널 대기 금지.
+- **아크코어 GM 기반(2026-08-22)**: 입은 스토리 비트·의도로 대화를 이끈다. 수락·클리어·신설은 `missionStore`/바/NPC. 정본: `docs/dialog/대화형_아크코어_구현.md` §0-G. 입 write · 대화 퀘스트 생성 금지. 일상 기본(§0-H)보다 스토리 줄기를 일상 말에 끼워 넣지 않는다.
 - **아크코어 문장 LLM (ZERO_BILL · 2026-09-08)**: 본선 후보 = **Groq Free + Lambda 중계** (`VENDOR=free_tier`). Bedrock 종량 LIVE 금지. 배포·URL·`LIVE=true` 전엔 로컬 G3. 운영: `ARC_CORE_CHAT_GROQ_FREE_LAMBDA_OPS.md`. 클라에 SDK/키 금지.
 - **경제·무역 생태계 참고**: `docs/ECONOMY_TRADE_ECOSYSTEM_REFERENCE.md` — 무역소 카탈로그·tg_* 교역·zone 진열·17/21 허브·갭 목록(2026-06-12 스냅샷).
 - **Macro economy SIM**: `npm run sim:economy` → `docs/ECONOMY_SIM_DAILY_OPS.md` — delta ingest → 일일 배치 overlay.
-- **인간형 플레이 학습**: 정본 `docs/PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md` v1.1 — 최종 산출은 PlaySession 코퍼스. 가상일 KPI는 감시. 코드는 대표님 지시 후.
+- **인간형 플레이 학습**: 정본 `docs/playbot/PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md` v1.1 — 최종 산출은 PlaySession 코퍼스. 가상일 KPI는 감시. 코드는 대표님 지시 후.
 - **경제·밸런스 운영 감사**: `npm run audit:balance-ops` (3h 로컬·CI) · `tools/balance-ops-audit/README.md` · 학습 상태 `reports/learning-state.json`.
 - **경제 시스템 종합 평가 히스토리**: `docs/economy-evaluation/README.md` (타이틀 비교·효율성 스냅샷).
 - **테이블 우선**: 환경 부트스트랩·NPC 함장·전함은 **`tables/content` CSV → `npm run build:content-tables`** 가 정본이다. 아크코어가 스스로 환경을 깔 때도 **코드에 임의 엔티티·이름 풀을 두지 말고** CSV·레지스트리(`npcFleetRegistry`, `arcNpcTrafficTableRegistry`, `nearbyOrbitPresenceSystem`) 패턴을 따른다. 헌법: `.cursor/rules/Arcfire_Master_Spec_v4.0-1781368341848295041.mdc` §1·§6.
 - **행성 소유권 증서(Table-First · 2026-07-02~ · 단일 정본)**: **`tables/content/item_defs.csv`만** — `ownership_{planetId}` · `type=planet_ownership`. A(21)+synth **별도 CSV·빌드 merge·런타임 lazy 합성 금지**. synth 신규: `synth_system_colonization.csv` → `sync-synth-ownership-into-item-defs.mjs` → item_defs append → `build:content-tables`. 무역 진열=eligibility+카탈로그 resync(**렌더/useMemo dispatch 금지**). 감사: `npx tsx tools/debug/audit-planet-ownership-item-defs.ts`.
-- **미션 시스템(Table-First)**: 정본 `missions.csv` + `mission_objectives.csv` + `mission_combat_captains.csv` → `missionCatalog.ts` · 진행 `missionStore.ts`. **세부미션** = 부모 퀘스트 1행의 순차 목표(`story_001`과 동일 · `.cursor/rules/arcfire-quest-detail-mission.mdc`). 작업 인수인계·다음 스프린트: **`docs/MISSION_SYSTEM_HANDOFF.md`**
-- **차기 업무(대표님 지시로 미룬 일)**: 정본 **`docs/차기_업무_목록.md`**. 새로 미루면 그 파일에만 추가. 개별 HOLD 문서가 있으면 링크만.
-- **플레이 시나리오 전투레벨 고도화 (전수 2026-09-17)**: 코어 21성계 일반전투·웨이브·보스·메인퀘 연동 조사 정본 — **`docs/PLAY_SCENARIO_COMBAT_LEVEL_ADVANCEMENT.md`**. 코드/CSV 패치는 갭 확인 후.
+- **미션 시스템(Table-First)**: 정본 `missions.csv` + `mission_objectives.csv` + `mission_combat_captains.csv` → `missionCatalog.ts` · 진행 `missionStore.ts`. **세부미션** = 부모 퀘스트 1행의 순차 목표(`story_001`과 동일 · `.cursor/rules/arcfire-quest-detail-mission.mdc`). 작업 인수인계·다음 스프린트: **`docs/quest/MISSION_SYSTEM_HANDOFF.md`**
+- **차기 업무(대표님 지시로 미룬 일)**: 정본 **`docs/ops/차기_업무_목록.md`**. 새로 미루면 그 파일에만 추가. 개별 HOLD 문서가 있으면 링크만.
+- **플레이 시나리오 전투레벨 고도화 (전수 2026-09-17)**: 코어 21성계 일반전투·웨이브·보스·메인퀘 연동 조사 정본 — **`docs/combat/PLAY_SCENARIO_COMBAT_LEVEL_ADVANCEMENT.md`**. 코드/CSV 패치는 갭 확인 후.
 - **전략·전술 자동화(아크코어 자동전투 · 노드/라인 1홉)**: 성계 그래프 공격 가시성·접전 전선 확장 설계 정본 — **`docs/strategy/README.md`** · **`docs/strategy/ARC_CORE_TACTICAL_AUTOMATION_AND_GALAXY_STRATEGY.md`** (v0.1 분석·Phase 0~6 · 코드 미착수)
 - **확장시스템(남·북 선단·운영자 병렬 등)**: 기존 은하·아크코어 운영 위에 새 축을 얹을 때 — **`docs/expansion/README.md`** · **`docs/expansion/아크파이어_확장시스템_설계안.md`** (설계검토 정본 · 코드 미착수 · 13번째 서브코어 금지)
 - **허브 궤도 트래픽(v4.0 §6-2)**: STAGE 1 동시 최대 **5척**, **15초** spawn/despawn — `src/game/hubOrbitTrafficSession.ts` + `planetMemoCache/hub_traffic` 풀. info 패널 `‹AI›` 접두. `onSnapshot`·`hub_peers`·`aiVirtualPlayerStore` 금지.
@@ -198,15 +198,15 @@ Cursor 및 기타 코딩 에이전트는 **`.cursor/rules/Arcfire_Master_Spec_v4
 - **전투 렌더 단일 구현 고정**: 전투 궤도 렌더의 정본은 `PlanetEdenRaidOrbitSkiaCombat` 하나만 유지한다. `CapitalRealtimeCombatOrbitSvg`는 **deprecated 별칭** — 신규 코드는 `CapitalRealtimeCombatOrbitSkia`만 사용.
 
 - **일일 성능·위생 점검**: `npm run audit:daily` → `tools/daily-perf-audit/reports/latest.md`. GitHub에는 `.github/workflows/daily-performance-audit.yml` 스케줄(1일 1회)이 있으며, 로컬은 `tools/daily-perf-audit/README.md`의 작업 스케줄러 예시를 참고.
-- **초기화 단축 (보류 · 2026-06-23)**: 타이틀까지 부트·STAGE lazy·RN import 다이어트 방향 정본 — **`docs/BOOT_INIT_OPTIMIZATION_ROADMAP.md`**. 「초기화 단축」「부트 최적화」 언급 시 에이전트는 본 문서를 먼저 읽는다. 부트 마커: `tools/boot-perf/README.md` · `src/game/bootPerformance.ts`.
+- **초기화 단축 (보류 · 2026-06-23)**: 타이틀까지 부트·STAGE lazy·RN import 다이어트 방향 정본 — **`docs/tech/BOOT_INIT_OPTIMIZATION_ROADMAP.md`**. 「초기화 단축」「부트 최적화」 언급 시 에이전트는 본 문서를 먼저 읽는다. 부트 마커: `tools/boot-perf/README.md` · `src/game/bootPerformance.ts`.
 - **아크코어 × Cursor 에이전트 자기 최적화**: `npm run audit:arc-self-optimize:pack` → `tools/arc-core-self-optimize/outbox/cursor-handoff.md` 를 Cloud Agent 등에 첨부. 옵트인 `stop` 훅은 `.cursor/trigger-arc-self-optimize-on-stop` 플래그 파일로 1회 안내 — `tools/arc-core-self-optimize/README.md`.
 - **런타임 버그 수정**: `.cursor/rules/arcfire-bug-debug-workflow.mdc` — adb logcat 캡처 → 사용자 재현 → 로그 근거 수정. Cursor **Agent 모드 그대로** 사용(Debug 전환 불필요).
 - **크래시·SIGSEGV·worklet 수정 (반쪽 패치 방지)**: `.cursor/rules/arcfire-crash-fix-structural-gate.mdc` — **코드 diff 전** 이전 수정·동일 스택 logcat·`planetHubWorkletContract` **전수검사** → 수정 설계·체크리스트 PASS 후에만 구현. 완료 시 `[crash-fix-gate]` 한 줄 기록.
 - **Skia GL 메모리 헌법 (P0 · 2026-06-14~ 필수)**: `.cursor/rules/arcfire-skia-memory-lifecycle.mdc` — **다음 기능개발부터** Skia/Reanimated 고프레임 코드는 Zero-Allocation(Pre-allocation + `rewind()` + 단일 Canvas)만 허용. **완료 게이트**: `npm run audit:skia-memory` PASS + `tsc` + GL mtrack Δ ±15MB. 루프 내 `Skia.Path.Make()`/`Paint()`·`<Path>` `.map()`·이벤트마다 Canvas 리마운트 **금지**. `docs/(구현)SKIA_WORKLET_MEMORY_CONTRACT.md` · UI 스레드 SharedValue Path **dispose 금지**.
 - **장거리 미사일(1차)**: 2026-06 제거됨 — 메모리 격리 테스트 중. 방어위성은 `planetaryDefense` + 궤도 마커만 유지. 재도입 시 Skia 단일 Canvas·GL 실측 필수.
-- **UI 오버레이·모달**: `src/ui/overlay/` — `ArcOverlayHost` 루트 단일 호스트, `showArcAlert` 등 imperative API. RN `Modal`·magic bottom padding 금지. **`showArcAlert` / compact 범용 팝업(alert·waveResult·reward·levelUp) 기본 40초 자동 닫힘** (`overlayAlertContract` · 예외 `autoDismissMs: 0`만). 점검: `npm run audit:ui-overlay`. **범용 UI 현황·로드맵**: `docs/OVERLAY_UI_UNIVERSAL_SPEC.md` · 에이전트 계약: `.cursor/rules/arcfire-overlay-ui-contract.mdc`. **조립 정본**: `ArcOverlayCard` + `ArcOverlayTitleHeader` + `ArcOverlayFooterActions` + `overlayPanelLayout.ts`(패널 세로 85~96%, center bias 36px). 패널형(planetEconomy·planetDevelopment·settings·bmShop·tradeQuantity) 마이그레이션 **완료** — alert/levelUp/reward/waveResult는 compact 잔존(Phase A 예정).
+- **UI 오버레이·모달**: `src/ui/overlay/` — `ArcOverlayHost` 루트 단일 호스트, `showArcAlert` 등 imperative API. RN `Modal`·magic bottom padding 금지. **`showArcAlert` / compact 범용 팝업(alert·waveResult·reward·levelUp) 기본 40초 자동 닫힘** (`overlayAlertContract` · 예외 `autoDismissMs: 0`만). 점검: `npm run audit:ui-overlay`. **범용 UI 현황·로드맵**: `docs/ui/OVERLAY_UI_UNIVERSAL_SPEC.md` · 에이전트 계약: `.cursor/rules/arcfire-overlay-ui-contract.mdc`. **조립 정본**: `ArcOverlayCard` + `ArcOverlayTitleHeader` + `ArcOverlayFooterActions` + `overlayPanelLayout.ts`(패널 세로 85~96%, center bias 36px). 패널형(planetEconomy·planetDevelopment·settings·bmShop·tradeQuantity) 마이그레이션 **완료** — alert/levelUp/reward/waveResult는 compact 잔존(Phase A 예정).
 - **인게임 대사 UI (기본 디폴트 · 2026-09-06)**: `NarrativeDialogRow` + `NARRATIVE_DIALOG_LAYOUT` — 세로 3단(얼굴 300 · 대사 · 버튼 56, 합 482) · 빗살무늬 헤더 아래 고정 카드 · `contain` 초상 · 하단 흰색 · 3줄 · `[ 다음 ]`. 규칙: `.cursor/rules/arcfire-ingame-dialog-ui-default.mdc` · 초상: `resolveIngameDialogPortraitSource`. **전 앱 1차 통신 게이트**(템플릿·선택). NL 입은 수락 후 2차 메신저로만 이어짐.
-- **NPC 초상 제작 정본 (2026-09-14)**: 240×240 · 톤=`bar_att_char016` · 스텔리움 함장 군복=`noname_char005`(네이비 기본) / `noname_char010`(화이트 정복) · **얼굴만 교체**. 정본 `docs/NPC_PORTRAIT_PRODUCTION_CANON.md`.
+- **NPC 초상 제작 정본 (2026-09-14)**: 240×240 · 톤=`bar_att_char016` · 스텔리움 함장 군복=`noname_char005`(네이비 기본) / `noname_char010`(화이트 정복) · **얼굴만 교체**. 정본 `docs/portrait/NPC_PORTRAIT_PRODUCTION_CANON.md`.
 
 ## Metro·앱 반영 (사용자 안내)
 

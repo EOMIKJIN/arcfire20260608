@@ -6,7 +6,7 @@ verdict=PASS (차단 0 · 실기 확인 1 · P3 관찰 2)
 date=2026-09-25
 reviewer=김클로드
 대상=IngameDialogPortraitWarmer · ingameDialogSessionPack · ingameDialogSessionAdvancePack · Host/ViewModel/Store/Overlay/intro
-설계=docs/INGAME_DIALOG_ZERO_LOAD_DESIGN.md v0.2
+설계=docs/dialog/INGAME_DIALOG_ZERO_LOAD_DESIGN.md v0.2
 ```
 
 ---

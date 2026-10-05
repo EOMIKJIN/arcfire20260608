@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>게임 UI — 아크파이어 온라인 위키</title>
+<title>게임 UI — 아크파이어 위키</title>
 <meta name="description" content="단일 오버레이 호스트 구조, 인게임 대화창 3단 팝업, Tactical/Phosphor 두 비주얼 테마" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
@@ -13,7 +13,7 @@
 
 <header class="site-header">
   <button class="nav-toggle" type="button" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
-  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 온라인 <span class="sub">Game Wiki</span></a>
+  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 <span class="sub">Game Wiki</span></a>
   <div class="site-search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
     <input type="text" placeholder="함선, 무기, 세력, 스킬 검색…" autocomplete="off" />
@@ -45,6 +45,9 @@
       <a href="arccore.html" data-page="arccore"><span class="dot"></span>아크코어 AI</a>
       <a href="social.html" data-page="social"><span class="dot"></span>바 · 함장 · 플레이어</a>
       <a href="ui.html" data-page="ui" class="active"><span class="dot"></span>게임 UI</a>
+    </div>
+    <div class="sidebar-group"><h5>커뮤니티</h5>
+      <a href="community.html" data-page="community"><span class="dot"></span>커뮤니티 게시판</a>
     </div>
   </nav>
 
@@ -130,14 +133,19 @@ ArcOverlayHost<br />
       <h2>UI 회귀를 막기 위한 감사 도구</h2>
       <p>이 오버레이 규칙들은 사람이 매번 눈으로 확인하는 게 아니라, 전용 자동 감사 스크립트로 검증된다 — RN <code>Modal</code>/<code>Alert.alert</code> 직접 사용이나 매직 넘버 패딩이 코드에 남아있으면 감사가 실패한다. 오버레이 UI를 건드리는 모든 작업은 이 감사를 통과해야 완료로 친다.</p>
 
-      <div class="source-note">정본: <code>docs/OVERLAY_UI_UNIVERSAL_SPEC.md</code> · <code>docs/TACTICAL_UI_BASELINE_AND_ROLLOUT_READINESS.md</code> · <code>docs/인게임_대화창_레이어_재설계_20260824.md</code></div>
+      <div class="source-note">정본: <code>docs/ui/OVERLAY_UI_UNIVERSAL_SPEC.md</code> · <code>docs/ui/TACTICAL_UI_BASELINE_AND_ROLLOUT_READINESS.md</code> · <code>docs/dialog/인게임_대화창_레이어_재설계_20260824.md</code></div>
+          <section class="comments" id="comments">
+        <h2>이 문서에 대한 의견</h2>
+        <div class="giscus-thread" data-category="General"></div>
+      </section>
     </article>
     </div>
   </main>
 </div>
 
-<footer class="site-footer">아크파이어 온라인 게임 위키 · 비공식 정리본</footer>
+<footer class="site-footer">아크파이어 게임 위키 · 비공식 정리본</footer>
 <script src="assets/search-index.js"></script>
 <script src="assets/wiki.js"></script>
+<script src="assets/comments.js"></script>
 </body>
 </html>

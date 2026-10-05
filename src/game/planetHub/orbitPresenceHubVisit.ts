@@ -1,5 +1,5 @@
 // 세축 W3 — 허브 세션 진입 1회 스냅. 대사 착륙 가드와 분리.
-// 정본: docs/세축_반응_잔상_세계변화_설계.md v1.1 §8-2
+// 정본: docs/arc-core/세축_반응_잔상_세계변화_설계.md v1.1 §8-2
 
 import { resolveDictionaryLocale } from '../../i18n';
 import {

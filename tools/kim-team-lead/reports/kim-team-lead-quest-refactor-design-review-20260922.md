@@ -4,7 +4,7 @@
 status=REVIEWED
 task_id=quest-system-audit-and-redesign-review-20260922
 source=tools/kim-team-lead/reports/kim-claude-quest-system-audit-20260922.md
-정본=docs/코드작업을_위한_퀘스트_시스템_리팩토링.md
+정본=docs/quest/코드작업을_위한_퀘스트_시스템_리팩토링.md
 verdict=DESIGN_REVISED — 코드 0
 ```
 

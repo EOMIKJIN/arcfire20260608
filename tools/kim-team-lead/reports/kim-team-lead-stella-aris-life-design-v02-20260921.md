@@ -4,8 +4,8 @@
 status=REVIEWED
 task_id=stella-aris-life-system-design-20260921
 kind=DESIGN_REVIEW + DESIGN_UPGRADE
-대상=docs/STELLA_ARIS_PROJECT_LIFE_SYSTEM_v0.1.md
-정본=docs/STELLA_ARIS_PROJECT_LIFE_SYSTEM_v0.2.md
+대상=docs/character/STELLA_ARIS_PROJECT_LIFE_SYSTEM_v0.1.md
+정본=docs/character/STELLA_ARIS_PROJECT_LIFE_SYSTEM_v0.2.md
 감사(김클로드)=tools/kim-team-lead/reports/kim-claude-stella-aris-life-design-full-audit-20260921.md
 reviewed_at=2026-09-21
 reviewed_by=김팀장
@@ -64,8 +64,8 @@ verdict=PARTIAL_AGREE — 골자 채택 · C1~C4 동의 · C5 신규 · 구현�
 
 | 파일 | 역할 |
 |------|------|
-| `docs/STELLA_ARIS_PROJECT_LIFE_SYSTEM_v0.2.md` | **구현 정본** |
-| `docs/STELLA_ARIS_PROJECT_LIFE_SYSTEM_v0.1.md` | 초안 · 대체 표시 |
+| `docs/character/STELLA_ARIS_PROJECT_LIFE_SYSTEM_v0.2.md` | **구현 정본** |
+| `docs/character/STELLA_ARIS_PROJECT_LIFE_SYSTEM_v0.1.md` | 초안 · 대체 표시 |
 | 본 리포트 | 검수 기록 |
 
 **코드 0.** 커밋 없음.

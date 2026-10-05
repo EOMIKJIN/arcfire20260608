@@ -1,9 +1,11 @@
 # 출시 준비도 마일스톤 보고서 — Arcfire Online (2026-06-23)
 
+> **[추후수정예정]** 표기 정리 대상: 「아크파이어 온라인」→「아크파이어」 — 본문은 아직 고치지 않음 (2026-10-05 대표님 지시, 위키는 반영 완료)
+
 > **문서 유형**: 릴리스 준비도 평가 · 마일스톤 로드맵  
 > **작성일**: 2026-06-23  
 > **상태**: 🟡 **개발 진행 중** — 플레이 가능 알파, 상용 출시 미충족  
-> **기준 문서**: `Arcfire_Master_Spec_v4.0` · `AGENTS.md` · `docs/_000_ARCFIRE_BM_REPORT_v2.0.md` · `docs/DEVELOPMENT_CHECKPOINT_2026-06-22.md` · `docs/I18N_MIGRATION_ROADMAP.md` · `docs/MISSION_SYSTEM_HANDOFF.md`  
+> **기준 문서**: `Arcfire_Master_Spec_v4.0` · `AGENTS.md` · `docs/bm/_000_ARCFIRE_BM_REPORT_v2.0.md` · `docs/DEVELOPMENT_CHECKPOINT_2026-06-22.md` · `docs/i18n/I18N_MIGRATION_ROADMAP.md` · `docs/quest/MISSION_SYSTEM_HANDOFF.md`  
 > **목적**: 기획 대비 현재 완성도를 정량·정성 평가하고, **출시까지 남은 작업을 P0/P1/P2 마일스톤으로 고정**하여 이후 세션·검수·릴리스 판단의 기준 문서로 사용한다.
 
 ---
@@ -265,10 +267,10 @@ QA·장기 soak·릴리스           ███░░░░░░░  30%
 | `AGENTS.md` | STAGE·Skia·경제·감시 인덱스 |
 | `docs/DEVELOPMENT_CHECKPOINT_2026-06-22.md` | Heavy UI·BM 1단계 스냅샷 |
 | `docs/STABILIZATION_CHECKPOINT_2026-06-16.md` | 6/16 정상 판정 기준 |
-| `docs/I18N_MIGRATION_ROADMAP.md` | i18n P1~P6 |
-| `docs/MISSION_SYSTEM_HANDOFF.md` | 미션 완료/미완 |
-| `docs/_000_ARCFIRE_BM_REPORT_v2.0.md` | BM 설계 정본 |
-| `docs/ARC_CORE_ECONOMY_FABRIC.md` | 경제 fabric 로드맵 |
+| `docs/i18n/I18N_MIGRATION_ROADMAP.md` | i18n P1~P6 |
+| `docs/quest/MISSION_SYSTEM_HANDOFF.md` | 미션 완료/미완 |
+| `docs/bm/_000_ARCFIRE_BM_REPORT_v2.0.md` | BM 설계 정본 |
+| `docs/economy/ARC_CORE_ECONOMY_FABRIC.md` | 경제 fabric 로드맵 |
 | `tools/long-run-monitor/PLAYTEST_WATCH.md` | P0 crash 집중 검증 |
 
 ---
@@ -289,9 +291,9 @@ QA·장기 soak·릴리스           ███░░░░░░░  30%
 
 | 항목 | 링크 |
 |------|------|
-| **정밀 재조사 보고서 (정본)** | [`docs/BUILD_PACKAGING_ANDROID_PLAY_RESCAN_2026-08-03.md`](../BUILD_PACKAGING_ANDROID_PLAY_RESCAN_2026-08-03.md) |
-| Firestore 배포 순서 | [`docs/FIRESTORE_PRODUCTION_READINESS.md`](../FIRESTORE_PRODUCTION_READINESS.md) |
-| 부트 JS 최적화 (보류) | [`docs/BOOT_INIT_OPTIMIZATION_ROADMAP.md`](../BOOT_INIT_OPTIMIZATION_ROADMAP.md) |
+| **정밀 재조사 보고서 (정본)** | [`docs/ops/BUILD_PACKAGING_ANDROID_PLAY_RESCAN_2026-08-03.md`](../ops/BUILD_PACKAGING_ANDROID_PLAY_RESCAN_2026-08-03.md) |
+| Firestore 배포 순서 | [`docs/ops/FIRESTORE_PRODUCTION_READINESS.md`](../ops/FIRESTORE_PRODUCTION_READINESS.md) |
+| 부트 JS 최적화 (보류) | [`docs/tech/BOOT_INIT_OPTIMIZATION_ROADMAP.md`](../tech/BOOT_INIT_OPTIMIZATION_ROADMAP.md) |
 
 ### 12-1. 2026-08-03 코드 실측 한 줄 (요약)
 

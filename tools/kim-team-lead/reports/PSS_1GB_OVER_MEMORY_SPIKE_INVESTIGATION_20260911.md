@@ -152,7 +152,7 @@ trigger=대표님 — "오늘 김팀장 작업분량 적용으로 PSS가 1GB를 
 ### 8-3. 문서 재학습 — 발견한 것
 
 - `docs/expansion/아크파이어_확장시스템_설계안.md` 재독 — 남·북 국가 수송선단 확장 설계 문서. 오늘 시스템들과 직접 겹치진 않지만, "확장은 기존 배치·서브코어를 재사용하고 신규 스토어/13번째 서브코어를 만들지 않는다"는 원칙이 오늘 dwell/BM 시스템에도 실제로 지켜지고 있음을 재확인.
-- `docs/MEMORY_REFACTOR_MASTER_PLAN.md` 재학습 — **중요한 사실 발견**: 이 문서의 마지막 실측 기록이 **2026-06-27**(석 달 전)이고, 그때도 이미 목표 초과 상태였다: PSS p50 937.9MB(목표 750) · PSS max 1134.9MB(목표 950 hard) · native p50 565.5MB(목표 350) · PSS≥800MB 비율 95.9%. `tools/long-run-monitor/logs/arc-memory-budget-ledger-latest.md`도 그 이후 **2.5개월간 재실행되지 않은 채 방치**돼 있었다.
+- `docs/tech/MEMORY_REFACTOR_MASTER_PLAN.md` 재학습 — **중요한 사실 발견**: 이 문서의 마지막 실측 기록이 **2026-06-27**(석 달 전)이고, 그때도 이미 목표 초과 상태였다: PSS p50 937.9MB(목표 750) · PSS max 1134.9MB(목표 950 hard) · native p50 565.5MB(목표 350) · PSS≥800MB 비율 95.9%. `tools/long-run-monitor/logs/arc-memory-budget-ledger-latest.md`도 그 이후 **2.5개월간 재실행되지 않은 채 방치**돼 있었다.
 - **직접 재측정(읽기전용, `npm run audit:memory-budget-ledger`, 기기 연결 확인 후 실행)**: 지금(09-12) 기준 PSS p50 **792.8MB** · p90 850.6MB · native p50 **374.3MB** · PSS≥800 **40.7%**. 6월 말 대비 상당히 개선됐지만(특히 native_heap 565→374), 여전히 목표(750/350)를 살짝 못 채운다.
 - 감사 리포트 상단의 참고문서 링크(`docs/2.1.memory.md`, `docs/rendering-pipeline-baseline.md`)는 **실제로 저장소에 존재하지 않는 깨진 참조**임을 확인(`Glob` 전수 검색 0건).
 

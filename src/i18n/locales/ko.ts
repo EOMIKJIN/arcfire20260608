@@ -648,6 +648,8 @@ export const KO_DICTIONARY: I18nDictionary = {
   // ── 웨이브 결과창 (waveResult) ──
   'waveResult.win': '✦ 승  리 ✦',
   'waveResult.lose': '✕ 패  배 ✕',
+  'waveResult.draw': '✦ 무 승 부 ✦',
+  'waveResult.subtitleDraw': '궤도 교전 — 적 퇴각',
   'waveResult.subtitle': '웨이브 디펜스 — 최종 결과',
   'waveResult.subtitleHubOrbit': '궤도 교전 — 전투 결과',
   'waveResult.subtitleQuestOrbit': '퀘스트 교전 — 전투 결과',
@@ -830,6 +832,7 @@ export const KO_DICTIONARY: I18nDictionary = {
   'nearbyPresence.action.commLink': '통신연결',
   'nearbyPresence.tag.mainQuest': '메인 퀘스트',
   'nearbyPresence.tag.subQuest': '서브 퀘스트',
+  'nearbyPresence.tag.instantQuest': '개인 의뢰',
   'nearbyPresence.tag.questMarks': '퀘스트 타입',
   'nearbyPresence.role.governorName': '총사령관 · {name}',
   'nearbyPresence.action.mission': '미션',

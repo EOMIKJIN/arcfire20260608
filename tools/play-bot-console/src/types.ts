@@ -46,6 +46,7 @@ export type JournalKind =
   | 'DEVELOP'
   | 'CAPITAL'
   | 'MINE'
+  | 'SEARCH'
   | 'EXCHANGE';
 
 export type JournalEntry = {
@@ -139,6 +140,8 @@ export type WorldState = {
   completedLookup: Record<string, true>;
   learnedLookup: Record<string, true>;
   activeQuest: ActiveQuest | null;
+  /** 승률이 낮아 보류한 퀘스트. 승률이 회복되면 다시 집는다. */
+  parkedQuests: ActiveQuest[];
   planets: Record<string, PlanetSlot>;
   dailyBatchCount: number;
   flags: string[];
@@ -151,6 +154,25 @@ export type WorldState = {
   learnedSkills: string[];
   equipped: Record<string, string>;
   gearScore: number;
+  /** 플레이봇 구간 함선. 격납고 척수와 별개. */
+  hullTierKey: string;
+  hullName: string;
+  hullShipId: string;
+  hullRank: number;
+  hullSaveDay: number;
+  hullJustBought: boolean;
+  /** 퀘스트 전투 연패. 승률이 회복되거나 이기면 0. */
+  questCombatLossStreak: number;
+  /** 이기기 어려운 퀘스트를 피해 머무는 수련 행성. */
+  trainPlanetId: string;
+  trainMissionId: string;
+  trainUntilLevel: number;
+  salvageDay: number;
+  salvageCount: number;
+  effFights: number;
+  effWins: number;
+  effExp: number;
+  effCredits: number;
   focusPlanetId: string;
   focusSystemId: string;
   devLevels: Record<string, number>;
@@ -204,6 +226,10 @@ export type KpiSnapshot = {
   gearScore: number;
   devSum: number;
   capitalDestroyed: number;
+  hullTierKey?: string;
+  hullName?: string;
+  hullShipId?: string;
+  hullFundGap?: number;
 };
 
 export type AnalyzeFinding = {

@@ -7,7 +7,7 @@ kind=CONSULT (코드 변경 0 · 커밋 금지)
 재검수 범위=브리프 §2~§4가 지목한 파일을 직접 재독
   tools/play-bot-console/src/{humanSeed,ownerPlaylogAuto,policy,intent,actions,dailyUrgentTriage,learnGate,catalog}.ts
   tools/play-bot-console/run-harness.ts
-  docs/PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md (v1.1)
+  docs/playbot/PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md (v1.1)
   tools/kim-team-lead/reports/kim-claude-playbot-learning-audit-20261002.md
   tools/kim-team-lead/reports/kim-claude-playbot-human-data-scale-plan-20261002.md
   tools/play-bot-console/PLAYBOT_DAILY_LOOP.md

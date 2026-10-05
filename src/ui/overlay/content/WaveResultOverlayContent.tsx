@@ -21,6 +21,7 @@ export const WaveResultOverlayContent = memo(function WaveResultOverlayContent({
   const body = resolveOverlayCompactBodyStyles(visualTheme);
   const { outcome, wavesCleared, totalWaves, expEarned, itemRewards, creditsEarned, enemyName, destroyedLabels } = entry;
   const isWin = outcome === 'win';
+  const isDraw = outcome === 'draw';
   const view = resolveCombatResultOverlayViewModel({
     venue: entry.venue,
     wavesCleared,
@@ -35,9 +36,9 @@ export const WaveResultOverlayContent = memo(function WaveResultOverlayContent({
 
   return (
     <ArcOverlayCard
-      title={isWin ? t('waveResult.win') : t('waveResult.lose')}
-      subtitle={t(view.subtitleKey)}
-      titleColor={isWin ? undefined : COLORS.danger}
+      title={isWin ? t('waveResult.win') : isDraw ? t('waveResult.draw') : t('waveResult.lose')}
+      subtitle={isDraw ? t('waveResult.subtitleDraw') : t(view.subtitleKey)}
+      titleColor={outcome === 'lose' ? COLORS.danger : undefined}
       layout="compact"
       visualTheme={visualTheme}
       onClose={onClose}

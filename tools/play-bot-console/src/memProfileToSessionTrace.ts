@@ -16,6 +16,17 @@ export type MemProfileImportMeta = {
 };
 
 const LINE_RE = /\[MEM_PROFILE\]\s+stage=(\S+)\s+event=(\S+)(?:\s+hermes_mb=\S+)?(?:\s+detail=(\S+))?/;
+/** 앱 `devPlayVerbLog` — 퀘스트·전투·무역·편입·스킬 (개발 빌드 전용) */
+const PLAY_VERB_RE = /\[PLAY_VERB\]\s+verb=(\S+)(?:\s+detail=(\S+))?/;
+const PLAY_VERB_STAGE = 'play';
+const PLAY_VERBS: Record<string, string> = {
+  quest: 'quest',
+  combat: 'combat',
+  trade: 'trade',
+  annex: 'annex',
+  skill: 'skill',
+  ship: 'ship',
+};
 const TS_RE = /^(\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})/;
 
 const SKIP_DETAIL = /hub_dodge|unmount_debounce|deep_reclaim|post_ingress_settle/;
@@ -32,6 +43,7 @@ function isHubCombatMarker(event: string, detail: string): boolean {
 }
 
 export function verbOf(stage: string, event: string, detail: string): string | null {
+  if (stage === PLAY_VERB_STAGE) return PLAY_VERBS[event] ?? null;
   if (SKIP_DETAIL.test(detail)) return null;
   if (isHubCombatMarker(event, detail)) return null;
   if (event === 'transit_hop_start' || detail.includes('departure_preflight')) return 'depart';
@@ -49,9 +61,24 @@ export function parseMemProfileLines(text: string): MemProfileBeat[] {
   let origin = 0;
   for (let i = 0; i < lines.length; i += 1) {
     const line = lines[i];
-    if (!line.includes('[MEM_PROFILE]')) continue;
-    const m = LINE_RE.exec(line);
-    if (!m) continue;
+    let stage: string;
+    let event: string;
+    let detail: string | undefined;
+    if (line.includes('[MEM_PROFILE]')) {
+      const m = LINE_RE.exec(line);
+      if (!m) continue;
+      stage = m[1];
+      event = m[2];
+      detail = m[3];
+    } else if (line.includes('[PLAY_VERB]')) {
+      const p = PLAY_VERB_RE.exec(line);
+      if (!p) continue;
+      stage = PLAY_VERB_STAGE;
+      event = p[1];
+      detail = p[2];
+    } else {
+      continue;
+    }
     const ts = TS_RE.exec(line);
     let tSec = out.length;
     if (ts) {
@@ -61,12 +88,7 @@ export function parseMemProfileLines(text: string): MemProfileBeat[] {
       if (origin === 0) origin = abs;
       tSec = Math.max(0, abs - origin);
     }
-    out.push({
-      tSec,
-      stage: m[1],
-      event: m[2],
-      detail: m[3],
-    });
+    out.push({ tSec, stage, event, detail });
   }
   return out;
 }

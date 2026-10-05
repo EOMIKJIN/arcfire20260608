@@ -1,6 +1,6 @@
 /**
  * 스텔라 퀘스트 현장 메모 — Table-First 카드 1~3.
- * 정본: docs/STELLA_QUEST_FIELD_NOTE_v0.1.md
+ * 정본: docs/quest/STELLA_QUEST_FIELD_NOTE_v0.1.md
  */
 import { STELLA_CAPTAIN_NOTE_FROM_CSV } from '../../data/generated/csvStellaCaptainNote';
 import { STELLA_QUEST_ASIDE_FROM_CSV } from '../../data/generated/csvStellaQuestAside';

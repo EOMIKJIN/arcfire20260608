@@ -91,8 +91,8 @@ export const NARRATIVE_DIALOG_LAYOUT = {
   textAlign: 'left' as const,
   /** IngameDialogHost · ArcOverlayHost narrative 앵커 */
   popupAnchor: 'center' as const,
-  /** RN 서브픽셀 + 타이핑 커서 1칸. CSV 수동 맞춤 대신 산술로만 접는다 */
-  splitSafetyChars: 2,
+  /** RN 서브픽셀 + 타이핑 커서 + 한글 폴백 폭. 줄 끝이 슬롯에서 잘리지 않게 칸을 남긴다 */
+  splitSafetyChars: 4,
   typewriterSpeedMsDefault: 22,
   typewriterSpeedScale: 0.52,
   typewriterSpeedMsMin: 10,

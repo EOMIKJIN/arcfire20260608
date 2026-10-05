@@ -1,5 +1,5 @@
 /**
- * 인게임 대사 페이지 분할 — 빈 줄 제거 · 2~3줄 문장 경계
+ * 인게임 대사 페이지 분할 — 빈 줄 제거 · 한글·영문 모두 3줄 후 다음 페이지
  * npx tsx --test src/ui/overlay/splitNarrativeDialogSegments.test.ts
  */
 import assert from 'node:assert/strict';
@@ -47,29 +47,29 @@ test('trailing blank paragraphs are dropped', () => {
   assert.ok(chunks[0]?.endsWith('침공했다.'));
 });
 
-test('a 4-line sentence without a mid break packs 2+2 instead of 3+1', () => {
+test('a 4-line Korean passage fills 3 lines and pages the remainder', () => {
   const chunks = splitNarrativeDialogSegmentsCore(
     '은하계 동부를 손에 넣은 크림슨 레기온은\n끈질기고 은밀한 움직임 끝에\n마침내 깊숙한 어둠의 구역안에\n잠들어 있던 아크코어를 찾아낸다.',
     3,
     WIDE,
   );
   assert.deepEqual(chunks, [
-    '은하계 동부를 손에 넣은 크림슨 레기온은\n끈질기고 은밀한 움직임 끝에',
-    '마침내 깊숙한 어둠의 구역안에\n잠들어 있던 아크코어를 찾아낸다.',
+    '은하계 동부를 손에 넣은 크림슨 레기온은\n끈질기고 은밀한 움직임 끝에\n마침내 깊숙한 어둠의 구역안에',
+    '잠들어 있던 아크코어를 찾아낸다.',
   ]);
 });
 
-test('sentence end at line 2 turns the page before an unfinished clause', () => {
+test('a sentence end on line 2 still fills the third Korean line', () => {
   const chunks = splitNarrativeDialogSegmentsCore(
     '스캔이 완료되었습니다.\n하단의 [대화]가 열렸습니다.\n은하계 동부를 손에 넣은 크림슨 레기온은\n잠들어 있던 아크코어를 찾아낸다.',
     3,
     WIDE,
   );
-  assert.equal(chunks[0], '스캔이 완료되었습니다.\n하단의 [대화]가 열렸습니다.');
   assert.equal(
-    chunks[1],
-    '은하계 동부를 손에 넣은 크림슨 레기온은\n잠들어 있던 아크코어를 찾아낸다.',
+    chunks[0],
+    '스캔이 완료되었습니다.\n하단의 [대화]가 열렸습니다.\n은하계 동부를 손에 넣은 크림슨 레기온은',
   );
+  assert.equal(chunks[1], '잠들어 있던 아크코어를 찾아낸다.');
 });
 
 test('three finished sentences stay on one page', () => {
@@ -82,16 +82,15 @@ test('three finished sentences stay on one page', () => {
   assertPagesFit(chunks, 3, WIDE);
 });
 
-test('phone-width wrap still avoids a 3+1 orphan on intro page 0', () => {
+test('phone-width Korean wrap fills 3 lines before the next page', () => {
   const chunks = splitNarrativeDialogSegmentsCore(
     '은하계 동부를 손에 넣은 크림슨 레기온은\n끈질기고 은밀한 움직임 끝에\n마침내 깊숙한 어둠의 구역안에\n잠들어 있던 아크코어를 찾아낸다.',
     3,
     27,
   );
-  assert.equal(chunks.length, 2);
-  assert.ok((chunks[0]?.split('\n').length ?? 0) <= 3);
+  assert.equal(chunks[0]?.split('\n').length, 3);
+  assert.ok((chunks[1]?.split('\n').length ?? 0) >= 1);
   assert.ok((chunks[1]?.split('\n').length ?? 0) <= 3);
-  assert.notEqual(chunks[1]?.split('\n').length, 1);
   assertPagesFit(chunks, 3, 27);
 });
 
@@ -137,15 +136,15 @@ test('same width budget always yields the same wrap', () => {
   assert.deepEqual(a, b);
 });
 
-test('scan messenger copy paginates 2+2 so the 3-line box shows every line', () => {
+test('scan messenger copy fills 3 Korean lines before the next page', () => {
   const chunks = splitNarrativeDialogSegmentsCore(
     "이제, 저와 대화할 수 있는\n메신저 통신창이 연결되었습니다.\n'대화'버튼을 누르면\n저와 언제든지 대화할 수 있어요",
     3,
     22,
   );
   assert.deepEqual(chunks, [
-    '이제, 저와 대화할 수 있는\n메신저 통신창이 연결되었습니다.',
-    "'대화'버튼을 누르면\n저와 언제든지 대화할 수 있어요",
+    "이제, 저와 대화할 수 있는\n메신저 통신창이 연결되었습니다.\n'대화'버튼을 누르면",
+    '저와 언제든지 대화할 수 있어요',
   ]);
   assertPagesFit(chunks, 3, 22);
 });

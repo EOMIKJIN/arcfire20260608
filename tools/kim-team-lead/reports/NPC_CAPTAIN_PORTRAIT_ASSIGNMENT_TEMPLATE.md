@@ -1,7 +1,7 @@
 # 함장 초상 할당표 템플릿 (원본 제작 전)
 
 > 픽셀 작업 전에 **함장 id → 사용할 asset 키**만 확정.  
-> 계약: `docs/NPC_CAPTAIN_PORTRAIT_ASSET_CONTRACT.md`
+> 계약: `docs/portrait/NPC_CAPTAIN_PORTRAIT_ASSET_CONTRACT.md`
 
 | captainId | 유형 | portraitImageAssetKey | 비고 |
 |-----------|------|------------------------|------|

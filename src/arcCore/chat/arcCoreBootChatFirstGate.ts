@@ -1,6 +1,6 @@
 // ============================================================
 // 아크코어 선실행 — 콜드스타트 1회 전면 채널, 부트/타이틀 게이트와 분리
-// 정본: docs/ARC_CORE_BOOT_CHAT_FIRST.md
+// 정본: docs/dialog/ARC_CORE_BOOT_CHAT_FIRST.md
 // ============================================================
 
 import { ARC_CORE_CHAT_OVERLAY_ID, useArcOverlayStore } from '../../ui/overlay/arcOverlayStore';

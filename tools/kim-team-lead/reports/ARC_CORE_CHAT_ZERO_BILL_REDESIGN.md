@@ -70,5 +70,5 @@ trigger=대표님 — 1인 테스트에서도 1달러라도 종량 요금 부가
 - HOLD 개정: `ARC_CORE_CHAT_INGAME_NL_HOLD.md`
 - Free-tier READY: `READY_ARC_CORE_CHAT_FREE_TIER_NL.md`
 - Bedrock READY: `READY_ARC_CORE_CHAT_BEDROCK_GOLIVE.md` (status=`FORBIDDEN_UNTIL_PAID_OK`)
-- 정본 스펙: `docs/대화형_아크코어_구현.md` §12-A
+- 정본 스펙: `docs/dialog/대화형_아크코어_구현.md` §12-A
 - 게이트: `src/arcCore/chat/arcCoreChatCloudGate.ts`

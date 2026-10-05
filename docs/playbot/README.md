@@ -1,0 +1,9 @@
+# 플레이봇
+
+가상 플레이·학습·실기 연결.
+
+| 파일 | 제목 |
+|---|---|
+| [PLAYBOT_CELL_LEARNING_DESIGN.md](./PLAYBOT_CELL_LEARNING_DESIGN.md) | 세포 학습 |
+| [PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md](./PLAYBOT_HUMAN_PATTERN_AND_ARCCORE_LEARNING_v1.md) | 인간 패턴과 아크코어 학습 |
+| [PLAYBOT_LIVE_PHONE_DESIGN.md](./PLAYBOT_LIVE_PHONE_DESIGN.md) | 실기 연결 |

@@ -2,7 +2,7 @@
 
 > **작성**: 김팀장(분석 세션 · Composer/글록 — **코드 수정 없음**)  
 > **범위**: 플레이어 성장 · 행성 핵심 스탯(R/P/D/T/E) · 일일 배치 전 패스 · SIM·관측 히스토리  
-> **근거**: `src/arcCore/**` · `tables/balance|content` · `tools/*-audit/reports/latest.md`(2026-08-02) · `docs/economy-evaluation/*` · `docs/ARC_CORE_ECONOMY_FABRIC.md`  
+> **근거**: `src/arcCore/**` · `tables/balance|content` · `tools/*-audit/reports/latest.md`(2026-08-02) · `docs/economy-evaluation/*` · `docs/economy/ARC_CORE_ECONOMY_FABRIC.md`  
 > **판정 요약**: **구조(일 1회·elasticity=0) PASS · 밸런스 depth WARN · 진행·재정 CRITICAL 다층**
 
 ---
@@ -230,7 +230,7 @@ UI는 hydrate 후 **반드시 runtime** 읽기. CSV 직독 = stale.
 | 전투 레벨링 | `runIntegratedEngageHpAdjustPass.ts` |
 | 카탈로그 | `tradePortCatalogPolicy.ts` |
 | 감사 최신 | `tools/balance-ops-audit/reports/latest.md` · `planet-economy-3h-audit/reports/latest.md` |
-| 설계 | `docs/ARC_CORE_ECONOMY_FABRIC.md` |
+| 설계 | `docs/economy/ARC_CORE_ECONOMY_FABRIC.md` |
 | 베이스라인 | `docs/economy-evaluation/2026-07-13-pre-reset-longrun-baseline.md` |
 
 ---

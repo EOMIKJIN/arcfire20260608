@@ -5,7 +5,7 @@ task_id=playbot-cell-loop-exec-20261004
 kind=CONSULT (이 턴 코드 0 · 답변 파일 1장만)
 작성=김클로드 · 2026-10-04 KST
 브리프=tools/kim-team-lead/reports/kim-team-lead-playbot-cell-loop-exec-brief-20261004.md
-정본=docs/PLAYBOT_CELL_LEARNING_DESIGN.md §0 · §0-1 · §0-2 · §3 · §4 · §5 · §6
+정본=docs/playbot/PLAYBOT_CELL_LEARNING_DESIGN.md §0 · §0-1 · §0-2 · §3 · §4 · §5 · §6
 재검수 범위=intent.ts · actions.ts · run-harness.ts · watch-owner-playlog-auto.ts · memProfileToSessionTrace.ts
 ```
 
@@ -15,7 +15,7 @@ kind=CONSULT (이 턴 코드 0 · 답변 파일 1장만)
 
 ## 1. 이 범위가 §0-2의 한 바퀴를 실제 행동까지 닫는가 — **AGREE (조건 1개)**
 
-§0-2(docs/PLAYBOT_CELL_LEARNING_DESIGN.md:40–49)의 한 바퀴는 생성→수집→반복→검증→선별→**적용(6번)**→다시 1번이다. 브리프 B가 그 6번을 실제 행동에 건다: `stepAction` 이 combat/trade 를 고른 뒤 카드의 선택 장소를 우선한다(판정 지점 = `actions.ts:598`~`604` combat 분기, `actions.ts:605` trade 분기, 그리고 의도 산출 `intent.ts:58` `pickStepKind`). "declareComplete 는 항상 false · 바퀴 수만 증가"는 §0-2:38 「한 번의 카드 기록이 학습 완료가 아니다」와 §1:58 「1회 완료가 아니다」에 정확히 맞는다. 누적 평균(승1패0, 크레딧 델타)로 점수를 쌓는 것도 §0-2:44 「다음 플레이와 다음 봇 행동에서 다시 본다」의 반복 축적과 맞는다. **1회 완료로 읽히지 않는다.**
+§0-2(docs/playbot/PLAYBOT_CELL_LEARNING_DESIGN.md:40–49)의 한 바퀴는 생성→수집→반복→검증→선별→**적용(6번)**→다시 1번이다. 브리프 B가 그 6번을 실제 행동에 건다: `stepAction` 이 combat/trade 를 고른 뒤 카드의 선택 장소를 우선한다(판정 지점 = `actions.ts:598`~`604` combat 분기, `actions.ts:605` trade 분기, 그리고 의도 산출 `intent.ts:58` `pickStepKind`). "declareComplete 는 항상 false · 바퀴 수만 증가"는 §0-2:38 「한 번의 카드 기록이 학습 완료가 아니다」와 §1:58 「1회 완료가 아니다」에 정확히 맞는다. 누적 평균(승1패0, 크레딧 델타)로 점수를 쌓는 것도 §0-2:44 「다음 플레이와 다음 봇 행동에서 다시 본다」의 반복 축적과 맞는다. **1회 완료로 읽히지 않는다.**
 
 **조건(여기를 고쳐라) — 적용(6번)의 읽기 지점을 프로세스 안에서 닫아야 한다.**
 - 정본 §6(130줄)은 「통합 카드의 재로드 경로는 없다」라고 적는다. 그 말대로 구현하면 6번(적용)이 **하니스 재시작 때만** 일어난다. 그런데 Section C(재가동)는 재시작이 가상일을 1로 되돌린다고 한다. 즉 "재시작으로만 적용"이면 바퀴가 재시작 사이에 멈춘다.

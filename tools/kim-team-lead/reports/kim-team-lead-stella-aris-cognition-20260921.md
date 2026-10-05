@@ -4,7 +4,7 @@
 status=REVIEWED
 task_id=stella-aris-cognition-advancement-20260921
 kind=DESIGN_REANALYSIS
-정본=docs/STELLA_ARIS_PROJECT_LIFE_SYSTEM_v0.2.md §15
+정본=docs/character/STELLA_ARIS_PROJECT_LIFE_SYSTEM_v0.2.md §15
 date=2026-09-21
 reviewed_by=김팀장
 verdict=v0.1/v0.2 D3는 기억 압축 · 사고 숙련은 별축으로 보강

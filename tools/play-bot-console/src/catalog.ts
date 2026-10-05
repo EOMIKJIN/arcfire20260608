@@ -25,6 +25,23 @@ export const STORY_IDS: readonly string[] = Array.from({ length: 30 }, (_, i) =>
   return `story_${n}`;
 });
 
+let storyLevelGates: number[] | null = null;
+
+/** 현재 레벨보다 높은 다음 본편 요구 레벨. 없으면 0. */
+export function nextStoryLevelGate(level: number): number {
+  if (!storyLevelGates) {
+    storyLevelGates = [];
+    for (let i = 0; i < STORY_IDS.length; i += 1) {
+      const m = MISSIONS_FROM_CSV[STORY_IDS[i]!];
+      if (m) storyLevelGates.push(m.levelRequired ?? 1);
+    }
+  }
+  for (let i = 0; i < storyLevelGates.length; i += 1) {
+    if (storyLevelGates[i]! > level) return storyLevelGates[i]!;
+  }
+  return 0;
+}
+
 /** 챕터1 기명 사이드 — 2단계에서 순회. 039–055 금지. */
 export const CHAPTER1_SIDE_IDS: readonly string[] = [
   'sandbox_034',
@@ -337,6 +354,7 @@ export function listGearCandidates(): GearCandidate[] {
   const ids = Object.keys(ITEM_DEFS_FROM_CSV);
   for (let i = 0; i < ids.length; i += 1) {
     const it = ITEM_DEFS_FROM_CSV[ids[i]];
+    if (it.id.includes('_wave')) continue;
     if (!it.capitalShipMountable || !it.tradeable) continue;
     if (it.kind !== 'equipment' && it.type !== 'weapon_module' && it.type !== 'ship_equipment') continue;
     const attrs = it.attrs ?? {};
@@ -357,6 +375,7 @@ export function listGearCandidates(): GearCandidate[] {
   const wids = Object.keys(CAPITAL_WEAPON_LIST_FROM_CSV);
   for (let i = 0; i < wids.length; i += 1) {
     const w = CAPITAL_WEAPON_LIST_FROM_CSV[wids[i]];
+    if (w.id.includes('_wave')) continue;
     if (!w.tradePortListed) continue;
     const dps = (w.damage * Math.max(1, w.salvoCount) * 1000) / Math.max(200, w.cooldownMs);
     out.push({

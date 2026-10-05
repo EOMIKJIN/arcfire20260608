@@ -11,10 +11,21 @@ import {
   resolveStellaHubTutorialPresent,
 } from './stellaHubTutorialGuideLogic';
 
-test('A1 dismiss → A2, 채굴 시작은 대기 · 광물 지급 → A3→A4, 판매 → A5, 조선소 → B1', () => {
+test('A1 dismiss → 통신두절 E1→E2. A2를 이미 본 저장만 채굴 체인', () => {
   const a1 = [S.a1];
-  assert.equal(resolveStellaHubTutorialPresent('a1_dismissed', a1)?.sceneId, S.a2);
-  const a2 = [...a1, S.a2];
+  const e1 = resolveStellaHubTutorialPresent('a1_dismissed', a1);
+  assert.equal(e1?.sceneId, S.e1);
+  assert.equal(e1?.chainOnDismiss, 'e2');
+  const afterE1 = [...a1, S.e1];
+  const e2 = resolveStellaHubTutorialPresent('hub_focused', afterE1);
+  assert.equal(e2?.sceneId, S.e2);
+  assert.equal(e2?.chainOnDismiss, 'start_opening_raid');
+  assert.equal(resolveStellaHubTutorialPresent('hub_focused', [...afterE1, S.e2]), null);
+  assert.equal(
+    resolveStellaHubTutorialPresent('hub_focused', [...afterE1, S.e2, S.e3])?.sceneId,
+    S.a2,
+  );
+  const a2 = [S.a1, S.a2];
   assert.equal(resolveStellaHubTutorialPresent('mine_started', a2), null);
   assert.equal(resolveStellaHubTutorialPresent('mine_granted', a2)?.sceneId, S.a3);
   assert.equal(resolveStellaHubTutorialPresent('mine_granted', a2)?.chainOnDismiss, 'a4');
@@ -50,7 +61,7 @@ test('D2 완료 후 가이드 정지 · 바 수락 차단도 해제', () => {
   assert.equal(isStellaHubTutorialInProgress(done), false);
   assert.equal(resolveStellaHubTutorialPresent('sold', done), null);
   assert.equal(resolveStellaHubTutorialPresent('bar_accept_blocked', done), null);
-  assert.equal(resolveStellaHubTutorialPresent('hub_focused', [S.a1])?.sceneId, S.a2);
+  assert.equal(resolveStellaHubTutorialPresent('hub_focused', [S.a1])?.sceneId, S.e1);
 });
 
 test('바 수락 차단은 C2를 다시 띄운다 · 대화 차단 팝업은 조선소 후에만', () => {

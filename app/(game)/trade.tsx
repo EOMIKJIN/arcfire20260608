@@ -36,6 +36,7 @@ import { generateMarketByItemIds } from '../../src/engine/TradeEngine';
 import { TRADE_GOODS } from '../../src/data/goods';
 import { applyPlanetTradeTransactionFee } from '../../src/arcCore/economy/applyPlanetTradeTransactionFee';
 import { recordPlanetEconomyPlayerTrade } from '../../src/arcCore/economy/planetEconomyFabric';
+import { emitPlayVerb } from '../../src/game/devPlayVerbLog';
 import { listArcCoreGalacticMineralItemIds } from '../../src/arcCore/economy/mineralTradePricing';
 import {
   addToInventorySlotsMax,
@@ -574,6 +575,7 @@ export default function TradeScreen() {
       }
       purchaseNote = `capital_ship_hangar:${npcCapitalShipId}`;
       capitalShipIdForRollback = npcCapitalShipId;
+      emitPlayVerb('ship', npcCapitalShipId);
     }
 
     const latestInvPlayer = usePlayerStore.getState().player ?? player;

@@ -116,7 +116,7 @@ void getArcCorePlanetAttackLevelPolicy(ARC_ATTACK_LEVEL_BASELINE);
 
 ## 4. ✅ Voronoi — 설계안대로 반영됨 (역회귀 확인)
 
-`docs/GALAXY_VORONOI_FRONTIER_TERRITORY_FIX_DESIGN.md` 기준 재확인.
+`docs/galaxy/GALAXY_VORONOI_FRONTIER_TERRITORY_FIX_DESIGN.md` 기준 재확인.
 
 | 설계 항목 | 반영 |
 |---|---|

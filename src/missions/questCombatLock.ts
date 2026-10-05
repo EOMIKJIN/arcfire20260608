@@ -1,6 +1,6 @@
 /**
  * 퀘스트 전투 락 — persist 없음. progress에서 동기 재계산.
- * 정본: docs/QUEST_COMBAT_PRIORITY_LANE_DESIGN.md
+ * 정본: docs/quest/QUEST_COMBAT_PRIORITY_LANE_DESIGN.md
  */
 
 import type { Mission, MissionProgress } from '../types';

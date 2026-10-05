@@ -4,7 +4,7 @@
 status=PENDING
 task_id=unidentified-anomaly-quest-v1.1-review-20260922
 kind=DESIGN_REVIEW (코드 변경 0)
-대상=docs/UNIDENTIFIED_ANOMALY_QUEST_DESIGN.md v1.1 (김팀장 · 2026-09-22 13:31)
+대상=docs/quest/UNIDENTIFIED_ANOMALY_QUEST_DESIGN.md v1.1 (김팀장 · 2026-09-22 13:31)
 ```
 
 ## 0. 총평

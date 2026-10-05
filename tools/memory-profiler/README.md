@@ -68,7 +68,7 @@ npm run audit:memory:session-floor
 3. 김팀장: `audit:memory:retention` 재실행 · handoff `[mem-profile-fix]` 기록
 4. 김경제: 재감사만 배정 (코드 수정 금지)
 
-정본: `.cursor/rules/arcfire-main-lead-agent.mdc` · `docs/KIM_TEAM_ECONOMY_WORKFLOW.md`
+정본: `.cursor/rules/arcfire-main-lead-agent.mdc` · `docs/team/KIM_TEAM_ECONOMY_WORKFLOW.md`
 
 ## 한계 (v1)
 

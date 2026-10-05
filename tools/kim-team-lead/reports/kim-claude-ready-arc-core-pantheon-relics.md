@@ -1,8 +1,8 @@
 # 김클로드 착수 — 아크코어 판테온 12좌 · 외곽 거점 · 잔해 유물 수색 (전체)
 
 > **배정**: 김팀장 (Cursor 본창) · **2026-07-24** · 대표님 지시: **김클로드가 해당 전체 내용 개발**  
-> **정본 기획**: `docs/ARC_CORE_SUBCORE_PANTHEON_OPTIMIZATION_PLAN.md`  
-> **교차**: `docs/ARC_CORE_WORLD_SUBCORE_SITES_AND_FINAL_GATE_PLAN.md`  
+> **정본 기획**: `docs/arc-core/ARC_CORE_SUBCORE_PANTHEON_OPTIMIZATION_PLAN.md`  
+> **교차**: `docs/arc-core/ARC_CORE_WORLD_SUBCORE_SITES_AND_FINAL_GATE_PLAN.md`  
 > **완료 후**: `kim-claude-handoff-pending.md` 상단에 **PENDING** 추가 · **git commit 금지** · 김팀장 검수 요청  
 > **task_id**: `arc-core-pantheon-relics-20260724`
 

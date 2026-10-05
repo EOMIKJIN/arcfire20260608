@@ -1,9 +1,9 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>스토리 · 미션 — 아크파이어 온라인 위키</title>
+<title>스토리 · 미션 — 아크파이어 위키</title>
 <meta name="description" content="메인 스토리 10장 구조, 1장 「은폐된 진실」, 현재 플레이 가능한 퀘스트" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
@@ -13,7 +13,7 @@
 
 <header class="site-header">
   <button class="nav-toggle" type="button" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
-  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 온라인 <span class="sub">Game Wiki</span></a>
+  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 <span class="sub">Game Wiki</span></a>
   <div class="site-search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
     <input type="text" placeholder="함선, 무기, 세력, 스킬 검색…" autocomplete="off" />
@@ -46,6 +46,9 @@
       <a href="social.html" data-page="social"><span class="dot"></span>바 · 함장 · 플레이어</a>
       <a href="ui.html" data-page="ui"><span class="dot"></span>게임 UI</a>
     </div>
+    <div class="sidebar-group"><h5>커뮤니티</h5>
+      <a href="community.html" data-page="community"><span class="dot"></span>커뮤니티 게시판</a>
+    </div>
   </nav>
 
   <main class="main">
@@ -54,7 +57,7 @@
       <div class="eyebrow">세계 · 서사</div>
       <h1 class="page-title">스토리 · 미션</h1>
       <p class="page-lede">
-        메인 스토리는 10개 장(챕터)으로 설계돼 있지만, 실제로 제목과 내용이 확정된 건 <strong>1장뿐</strong>이다.
+        메인 스토리는 10개 장(챕터)으로 설계돼 있고, 현재 <strong>1장 「은폐된 진실」의 메인 퀘스트 30개가 모두 구현</strong>돼 있다(2026-10-05 기준).
         이 위키는 실제로 존재하는 내용과 아직 빈 자리(2~10장)를 정직하게 구분해 싣는다.
       </p>
 
@@ -74,11 +77,28 @@
         같은 챕터 안에서 병렬로 다룬다.
       </div>
       <p>
-        현재 실제로 플레이 가능한 메인 퀘스트는 <strong>1개</strong>뿐이다: <code>동기가 확인되지 않는 살인사건</code>.
-        아르카디아 정착지에서 벌어진 원인 불명의 살인사건을 조사하며 솔라 항구로 이동해 바에서 목격자를 만나고,
-        증거(도킹 기록)를 확보해 돌아오는 구조다. 의뢰인은 <strong>엘렌 드 코르</strong>. 1장의 나머지 슬롯(퀘스트 2~30번,
-        분기 4개)은 아직 빈 뼈대다.
+        1장은 <code>story_001</code>~<code>story_030</code> 30개 메인 퀘스트로 이어진다. 첫 퀘스트
+        <code>동기가 확인되지 않는 살인사건</code>(의뢰인 <strong>엘렌 드 코르</strong>)에서 출발해, 라이트홀드가 남긴 이름들과
+        3인 합류, 섀도우 넥서스 공방전을 거쳐 <code>은폐된 진실의 끝</code>으로 닫힌다. 각 퀘스트는 요구 레벨 관문
+        (Lv 1 → 7 → 9 → 15 → 25 → 28 → 32 → 36 → 40 → 44)을 넘어야 열리고, 관문 사이는 서브 의뢰와 수련으로 채운다.
       </p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>구간</th><th class="num">요구 Lv</th><th>퀘스트</th></tr></thead>
+          <tbody>
+            <tr><td>001</td><td class="num">1</td><td>동기가 확인되지 않는 살인사건</td></tr>
+            <tr><td>002–004</td><td class="num">7</td><td>동기 없는 진실 · 위임된 지휘권 · 예상 밖의 참사</td></tr>
+            <tr><td>005–008</td><td class="num">9</td><td>복수는 누가 하는 겁니까? · 숨은 자와의 대면 · 빚진 자의 증언 · 라이트홀드가 남긴 세 이름</td></tr>
+            <tr><td>009–012</td><td class="num">15</td><td>3인 합류 · 교차하는 항로 · 이면 협정 · 반역자의 이름</td></tr>
+            <tr><td>013–020</td><td class="num">25</td><td>도피처를 찾아서 · 첫 신뢰 · 함정인가 기회인가 · 외곽의 잔해 · 검은 시장의 손 · 요새의 뼈대 · 내부의 균열 · 진실 혹은 이간계</td></tr>
+            <tr><td>021–022</td><td class="num">28</td><td>섀도우 넥서스 공방전 · 깃발 없는 승리</td></tr>
+            <tr><td>023–024</td><td class="num">32</td><td>깃발의 메아리 · 기록의 사본</td></tr>
+            <tr><td>025–026</td><td class="num">36</td><td>버려진 보고서 · 코발의 침묵</td></tr>
+            <tr><td>027–029</td><td class="num">40</td><td>소사의 조건 · 크림슨의 다음 손 · 이름 없는 선서</td></tr>
+            <tr><td>030</td><td class="num">44</td><td>은폐된 진실의 끝</td></tr>
+          </tbody>
+        </table>
+      </div>
 
       <h2>2~10장</h2>
       <p>
@@ -87,10 +107,9 @@
         자리표시자 상태다. 이 위키는 존재하지 않는 내용을 지어내지 않는다.
       </p>
 
-      <h2 id="all-missions">전체 미션 목록 — 61개</h2>
+      <h2 id="all-missions">전체 미션 목록 — 104개</h2>
       <p>
-        <code>missions.csv</code> 전체다. 메인 챕터 스토리와는 별개로, 이동·전투·배달 등 범용 임무 체인이 이미
-        61개 구현돼 있다 — 첫 임무 <code>mission_001</code>부터 순서대로 이어진다.
+        <code>missions.csv</code> 전체다 — 튜토리얼 임무 5개(<code>mission_*</code>) · 1장 메인 퀘스트 30개(<code>story_*</code>) · 행성 NPC가 주는 서브 의뢰 46개(<code>sandbox_*</code>) · 바 게시판 의뢰 템플릿 23개(<code>tq_*</code>).
       </p>
       <div id="mission-table"></div>
 
@@ -105,17 +124,22 @@
         3개 서사 아키타입이 언급돼 있다 — 아직 구체적인 퀘스트로 구현되지는 않은 상위 설계 개념이다.
       </p>
 
-      <div class="source-note">정본: <code>docs/MAIN_STORY_CHAPTER_SPINE.md</code> · <code>docs/EARLY_STORY_AND_QUEST_SPINE.md</code> · <code>tables/content/main_story_chapters.csv</code> · <code>main_story_quests.csv</code></div>
+      <div class="source-note">정본: <code>docs/quest/MAIN_STORY_CHAPTER_SPINE.md</code> · <code>docs/quest/EARLY_STORY_AND_QUEST_SPINE.md</code> · <code>tables/content/main_story_chapters.csv</code> · <code>main_story_quests.csv</code> · <code>missions.csv</code>(104행)</div>
+          <section class="comments" id="comments">
+        <h2>이 문서에 대한 의견</h2>
+        <div class="giscus-thread" data-category="General"></div>
+      </section>
     </article>
     </div>
   </main>
 </div>
 
-<footer class="site-footer">아크파이어 온라인 게임 위키 · 비공식 정리본</footer>
+<footer class="site-footer">아크파이어 게임 위키 · 비공식 정리본</footer>
 <script src="assets/search-index.js"></script>
 <script src="assets/data/missions.js"></script>
 <script src="assets/datatable.js"></script>
 <script src="assets/wiki.js"></script>
+<script src="assets/comments.js"></script>
 <script>
   mountWikiDataTable({
     mount: document.getElementById("mission-table"),

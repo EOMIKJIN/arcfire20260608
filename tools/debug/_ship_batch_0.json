@@ -1,0 +1,12 @@
+[
+  {
+    "id": "npc_arc_seed_ship_iron_cross",
+    "name": "오스 ARC급 ARC시드",
+    "hint": "오스 ARC급 ARC시드. escort transport with a single tall beacon mast. medium, hangar floor still visible. thin armor skin. modest blue shield emitters. white and pale-grey metal, dark panel seams."
+  },
+  {
+    "id": "npc_arc_seed_ship_solar_port",
+    "name": "테온 ARC급 ARC시드",
+    "hint": "테온 ARC급 ARC시드. escort transport with a single tall beacon mast. medium, hangar floor still visible. thin armor skin. modest blue shield emitters. white and pale-grey metal, dark panel seams."
+  }
+]

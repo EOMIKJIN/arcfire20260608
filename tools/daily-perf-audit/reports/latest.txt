@@ -1,18 +1,12 @@
-Daily audit — 2026-10-04T15:00:07.782Z
+Daily audit — 2026-10-05T15:00:15.682Z
 
 TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
 
-tools/play-bot-console/play-bot-console.test.ts(1587,64): error TS2353: Object literal may only specify known properties, and 'restartIndex' does not exist in type 'Pick<StallMark, "reason" | "level" | "day" | "questCleared">'.
-tools/play-bot-console/play-bot-console.test.ts(1592,64): error TS2353: Object literal may only specify known properties, and 'restartIndex' does not exist in type 'Pick<StallMark, "reason" | "level" | "day" | "questCleared">'.
-tools/play-bot-console/play-bot-console.test.ts(1762,3): error TS2322: Type 'string | null' is not assignable to type 'string'.
-  Type 'null' is not assignable to type 'string'.
-tools/play-bot-console/play-bot-console.test.ts(1784,3): error TS2322: Type 'string | null' is not assignable to type 'string'.
-  Type 'null' is not assignable to type 'string'.
-tools/play-bot-console/src/cellLoop.ts(160,30): error TS18047: 'best.score' is possibly 'null'.
+(no output)
 
 
-**exit:** 2
+**exit:** 0
 
 Content tables (`npm run build:content-tables`)
 
@@ -58,18 +52,18 @@ PASS — buy_goods/defeat_enemy 배치·tq_* materialize·tq_anom 월드이벤�
 Largest TS/TSX under `src/` + `app/` (bytes)
 
 - 660,019 — `src/data/generated/galaxySystems100.generated.ts`
-- 506,785 — `src/data/generated/csvStoryScenes.ts`
+- 512,808 — `src/data/generated/csvStoryScenes.ts`
 - 500,299 — `src/data/generated/csvNpcCaptains.ts`
-- 482,337 — `src/data/generated/csvNpcCapitalShips.ts`
+- 484,100 — `src/data/generated/csvNpcCapitalShips.ts`
 - 383,335 — `src/data/generated/csvItemDefs.ts`
 - 200,040 — `src/data/generated/csvNpcCapitalShipEquipSlots.ts`
-- 174,274 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
+- 177,331 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
 - 161,657 — `src/data/generated/csvMissions.ts`
-- 126,690 — `src/i18n/locales/ko.ts`
+- 126,852 — `src/i18n/locales/ko.ts`
 - 121,265 — `src/data/generated/csvMainStorySpine.ts`
-- 115,590 — `src/i18n/locales/en.ts`
+- 115,752 — `src/i18n/locales/en.ts`
 - 105,977 — `app/(game)/worldmap.tsx`
-- 96,912 — `app/(game)/planet.tsx`
+- 100,937 — `app/(game)/planet.tsx`
 - 90,835 — `src/data/generated/csvBarPatronage.ts`
 - 71,316 — `src/data/balance/generated/csvSynthSystemColonization.ts`
 - 71,070 — `src/data/generated/csvWeapons.ts`

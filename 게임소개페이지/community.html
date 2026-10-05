@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>커뮤니티 — 아크파이어 위키</title>
+<meta name="description" content="아크파이어 커뮤니티 게시판 — 공지·자유·건의·질문·투표·자랑" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
+<link rel="stylesheet" href="assets/style.css" />
+</head>
+<body data-page="community">
+
+<header class="site-header">
+  <button class="nav-toggle" type="button" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+  <a class="brand" href="index.html"><span class="mark">✦</span> 아크파이어 <span class="sub">Game Wiki</span></a>
+  <div class="site-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    <input type="text" placeholder="함선, 무기, 세력, 스킬 검색…" autocomplete="off" />
+    <div class="search-hits"></div>
+  </div>
+  <button class="theme-toggle" type="button" aria-label="테마 전환"></button>
+</header>
+<div class="sidebar-scrim"></div>
+
+<div class="shell">
+  <nav class="sidebar">
+    <div class="sidebar-group"><h5>시작</h5><a href="index.html" data-page="index"><span class="dot"></span>홈</a></div>
+    <div class="sidebar-group"><h5>세계</h5>
+      <a href="world.html" data-page="world"><span class="dot"></span>세계관 · 아크코어</a>
+      <a href="factions.html" data-page="factions"><span class="dot"></span>4대 세력</a>
+      <a href="galaxy.html" data-page="galaxy"><span class="dot"></span>은하 · 행성</a>
+      <a href="story.html" data-page="story"><span class="dot"></span>스토리 · 미션</a>
+    </div>
+    <div class="sidebar-group"><h5>전력</h5>
+      <a href="ships.html" data-page="ships"><span class="dot"></span>함선</a>
+      <a href="weapons.html" data-page="weapons"><span class="dot"></span>무기체계</a>
+      <a href="skills.html" data-page="skills"><span class="dot"></span>스킬</a>
+      <a href="items.html" data-page="items"><span class="dot"></span>아이템 · 강화</a>
+    </div>
+    <div class="sidebar-group"><h5>체제</h5>
+      <a href="economy.html" data-page="economy"><span class="dot"></span>경제 시스템</a>
+      <a href="planetdev.html" data-page="planetdev"><span class="dot"></span>행성개발</a>
+      <a href="combat.html" data-page="combat"><span class="dot"></span>전투 · 분쟁</a>
+      <a href="arccore.html" data-page="arccore"><span class="dot"></span>아크코어 AI</a>
+      <a href="social.html" data-page="social"><span class="dot"></span>바 · 함장 · 플레이어</a>
+      <a href="ui.html" data-page="ui"><span class="dot"></span>게임 UI</a>
+    </div>
+    <div class="sidebar-group"><h5>커뮤니티</h5>
+      <a href="community.html" data-page="community" class="active"><span class="dot"></span>커뮤니티 게시판</a>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="content-wrap">
+    <article class="content">
+      <div class="eyebrow">커뮤니티</div>
+      <h1 class="page-title">커뮤니티 게시판</h1>
+      <p class="page-lede">
+        함장들의 이야기 공간이다. 읽기는 누구나, 글쓰기는 <strong>GitHub 계정 로그인</strong> 후 가능하다(무료).
+        게시판 전체는 아래 카테고리에서, 가볍게 남길 말은 맨 아래 자유 게시판에 바로 쓰면 된다.
+      </p>
+
+      <h2>게시판</h2>
+      <div class="board-grid">
+        <a href="https://github.com/EOMIKJIN/arcfire-wiki/discussions/categories/announcements" target="_blank" rel="noopener"><strong>📢 공지</strong><span>업데이트·운영 소식 (운영자만 작성)</span></a>
+        <a href="https://github.com/EOMIKJIN/arcfire-wiki/discussions/categories/general" target="_blank" rel="noopener"><strong>💬 자유</strong><span>함장들의 수다</span></a>
+        <a href="https://github.com/EOMIKJIN/arcfire-wiki/discussions/categories/ideas" target="_blank" rel="noopener"><strong>💡 건의·아이디어</strong><span>바랐으면 하는 기능·밸런스</span></a>
+        <a href="https://github.com/EOMIKJIN/arcfire-wiki/discussions/categories/q-a" target="_blank" rel="noopener"><strong>❓ 질문</strong><span>공략·시스템 문의</span></a>
+        <a href="https://github.com/EOMIKJIN/arcfire-wiki/discussions/categories/polls" target="_blank" rel="noopener"><strong>📊 투표</strong><span>의견 모으기</span></a>
+        <a href="https://github.com/EOMIKJIN/arcfire-wiki/discussions/categories/show-and-tell" target="_blank" rel="noopener"><strong>🚀 자랑</strong><span>내 함대·스크린샷</span></a>
+      </div>
+
+      <div class="callout note">
+        <strong>이용 안내</strong>
+        서로 존중하는 말투로 써 주세요. 욕설·광고·개인정보는 운영자가 숨기거나 지울 수 있습니다.
+        위키 각 문서 하단의 「이 문서에 대한 의견」도 같은 게시판(자유)에 모입니다.
+      </div>
+
+      <h2 id="board">자유 게시판</h2>
+      <div class="giscus-thread" data-term="커뮤니티 자유 게시판" data-category="General"></div>
+    </article>
+    </div>
+  </main>
+</div>
+
+<footer class="site-footer">아크파이어 게임 위키 · 비공식 정리본</footer>
+<script src="assets/search-index.js"></script>
+<script src="assets/wiki.js"></script>
+<script src="assets/comments.js"></script>
+</body>
+</html>

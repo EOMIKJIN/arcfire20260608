@@ -6,7 +6,7 @@ task_id=three-axis-world-change-design-review-20260917
 kind=DESIGN_REVIEW
 code_changes=NO
 commit=FORBIDDEN
-target=docs/세축_반응_잔상_세계변화_설계.md (v1.0, 2026-09-17, 김팀장)
+target=docs/arc-core/세축_반응_잔상_세계변화_설계.md (v1.0, 2026-09-17, 김팀장)
 [pss-pre-dev] hot_path=검토 대상 문서 자체가 설계안(코드 미착수) alloc=없음 cache=없음
 [pss-pre-dev] stage=N/A(문서 검수) risk=N/A
 [pss-pre-dev] verdict=PASS — 본 리포트는 분석·검수만, src/tables 미변경
@@ -87,7 +87,7 @@ CSV 신규 행 부담을 최소화하려는 의도로 보이나(§9의 "Phase 2 
 
 ## 6. 김팀장 후속 (2026-09-17)
 
-대표님 지시로 피드백을 정본에 반영했다. `docs/세축_반응_잔상_세계변화_설계.md` **v1.1** · §16.  
+대표님 지시로 피드백을 정본에 반영했다. `docs/arc-core/세축_반응_잔상_세계변화_설계.md` **v1.1** · §16.  
 handoff `REVIEWED` / `AGREE_WITH_AMENDMENTS`.
 
 *작성: 김클로드 · 2026-09-17 · 독립 재검수(코드 직접 대조). 원 설계 본문은 김팀장이 v1.1에서 개정.*

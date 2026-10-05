@@ -37,7 +37,7 @@
 
 1. 분석 문서 §2·§8 라우팅과 코드 `resolveFactionVault.ts` / upkeep / fee 대조.  
 2. handoff에 AGREE/PARTIAL + 줄번호 근거.  
-3. `docs/ARC_CORE_ECONOMY_FABRIC.md` §9·§11 에 **5축 표 초안 패치**(분석과 동일).
+3. `docs/economy/ARC_CORE_ECONOMY_FABRIC.md` §9·§11 에 **5축 표 초안 패치**(분석과 동일).
 
 ### Phase A — 중립 금고 (#4) (필수 · 안정 우선)
 

@@ -552,3 +552,25 @@ footer.site-footer {
   max-width: 1400px;
   margin: 0 auto;
 }
+
+/* 게임 에셋 썸네일 (2026-10-05) */
+.dt-thumb { display: block; width: 44px; height: 44px; object-fit: cover; border-radius: 8px; background: var(--bg-inset); border: 1px solid var(--border); }
+.dt-thumb-ship { width: 72px; height: 44px; object-fit: contain; background: #0b0f17; }
+.dt-thumb-planet { width: 64px; height: 44px; }
+.dt-thumb-empty { display: inline-block; }
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 10px; margin: 1em 0 1.8em; }
+.gallery figure { margin: 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--bg-elevated); }
+.gallery img { display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover; background: var(--bg-inset); }
+.gallery.ships img { aspect-ratio: 16 / 10; object-fit: contain; background: #0b0f17; }
+.gallery figcaption { padding: 6px 8px; font-size: 0.78rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+td.thumbs { white-space: nowrap; } td.thumbs .dt-thumb { display: inline-block; margin-right: 4px; }
+
+/* 커뮤니티 (giscus) — 2026-10-05 */
+.comments { margin-top: 2.4em; padding-top: 1.2em; border-top: 1px solid var(--border); }
+.comments h2 { border: none; margin-top: 0; }
+.comments-offline { color: var(--text-faint); font-size: 0.86rem; }
+.board-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin: 1em 0 1.8em; }
+.board-grid a { display: block; padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg-elevated); color: var(--text); text-decoration: none; }
+.board-grid a:hover { background: var(--bg-hover); border-color: var(--border-strong); }
+.board-grid strong { display: block; font-family: var(--font-display); margin-bottom: 2px; }
+.board-grid span { font-size: 0.82rem; color: var(--text-dim); }

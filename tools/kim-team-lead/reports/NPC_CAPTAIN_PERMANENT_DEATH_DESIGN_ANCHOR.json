@@ -1,7 +1,7 @@
 {
   "id": "npc-captain-permanent-death-design",
   "titleKo": "NPC 함장 영구 사망 — 기획·기반 설계",
-  "docPath": "docs/NPC_CAPTAIN_PERMANENT_DEATH_DESIGN.md",
+  "docPath": "docs/character/NPC_CAPTAIN_PERMANENT_DEATH_DESIGN.md",
   "docVersion": "v0.2.1",
   "status": "foundation_implemented_awaiting_S0",
   "runtimeCodeAllowed": true,

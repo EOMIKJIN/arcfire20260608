@@ -11,7 +11,7 @@ export const GALAXY_VORONOI_CLIP_PADDING_PX = 48;
 /**
  * 영역 채움·국경선 Voronoi가 **같은 사각형**을 쓰도록 한다.
  * 호출부가 넘긴 mapBounds를 한쪽만 축소하면 변경 셀 모양이 어긋난다
- * (docs/GALAXY_VORONOI_FRONTIER_TERRITORY_FIX_DESIGN.md 원인 B).
+ * (docs/galaxy/GALAXY_VORONOI_FRONTIER_TERRITORY_FIX_DESIGN.md 원인 B).
  */
 export function computeGalaxyVoronoiClipBounds(
   sites: readonly { x: number; y: number }[],

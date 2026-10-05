@@ -237,6 +237,23 @@ export function resolveCaptainPersonalDestPlanetId(
   return resolveDestDisplayPlanetId(template, offerPlanetId, offerCaptainId);
 }
 
+/** 통신 수락 시 템플릿이 하나라도 쓰이면 true. 생성·캐시 기록 없음. */
+export function hasUsableCaptainPersonalTemplate(
+  captainId: string,
+  planetId: string,
+  dayKey: string,
+): boolean {
+  const id = captainId.trim();
+  const planet = planetId.trim();
+  const day = dayKey.trim();
+  if (!id || !planet || !day) return false;
+  const picked = pickUsableCaptainPersonalTemplateId(id, planet, day, (templateId) => {
+    const template = getCaptainPersonalMissionTemplate(templateId);
+    return template ? canUseTemplate(template, id, planet) : false;
+  });
+  return picked != null;
+}
+
 export function pickAndMaterializeCaptainPersonalMission(input: {
   captainId: string;
   planetId: string;

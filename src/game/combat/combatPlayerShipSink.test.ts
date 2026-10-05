@@ -4,6 +4,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
+  clearCombatPlayerShipSinkPending,
   consumeCombatPlayerShipSinkPending,
   markCombatPlayerShipSinkPending,
   peekCombatPlayerShipSinkPending,
@@ -15,6 +16,13 @@ test('sink pending is one-shot consume', () => {
   markCombatPlayerShipSinkPending();
   assert.equal(peekCombatPlayerShipSinkPending(), true);
   assert.equal(consumeCombatPlayerShipSinkPending(), true);
+  assert.equal(peekCombatPlayerShipSinkPending(), false);
+  assert.equal(consumeCombatPlayerShipSinkPending(), false);
+});
+
+test('clear drops a sink left by another combat', () => {
+  markCombatPlayerShipSinkPending();
+  clearCombatPlayerShipSinkPending();
   assert.equal(peekCombatPlayerShipSinkPending(), false);
   assert.equal(consumeCombatPlayerShipSinkPending(), false);
 });

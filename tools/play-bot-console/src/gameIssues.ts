@@ -8,6 +8,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { atomicWriteFile } from './learnedIo';
 import { LIVE_PARENT_COUNT } from './learnCycle';
+import { CREDIT_DRAIN_LOW_BALANCE, CREDIT_DRAIN_MIN_DROP, isCreditDrain } from './analyze';
 
 export const GAME_ISSUE_FLUSH_MIN_MS = 10 * 60 * 1000;
 export const QUEST_END_FLAT_DAYS = 8;
@@ -76,6 +77,7 @@ let lastSig = '';
 let creditRing: number[] = [];
 let drainHits = 0;
 let drainLatched = false;
+let drainReported = false;
 
 export function resetGameIssuesForTest(): void {
   issues = [];
@@ -91,6 +93,7 @@ export function resetGameIssueRunMemory(): void {
   creditRing = [];
   drainHits = 0;
   drainLatched = false;
+  drainReported = false;
 }
 
 export function gameIssuesPath(dir: string): string {
@@ -214,12 +217,13 @@ export function issuesFromObservation(
       `초반 전투 ${obs.combatWins}승 ${obs.combatLosses}패. 레벨 ${obs.level}에서 패가 더 많다.`,
     );
   }
-  if (obs.drainHits >= 2) {
+  if (obs.drainHits >= 1 && !drainReported) {
+    drainReported = true;
     apply(
       'balance:credit-drain',
       'balance',
       '크레딧 급감',
-      `크레딧이 3일 안에 2500 이상 줄어든 구간이 ${obs.drainHits}회다.`,
+      `크레딧이 3일 안에 ${CREDIT_DRAIN_MIN_DROP} 이상 줄어 잔액 ${CREDIT_DRAIN_LOW_BALANCE} 아래로 떨어진 구간이 이번 세계에서 1회다.`,
     );
   }
   if (obs.day <= FQA_OPENING_DAYS && obs.hangarShips <= 0 && obs.combatLosses >= 1) {
@@ -293,14 +297,11 @@ function economySample(credits: number): { insolventDays: number; drainHits: num
     if (creditRing[i] < 400) insolventDays += 1;
   }
   if (creditRing.length >= 4) {
-    const drop = creditRing[creditRing.length - 4] - creditRing[creditRing.length - 1];
-    if (drop >= 2500) {
+    if (isCreditDrain(creditRing[creditRing.length - 4], creditRing[creditRing.length - 1])) {
       if (!drainLatched) {
         drainHits += 1;
         drainLatched = true;
       }
-    } else {
-      drainLatched = false;
     }
   }
   return { insolventDays, drainHits };

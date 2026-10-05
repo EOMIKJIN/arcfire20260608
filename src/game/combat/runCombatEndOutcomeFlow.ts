@@ -15,6 +15,7 @@ import { tryPresentPendingMissionClearDialog } from '../../missions/presentPendi
 import { showArcAlert } from '../../utils/showArcAlert';
 import { applyCombatCapitalShipDestructionIfNeeded } from './combatPlayerShipSink';
 import { setCombatEndOutcomeHold } from './combatEndOutcomeHold';
+import { emitPlayVerb } from '../devPlayVerbLog';
 import {
   presentCombatResultOverlay,
   presentPendingCombatLevelUpThen,
@@ -60,6 +61,7 @@ export type RunCombatEndOutcomeFlowInput = {
 };
 
 export function runCombatEndOutcomeFlow(input: RunCombatEndOutcomeFlowInput): void {
+  emitPlayVerb('combat', `${input.result.venue ?? 'wave'}:${input.result.outcome}`);
   let finished = false;
   const finish = () => {
     if (finished) return;

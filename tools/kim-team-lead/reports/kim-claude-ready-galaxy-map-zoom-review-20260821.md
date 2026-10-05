@@ -14,8 +14,8 @@ post_review=김팀장 재대조 (대표님 지시 2026-08-21)
 > **김클로드**: 김팀장 문서를 **받아쓰지 말 것**. `worldmap` 탭·팬·이동 코드와 대조한 뒤 AGREE/PARTIAL/DISAGREE + 근거. **git commit 금지.**  
 > **끝나면** `kim-claude-handoff-pending.md` 상단에 `status=PENDING` · 김팀장이 확인.
 
-정본: `docs/은하지도_줌_개발계획.md`  
-교차: `docs/은하지도_이동포그_개발계획.md` (포그와 분리) · `app/(game)/worldmap.tsx` (지금 탭/팬)
+정본: `docs/galaxy/은하지도_줌_개발계획.md`  
+교차: `docs/galaxy/은하지도_이동포그_개발계획.md` (포그와 분리) · `app/(game)/worldmap.tsx` (지금 탭/팬)
 
 ---
 

@@ -401,9 +401,9 @@ app/(game)/
 
 | 문서 | 관계 |
 |------|------|
-| `docs/MISSION_SYSTEM_HANDOFF.md` | 인스턴스/transit 전투 — `TRANSIT` 공격 카테고리와 후속 통합 |
-| `docs/ARC_CORE_ECONOMY_FABRIC.md` | 공격→스탯·무역 — 전선 변화가 fabric signal로 연결 가능 (Phase 5+) |
-| `docs/_000_ARCFIRE_PLANET_COMPENDIUM_v1.0_20260619.md` | 행성·성계 Lore · 오메가=블루 후방 거점 등 |
+| `docs/quest/MISSION_SYSTEM_HANDOFF.md` | 인스턴스/transit 전투 — `TRANSIT` 공격 카테고리와 후속 통합 |
+| `docs/economy/ARC_CORE_ECONOMY_FABRIC.md` | 공격→스탯·무역 — 전선 변화가 fabric signal로 연결 가능 (Phase 5+) |
+| `docs/planet/_000_ARCFIRE_PLANET_COMPENDIUM_v1.0_20260619.md` | 행성·성계 Lore · 오메가=블루 후방 거점 등 |
 | `.cursor/rules/Arcfire_Master_Spec_v4.0-*.mdc` | ArcCore·Table-First·일일 배치 헌법 |
 
 ---

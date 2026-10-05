@@ -1,7 +1,7 @@
 {
   "id": "galaxy-700-scale-operations-design",
   "titleKo": "성계 700 전개방 — 메모리·게임데이터·연동 운영 설계",
-  "docPath": "docs/성계700_전개방_메모리_운영_설계.md",
+  "docPath": "docs/tech/성계700_전개방_메모리_운영_설계.md",
   "docVersion": "v0.3.1",
   "implReadyPath": "tools/kim-team-lead/reports/kim-team-lead-ready-galaxy700-scale-ops.md",
   "implReadyStatus": "Z1_DONE",

@@ -36,6 +36,10 @@ const VERB_TO_KIND: Record<string, ActionKind> = {
   mine: 'quest',
   trade: 'trade',
   talk: 'quest',
+  annex: 'annex_path',
+  skill: 'skill',
+  /** 전함 구매 — 트윈은 장비·함선 구매를 gear 행동에서 처리 */
+  ship: 'gear',
 };
 
 export function verbToActionKind(verb: string): ActionKind | undefined {

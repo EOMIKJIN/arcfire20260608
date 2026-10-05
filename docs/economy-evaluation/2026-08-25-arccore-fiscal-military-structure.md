@@ -11,7 +11,7 @@
 [pss-pre-dev] verdict=PASS — 구현 착수 전 구조 확정
 ```
 
-정본 교차: `docs/ARC_CORE_ECONOMY_FABRIC.md` · `2026-08-04-economy-system-full-structure-audit-FINAL.md` · `2026-08-04-vault-5axis-reaudit.md` · `2026-08-03-economy-concept-scenario-full-recheck.md`
+정본 교차: `docs/economy/ARC_CORE_ECONOMY_FABRIC.md` · `2026-08-04-economy-system-full-structure-audit-FINAL.md` · `2026-08-04-vault-5axis-reaudit.md` · `2026-08-03-economy-concept-scenario-full-recheck.md`
 
 ---
 

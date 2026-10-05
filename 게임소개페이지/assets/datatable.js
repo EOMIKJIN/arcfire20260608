@@ -8,6 +8,13 @@
     });
   }
 
+  /** 썸네일 — 게임 에셋(../assets/images/...) 지연 로딩. 경로 없으면 빈 칸 */
+  window.wikiThumb = function (src, alt, variant) {
+    if (!src) return '<span class="dt-thumb dt-thumb-empty" aria-hidden="true"></span>';
+    return '<img class="dt-thumb' + (variant ? ' dt-thumb-' + variant : '') + '" loading="lazy" decoding="async" src="' +
+      escapeHtml(src) + '" alt="' + escapeHtml(alt || '') + '" />';
+  };
+
   function renderRow(row, columns) {
     return "<tr>" + columns.map(function (col) {
       var v = row[col.key];

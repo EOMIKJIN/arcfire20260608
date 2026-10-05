@@ -1,6 +1,6 @@
 # ARCFIRE Active Ecosystem v1.0 — 적용 가능 항목만 추출 (중복 제거판)
 
-> **원본 검토 문서**: [`../ARCFIRE_ACTIVE_ECOSYSTEM_SPEC_v1_0.md`](../ARCFIRE_ACTIVE_ECOSYSTEM_SPEC_v1_0.md)  
+> **원본 검토 문서**: [`../ARCFIRE_ACTIVE_ECOSYSTEM_SPEC_v1_0.md`](ARCFIRE_ACTIVE_ECOSYSTEM_SPEC_v1_0.md)  
 > **작성**: 2026-06-26  
 > **상태**: **검토·1차 메모리 감사 완료 — 구현 대기(확장만, 신규 엔진 없음)**  
 > **원칙**: **중복 시스템 금지** · 유사 개념 **이중 추가 금지** · `.cursor/rules/arcfire-memory-leak-audit-first.mdc` 1순위
@@ -165,13 +165,13 @@ Phase C — territorial / learning / Skia (별도 정본)
 
 ## 7. 관련 정본 (구현 시 읽을 순서)
 
-1. `docs/ARC_CORE_ECONOMY_FABRIC.md`  
+1. `docs/economy/ARC_CORE_ECONOMY_FABRIC.md`  
 2. `src/arcCore/economy/planetEconomyFabric.ts`  
 3. `src/arcCore/economy/runArcCoreConvoyDailySettlementPass.ts`  
 4. `src/arcCore/subcores/AiNpcSubCore.ts`  
 5. `src/arcCore/balance/seedPlanetOccupationFromBalance.ts`  
 6. `.cursor/rules/arcfire-memory-leak-audit-first.mdc`  
-7. 원본 (전체): `docs/ARCFIRE_ACTIVE_ECOSYSTEM_SPEC_v1_0.md`
+7. 원본 (전체): `docs/ecosystem/ARCFIRE_ACTIVE_ECOSYSTEM_SPEC_v1_0.md`
 
 ---
 

@@ -21,9 +21,15 @@ import {
   isStellaHubTutorialAwaitingTalk,
   isStellaHubTutorialInProgress,
   resolveStellaHubTutorialPresent,
+  shouldResumeTutorialOpeningRaid,
   type StellaHubTutorialEvent,
   type StellaHubTutorialPresent,
 } from './stellaHubTutorialGuideLogic';
+import {
+  armTutorialOpeningRaid,
+  getTutorialOpeningRaidGateOpen,
+  isTutorialOpeningRaidRetryPending,
+} from './tutorialOpeningRaid';
 
 export {
   STELLA_HUB_TUTORIAL_HOME_PLANET_ID,
@@ -124,6 +130,19 @@ function presentGuideScene(plan: StellaHubTutorialPresent): boolean {
       });
       return;
     }
+    if (plan.chainOnDismiss === 'e2') {
+      presentIngameDialogScene(S.e2, {
+        bypassScreenShell: true,
+        onDismiss: () => {
+          armTutorialOpeningRaid();
+        },
+      });
+      return;
+    }
+    if (plan.chainOnDismiss === 'start_opening_raid') {
+      armTutorialOpeningRaid();
+      return;
+    }
     if (plan.chainOnDismiss === 'start_first_mission') {
       completion.runIntroSeenAndStartFirstMissionPolicy();
     }
@@ -149,7 +168,16 @@ export function notifyStellaHubTutorial(
   planetId?: string | null,
 ): boolean {
   if (!isHomePlanet(planetId)) return false;
-  const plan = resolveStellaHubTutorialPresent(event, readSeenSceneIds());
+  const seen = readSeenSceneIds();
+  if (
+    shouldResumeTutorialOpeningRaid(seen)
+    && !isTutorialOpeningRaidRetryPending()
+    && !getTutorialOpeningRaidGateOpen()
+    && !isIngameDialogActive()
+  ) {
+    armTutorialOpeningRaid();
+  }
+  const plan = resolveStellaHubTutorialPresent(event, seen);
   if (!plan) return false;
   return presentGuideScene(plan);
 }

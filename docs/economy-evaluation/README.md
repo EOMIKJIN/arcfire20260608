@@ -16,10 +16,10 @@
 
 ## 관련 정본
 
-- 구현·로드맵: [ARC_CORE_ECONOMY_FABRIC.md](../ARC_CORE_ECONOMY_FABRIC.md) · §12 재정·군사
+- 구현·로드맵: [ARC_CORE_ECONOMY_FABRIC.md](../economy/ARC_CORE_ECONOMY_FABRIC.md) · §12 재정·군사
 - 확장시스템(남·북 선단 병렬·운영자 게이트): [docs/expansion/README.md](../expansion/README.md)
 - 3h 운영 감사: `npm run audit:planet-economy-3h` · `npm run audit:balance-ops`
-- 김경제 워크플로: [KIM_ECONOMY_AGENT.md](../KIM_ECONOMY_AGENT.md)
+- 김경제 워크플로: [KIM_ECONOMY_AGENT.md](../team/KIM_ECONOMY_AGENT.md)
 
 ## 갱신 규칙
 
