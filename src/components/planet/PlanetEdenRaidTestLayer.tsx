@@ -499,6 +499,8 @@ export type Agent = {
   statusTintHex: string;
   /** 정책 interned iconKind. 빈 문자열=배지 없음 */
   statusIconKind: string;
+  /** 색 마크와 같이 켜고 끄는 고정 문구. 빈 문자열=없음 */
+  statusEffectLabel: string;
   /** 플레이어 태세 실드 재생 마지막 반영 시각(ms) */
   lastShieldRegenAtMs: number;
   stallChaseBoostUntilMs: number;
@@ -2487,6 +2489,7 @@ function createCapitalAgentBase(
     statusTintUntilMs: 0,
     statusTintHex: '',
     statusIconKind: '',
+    statusEffectLabel: '',
     lastShieldRegenAtMs: wallBaseMs,
     stallChaseBoostUntilMs: 0,
     tempoRole: 'press',

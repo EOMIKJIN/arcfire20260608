@@ -1,0 +1,29 @@
+key,value,noteKo
+speakThreshold,0.4,말하고 싶은 마음이 이 값 이상이면 말한다
+askThreshold,0.7,이 이상이면 1차 통신으로 물어볼 만큼 중요하다고 판단
+restraintHalfLifeMin,90,방금 말했다는 자제심이 반으로 줄어드는 시간(분) — 일상 질문 포함
+restraintMax,0.8,방금 말한 직후 마음을 누르는 정도(0~1)
+newsRestraintScale,0.5,마지막 말 뒤에 새 일이 생기면 자제 최대치에 곱한다
+ignoreDamp,0.6,같은 상황을 무시당한 횟수마다 곱하는 값
+globalIgnoreDamp,0.85,최근 연달아 무시당한 횟수마다 모든 상황에 곱하는 값
+dutyDamp,0.5,당직 중 off_only 상황에 곱하는 값 (걱정 계열 제외)
+casualDamp,0.7,casualFirst 높을 때 걱정 외 상황에 곱하는 값
+minGapMin,15,근원체 inbound 와 겹치지 않는 최소 간격(분) — 기술 조정
+failsafeMaxPerDay,6,고장 방지 상한 — 판단 규칙 아님 · O4 에서 닿으면 판단 쪽을 고친다
+fitFreshMin,10,근거 행동이 이 분 안이면 지금이 딱 말할 때
+fitHalfLifeMin,30,그 뒤로 말할 때가 지나가는 반감기(분)
+fitFloor,0.3,때가 지나도 남는 최저치 — 근거 행동이 최근 기록에 없을 때도 이 값
+busyWindowMin,5,최근 이 분 동안의 행동 수로 한창 바쁜지 본다
+busyActions,6,그 안에 행동이 이 수 이상이면 한창 바쁜 중
+busyDamp,0.5,한창 바쁠 때 걱정 외 상황에 곱하는 값
+ignoreHalfLifeHours,72,무시당한 기억이 반으로 풀리는 시간(시간) — 영원히 입을 닫지 않는다
+repeatWindowHours,72,이 시간 안에 같은 상황을 꺼낸 횟수만큼 repeatDamp 를 곱한다
+repeatDamp,0.4,자주 한 말은 덜 하고 싶다 — 최근 한 번 꺼낼 때마다 곱하는 값
+lifeCooldownHours,24,같은 일상 질문을 한 뒤 이 시간 안에는 다시 묻지 않는다 (하루 1회 규칙 대신 판단 — 대표님 2026-10-06)
+w_worry,1.0,동기 무게 — 걱정
+w_want_right,0.9,동기 무게 — 바로잡고 싶음
+w_check_in,0.75,동기 무게 — 안부
+w_need_you,0.7,동기 무게 — 도움 제안
+w_proud,0.6,동기 무게 — 함께 기뻐함
+w_curious,0.5,동기 무게 — 궁금
+w_want_share,0.45,동기 무게 — 공감

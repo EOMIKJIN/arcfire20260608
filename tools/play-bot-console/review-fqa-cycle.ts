@@ -11,7 +11,10 @@ import { attachFqaResponse, loadGameIssues } from './src/gameIssues';
 import { atomicWriteFile } from './src/learnedIo';
 import { toolRoot } from './src/io';
 import { learnedDir } from './src/policy';
+import { runProcessBoard, worstState } from './src/processBoard';
 import {
+  cardSignature,
+  FQA_CARD_RAISE_HOLD,
   emptyFqaReviewState,
   planFqaReview,
   reviewNeeded,
@@ -43,6 +46,7 @@ function loadState(dir: string): FqaReviewState {
       seenEvidence: raw.seenEvidence && typeof raw.seenEvidence === 'object' ? raw.seenEvidence : {},
       reviews: Number.isFinite(raw.reviews) ? Number(raw.reviews) : 0,
       consultPending: raw.consultPending === true,
+      cardSig: typeof raw.cardSig === 'string' ? raw.cardSig : '',
     };
   } catch {
     return emptyFqaReviewState();
@@ -114,8 +118,8 @@ export async function runFqaReviewOnce(dir: string, nowMs: number, consult: bool
   if (fs.existsSync(STOP_FLAG)) return 'stop';
   const issues = loadGameIssues(dir);
   const state = loadState(dir);
-  if (!reviewNeeded(state, issues)) return 'idle';
   const card = loadPlayIntelligence(dir);
+  if (!reviewNeeded(state, issues, card)) return 'idle';
   const plan = planFqaReview(issues, card, state.seenEvidence);
   let verdict: 'agree' | 'hold' | 'unanswered' = 'agree';
   if (consult && plan.responses.length > 0) {
@@ -145,6 +149,9 @@ export async function runFqaReviewOnce(dir: string, nowMs: number, consult: bool
     seenEvidence: verdict === 'unanswered' ? state.seenEvidence : plan.seenEvidence,
     reviews: state.reviews + (verdict === 'unanswered' ? 0 : 1),
     consultPending: verdict === 'unanswered',
+    cardSig: verdict === 'unanswered'
+      ? state.cardSig
+      : cardSignature(verdict === 'agree' && plan.cardChanged ? plan.card : card),
   };
   fs.mkdirSync(dir, { recursive: true });
   atomicWriteFile(statePath(dir), JSON.stringify(next, null, 2));
@@ -169,6 +176,12 @@ async function main(): Promise<void> {
   do {
     const verdict = await runFqaReviewOnce(dir, Date.now(), true);
     console.log(`fqa-review ${verdict}`);
+    try {
+      const board = runProcessBoard({ cardRaiseHold: FQA_CARD_RAISE_HOLD, bench: true });
+      console.log(`process-board ${worstState(board.checks)}${board.alerted ? ' alerted' : ''}`);
+    } catch (err) {
+      console.error('process-board failed', err);
+    }
     if (!loop) break;
     await new Promise((resolve) => setTimeout(resolve, FQA_REVIEW_INTERVAL_MS));
   } while (!fs.existsSync(STOP_FLAG));

@@ -10,6 +10,7 @@ import {
   verbToActionKind,
   type SessionTraceV0,
 } from './humanSeed';
+import { atomicWriteFile } from './learnedIo';
 import type { ActionKind } from './types';
 
 export type HumanDeltaFile = {
@@ -28,17 +29,6 @@ export type HumanDeltaFile = {
 
 const PAIR_CAP = 12;
 const COMBAT_METHOD_RE = /(?:^|[;\s])(range|weapon|approach)=/;
-
-function atomicWrite(file: string, body: string): void {
-  const tmp = `${file}.${process.pid}.tmp`;
-  fs.writeFileSync(tmp, body, 'utf8');
-  try {
-    fs.renameSync(tmp, file);
-  } catch {
-    fs.copyFileSync(tmp, file);
-    try { fs.unlinkSync(tmp); } catch { /* ignore */ }
-  }
-}
 
 export function humanDeltaPath(dir: string): string {
   return path.join(dir, 'human-delta.json');
@@ -177,7 +167,7 @@ export function mergeHumanDelta(prev: HumanDeltaFile, next: HumanDeltaFile): Hum
 export function writeHumanDelta(dir: string, delta: HumanDeltaFile): string {
   fs.mkdirSync(dir, { recursive: true });
   const dest = humanDeltaPath(dir);
-  atomicWrite(dest, `${JSON.stringify(delta, null, 2)}\n`);
+  atomicWriteFile(dest, `${JSON.stringify(delta, null, 2)}\n`);
   return dest;
 }
 

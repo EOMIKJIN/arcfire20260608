@@ -96,6 +96,40 @@ function runMtime(dir: string): number {
   }
 }
 
+/** 닫힌 profiler 수집 세션 보관 기간. 사람·미판정 세션은 기간과 무관하게 남긴다. */
+export const PROFILER_RAW_KEEP_MS = 3 * 24 * 60 * 60 * 1000;
+const PROFILER_PRUNE_EVERY_MS = 60 * 60 * 1000;
+let lastProfilerPruneMs = 0;
+
+/**
+ * learned/human-raw 의 닫힌 profiler 세션 중 오래된 것만 지운다.
+ * 학습은 human 세션만, 세포 반복은 열린 세션(capture.pid)만 읽는다.
+ */
+export function pruneProfilerHumanRaw(input?: { dir?: string; nowMs?: number; keepMs?: number }): number {
+  const root = path.join(input?.dir ?? learnedDir(), 'human-raw');
+  if (!fs.existsSync(root)) return 0;
+  const now = input?.nowMs ?? Date.now();
+  const keep = input?.keepMs ?? PROFILER_RAW_KEEP_MS;
+  let removed = 0;
+  const ents = fs.readdirSync(root, { withFileTypes: true });
+  for (let i = 0; i < ents.length; i += 1) {
+    if (!ents[i].isDirectory()) continue;
+    const dir = path.join(root, ents[i].name);
+    if (fs.existsSync(path.join(dir, 'capture.pid'))) continue;
+    let kind = '';
+    try {
+      kind = String((JSON.parse(fs.readFileSync(path.join(dir, 'manifest.json'), 'utf8')) as { sessionKind?: string }).sessionKind ?? '');
+    } catch {
+      continue;
+    }
+    if (kind !== 'profiler') continue;
+    if (now - runMtime(dir) < keep) continue;
+    rmrf(dir);
+    removed += 1;
+  }
+  return removed;
+}
+
 export function resetRawPlayData(input?: { capBytes?: number; root?: string }): {
   reset: boolean;
   bytes: number;
@@ -103,6 +137,14 @@ export function resetRawPlayData(input?: { capBytes?: number; root?: string }): 
 } {
   const root = input?.root ?? toolRoot();
   const cap = input?.capBytes ?? RAW_CAP_BYTES;
+  if (!input?.root && Date.now() - lastProfilerPruneMs >= PROFILER_PRUNE_EVERY_MS) {
+    lastProfilerPruneMs = Date.now();
+    try {
+      pruneProfilerHumanRaw();
+    } catch {
+      /* 다음 시간에 다시 */
+    }
+  }
   const bytes = measureRawBytes(root);
   if (bytes < cap) return { reset: false, bytes, cap };
 

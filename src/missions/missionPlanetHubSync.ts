@@ -3,6 +3,7 @@
  * present 는 presentPendingMissionClearDialog · store.tryFireTrigger 만 — Api 경유 금지.
  */
 
+import { tryPresentFirstStellaLandContact } from '../game/ingameDialog/firstStellaContactAlert';
 import { useIngameDialogStore } from '../store/ingameDialogStore';
 import { useMissionStore } from '../store/missionStore';
 import { applyLandedMissionObjectives } from './applyLandedMissionObjectives';
@@ -16,6 +17,7 @@ export function syncPlanetHubMissionAndDialog(planetId: string): void {
   applyLandedMissionObjectives(planetId);
   tryPresentPendingMissionClearDialog();
   if (!useIngameDialogStore.getState().isActive()) {
+    if (tryPresentFirstStellaLandContact(planetId)) return;
     useIngameDialogStore.getState().tryFireTrigger({ triggerKey: 'planet_landed', targetId: planetId });
   }
 }

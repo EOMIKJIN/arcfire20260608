@@ -24,6 +24,7 @@ import {
 } from './facilityTwin';
 import { markSkillLearned, paintOf, sumDevLevels } from './world';
 import { gearCreditReserve } from './combatEfficiency';
+import { noteObs, obsDetail } from './observeVocab';
 
 export function markQuestPlanet(world: WorldState, planetId: string | null | undefined): void {
   if (planetId && planetId.length > 0) world.lastQuestPlanetId = planetId;
@@ -157,6 +158,7 @@ export function tryLearnSkill(world: WorldState, ev: (kind: JournalEntry['kind']
     return ev('SKILL', `습득 대기 SP${world.skillPoints} / ${world.learnedSkills.length}/${skills.length}`);
   }
   markSkillLearned(world, pick.id);
+  noteObs(world, 'skill', obsDetail.skill(pick.id));
   world.skillPoints -= 1;
   world.skillLearned += 1;
   return ev(
@@ -173,6 +175,7 @@ export function tryBuyBestGear(
   if (!g) return ev('GEAR', '상위 장비 없음');
   world.credits -= g.price;
   world.equipped[g.slot] = g.id;
+  noteObs(world, 'equip', obsDetail.equip(g.slot, g.id));
   world.gearBuys += 1;
   let score = 0;
   const slots = Object.keys(world.equipped);
@@ -217,6 +220,7 @@ export function tryDevelopFocus(
   const pick = pickBalancedDev(world);
   if (!pick) return ev('DEVELOP', `${FOCUS_PLANET_ID} 개발 대기 (자금 ${world.credits} · 게이트)`);
   world.credits -= pick.cost;
+  noteObs(world, 'develop', obsDetail.develop(pick.level <= 0 ? 'install' : 'upgrade', pick.id, world.focusPlanetId));
   const target = pick.level + 1;
   const ticks = durationTicks(pick.id, target);
   world.devJob = {

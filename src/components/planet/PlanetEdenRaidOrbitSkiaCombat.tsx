@@ -57,6 +57,10 @@ import {
 } from './planetSkiaHitFxContract';
 
 const ALLY_MARK_HALF = 7;
+/** 색 마크 위 효과 문구. 함장 이름(8px)과 같은 최소 크기 */
+const EFFECT_HIT_LABEL_WIDTH = 128;
+const EFFECT_HIT_LABEL_LIFT_PX = ALLY_MARK_HALF + 18;
+const EFFECT_HIT_LABEL_LIFT_ABOVE_NAME_PX = ALLY_MARK_HALF + 30;
 const DIAMOND_HEADING_OFFSET_DEG = 90;
 const DEBUG_CAPITAL_BOW_LINE_PX = 22;
 const LASER_DURATION_MS = 320;
@@ -1060,6 +1064,9 @@ export const PlanetEdenRaidOrbitSkiaCombat = memo(function PlanetEdenRaidOrbitSk
   const renderMissileDodgeFxRef = useRef(renderMissileDodgeFx);
   renderMissileDodgeFxRef.current = renderMissileDodgeFx;
   const picLiveRef = useRef<SkPicture | null>(null);
+  /** Picture에 찍힌 전투 시계. 효과 문구는 이 시각으로 링과 같이 켜고 끈다 */
+  const pendingLabelClockRef = useRef(0);
+  const committedLabelClockRef = useRef(0);
   /** Path 풀·노바 접선 맵을 한 객체에 유지 — 분리 ref 시 HMR/번들 불일치로 런타임 ReferenceError·Skia SIGSEGV로 이어진 사례 방지 */
   const poolsRef = useRef<CombatSkiaPoolBundle | null>(null);
   if (poolsRef.current === null) {
@@ -1116,12 +1123,14 @@ export const PlanetEdenRaidOrbitSkiaCombat = memo(function PlanetEdenRaidOrbitSk
       if (!mountedRef.current || !combatSkiaLoopsActiveRef.current) return;
       const next = pendingPictureRef.current;
       if (!next) return;
+      committedLabelClockRef.current = pendingLabelClockRef.current;
       commitSkPictureReactFrame({ liveRef: picLiveRef, setPicture, next });
     };
     const pushFrame = () => {
       if (!mountedRef.current || !combatSkiaLoopsActiveRef.current) return;
       const orbitSz = orbitSizeRef.current;
       if (orbitSz < 1) return;
+      pendingLabelClockRef.current = sim.tMsRef.current;
       pendingPictureRef.current = recordCombatOrbitPicture(
         sim,
         pools,
@@ -1176,13 +1185,49 @@ export const PlanetEdenRaidOrbitSkiaCombat = memo(function PlanetEdenRaidOrbitSk
   }
 
   const agents = sim.agentsRef.current;
+  const labelClockMs = committedLabelClockRef.current;
   const labelEls: React.ReactNode[] = [];
   for (const ag of agents) {
     if (!ag.alive) continue;
+    if (!finiteNum(ag.x) || !finiteNum(ag.y)) continue;
+    const effectLabel = ag.statusEffectLabel;
+    if (
+      effectLabel &&
+      ag.statusTintHex.length > 0 &&
+      labelClockMs < ag.statusTintUntilMs
+    ) {
+      labelEls.push(
+        <View
+          key={`fx-${ag.id}`}
+          style={[
+            styles.captionWrap,
+            {
+              transform: [
+                { translateX: ag.x - EFFECT_HIT_LABEL_WIDTH * 0.5 },
+                {
+                  translateY:
+                    ag.y -
+                    (ag.team === 'blue'
+                      ? EFFECT_HIT_LABEL_LIFT_ABOVE_NAME_PX
+                      : EFFECT_HIT_LABEL_LIFT_PX),
+                },
+              ],
+            },
+          ]}
+          pointerEvents="none"
+        >
+          <Text
+            style={[styles.effectCaption, { color: ag.statusTintHex }]}
+            numberOfLines={1}
+          >
+            {effectLabel}
+          </Text>
+        </View>,
+      );
+    }
     // 프레임 효율: 적함(red/orange) 닉네임은 렌더하지 않는다(매 프레임 RN Text 레이아웃 비용 절감).
     // 플레이어(blue 팀)만 닉네임 유지 — 웨이브 전투에서 텍스트 노드 ~12개 제거.
     if (ag.team !== 'blue') continue;
-    if (!finiteNum(ag.x) || !finiteNum(ag.y)) continue;
     labelEls.push(
       <View
         key={`lb-${ag.id}`}
@@ -1233,6 +1278,16 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.mono,
     fontSize: 8,
     lineHeight: 10,
+    textAlign: 'center',
+    textShadowColor: 'rgba(6,10,20,0.75)',
+    textShadowOffset: { width: 0, height: 0.5 },
+    textShadowRadius: 1.5,
+  },
+  effectCaption: {
+    fontFamily: FONTS.mono,
+    fontSize: 8,
+    lineHeight: 10,
+    width: EFFECT_HIT_LABEL_WIDTH,
     textAlign: 'center',
     textShadowColor: 'rgba(6,10,20,0.75)',
     textShadowOffset: { width: 0, height: 0.5 },

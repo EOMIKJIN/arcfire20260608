@@ -1176,6 +1176,7 @@ export const useMissionStore = create<MissionState>((set, get) => ({
     if (state.pendingMissionDialogId !== missionId) return;
     const prev = state.progresses[missionId];
     if (!prev) return;
+    emitPlayVerb('quest', `complete:${missionId}`);
 
     const completed: MissionProgress = {
       ...prev,

@@ -101,6 +101,7 @@ export function applySpecialWeaponStatusOnAgent(
   if (policy.tintHex) {
     victim.statusTintHex = policy.tintHex;
     victim.statusIconKind = policy.iconKind;
+    victim.statusEffectLabel = policy.effectHitLabel;
     victim.statusTintUntilMs = Math.max(victim.statusTintUntilMs, elapsedMs + markMs);
   }
   if (policy.stripShield) {

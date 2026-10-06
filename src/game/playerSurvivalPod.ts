@@ -102,6 +102,7 @@ function reconcileCapitalShipInventoryFromHangar(
 function buildSurvivalPodShip(currentShip: PlayerShip): PlayerShip {
   const applied = applyNpcCapitalShipToPlayerShip(currentShip, SURVIVAL_POD_NPC_SHIP_ID);
   if (!applied.ok) {
+    const alreadyPod = isSurvivalPodNpcShipId(currentShip.portraitNpcCapitalShipId);
     return {
       ...currentShip,
       portraitNpcCapitalShipId: SURVIVAL_POD_NPC_SHIP_ID,
@@ -109,6 +110,9 @@ function buildSurvivalPodShip(currentShip: PlayerShip): PlayerShip {
       equipSlots: {},
       weapons: [],
       weaponItems: [],
+      preservedEquipSlots: alreadyPod
+        ? currentShip.preservedEquipSlots
+        : currentShip.equipSlots,
     };
   }
   return {

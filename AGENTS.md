@@ -2,7 +2,7 @@
 
 ## 사용자 호칭 (전체 팀 · 2026-07-05~)
 
-**사용자 = 「대표님」** — 김팀장 · Fable · 김경제 · 김클로드 · Auto/Sonnet **전원** 한국어 응답·handoff·리포트에서 동일 적용.  
+**사용자 = 「대표님」** — 김팀장 · Fable · 김경제 · 김클로드 · 김플레이 · Auto/Sonnet **전원** 한국어 응답·handoff·리포트에서 동일 적용.  
 정본: `.cursor/rules/arcfire-user-addressing.mdc`
 
 ## 🚨 개발규칙 1순위 (무조건 · 2026-07-01~)
@@ -44,9 +44,9 @@ npm run audit:mem-post-dev-recheck    # 개발 반영 후 handoff·status 갱신
 
 상태: `tools/kim-team-lead/reports/DEV_PROCESS_GATE_STATUS.md`
 
-## 모델 게이트 — 김팀장 핵심 **glock 4.5** · Composer·Auto 분석 전용 (2026-08-04~)
+## 모델 게이트 — 김팀장 핵심 **glock 4.7** · Composer·Auto 분석 전용 (2026-10-06~)
 
-> **대표님 지시 (2026-08-04)**: **김팀장 에이전트 핵심 모델 = glock 4.5** (글록 4.5 · Cursor Grok 4.5 · `cursor-grok-4.5-high-fast`).  
+> **대표님 지시 (2026-10-06)**: **김팀장 에이전트 핵심 모델 = glock 4.7** (글록 4.7 · Grok 4.7 · `grok-4.7-xhigh-fast`).  
 > **Composer · Cursor Auto/미지정 폴백** = 분석만 · 코드·로그 금지 (2026-08-02 교훈 유지).
 
 | 항목 | 경로 |
@@ -55,8 +55,8 @@ npm run audit:mem-post-dev-recheck    # 개발 반영 후 handoff·status 갱신
 | 구독·핵심 모델 | `tools/kim-team-lead/reports/SUBSCRIPTION_RENEWAL_ANCHOR.json` → `kimTeamLeadCoreModel` |
 | API 소진 플래그 | `tools/kim-team-lead/reports/API_EXHAUST_FALLBACK_ACTIVE.flag` — Composer/Auto에 코드·로그 diff 금지 |
 
-- **김팀장 핵심**: **glock 4.5** — 개발·검수 허용
-- **허용 개발 모델**: 글록 4.5(김팀장) · Fable · Sonnet · (보조) Opus — Task slug **필수**
+- **김팀장 핵심**: **glock 4.7** — 개발·검수 허용
+- **허용 개발 모델**: 글록 4.7(김팀장) · Fable · Sonnet · (보조) Opus — Task slug **필수**
 - **금지**: Composer · `composer-2.5*` · Cursor Auto/미지정 · Task `model` 생략 · Composer가 「김팀장」으로 코드 수정
 - **훅**: `on-session-start-paid-model-gate.cjs` · `on-before-submit-prompt-paid-model-gate.cjs`
 
@@ -69,12 +69,14 @@ npm run audit:mem-post-dev-recheck    # 개발 반영 후 handoff·status 갱신
 
 | 에이전트 | 호출 | 역할 | 코드 |
 |---------|------|------|------|
-| **김팀장** | `@김팀장` · 「김팀장」 | **유일한 사용자 지시** — 핵심 모델 **glock 4.5** · Skia·UI·STAGE·arcCore·일일배치·메모리·버그 **런타임** | **O** |
+| **김팀장** | `@김팀장` · 「김팀장」 | **유일한 사용자 지시** — 핵심 모델 **glock 4.7** · Skia·UI·STAGE·arcCore·일일배치·메모리·버그 **런타임** | **O** |
 | **Fable** | `@Fable` · `@페이블` | **Table-First 구현 핵심** — CSV·시드·점유·카탈로그·registry·72단계 (김팀장 Task 위임) | **O (해당 축)** |
 | **김경제** (팀원) | `@김경제` · 「김경제」 | **김팀장 배정만** — 감시·**메모리 프로파일링**·`audit:balance-ops` **점검·리포트** · **개발 업데이트 시 메모리 즉각 재검수·보고** | **X** |
 | **김클로드** (보조) | `@김클로드` · Cursor ✱ / `claude` | **초안 구현** — handoff 후 **김팀장 검수·커밋** | **초안만 (커밋 X)** |
+| **김플레이** (전담) | `@김플레이` · 「김플레이」 | **플레이봇 직접 수정** · **게임 학습 로그** (`devPlayVerbLog` · `[PLAY_VERB]`). 김클로드 플레이봇 업무 이관 (대표님 직접 지시 · 2026-10-06~) | **O (플레이봇 경로 · 학습 로그)** |
 
-> 사용자는 **김팀장 대화창 하나**에만 작업 지시. 김경제 별도 창 = 감시·점검 전용(충돌 방지).
+> 사용자는 **김팀장 대화창 하나**에만 게임 개발을 지시한다. 김경제 별도 창 = 감시·점검 전용. 플레이봇·학습 로그는 **김플레이 창**.
+> **김플레이 (2026-10-06)**: 플레이봇(`tools/play-bot-console/**` · `docs/playbot/**`)은 직접 수정한다. 게임에 들어가는 학습 로그도 김플레이가 고친다. 그 외 게임 본체 문제는 보고만 하고 김팀장에게 넘긴다. 김팀장은 플레이봇·학습 로그를 구현하지 않는다.
 > **김클로드** 산출물은 `tools/kim-team-lead/reports/kim-claude-handoff-pending.md` → **김팀장 재검수·최종 커밋** 필수 (`CLAUDE.md` · `.cursor/rules/arcfire-main-lead-agent.mdc`).
 
 ### 김클로드 → 김팀장 검수 (2026-07-04~)
@@ -148,7 +150,7 @@ npm run monitor:dashboard           # logs/MONITOR_DASHBOARD_LATEST.html
 - **정본**: `.cursor/rules/gemini-code-agent-routing.mdc` — `alwaysApply`, 매 턴 @김팀장/@김경제/@Fable/@Opus/@Sonnet **없이** 자동 선별 (김팀장 세션 내부 라우팅).
 - **원본 기획**: `.cursor/rules/gemini-code-1781406772084.md`
 - **세션 훅**: `.cursor/hooks/on-session-start-agent-routing.cjs` (`sessionStart`)
-- **Task 위임 model**: **김팀장(글록 4.5)** `cursor-grok-4.5-high-fast` · **Fable** `claude-fable-5-thinking-high` · 김경제(감시만) `claude-fable-5-thinking-high` · Sonnet `claude-4.6-sonnet-medium-thinking` · (보조 `@Opus`) `claude-opus-4-8-thinking-high`
+- **Task 위임 model**: **김팀장(글록 4.7)** `grok-4.7-xhigh-fast` · **Fable** `claude-fable-5-thinking-high` · 김경제(감시만) `claude-fable-5-thinking-high` · Sonnet `claude-4.6-sonnet-medium-thinking` · (보조 `@Opus`) `claude-opus-4-8-thinking-high`
 - **Fable 규칙**: `.cursor/rules/arcfire-fable-implementation-agent.mdc`
 
 Cursor 및 기타 코딩 에이전트는 **`.cursor/rules/Arcfire_Master_Spec_v4.0-1781368341848295041.mdc`** (프로젝트 헌법 v4.0)를 따릅니다. 구현·운영 세부 요약은 아래와 `AGENTS.md`에 둡니다.

@@ -6,9 +6,9 @@
 
 
 
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import React, { memo, useEffect } from 'react';
 
-import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 
 import {
 
@@ -22,10 +22,9 @@ import {
 
 } from '../combat';
 
-import { COLORS, FONTS, SPACING } from '../utils/theme';
+import { SPACING } from '../utils/theme';
 
-import { useBattleStanceStore, BATTLE_STANCE_META } from '../store/battleStanceStore';
-import { useT } from '../i18n';
+import { CombatStanceRow } from './combat/CombatStanceRow';
 
 import {
 
@@ -43,41 +42,7 @@ import {
 
   PLANET_MAIN_ORBIT_VISUAL_LIFT_PX,
 
-  PLANET_MAIN_STANCE_ENGAGEMENT_POLL_MS,
-
-  PLANET_MAIN_STANCE_UI_DELAY_MS,
-
 } from './planetHub/planetHubConstants';
-
-import { usePlanetHubInterval } from './planetHub/usePlanetHubInterval';
-
-import { usePlanetHubTimeout } from './planetHub/usePlanetHubTimeout';
-
-
-
-function computeMainStageCapitalEngagement(sim: CapitalRealtimeCombatSim): boolean {
-
-  const agents = sim.agentsRef.current;
-
-  let blueAlive = false;
-
-  let foeAlive = false;
-
-  for (let i = 0; i < agents.length; i += 1) {
-
-    const a = agents[i]!;
-
-    if (!a.alive) continue;
-
-    if (a.team === 'blue') blueAlive = true;
-
-    if (a.team === 'red' || a.team === 'orange') foeAlive = true;
-
-  }
-
-  return blueAlive && foeAlive;
-
-}
 
 
 
@@ -199,6 +164,8 @@ export { CapitalRealtimeCombatHudOverlay };
 
 
 
+
+
 export function PlanetMainStanceRow({
 
   routeFocused,
@@ -213,164 +180,21 @@ export function PlanetMainStanceRow({
 
 }) {
 
-  const sim = useCapitalRealtimeCombatSimContext();
-
-  const t = useT();
-
-  const activeStance = useBattleStanceStore((s) => s.activeStance);
-
-  const setBattleStance = useBattleStanceStore((s) => s.setStance);
-
-  const [engaged, setEngaged] = useState(false);
-
-  const [delayReady, setDelayReady] = useState(false);
-
-
-
-  const pollEngagement = useCallback(() => {
-
-    if (!sim || !routeFocused) {
-
-      setEngaged(false);
-
-      return;
-
-    }
-
-    setEngaged(computeMainStageCapitalEngagement(sim));
-
-  }, [sim, routeFocused]);
-
-
-
-  useEffect(() => {
-
-    if (!sim || !routeFocused) {
-
-      setEngaged(false);
-
-      return;
-
-    }
-
-    pollEngagement();
-
-  }, [sim, routeFocused, pollEngagement]);
-
-
-
-  usePlanetHubInterval(
-
-    'planet_main_stance_engagement_poll',
-
-    planetId,
-
-    Boolean(sim && routeFocused),
-
-    PLANET_MAIN_STANCE_ENGAGEMENT_POLL_MS,
-
-    pollEngagement,
-
-  );
-
-
-
-  useEffect(() => {
-
-    if (!engaged) setDelayReady(false);
-
-  }, [engaged]);
-
-
-
-  usePlanetHubTimeout(
-
-    'planet_main_stance_ui_delay',
-
-    planetId,
-
-    engaged,
-
-    PLANET_MAIN_STANCE_UI_DELAY_MS,
-
-    () => setDelayReady(true),
-
-  );
-
-
-
-  const stanceControlsEnabled = engaged && delayReady;
-
-
-
   return (
 
-    <View
+    <CombatStanceRow
 
-      style={[stanceStyles.stanceRow, !stanceControlsEnabled && stanceStyles.stanceRowHidden]}
+      routeFocused={routeFocused}
 
-      pointerEvents={stanceControlsEnabled ? 'auto' : 'none'}
+      planetId={planetId}
 
-    >
+      bindPlanetSession
 
-      {(['AGGRESSIVE', 'DEFENSIVE', 'NEUTRAL'] as const).map((stanceId) => {
-
-        const meta = BATTLE_STANCE_META[stanceId];
-
-        const isActive = stanceControlsEnabled && activeStance === stanceId;
-
-        return (
-
-          <TouchableOpacity
-
-            key={stanceId}
-
-            style={[
-
-              stanceStyles.stanceBtn,
-
-              isActive && { borderColor: meta.color, backgroundColor: `${meta.color}22` },
-
-            ]}
-
-            onPress={() => setBattleStance(stanceId)}
-
-            disabled={!stanceControlsEnabled}
-
-            activeOpacity={stanceControlsEnabled ? 0.7 : 1}
-
-          >
-
-            <Text
-
-              style={[
-
-                stanceStyles.stanceLabel,
-
-                isActive && { color: meta.color, fontWeight: FONTS.weight.bold },
-
-              ]}
-
-            >
-
-              [{
-                t(`battleStance.${stanceId}`)
-              }]
-
-            </Text>
-
-          </TouchableOpacity>
-
-        );
-
-      })}
-
-    </View>
+    />
 
   );
 
 }
-
 
 
 const overlayStyles = StyleSheet.create({
@@ -454,59 +278,4 @@ const overlayStyles = StyleSheet.create({
   },
 
 });
-
-
-
-const stanceStyles = StyleSheet.create({
-
-  stanceRow: {
-
-    flexDirection: 'row',
-
-    justifyContent: 'space-between',
-
-    paddingHorizontal: SPACING.md,
-
-    columnGap: SPACING.sm,
-
-    marginBottom: 4,
-
-  },
-
-  stanceRowHidden: {
-
-    opacity: 0,
-
-  },
-
-  stanceBtn: {
-
-    width: '30.5%',
-
-    backgroundColor: COLORS.bg_panel,
-
-    borderWidth: 1,
-
-    borderColor: COLORS.border_dark,
-
-    borderRadius: 6,
-
-    paddingVertical: SPACING.md,
-
-    alignItems: 'center',
-
-  },
-
-  stanceLabel: {
-
-    fontFamily: FONTS.mono,
-
-    fontSize: FONTS.size.xs,
-
-    color: COLORS.ink_mid,
-
-  },
-
-});
-
 

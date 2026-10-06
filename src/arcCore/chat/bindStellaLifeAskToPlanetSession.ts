@@ -59,7 +59,11 @@ function tryPresentStellaLifeAsk(disposed: () => boolean): void {
 
 export function bindStellaLifeAskToPlanetSession(planetId: string): () => void {
   let disposed = false;
-  tryPresentStellaLifeAsk(() => disposed);
+  // 대화 store 는 지연 hydrate — 그 전엔 operatorIntroPlayed·lastAskDay 가 비어 판정이 틀린다.
+  void useArcCoreChatStore
+    .getState()
+    .ensureHydrated()
+    .then(() => tryPresentStellaLifeAsk(() => disposed));
   const token = registerPlanetSessionResource({
     ownerId: 'stella_life_ask',
     planetId,

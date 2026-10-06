@@ -871,8 +871,9 @@ export const KO_DICTIONARY: I18nDictionary = {
   'hubTalk.close': '닫기',
   'conversation.gate1.arcCore.hubBody': '적의 입에서 통신이 도착했습니다.',
   'conversation.gate1.operator.hubBody':
-    '아, 제 소개를 잊었군요. 저는 스텔라 아리스입니다. 원하시면 저와 [대화]를 통해 언제든지 연락할 수 있습니다.',
+    '정식으로 다시 소개할게요. 저는 함장님이 궁금하신 모든 것에 대답해 드릴게요. 부족하지만 잘 부탁드립니다. 언제든지 원하실 때 저와 [대화]를 통해 연결될 수 있습니다.',
   'conversation.gate1.operator.inboundGreet': '나야, 스텔라.',
+  'conversation.gate1.operator.incomingBody': '동료 스텔라에게서 연락이 왔습니다.',
   'conversation.operatorName': '스텔라 아리스',
   'hubTalk.operatorSubtitle': '동료 입',
   'hubTalk.section.agentHintDual': '동료 스텔라 · 적의 입',

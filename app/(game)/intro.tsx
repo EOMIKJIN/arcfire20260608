@@ -36,6 +36,7 @@ import type { Href } from 'expo-router';
 import { runStageNavAfterTeardown } from '../../src/navigation/stageNavGate';
 import { usePreHubWorldOpsAlertSuppress } from '../../src/navigation/usePreHubWorldOpsAlertSuppress';
 import { ArcButton } from '../../src/ui/overlay/ArcButton';
+import { playPrologueVoice, stopPrologueVoice } from '../../src/audio/prologueVoicePlayer';
 
 export default function IntroScreen() {
   usePreHubWorldOpsAlertSuppress();
@@ -138,6 +139,14 @@ export default function IntroScreen() {
     setSegmentIndex(0);
     setPageComplete(false);
   }, [page]);
+
+  useEffect(() => {
+    if (!isCinematicPage || scene?.id !== 'intro01') return undefined;
+    playPrologueVoice(scene.id, page);
+    return () => {
+      stopPrologueVoice();
+    };
+  }, [isCinematicPage, scene?.id, page]);
 
   const currentDialogImageSource = introPackStep?.imageSource
     ?? (current && currentViewMode === 'ingame_dialog' && !introPack

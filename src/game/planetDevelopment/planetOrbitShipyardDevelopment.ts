@@ -41,7 +41,11 @@ import { invalidatePlanetMemoCachesForPlanet } from '../planetMemoCache';
 import { t } from '../../i18n';
 import { usePlayerStore } from '../../store/playerStore';
 import type { PlanetDevActionOpts } from './planetDevelopmentActionOptions';
-import { isArcCorePlanetDevAction, resolvePlanetDevFundingSource } from './planetDevelopmentActionOptions';
+import {
+  emitPlayerPlanetDevVerb,
+  isArcCorePlanetDevAction,
+  resolvePlanetDevFundingSource,
+} from './planetDevelopmentActionOptions';
 import {
   refundPlanetDevelopmentCredits,
   resolvePlanetDevFundingBalance,
@@ -347,6 +351,7 @@ export function installPlanetOrbitShipyard(
     invalidatePlanetMemoCachesForPlanet(planetId);
     finalizePlanetFacilityLevelApplied(planetId, 'shipyard', 1);
     syncTradeCatalogAfterShipyardChange(planetId);
+    emitPlayerPlanetDevVerb(opts, 'install', PLANET_DEV_MODULE_ORBIT_SHIPYARD, planetId);
     return { ok: true };
   }
   const written = writeFacilityModuleDetail(planetId, PLANET_DEV_MODULE_ORBIT_SHIPYARD, {
@@ -361,6 +366,7 @@ export function installPlanetOrbitShipyard(
     return { ok: false, reason: t('orbitShipyardDev.recordFailed') };
   }
   invalidatePlanetMemoCachesForPlanet(planetId);
+  emitPlayerPlanetDevVerb(opts, 'install', PLANET_DEV_MODULE_ORBIT_SHIPYARD, planetId);
   return { ok: true };
 }
 
@@ -400,6 +406,7 @@ export function startPlanetOrbitShipyardUpgrade(
   const targetLevel = level + 1;
   if (durationSec <= 0) {
     applyOrbitShipyardLevel(planetId, targetLevel);
+    emitPlayerPlanetDevVerb(opts, 'upgrade', PLANET_DEV_MODULE_ORBIT_SHIPYARD, planetId);
     return { ok: true };
   }
   patchOrbitShipyardDetail(planetId, {
@@ -411,6 +418,7 @@ export function startPlanetOrbitShipyardUpgrade(
     ),
   });
   invalidatePlanetMemoCachesForPlanet(planetId);
+  emitPlayerPlanetDevVerb(opts, 'upgrade', PLANET_DEV_MODULE_ORBIT_SHIPYARD, planetId);
   return { ok: true };
 }
 

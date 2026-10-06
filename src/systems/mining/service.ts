@@ -5,6 +5,7 @@ import { isArcCorePricedMineral } from '../../arcCore/economy/mineralTradePricin
 import { useMenuNotificationStore } from '../../store/menuNotificationStore';
 import { usePlayerStore } from '../../store/playerStore';
 import { scheduleMiningPlayerPersist } from './miningPlayerPersist';
+import { emitPlayVerb } from '../../game/devPlayVerbLog';
 
 const INITIAL_STATE: MiningSessionState = {
   planetId: null,
@@ -25,6 +26,7 @@ export function startMiningSession(
   miningGoodId: string,
   nowMs: number,
 ): MiningSessionState {
+  emitPlayVerb('mine', `${planetId}:${miningGoodId}`);
   return {
     ...prev,
     planetId,

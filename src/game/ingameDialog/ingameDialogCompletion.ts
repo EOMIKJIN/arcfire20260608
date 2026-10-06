@@ -8,6 +8,7 @@ import { SEEN_STORY_SCENE_IDS_MAX, capBoundedStringList } from '../../store/play
 import type { StorySceneCompletionPolicy } from '../../types';
 import type { IngameDialogCompletionAction } from './ingameDialogTypes';
 import { t } from '../../i18n';
+import { emitPlayVerb } from '../devPlayVerbLog';
 import {
   tryAcceptMainStoryMissionWithFeedback,
   tryAcceptQuestMissionWithFeedback,
@@ -84,6 +85,7 @@ export async function runIngameDialogCompletionAction(
 ): Promise<void> {
   switch (action.type) {
     case 'mark_scene_seen':
+      emitPlayVerb('talk', action.sceneId);
       markIngameDialogSceneSeen(action.sceneId);
       break;
     case 'grant_mission_rewards':

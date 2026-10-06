@@ -2,6 +2,7 @@
  * npx tsx src/combat/weaponSpecialFxPolicy.test.ts
  */
 import assert from 'node:assert/strict';
+import { WeaponSpecialFxPolicy_FROM_BALANCE_CSV } from '../data/balance/generated';
 import {
   formatWeaponSpecialDisplayName,
   getWeaponSpecialFxPolicy,
@@ -145,6 +146,22 @@ test('genesis mothership aoe + ally heal flag', () => {
   assert.ok(p);
   assert.ok(p.aoeRadiusPx >= 52);
   assert.ok(p.allyHealPct > 0);
+});
+
+test('hit label is interned and follows the color mark name', () => {
+  const orange = getWeaponSpecialFxPolicy('w_missile_arc_009');
+  assert.ok(orange);
+  assert.equal(orange.tintHex, '#FB923C');
+  assert.equal(orange.effectHitLabel, '파편 효과 타격');
+  assert.equal(getWeaponSpecialFxPolicy('w_missile_arc_009'), orange);
+  assert.equal(getWeaponSpecialFxPolicy('w_missile_arc_035')?.effectHitLabel, '메테오 효과 타격');
+  for (const row of WeaponSpecialFxPolicy_FROM_BALANCE_CSV) {
+    const id = String(row.weaponId ?? '').trim();
+    const policy = getWeaponSpecialFxPolicy(id);
+    assert.ok(policy);
+    assert.equal(policy.effectHitLabel.endsWith(' 효과 타격'), true);
+    assert.ok(policy.effectHitLabel.length > ' 효과 타격'.length);
+  }
 });
 
 test('adamantine is armor ignore not shield ignore', () => {

@@ -10,6 +10,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { noteObs, obsDetail } from './observeVocab';
 import { CapitalHullPurchasePolicy_FROM_BALANCE_CSV } from '../../../src/data/balance/generated/csvCapitalHullPurchasePolicy';
 import { MiningSellPricePolicy_FROM_BALANCE_CSV } from '../../../src/data/balance/generated/csvMiningSellPricePolicy';
 import { PlayScenarioZonePlanets_FROM_BALANCE_CSV } from '../../../src/data/balance/generated/csvPlayScenarioZonePlanets';
@@ -125,6 +126,20 @@ export function needsHullFund(world: WorldState): boolean {
   return hullFundGap(world) > 0;
 }
 
+/** 정체 기록용 한 줄. 다음 함선 값이 잔액보다 멀고 승률 미달로 쉬는 퀘스트가 있으면 함선 자금 벽. */
+export function progressWall(world: WorldState): string {
+  const parked = world.parkedQuests.map((q) => q.missionId).join(',');
+  const next = nextHullStep(world);
+  const gap = hullFundGap(world);
+  if (next && gap > 0) {
+    return `hull_fund ${next.key} ${next.price}cr 부족 ${gap} · 보유 ${world.credits} · 대기 ${parked || '-'}`;
+  }
+  if (next && next.price > 0 && world.level < next.levelReq) {
+    return `hull_level ${next.key} Lv${next.levelReq} · 현재 Lv${world.level} · 대기 ${parked || '-'}`;
+  }
+  return parked ? `parked ${parked}` : '';
+}
+
 /** 기함 파괴 후 무료 재탑승은 기본 프리깃만. */
 export function revertFlagshipToStarter(world: WorldState): boolean {
   if ((world.hullRank ?? 0) <= 0) return false;
@@ -181,6 +196,7 @@ export function tryBuyNextHull(world: WorldState): string | null {
   world.hullName = next.name;
   world.hullShipId = shipId;
   world.hullJustBought = true;
+  noteObs(world, 'ship', obsDetail.ship(shipId));
   world.gearBuys += 1;
   return `함선 ${next.name} [${next.key}] ${shipId} -${next.price}cr (잔 ${world.credits})`;
 }

@@ -64,7 +64,7 @@ import {
 } from './src/cellLoop';
 import { BLUE_CLAN, NEUTRAL_CLAN, RED_CLAN } from './src/types';
 import { STAGE1_PERSONAS, STAGE2_PERSONAS, resolvePersona } from './src/personas';
-import { planFqaReview, reviewNeeded, emptyFqaReviewState } from './src/fqaReview';
+import { cardSignature, planFqaReview, reviewNeeded, emptyFqaReviewState } from './src/fqaReview';
 import { clampPlayIntelligence, defaultPlayIntelligence } from './src/playIntelligence';
 import type { GameIssue } from './src/gameIssues';
 import { pickCreditExchange, starterGemBalance, takeCreditExchange, gemExchangeCap } from './src/bmWallet';
@@ -72,9 +72,23 @@ import { alreadyLanded, stepAction, fightHere, earnCredits, trainOrRelocate, win
 import { fightOdds, hopFuelCredits, transitEncounterChance } from './src/liveCombat';
 import { buildDailyTriage } from './src/dailyUrgentTriage';
 import { createRng } from './src/rng';
+import { BOT_OBSERVE_COVERAGE, obsDetail, takeObs } from './src/observeVocab';
+import {
+  forEachRecentPlayerObserve,
+  parsePlayerObserveDetail,
+  playerObserveDayOf,
+  readPlayerObserveDigest,
+  recordPlayerObserve,
+  resetPlayerObserve,
+  type PlayerObserveVerb,
+} from '../../src/game/playerObserve/playerObserveSink';
+import { detectStellaSituations } from '../../src/arcCore/chat/stellaObserveSituations';
+import { decideStellaObserve, emptyStellaObserveGateState } from '../../src/arcCore/chat/stellaObserveGate';
+import { getStellaObserveGatePolicy, listStellaObserveSituations } from '../../src/arcCore/chat/stellaObserveTableIndex';
 import { analyzeDay, analyzeStronger, isCreditDrain } from './src/analyze';
 import { compareKpi } from './src/compare';
 import { runSimulation } from './src/simulate';
+import { evaluateProcess, stateChanges, worstState, type ProcessInput, type StageCheck, type StageState } from './src/processBoard';
 import { TICKS_PER_DAY } from './src/clock';
 import {
   absorbEarlyFeel,
@@ -86,7 +100,7 @@ import {
 } from './src/earlyFeel';
 import { recordLearning, loadLearning, resetLearningCacheForTest } from './src/learn';
 import { adaptPolicy, decideAdaptPeriodDays, getLearnExploreRate, getLiveWeights, getPolicyHealth, learnedDir, loadPolicy, resetPolicyForTest, savePolicy, setLearnedRootForTest } from './src/policy';
-import { enableCombatEfficiencyMemory, needsHullFund, nextHullStep, rememberCombatDay, tryBuyNextHull } from './src/combatEfficiency';
+import { enableCombatEfficiencyMemory, liveMineralUnitPrice, needsHullFund, nextHullStep, progressWall, rememberCombatDay, tryBuyNextHull } from './src/combatEfficiency';
 import { campaignDaysForHarness, inCampaignLearnWindow, isAdaptExcludedCode, isNewRunForScore, isTwinLearnCode, nextCampaignSeed, shouldLoopNextCampaign, shouldRollbackScore, windowHangarDelta } from './src/learnGate';
 import {
   ADB_DATE_ARGS,
@@ -107,7 +121,7 @@ import { classifySessionKind, memProfileToTraces } from './src/memProfileToSessi
 import { importHumanSeedFromMemProfile, pickMemProfileInput, readOwnerSessionKind } from './src/refreshHumanSeed';
 import { mergeHumanDelta, planHumanDelta, readHumanDelta, writeHumanDelta } from './src/humanDelta';
 import type { SessionTraceV0 } from './src/humanSeed';
-import { measureRawBytes, resetRawPlayData } from './src/housekeep';
+import { measureRawBytes, pruneProfilerHumanRaw, resetRawPlayData } from './src/housekeep';
 import { appendJournal, appendTimeline, beginRecording, endRecording, ensureRunPaths, isRecording, setPlaybotIoLogsForTest, writeStatus } from './src/io';
 import { continuePastWall, nextUntilWallIsoKst, resolveUntilWallMs } from './src/untilWall';
 
@@ -1270,6 +1284,26 @@ test('A2 [PLAY_VERB] 핵심 동작 마커 → 퀘스트·전투·무역·편입�
   fs.rmSync(dir, { recursive: true, force: true });
 });
 
+test('A2b [PLAY_VERB] 채굴·스캔·퀘스트 완료·대화·개발 비트', () => {
+  const log = [
+    '10-06 10:00:00.000 I ReactNativeJS: [MEM_PROFILE] stage=planet_hub event=route_focus hermes_mb=32 detail=arcadia_prime',
+    '10-06 10:00:10.000 I ReactNativeJS: [PLAY_VERB] verb=scan detail=arcadia_prime',
+    '10-06 10:00:20.000 I ReactNativeJS: [PLAY_VERB] verb=mine detail=arcadia_prime:ore_mineral_1',
+    '10-06 10:00:30.000 I ReactNativeJS: [PLAY_VERB] verb=talk detail=story_dialog_obj_story_001_a',
+    '10-06 10:00:40.000 I ReactNativeJS: [PLAY_VERB] verb=quest detail=complete:story_001',
+    '10-06 10:00:50.000 I ReactNativeJS: [PLAY_VERB] verb=develop detail=install:defense_satellite:arcadia_prime',
+  ].join('\n');
+  const traces = memProfileToTraces(log, 'owner-play', { defaultKind: 'human' });
+  assert.equal(traces.length, 1);
+  assert.deepEqual(traces[0].beats.map((b) => b.verb), ['land', 'scan', 'mine', 'talk', 'quest', 'develop']);
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pb-verb-b-'));
+  const delta = planHumanDelta(dir, traces);
+  assert.ok(delta);
+  assert.ok(delta!.coveredKinds.includes('develop'));
+  assert.deepEqual(delta!.missingVerbs, []);
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
 test('T2 owner-playlog는 pull보다 항상 우선 · pending은 human 아님', () => {
   const picked = pickMemProfileInput([
     { file: 'pull.txt', owner: false, hasMem: true },
@@ -1845,7 +1879,7 @@ test('돈이 바닥이면 퀘스트로 벌고 퀘스트가 없으면 채굴한�
   mined.currentSystemId = hubSystem;
   const sold = earnCredits(mined, () => 0.1);
   assert.equal(sold.kind, 'TRADE');
-  assert.equal(mined.credits, 120 + 310);
+  assert.equal(mined.credits, 120 + liveMineralUnitPrice(hub, mined.level));
   assert.equal(mined.mineralCargo, 7);
 });
 
@@ -2158,6 +2192,330 @@ test('구간 함선은 한 단계씩 사고 웨이브 시험 무기는 후보에
   assert.equal(mined.kind, 'MINE');
   const fuel = hopFuelCredits('arcadia', 'solar_port', 'frigate_default', 1);
   assert.ok(fuel >= 50);
+});
+
+function expEdge(w: ReturnType<typeof seedWorld>, planetId: string): number {
+  const slot = w.planets[planetId];
+  const odds = fightOdds(w, planetId, slot.tcl);
+  let exp = 0;
+  for (let i = 0; i < odds.expShips.length; i += 1) exp += odds.expShips[i];
+  return odds.chance * exp;
+}
+
+test('수련은 가장 가까운 곳이 아니라 기대 경험치가 큰 공정 전장으로 간다', () => {
+  const w = seedWorld({ runId: 'train-best', persona: 'mixed_ref' });
+  w.earlyFeelClosed = true;
+  w.level = 16;
+  w.credits = 50_000;
+  w.currentPlanetId = 'minerva_deep';
+  w.currentSystemId = 'minerva';
+  const here = expEdge(w, 'minerva_deep');
+  const row = trainOrRelocate(w, () => 0.5, '수련');
+  if (w.currentPlanetId === 'minerva_deep') {
+    assert.equal(row.kind === 'COMBAT' || row.kind === 'DESTROY', true);
+    return;
+  }
+  const slot = w.planets[w.currentPlanetId];
+  if (slot?.combatEnabled && fightOdds(w, w.currentPlanetId, slot.tcl).chance >= 0.5) {
+    assert.ok(expEdge(w, w.currentPlanetId) >= here * 0.5, row.line);
+  }
+  assert.notEqual(row.kind, 'HOLD');
+});
+
+test('교역 매도는 산 교역품이 있을 때만 크레딧이 는다', () => {
+  const w = seedWorld({ runId: 'goods', persona: 'mixed_ref' });
+  w.earlyFeelClosed = true;
+  w.credits = 300;
+  w.goodsCargo = 0;
+  let sells = 0;
+  for (let i = 0; i < 400; i += 1) {
+    const goods: number = w.goodsCargo ?? 0;
+    const r = stepAction(w, () => 0.99, 'mixed_ref', { allowSides: false });
+    if (r.kind === 'TRADE' && r.line.includes('매도 +') && !r.line.includes('채굴')) {
+      sells += 1;
+      assert.ok(goods > 0, r.line);
+      assert.equal(w.goodsCargo, goods - 1);
+    }
+  }
+  assert.ok(sells >= 0);
+});
+
+test('정체 기록은 함선 자금 벽을 한 줄로 남긴다', () => {
+  const w = seedWorld({ runId: 'wall', persona: 'mixed_ref' });
+  const next = nextHullStep(w);
+  assert.ok(next && next.price > 0);
+  w.level = next.levelReq;
+  w.credits = 10;
+  w.parkedQuests.push({ missionId: 'story_012', title: 't', objIndex: 0, acceptedDay: 1 });
+  const wall = progressWall(w);
+  assert.ok(wall.startsWith('hull_fund '), wall);
+  assert.ok(wall.includes('story_012'), wall);
+  w.level = 1;
+  assert.ok(progressWall(w).startsWith('hull_level '));
+});
+
+test('FQA 검토는 카드가 바뀌면 이슈가 같아도 문구를 다시 쓴다', () => {
+  const state = emptyFqaReviewState();
+  const card = defaultPlayIntelligence();
+  state.lastSig = '';
+  state.cardSig = cardSignature(card);
+  assert.equal(reviewNeeded(state, [], card), false);
+  assert.equal(reviewNeeded(state, [], { ...card, mineCap: card.mineCap + 4 }), true);
+  assert.equal(reviewNeeded({ ...state, cardSig: undefined }, [], card), true);
+});
+
+test('human-raw 정리는 오래된 닫힌 profiler 세션만 지운다', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pb-raw-'));
+  const root = path.join(dir, 'human-raw');
+  const mk = (name: string, kind: string, open: boolean) => {
+    const d = path.join(root, name);
+    fs.mkdirSync(d, { recursive: true });
+    fs.writeFileSync(path.join(d, 'manifest.json'), JSON.stringify({ sessionKind: kind }));
+    fs.writeFileSync(path.join(d, 'session.log'), 'x');
+    if (open) fs.writeFileSync(path.join(d, 'capture.pid'), '1');
+  };
+  mk('owner-a', 'profiler', false);
+  mk('owner-b', 'human', false);
+  mk('owner-c', 'profiler', true);
+  mk('owner-d', 'pending', false);
+  const later = Date.now() + 10 * 24 * 60 * 60 * 1000;
+  assert.equal(pruneProfilerHumanRaw({ dir, nowMs: Date.now() }), 0);
+  assert.equal(pruneProfilerHumanRaw({ dir, nowMs: later }), 1);
+  assert.equal(fs.existsSync(path.join(root, 'owner-a')), false);
+  assert.equal(fs.existsSync(path.join(root, 'owner-b')), true);
+  assert.equal(fs.existsSync(path.join(root, 'owner-c')), true);
+  assert.equal(fs.existsSync(path.join(root, 'owner-d')), true);
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test('초반 성장 정체가 생기던 시드(목적지 왕복·레벨게이트 채굴·탐사지 없음)가 100일 안에 멈추지 않는다', () => {
+  for (const seed of [2, 4, 8]) {
+    let mem = emptyStallMemory();
+    let stalled = '';
+    runSimulation({
+      persona: 'mixed_ref', days: 100, seed, runId: `stall-${seed}`, allowSides: true, stronger: false,
+      hooks: {
+        onDay: (w) => {
+          if (stalled) return;
+          const k = snapshotKpi(w);
+          const r = stepStall(mem, { day: w.day, level: k.level, totalExp: k.totalExp, questCleared: k.questCleared, annexOk: k.annexOk, colonizeOk: k.colonizeOk, independent: k.independent, devSum: k.devSum, combatWins: k.combatWins, credits: k.credits });
+          mem = r.mem;
+          if (r.restart) stalled = `seed${seed} ${r.reason} D${w.day} L${k.level} ${progressWall(w)}`;
+        },
+      },
+    });
+    assert.equal(stalled, '', stalled);
+  }
+});
+
+test('함선 자금 벽에서 교역로 왕복으로 첫 상위 함선을 산다', () => {
+  let sells = 0;
+  let bought = false;
+  runSimulation({
+    persona: 'mixed_ref', days: 300, seed: 2, runId: 'tg-hull', allowSides: true, stronger: false,
+    hooks: {
+      onEntry: (w, e) => {
+        if (e.line.startsWith('교역 매도 ')) sells += 1;
+        if ((w.hullRank ?? 0) >= 1) bought = true;
+      },
+    },
+  });
+  assert.ok(sells > 0, '교역 매도 없음');
+  assert.ok(bought, '300일 안에 상위 함선 미구매');
+});
+
+function processInput(over: Partial<ProcessInput> = {}): ProcessInput {
+  const now = Date.parse('2026-10-06T12:00:00Z');
+  return {
+    nowMs: now,
+    pids: { harness: true, 'fqa-review': true, 'owner-auto': true, console: true },
+    policyUpdatedMs: now - 3600_000,
+    policyGeneration: 10,
+    deltaCapturedMs: now - 3600_000,
+    deltaConsumed: true,
+    newestOwnerSessionMs: now - 600_000,
+    fqaUpdatedMs: now - 600_000,
+    fqaConsultPending: false,
+    fqaCardRaiseHold: false,
+    stallRecent: [],
+    bench: [],
+    handoffStatus: null,
+    handoffMs: null,
+    items: [],
+    mirrorChanged: [],
+    ...over,
+  };
+}
+
+test('감시판은 멈춘 프로세스·실기 입력 대기·반복 정체·함선 벽 대기를 구분한다', () => {
+  const now = Date.parse('2026-10-06T12:00:00Z');
+  const byId = (checks: StageCheck[], id: string) => checks.find((c) => c.id === id)!;
+  let c = evaluateProcess(processInput());
+  assert.equal(worstState(c), 'WAIT');
+  c = evaluateProcess(processInput({ pids: { harness: false, 'fqa-review': true, 'owner-auto': true, console: true } }));
+  assert.equal(byId(c, 'proc:harness').state, 'STOP');
+  c = evaluateProcess(processInput({ deltaCapturedMs: now - 48 * 3600_000, policyUpdatedMs: now - 48 * 3600_000 }));
+  assert.equal(byId(c, 'learn:input').state, 'WAIT');
+  assert.equal(byId(c, 'learn:input').owner, '대표님');
+  assert.equal(byId(c, 'learn:policy').state, 'WAIT');
+  c = evaluateProcess(processInput({ deltaCapturedMs: now - 48 * 3600_000, newestOwnerSessionMs: now - 10 * 3600_000 }));
+  assert.equal(byId(c, 'learn:input').state, 'RISK');
+  const hard = (h: number) => ({ at: now - h * 3600_000, reason: 'hard', wall: 'hull_level x' });
+  c = evaluateProcess(processInput({ stallRecent: [hard(1), hard(2), hard(3)] }));
+  assert.equal(byId(c, 'learn:stall').state, 'RISK');
+  c = evaluateProcess(processInput({ stallRecent: [hard(1), hard(2), hard(3)], harnessStartMs: now - 0.5 * 3600_000 }));
+  assert.notEqual(byId(c, 'learn:stall').state, 'RISK');
+  const b4 = { id: 'B-4', lane: 3 as const, owner: '김팀장', title: '함선가', since: '2026-10-06T00:00:00Z', doneWhen: { kind: 'manual' as const }, blocksLane: 2 };
+  c = evaluateProcess(processInput({ stallRecent: [{ at: now - 3600_000, reason: 'hard', wall: 'hull_fund frigate_upgraded' }], items: [{ item: b4, done: false, changedMs: null }] }));
+  assert.equal(byId(c, 'learn:stall').state, 'HOLD');
+  assert.equal(byId(c, 'item:B-4').state, 'WAIT');
+  c = evaluateProcess(processInput({ items: [{ item: b4, done: false, changedMs: now - 600_000 }] }));
+  assert.equal(byId(c, 'item:B-4').state, 'RUN');
+  c = evaluateProcess(processInput({ items: [{ item: b4, done: false, changedMs: null }], nowMs: now + 72 * 3600_000 }));
+  assert.equal(byId(c, 'item:B-4').state, 'HOLD');
+  const bench = (level: number, hardStalls: number) => ({ at: new Date(now - 3600_000).toISOString(), avg: { level, quests: 77, story: 13, hullRank: 0, fuel: 1 }, total: { hardStalls, sectionStalls: 0 } });
+  c = evaluateProcess(processInput({ bench: [bench(30, 0), bench(28, 0)] }));
+  assert.equal(byId(c, 'bot:bench').state, 'RISK');
+  c = evaluateProcess(processInput({ bench: [bench(30, 0), bench(30, 1)] }));
+  assert.equal(byId(c, 'bot:bench').state, 'RISK');
+  c = evaluateProcess(processInput({ bench: [bench(30, 0), bench(30, 0)] }));
+  assert.equal(byId(c, 'bot:bench').state, 'OK');
+});
+
+test('감시판 알림은 나빠진 단계와 풀린 단계만 고른다', () => {
+  const checks = evaluateProcess(processInput({ pids: { harness: false, 'fqa-review': true, 'owner-auto': true, console: true } }));
+  const prev: Record<string, StageState> = {};
+  for (const c of checks) prev[c.id] = c.state;
+  assert.deepEqual(stateChanges(prev, checks), { worse: [], cleared: [] });
+  const healed = evaluateProcess(processInput());
+  const ch = stateChanges(prev, healed);
+  assert.deepEqual(ch.cleared.map((c) => c.id), ['proc:harness']);
+  assert.equal(ch.worse.length, 0);
+  const first = stateChanges({}, checks);
+  assert.ok(first.worse.some((c) => c.id === 'proc:harness'));
+});
+
+/** 앱 emitPlayVerb 두 번째 인자 모양. playerObserveDetail 과 같아야 한다. */
+const OBS_ARG_SHAPE: Record<string, RegExp> = {
+  quest: /^`(accept|objective|complete):\$\{\w+\}`$/,
+  combat: /^`\$\{[^}]+\}:\$\{[^}]+\}`$/,
+  trade: /^`\$\{\w+\}:\$\{\w+\}`$/,
+  develop: /^`\$\{\w+\}:\$\{\w+\}:\$\{\w+\}`$/,
+  mine: /^`\$\{\w+\}:\$\{\w+\}`$/,
+  level: /^String\([\w.]+\)$/,
+  land: /^[\w.]+$/,
+  annex: /^[\w.]+$/,
+  ship: /^[\w.]+$/,
+  skill: /^[\w.]+$/,
+  scan: /^[\w.]+$/,
+  talk: /^[\w.]+$/,
+};
+
+function listAppSources(dir: string, out: string[]): void {
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    const p = path.join(dir, e.name);
+    if (e.isDirectory()) listAppSources(p, out);
+    else if (/\.tsx?$/.test(e.name) && !/\.test\.tsx?$/.test(e.name)) out.push(p);
+  }
+}
+
+test('D1 앱 emitPlayVerb 방출 형식 = 봇 obsDetail 형식', () => {
+  const root = path.resolve(__dirname, '../..');
+  const files: string[] = [];
+  listAppSources(path.join(root, 'src'), files);
+  listAppSources(path.join(root, 'app'), files);
+  const re = /emitPlayVerb\('(\w+)',\s*([^;\n]+?)\);/g;
+  let sites = 0;
+  for (const f of files) {
+    if (f.endsWith('devPlayVerbLog.ts')) continue;
+    const text = fs.readFileSync(f, 'utf8');
+    for (const m of text.matchAll(re)) {
+      sites += 1;
+      const shape = OBS_ARG_SHAPE[m[1]];
+      assert.ok(shape, `${path.relative(root, f)} 새 동사 ${m[1]} — observeVocab·OBS_ARG_SHAPE 에 추가`);
+      assert.ok(shape.test(m[2].trim()), `${path.relative(root, f)} ${m[1]} 형식 변경: ${m[2]}`);
+      assert.ok(m[1] in BOT_OBSERVE_COVERAGE, `${m[1]} 커버리지 표 누락`);
+    }
+  }
+  assert.ok(sites >= 15, `방출 지점 ${sites}개 — 스캔 실패 의심`);
+  const p = (verb: PlayerObserveVerb, d: string) => parsePlayerObserveDetail(verb, d, 'eden');
+  assert.deepEqual(p('combat', obsDetail.combat('hub_orbit', 'lose')), { sub: 'lose', planet: 'eden', ref: 'hub_orbit' });
+  assert.deepEqual(p('trade', obsDetail.trade('sell', 'solar_port')), { sub: 'sell', planet: 'solar_port', ref: '' });
+  assert.deepEqual(p('develop', obsDetail.develop('install', 'defense_satellite', 'eden')), { sub: 'install', planet: 'eden', ref: 'defense_satellite' });
+  assert.deepEqual(p('quest', obsDetail.quest('complete', 'story_001')), { sub: 'complete', planet: 'eden', ref: 'story_001' });
+  assert.deepEqual(p('land', obsDetail.land('solar_port')), { sub: '', planet: 'solar_port', ref: '' });
+});
+
+test('D1 봇 행동 문자열이 앱 관찰 다이제스트를 그대로 움직인다', () => {
+  const w = seedWorld({ runId: 'obs', persona: 'mixed_ref' });
+  w.earlyFeelClosed = true;
+  const seen: Array<{ verb: PlayerObserveVerb; detail: string }> = [];
+  for (let i = 0; i < 600; i += 1) {
+    stepAction(w, createRng(21 + i * 7), 'mixed_ref', { allowSides: true });
+    const obs = takeObs(w);
+    if (obs) seen.push(...obs);
+  }
+  const tally: Partial<Record<PlayerObserveVerb, number>> = {};
+  for (let i = 0; i < seen.length; i += 1) {
+    const o = seen[i];
+    assert.equal(BOT_OBSERVE_COVERAGE[o.verb], 'bot', `봇이 만들지 않는다던 ${o.verb}`);
+    tally[o.verb] = (tally[o.verb] ?? 0) + 1;
+    if (o.verb === 'combat' && o.detail.endsWith(':lose')) assert.equal(seen[i + 1]?.verb, 'destroy');
+  }
+  for (const v of ['land', 'combat', 'quest'] as const) assert.ok((tally[v] ?? 0) > 0, `${v} 미발생`);
+  resetPlayerObserve();
+  const at = Date.UTC(2026, 9, 6, 3);
+  for (const o of seen) recordPlayerObserve(o.verb, o.detail, at);
+  const dg = readPlayerObserveDigest(at);
+  for (const v of Object.keys(tally) as PlayerObserveVerb[]) assert.equal(dg.c[v], Math.min(999, tally[v]!));
+  const lastLand = [...seen].reverse().find((o) => o.verb === 'land');
+  if (lastLand) assert.equal(dg.lastLand, lastLand.detail);
+  resetPlayerObserve();
+});
+
+test('O3 스텔라 감지기·게이트는 봇이 그대로 import (D-5 순수 모듈)', () => {
+  const rows = listStellaObserveSituations();
+  assert.ok(rows.length > 0);
+  const w = seedWorld({ runId: 'o3', persona: 'mixed_ref' });
+  w.earlyFeelClosed = true;
+  resetPlayerObserve();
+  const at = Date.UTC(2026, 9, 6, 3);
+  for (let i = 0; i < 300; i += 1) {
+    stepAction(w, createRng(5 + i * 13), 'mixed_ref', { allowSides: true });
+    for (const o of takeObs(w) ?? []) recordPlayerObserve(o.verb, o.detail, at);
+  }
+  const hits = detectStellaSituations(rows, {
+    digest: readPlayerObserveDigest(at),
+    hullPct: null,
+    sessionStart: false,
+    sessionGapHours: 0,
+    sessionMinutes: 90,
+    localHour: 14,
+    level: w.level,
+    objectiveStallCount: 0,
+    objectiveStallMinutes: 0,
+    adviceIgnoredThenDestroyed: false,
+    adviceFollowedThenWon: false,
+    announcedFirsts: 0,
+    lastLevelMark: 0,
+  }, { includeDisabled: true });
+  const recent: { verb: string; at: number }[] = [];
+  forEachRecentPlayerObserve(16, (e) => recent.push({ verb: e.verb, at: e.at }));
+  const d = decideStellaObserve(hits, emptyStellaObserveGateState(), {
+    nowMs: at,
+    day: playerObserveDayOf(at),
+    safeSlot: true,
+    otherPopupThisEntry: false,
+    originLastAtMs: 0,
+    originPendingNow: false,
+    lifeAskLastAtMs: 0,
+    stellaOnDuty: false,
+    casualFirstHigh: false,
+    recent,
+  }, getStellaObserveGatePolicy());
+  assert.ok(d.kind === 'speak' || d.kind === 'silent');
+  if (d.kind === 'speak') assert.ok(d.fit > 0 && d.fit <= 1);
+  resetPlayerObserve();
 });
 
 console.log('play-bot-console tests done');

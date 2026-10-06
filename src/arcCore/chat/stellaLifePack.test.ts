@@ -1,6 +1,12 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { buildStellaLifePackFragment, shouldAttachStellaLifeToPack, STELLA_LIFE_PACK_MAX } from './stellaLifePack';
+import {
+  buildStellaLifePackFragment,
+  shouldAttachStellaLifeToPack,
+  STELLA_LIFE_PACK_MAX,
+  STELLA_LIFE_TOOL_NAME,
+  stellaLifeToolData,
+} from './stellaLifePack';
 import { emptyStellaLifeSnapshot } from './stellaLifeSnapshot';
 import { resolveStellaLifeAt, emptyStellaLifeEnv } from './stellaLifeResolve';
 
@@ -33,6 +39,23 @@ test('humanFirst drops life line; pack stays <=400', () => {
   });
   assert.ok(open.block.length <= STELLA_LIFE_PACK_MAX);
   assert.ok(open.lifeLine.length > 0);
+});
+
+test('life parts reach the server as get_stella_now tool data', () => {
+  const resolved = resolveStellaLifeAt(NOON, 'uid-a', emptyStellaLifeEnv(NOON), null);
+  const snap = emptyStellaLifeSnapshot();
+  snap.anchors = ['호출은 짧게'];
+  const open = buildStellaLifePackFragment({ resolved, snapshot: snap, humanFirst: false, locale: 'ko' });
+  const data = stellaLifeToolData(open.parts);
+  assert.ok(data);
+  assert.equal(data!.now, open.lifeLine);
+  assert.equal(data!.memory, '호출은 짧게');
+  const keys = Object.keys(data!);
+  assert.ok(keys.length <= 6);
+  for (const k of keys) assert.ok(data![k]!.length <= 80);
+  const blocked = buildStellaLifePackFragment({ resolved, snapshot: snap, humanFirst: true, locale: 'ko' });
+  assert.equal(stellaLifeToolData(blocked.parts), null);
+  assert.equal(STELLA_LIFE_TOOL_NAME, 'get_stella_now');
 });
 
 test('en pack uses activityEn digest not Korean done[0]', () => {

@@ -872,8 +872,9 @@ export const EN_DICTIONARY: I18nDictionary = {
   'hubTalk.close': 'Close',
   'conversation.gate1.arcCore.hubBody': 'A comm has arrived from the enemy mouth.',
   'conversation.gate1.operator.hubBody':
-    'Ah, I forgot to introduce myself. I am Stella Aris. If you wish, you can reach me anytime through [Talk].',
+    'Let me introduce myself properly. I will answer anything you want to know, Captain. I am still learning, so please bear with me. Whenever you wish, you can reach me through [Talk].',
   'conversation.gate1.operator.inboundGreet': "It's me, Stella.",
+  'conversation.gate1.operator.incomingBody': 'A comm has arrived from companion Stella.',
   'conversation.operatorName': 'Stella Aris',
   'hubTalk.operatorSubtitle': 'Companion mouth',
   'hubTalk.section.agentHintDual': 'Companion Stella · enemy mouth',

@@ -23,7 +23,7 @@ import {
   resetArcCoreChatJudgmentMemory,
   snapshotArcCoreChatJudgmentMemory,
 } from '../arcCore/chat/arcCoreChatJudgmentMemory';
-import { canCommitArcCoreChatDiskWrite } from './arcCoreChatPersistGuard';
+import { canCommitArcCoreChatDiskWrite, canPersistArcCoreChat } from './arcCoreChatPersistGuard';
 import type { NlMouthId } from '../game/conversation/conversationGateContract';
 import { getDefaultNlMouthId } from '../arcCore/chat/arcCoreChatTableIndex';
 import {
@@ -37,6 +37,15 @@ import {
   parseStellaLifeSnapshot,
 } from '../arcCore/chat/stellaLifeSnapshot';
 import type { StellaLifeSnapshot } from '../arcCore/chat/stellaLifeTypes';
+import {
+  exportPlayerObserveDigest,
+  hydratePlayerObserveDigest,
+  isPlayerObserveDigestEmpty,
+  parsePlayerObserveDigest,
+  registerPlayerObserveFlush,
+  resetPlayerObserve,
+  type PlayerObserveDigest,
+} from '../game/playerObserve/playerObserveSink';
 
 export const ARC_CORE_CHAT_STORAGE_KEY = 'arcfire_arc_core_chat_v1';
 export const ARC_CORE_CHAT_MAX_MESSAGES = 40;
@@ -74,6 +83,8 @@ export type ArcCoreChatPayload = {
   activeSpeakerId: NlMouthId;
   operatorIntroPlayed: boolean;
   life: StellaLifeSnapshot;
+  /** 플레이어 행동 요약 — life 클램프와 별개 상한(512B) */
+  observe: PlayerObserveDigest;
 };
 
 const EMPTY_PAYLOAD: ArcCoreChatPayload = {
@@ -92,6 +103,7 @@ const EMPTY_PAYLOAD: ArcCoreChatPayload = {
   activeSpeakerId: 'operator',
   operatorIntroPlayed: false,
   life: parseStellaLifeSnapshot(undefined),
+  observe: parsePlayerObserveDigest(undefined),
 };
 
 const ROLE_OK: ReadonlySet<string> = new Set(['user', 'arc', 'system']);
@@ -193,6 +205,7 @@ export function normalizeArcCoreChatPayload(raw: unknown): ArcCoreChatPayload {
         : getDefaultNlMouthId(),
     operatorIntroPlayed: o.operatorIntroPlayed === true,
     life: parseStellaLifeSnapshot(o.life),
+    observe: parsePlayerObserveDigest(o.observe),
   };
 }
 
@@ -258,6 +271,7 @@ function snapshotPersistPayload(
     lastArcQuestion: getArcCoreChatLastQuestion(),
     judgment: snapshotArcCoreChatJudgmentMemory(),
     life: clampStellaLifeSnapshotToMaxBytes(snapshotStellaLifeMemory()),
+    observe: exportPlayerObserveDigest(),
   };
 }
 
@@ -272,12 +286,21 @@ async function writePersistPayload(payload: ArcCoreChatPayload): Promise<void> {
     && !payload.judgment.lastRefusedProposalId
     && payload.judgment.counts.length === 0
     && !payload.operatorIntroPlayed
-    && isStellaLifeSnapshotEmpty(payload.life);
+    && isStellaLifeSnapshotEmpty(payload.life)
+    && isPlayerObserveDigestEmpty(payload.observe);
   if (empty) {
     await AsyncStorage.removeItem(ARC_CORE_CHAT_STORAGE_KEY);
     return;
   }
   await AsyncStorage.setItem(ARC_CORE_CHAT_STORAGE_KEY, JSON.stringify(payload));
+}
+
+/** hydrate 전에 persist 하면 디스크 대화가 빈 값으로 덮인다 — hydrate 완료 뒤에만 연결. */
+function connectPlayerObserveFlush(): void {
+  registerPlayerObserveFlush(() => {
+    const s = useArcCoreChatStore.getState();
+    if (s.hydrated) s.touchPersist();
+  });
 }
 
 function schedulePersist(persist: () => Promise<void>): void {
@@ -325,6 +348,7 @@ export const useArcCoreChatStore = create<ArcCoreChatState>((set, get) => ({
         hydrateArcCoreChatLastQuestion('');
         resetArcCoreChatJudgmentMemory();
         resetStellaLifeMemory();
+        hydratePlayerObserveDigest(undefined);
         set({
           hydrated: true,
           messages: [],
@@ -332,6 +356,7 @@ export const useArcCoreChatStore = create<ArcCoreChatState>((set, get) => ({
           activeSpeakerId: getDefaultNlMouthId(),
           operatorIntroPlayed: false,
         });
+        connectPlayerObserveFlush();
         return;
       }
       const parsed = normalizeArcCoreChatPayload(JSON.parse(raw));
@@ -340,6 +365,7 @@ export const useArcCoreChatStore = create<ArcCoreChatState>((set, get) => ({
       hydrateArcCoreChatLastQuestion(parsed.lastArcQuestion);
       hydrateArcCoreChatJudgmentMemory(parsed.judgment);
       hydrateStellaLifeMemory(parsed.life);
+      hydratePlayerObserveDigest(parsed.observe);
       set({
         hydrated: true,
         messages: parsed.messages,
@@ -347,12 +373,14 @@ export const useArcCoreChatStore = create<ArcCoreChatState>((set, get) => ({
         activeSpeakerId: parsed.activeSpeakerId,
         operatorIntroPlayed: parsed.operatorIntroPlayed,
       });
+      connectPlayerObserveFlush();
     } catch {
       if (!canCommitArcCoreChatDiskWrite(epoch, storeEpoch, resetInFlight)) return;
       hydrateArcCoreChatRollingSummary('');
       hydrateArcCoreChatLastQuestion('');
       resetArcCoreChatJudgmentMemory();
       resetStellaLifeMemory();
+      hydratePlayerObserveDigest(undefined);
       set({
         hydrated: true,
         messages: [],
@@ -360,6 +388,7 @@ export const useArcCoreChatStore = create<ArcCoreChatState>((set, get) => ({
         activeSpeakerId: getDefaultNlMouthId(),
         operatorIntroPlayed: false,
       });
+      connectPlayerObserveFlush();
     }
   },
 
@@ -377,7 +406,7 @@ export const useArcCoreChatStore = create<ArcCoreChatState>((set, get) => ({
 
   persist: async () => {
     const epoch = storeEpoch;
-    if (!canCommitArcCoreChatDiskWrite(epoch, storeEpoch, resetInFlight)) return;
+    if (!canPersistArcCoreChat(get().hydrated, epoch, storeEpoch, resetInFlight)) return;
     const s = get();
     const payload = snapshotPersistPayload(
       s.messages,
@@ -501,6 +530,7 @@ export const useArcCoreChatStore = create<ArcCoreChatState>((set, get) => ({
     resetArcCoreChatDialogueState();
     resetArcCoreChatJudgmentMemory();
     resetStellaLifeMemory();
+    resetPlayerObserve();
     resetInFlight = true;
     storeEpoch += 1;
     if (persistTimer) {
@@ -518,6 +548,7 @@ export const useArcCoreChatStore = create<ArcCoreChatState>((set, get) => ({
       originHold: false,
       restoreOperatorOnNextSend: false,
     });
+    connectPlayerObserveFlush();
     try {
       await AsyncStorage.removeItem(ARC_CORE_CHAT_STORAGE_KEY);
     } catch {

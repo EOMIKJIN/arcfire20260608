@@ -6,6 +6,7 @@ import { runTerritorialDay } from './territorial';
 import { analyzeDay, analyzeStronger } from './analyze';
 import { dayOfTick, gameNowMs, isDayBoundary, TICKS_PER_DAY } from './clock';
 import { absorbEarlyFeel, applyOpeningFeelIfNeeded } from './earlyFeel';
+import { takeObs } from './observeVocab';
 
 export type SimHooks = {
   onEntry?: (world: WorldState, entry: JournalEntry) => void;
@@ -38,6 +39,8 @@ export function runSimulation(input: {
     world.nowMs = gameNowMs(i);
     const entry = stepAction(world, rng, input.persona, { allowSides: input.allowSides });
     if (!entry.silent) {
+      const obs = takeObs(world);
+      if (obs) entry.obs = obs;
       absorbEarlyFeel(world, entry);
       dayBuf.push(entry);
       input.hooks?.onEntry?.(world, entry);

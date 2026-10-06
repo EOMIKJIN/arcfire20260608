@@ -31,7 +31,12 @@ import { toolNameForInboundWhy } from './arcCoreInboundTalkWhy';
 import { isArcCoreChatHumanFirstTurn } from './arcCoreChatCasualTalk';
 import { readStellaLifeEnv, readStellaLifeUid } from './stellaLifeEnvRead';
 import { snapshotStellaLifeMemory } from './stellaLifeMemory';
-import { buildStellaLifePackFragment, shouldAttachStellaLifeToPack } from './stellaLifePack';
+import {
+  buildStellaLifePackFragment,
+  shouldAttachStellaLifeToPack,
+  STELLA_LIFE_TOOL_NAME,
+  stellaLifeToolData,
+} from './stellaLifePack';
 import { readStellaLifeSession } from './stellaLifeSession';
 import { pickStellaQuestFieldNoteCards } from './stellaQuestFieldNote';
 
@@ -223,6 +228,10 @@ export function buildArcCoreAgentPack(
     });
     lifeBlock = frag.block;
     lifeLine = frag.lifeLine;
+    const lifeData = stellaLifeToolData(frag.parts);
+    if (lifeData && toolResults.length < 4) {
+      toolResults.push({ name: STELLA_LIFE_TOOL_NAME, data: lifeData });
+    }
   }
   const purposeLine = inboundWhy
     ? pickLocaleText(

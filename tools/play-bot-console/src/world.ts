@@ -26,6 +26,7 @@ import { EPOCH_MS, TICKS_PER_DAY } from './clock';
 import { starterGemBalance } from './bmWallet';
 import { hullFundGap } from './combatEfficiency';
 import { STARTER_HULL_SHIP_ID } from './liveCombat';
+import { noteObs, obsDetail } from './observeVocab';
 
 function clanOfOwner(owner: string): { clan: string; kind: PlanetSlot['kind'] } {
   if (owner === 'BLUE') return { clan: BLUE_CLAN, kind: 'clan_hold' };
@@ -271,6 +272,7 @@ export function addExp(world: WorldState, delta: number): boolean {
   world.level = levelFromTotalExp(world.totalExp);
   if (world.level > before) {
     world.skillPoints += world.level - before;
+    noteObs(world, 'level', obsDetail.level(world.level));
   }
   return world.level !== before;
 }

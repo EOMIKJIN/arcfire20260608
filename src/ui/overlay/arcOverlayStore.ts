@@ -356,6 +356,8 @@ export const useArcOverlayStore = create<ArcOverlayState>((set, get) => ({
 export type ArcAlertPresentOptions = {
   id?: string;
   autoDismissMs?: number;
+  /** 생략·true = 배경 탭으로 닫힘. false = 버튼·자동닫힘만 */
+  dismissOnBackdrop?: boolean;
   messageLead?: ArcOverlayAlertMessageLead;
   messageSection?: ArcOverlayAlertMessageSection;
 };
@@ -376,7 +378,7 @@ export function presentArcOverlayAlert(
     title,
     message,
     buttons: list,
-    dismissOnBackdrop: true,
+    dismissOnBackdrop: options?.dismissOnBackdrop !== false,
     autoDismissMs: resolveArcAlertAutoDismissMs(options?.autoDismissMs),
     ...(options?.messageLead ? { messageLead: options.messageLead } : {}),
     ...(options?.messageSection ? { messageSection: options.messageSection } : {}),

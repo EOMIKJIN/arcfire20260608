@@ -115,19 +115,6 @@ function findInventoryIndexForEquippedItem(
   return -1;
 }
 
-function clearEquipSlot(
-  equipSlots: Partial<Record<ShipyardEquipSlotId, ShipEquipSlotAssignment | null>>,
-  slotId: ShipyardEquipSlotId,
-): Partial<Record<ShipyardEquipSlotId, ShipEquipSlotAssignment | null>> {
-  const next = { ...equipSlots };
-  if (COMBAT_WEAPON_SLOT_IDS.includes(slotId as typeof COMBAT_WEAPON_SLOT_IDS[number])) {
-    next[slotId] = { itemDefId: UNEQUIPPED_WEAPON_ITEM_ID, name: '' };
-  } else {
-    delete next[slotId];
-  }
-  return next;
-}
-
 export function backfillEquipSlotInventoryIndices(
   ship: PlayerShip,
   inventorySlots: PlayerInventorySlot[],
@@ -196,14 +183,11 @@ export function applyPostCombatDurabilityPass(
     if (!cell) continue;
 
     const nextPct = resolveDurabilityPct(cell.durabilityPct) - wear;
-    if (nextPct <= DURABILITY_MIN_PCT) {
-      slots[invIndex] = null;
-      equipSlots = clearEquipSlot(equipSlots, slotId);
-      destroyedItemLabels.push(assignment.name || assignment.itemDefId);
-      continue;
-    }
-
-    slots[invIndex] = { ...cell, durabilityPct: nextPct };
+    // 0%여도 칸을 지우지 않는다. 소멸·장착 해제는 장비 파괴 운영을 정한 뒤에 연다.
+    slots[invIndex] = {
+      ...cell,
+      durabilityPct: Math.max(DURABILITY_MIN_PCT, nextPct),
+    };
   }
 
   let ship: PlayerShip = {

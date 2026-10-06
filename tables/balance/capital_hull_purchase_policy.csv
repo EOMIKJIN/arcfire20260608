@@ -6,7 +6,7 @@ destroyer_upgraded,구축함 개량형,Destroyer Mk.II,1800000,25,10,가디언 M
 cruiser,순양함(Cruiser),Cruiser,5000000,31,12,오라클 순양함
 cruiser_upgraded,순양함 개량형,Cruiser Mk.II,7500000,40,15,오라클 Mk.II
 battlecruiser,순양전함(Battlecruiser),Battlecruiser,15000000,52,18,소버린 순양전함
-battlecruiser_max,순양전함 최종 풀강,Battlecruiser (Max),0,60,20,소버린 완성형(업그레이드 정점)
+battlecruiser_max,순양전함 최종 풀강,Battlecruiser (Max),20000000,60,20,소버린 완성형(업그레이드 정점)
 dreadnought,드레드노트,Dreadnought,25000000,65,20,엔드 이후 장기 목표·1
 super_capital,슈퍼캐피털,Super Capital,50000000,72,20,엔드 이후 장기 목표·2
 apex_legend,아펙스 레전드,Apex Legend,100000000,80,20,6개월+ 장기 정점 함선

@@ -1,6 +1,6 @@
 'use strict';
 /**
- * 김팀장 핵심=글록 4.5 · Composer/Cursor Auto 폴백 분석 전용
+ * 김팀장 핵심=글록 4.7 · Composer/Cursor Auto 폴백 분석 전용
  * 정본: .cursor/rules/arcfire-paid-model-exclusion-gate.mdc
  * 앵커: tools/kim-team-lead/reports/SUBSCRIPTION_RENEWAL_ANCHOR.json
  */
@@ -21,7 +21,7 @@ const DEFAULT_FORBIDDEN = [
 ];
 
 const DEFAULT_ALLOWED = [
-  'cursor-grok-4.5-high-fast',
+  'grok-4.7-xhigh-fast',
   'claude-opus-4-8-thinking-high',
   'claude-sonnet-5-thinking-high',
   'claude-fable-5-thinking-high',
@@ -29,9 +29,9 @@ const DEFAULT_ALLOWED = [
 ];
 
 const DEFAULT_KIM_CORE = {
-  displayName: 'glock 4.5',
-  displayNameKo: '글록 4.5',
-  taskSlug: 'cursor-grok-4.5-high-fast',
+  displayName: 'glock 4.7',
+  displayNameKo: '글록 4.7',
+  taskSlug: 'grok-4.7-xhigh-fast',
 };
 
 function readAnchor() {
@@ -81,11 +81,11 @@ function buildPaidModelGateContext() {
   const kim = resolveKimCore(anchor);
 
   const lines = [
-    '[Arcfire Model Gate — 2026-08-04: 김팀장 핵심=글록 4.5 · Composer/Auto=분석전용]',
+    '[Arcfire Model Gate — 2026-10-06: 김팀장 핵심=글록 4.7 · Composer/Auto=분석전용]',
     `김팀장 핵심 모델: ${kim.displayName} (${kim.displayNameKo}) · Task slug=${kim.taskSlug}`,
     `구독 구간(KST): ${lastRenewal} ~ ${nextRenewal} 전일`,
     `허용 Task model: ${allowed.join(' | ')}`,
-    `개발 금지(분석만): ${forbidden.join(' | ')} — Composer·Cursor Auto/미지정 (글록 4.5와 구분)`,
+    `개발 금지(분석만): ${forbidden.join(' | ')} — Composer·Cursor Auto/미지정 (글록 4.7과 구분)`,
     '교훈: 2026-08-02 worldmap 고착방지 — Composer/미지정 Auto가 예방 코드를 넣지 말 것',
   ];
 

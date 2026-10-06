@@ -40,6 +40,8 @@ export type WeaponSpecialFxPolicy = {
   stripShield: boolean;
   /** 착탄 반경 아군 선체 회복 % (0=없음). 틱 할당 없음 */
   allyHealPct: number;
+  /** 함체 색 마크 위에 올리는 고정 문구. parse 1회 intern */
+  effectHitLabel: string;
 };
 
 const ICON_KINDS = new Set<string>([
@@ -82,6 +84,14 @@ function normalizeHex(raw: string | undefined): string {
   return '';
 }
 
+/** notesKo 앞머리(— 앞) + 「효과 타격」. 행당 문자열 1개. */
+function buildEffectHitLabel(notesKo: string | undefined): string {
+  const raw = String(notesKo ?? '').trim();
+  const head = (raw.split('—')[0] ?? raw).trim();
+  if (!head) return '';
+  return `${head} 효과 타격`;
+}
+
 function parseIconKind(raw: string | undefined): WeaponSpecialIconKind {
   const t = String(raw ?? '').trim();
   if (ICON_KINDS.has(t)) return t as WeaponSpecialIconKind;
@@ -108,6 +118,7 @@ function parseRow(row: CsvRow): WeaponSpecialFxPolicy {
     interceptNearby: flag(row.interceptNearby),
     stripShield: flag(row.stripShield),
     allyHealPct: Math.max(0, Math.min(100, num(row.allyHealPct, 0))),
+    effectHitLabel: buildEffectHitLabel(row.notesKo),
   };
 }
 

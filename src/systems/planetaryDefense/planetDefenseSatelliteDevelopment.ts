@@ -32,7 +32,11 @@ import { resolvePlanetFacilityInstallGate } from '../../game/planetDevelopment/p
 import { ensurePlanetCoreRuntimeForDev } from '../../game/planetDevelopment/planetFacilityModuleRuntime';
 import { usePlayerStore } from '../../store/playerStore';
 import type { PlanetDevActionOpts } from '../../game/planetDevelopment/planetDevelopmentActionOptions';
-import { isArcCorePlanetDevAction, resolvePlanetDevFundingSource } from '../../game/planetDevelopment/planetDevelopmentActionOptions';
+import {
+  emitPlayerPlanetDevVerb,
+  isArcCorePlanetDevAction,
+  resolvePlanetDevFundingSource,
+} from '../../game/planetDevelopment/planetDevelopmentActionOptions';
 import {
   refundPlanetDevelopmentCredits,
   resolvePlanetDevFundingBalance,
@@ -324,6 +328,7 @@ export function installPlanetDefenseSatellite(
     syncDefenseSatelliteInstances(planetId, 1);
     invalidatePlanetMemoCachesForPlanet(planetId);
     finalizePlanetFacilityLevelApplied(planetId, 'defense_satellite', 1);
+    emitPlayerPlanetDevVerb(opts, 'install', 'defense_satellite', planetId);
     return { ok: true };
   }
   patchDefenseSatelliteDetail(planetId, {
@@ -333,6 +338,7 @@ export function installPlanetDefenseSatellite(
     upgradeJob: buildInstallUpgradeJob(durationSec, Date.now(), resolveActivePlanetFacilityDurationTier()),
   });
   invalidatePlanetMemoCachesForPlanet(planetId);
+  emitPlayerPlanetDevVerb(opts, 'install', 'defense_satellite', planetId);
   return { ok: true };
 }
 
@@ -370,6 +376,7 @@ export function startPlanetDefenseSatelliteUpgrade(
   const targetLevel = level + 1;
   if (durationSec <= 0) {
     applyDefenseSatelliteLevel(planetId, targetLevel, opts);
+    emitPlayerPlanetDevVerb(opts, 'upgrade', 'defense_satellite', planetId);
     return { ok: true };
   }
   patchDefenseSatelliteDetail(planetId, {
@@ -382,6 +389,7 @@ export function startPlanetDefenseSatelliteUpgrade(
     ),
   });
   invalidatePlanetMemoCachesForPlanet(planetId);
+  emitPlayerPlanetDevVerb(opts, 'upgrade', 'defense_satellite', planetId);
   return { ok: true };
 }
 

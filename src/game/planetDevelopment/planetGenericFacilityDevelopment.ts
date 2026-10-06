@@ -40,7 +40,11 @@ import {
   resolveEffectiveFacilityDevView,
 } from './planetCsvWorldFacilityBaseline';
 import type { PlanetDevActionOpts } from './planetDevelopmentActionOptions';
-import { isArcCorePlanetDevAction, resolvePlanetDevFundingSource } from './planetDevelopmentActionOptions';
+import {
+  emitPlayerPlanetDevVerb,
+  isArcCorePlanetDevAction,
+  resolvePlanetDevFundingSource,
+} from './planetDevelopmentActionOptions';
 import {
   refundPlanetDevelopmentCredits,
   resolvePlanetDevFundingBalance,
@@ -348,6 +352,7 @@ export function createGenericFacilityDevelopment(opts: CreateGenericFacilityDevO
       invalidatePlanetMemoCachesForPlanet(planetId);
       finalizePlanetFacilityLevelApplied(planetId, facilityType, 1);
       onLevelApplied?.(planetId, 1);
+      emitPlayerPlanetDevVerb(opts, 'install', moduleId, planetId);
       return { ok: true };
     }
     const written = writeFacilityModuleDetail(planetId, moduleId, {
@@ -362,6 +367,7 @@ export function createGenericFacilityDevelopment(opts: CreateGenericFacilityDevO
       return { ok: false, reason: t(`${i18nPrefix}.recordFailed`) };
     }
     invalidatePlanetMemoCachesForPlanet(planetId);
+    emitPlayerPlanetDevVerb(opts, 'install', moduleId, planetId);
     return { ok: true };
   }
 
@@ -405,6 +411,7 @@ export function createGenericFacilityDevelopment(opts: CreateGenericFacilityDevO
     const targetLevel = level + 1;
     if (durationSec <= 0) {
       applyLevel(planetId, targetLevel);
+      emitPlayerPlanetDevVerb(opts, 'upgrade', moduleId, planetId);
       return { ok: true };
     }
     patchDetail(planetId, {
@@ -416,6 +423,7 @@ export function createGenericFacilityDevelopment(opts: CreateGenericFacilityDevO
       ),
     });
     invalidatePlanetMemoCachesForPlanet(planetId);
+    emitPlayerPlanetDevVerb(opts, 'upgrade', moduleId, planetId);
     return { ok: true };
   }
 

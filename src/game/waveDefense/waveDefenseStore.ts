@@ -20,6 +20,9 @@ export type WaveDefensePhase =
 /** 전체 종료 결과 — 최종 결과창(승리/패배)에 사용 */
 export type WaveDefenseOutcome = 'win' | 'lose';
 
+/** 종료 사유. failsafe 는 교전 결과가 아니라 엔진 가드다. outcome 과 따로 둔다. */
+export type WaveDefenseEndCause = 'played' | 'failsafe';
+
 type WaveDefenseState = {
   active: boolean;
   planetId: string | null;
@@ -33,6 +36,8 @@ type WaveDefenseState = {
   waveGenKey: number;
   /** 전체 종료 결과(승리/패배) — endRun 시 확정, 최종 결과창에서 소비 */
   outcome: WaveDefenseOutcome | null;
+  /** played = 교전 승패. failsafe = 45초 미마운트·10분 정체. 점유·귀환에 쓰지 않는다. */
+  endCause: WaveDefenseEndCause;
   /** 클리어한 웨이브 누적 보상 경험치(최종 결과창 표기 + addExp 지급) */
   expEarned: number;
   /** 클리어 완료한 웨이브 수(최종 결과창 진행도 표기) */
@@ -51,10 +56,10 @@ type WaveDefenseState = {
   recordWaveCleared: (waveIndex: number) => void;
   /**
    * 전체 종료 1회 예약 — active 유지한 채 홀드 후 컨트롤러가 endRun.
-   * failsafe orphan/stall 은 기존처럼 endRun 직접 호출.
+   * failsafe orphan/stall 은 endRun('lose','failsafe') 직접 호출. outcome 은 lose 로 남긴다.
    */
   requestEndRun: (outcome: WaveDefenseOutcome) => void;
-  endRun: (outcome: WaveDefenseOutcome) => void;
+  endRun: (outcome: WaveDefenseOutcome, cause?: WaveDefenseEndCause) => void;
   reset: () => void;
 };
 
@@ -67,6 +72,7 @@ const INITIAL = {
   fleetSeedOverride: null as CombatFleetSeedSlot[] | null,
   waveGenKey: 0,
   outcome: null as WaveDefenseOutcome | null,
+  endCause: 'played' as WaveDefenseEndCause,
   expEarned: 0,
   wavesCleared: 0,
   endHoldActive: false,
@@ -86,6 +92,7 @@ export const useWaveDefenseStore = create<WaveDefenseState>((set) => ({
       phase: 'countdown',
       fleetSeedOverride: null,
       outcome: null,
+      endCause: 'played',
       expEarned: 0,
       wavesCleared: 0,
       endHoldActive: false,
@@ -122,11 +129,12 @@ export const useWaveDefenseStore = create<WaveDefenseState>((set) => ({
       if (!s.active || s.phase === 'ended' || s.pendingOutcome) return s;
       return { endHoldActive: true, pendingOutcome: outcome };
     }),
-  endRun: (outcome) => set({
+  endRun: (outcome, cause = 'played') => set({
     active: false,
     phase: 'ended',
     fleetSeedOverride: null,
     outcome,
+    endCause: cause,
     endHoldActive: false,
     pendingOutcome: null,
   }),

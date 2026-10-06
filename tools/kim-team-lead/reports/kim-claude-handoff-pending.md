@@ -1,5 +1,88 @@
 # 김클로드 → 김팀장 검수 handoff
 
+## 검수 요청 — PB-G1 순익 이중 거리 가중 제거 · 2026-10-06
+
+```text
+task_id=pb-g1-net-profit-distance-once-20261006
+kind=IMPLEMENTATION_REVIEW
+선정=PB-G1만. PB-G2·PB-G3는 기존값이라 코드·CSV 없음. §10-2는 항목 없음
+변경=src/arcCore/economy/tradeRouteTransportCost.ts · tradeRouteTransportCost.test.ts
+```
+
+- 호출부가 넘기는 gross는 시세 차익(수요 매도가 − 공급 매입가)이고, 수요 매도가는 `resolveDistanceScaledDemandSellAnchor`로 이미 거리 가중이다.
+- 순익 함수가 `거리/기준거리`를 다시 곱하면 기준거리보다 먼 노선에서 순익 > 총차익. 제거 후 순익 = floor(총차익) − 운송비, 하한 `min_net_profit_per_unit`.
+- 플레이어 매도가·교역 수수료 CSV·퀘스트 `levelRequired`는 무변경. 수송선단 하역 정산(`resolveArcConvoyUnloadSettlement`)은 같은 함수라 장거리 선단 장부 순익만 줄어든다.
+
+## ⏳ PENDING — 분쟁 링 전투 후 점유 원인 조사 · 2026-10-06 14:40
+
+```text
+task_id=contested-occupation-after-battle-rootcause-20261006
+kind=ROOT_CAUSE (코드 변경 0)
+상세=tools/kim-team-lead/reports/kim-claude-contested-occupation-after-battle-rootcause-20261006.md
+증거=폰 저장소 사본 + logcat 12:57:52 `neutral_declare blue->neutral` → 14:03 wave:win → status_quo
+```
+
+- ~~P0 체류 판정 확장~~ **철회(대표님 정정)**: 착륙 전은 체류 아님 → 12:57:52 NPC 판정 정상.
+- 대표님 승리 규칙 확정: 중립 승→중립 · 레드 승→중립(→편입 시 블루) · 블루 승→블루. 코드 일치 확인. 드라코 헤이븐 사례는 규칙대로.
+- 잠재 위험: R1 부팅 시드 복구가 패배 RED를 블루로 되돌림(분쟁 풀 밖 행성) · R2 결과창 닫기 전 종료 시 RED 유실 · R3 귀환 후 NPC 재판정.
+
+## 분석 피드백 요청 — 드라코 성운 블루 유지 실패 · 2026-10-06
+
+```text
+task_id=draco-blue-neutral-audit-20261006
+kind=ANALYSIS_FEEDBACK
+코드 변경=0
+정본=tools/kim-team-lead/reports/kim-claude-draco-blue-neutral-audit-20261006.md
+판정 파일=tools/kim-team-lead/reports/kim-claude-draco-blue-neutral-feedback-20261006.md
+```
+
+- 대표님 사실: 드라코는 블루, 분쟁링 이후 착륙, 웨이브 승리, 기대는 블루 유지, 관측은 중립.
+- 기기 기록: 12:57:52 KST `neutral_declare` / `arc_core_territorial` / previousSide `blue` → hold `neutral`, `neutralizedAt` null. 14:03:13 KST `player_wave` 관측은 `status_quo` · `holdChanged false`.
+- 12:57 의 `currentPlanetId` 는 저장돼 있지 않다. 원인 추정 금지. 위 정본 §5 다섯 항만 판정.
+
+## ⏳ PENDING — 김클로드 검수: failsafe 처분 분리 (김팀장 구현) · 2026-10-06
+
+```text
+task_id=review-wave-failsafe-impl-20261006
+verdict=PARTIAL (코드 변경 0)
+상세=tools/kim-team-lead/reports/kim-claude-review-wave-failsafe-impl-20261006.md
+self-check=client tsc 0 · wave 테스트 14/14
+```
+
+- AGREE: `endCause` 별도 필드(outcome lose 유지) · failsafe 2곳만 표시 · 처분 순수 함수 · 분쟁 루프 차단(패스 완료·red 학습 없음).
+- **P1 격침 경합**: 격침 후 홀드 중 failsafe가 먼저 끝내면 격침 안내만 뜨고 격침·생존포드·R0 미적용(`planet.tsx:1423-1424`). 수정: 컨트롤러 failsafe 2곳 `if (s.pendingOutcome) { s.endRun(s.pendingOutcome); return; }`.
+- **대표님 결정**: failsafe 결과창 「패배」(현재) vs 「무승부」(대표님 질문). 처분은 동일, 문구만 다름.
+- P3: 엔진 중단 소모 턴 학습 구분 미반영(백로그).
+
+## REVIEWED — 웨이브 패배 경로 무관 + failsafe 제외 · 2026-10-06
+
+```text
+task_id=wave-defeat-crimson-all-triggers-20261006
+status=REVIEWED
+판정=AGREE(경로 확장) + failsafe 협의 반영
+협의=tools/kim-team-lead/reports/kim-claude-wave-failsafe-consult-20261006.md
+commit=하지 않음
+```
+
+- 입력 `territorialAttack` → `crimsonWave`. 허브 웨이브 시작은 `useWaveDefenseController.ts:116` 한 곳·4트리거뿐 → `crimsonWave: Boolean(endedPlanetId)`.
+- 결과: 분쟁 차례·[전투]·채팅 무장·엔드게임 보스 어디서 시작하든 패배 = 귀환(격침=생존포드) + 블루/중립이면 RED·증서 해제·분쟁 재편입 · 이미 RED면 점유 유지. 승리 = RED면 중립화(기존, 트리거 무관).
+- failsafe: 김클로드 협의 Q1·Q2 AGREE, Q3 PARTIAL. `endCause` 분리. 점유·귀환·격침 제외. 분쟁 패스 완료는 유지(레드 학습은 안 씀). 플레이봇은 10-07.
+- 미커밋 김팀장 diff(튜토리얼 습격 게이트 등) 위에 얹힘 — 함께 검수.
+
+## ✅ 검수 결과 — 웨이브 패배 크림슨 점령 + 기함 귀환 구현 · 2026-10-06
+
+```text
+task_id=impl-review-wave-defeat-crimson-home-20261005
+verdict=PARTIAL → P1은 위 PENDING으로 해소
+상세=tools/kim-team-lead/reports/kim-claude-impl-review-wave-defeat-crimson-home-20261006.md
+self-check=tsc 0 · disposition 4/4 · directWave 1/1 · 데일리 커밋 10-06 00:05 성공
+```
+
+- AGREE: 처분 표 · 기함 먼저 거점(격침=생존포드/생존=`landOnPlanet(resolvePlayerHomePlanetId)`) 후 RED 기록 · 증서 null + 클라우드 잠금 해제 · `promoteDynamicContestedZone` 재편입 · 블루·중립 무관 RED · 이중 격침 처리 방지.
+- **대표님 결정(10-06) → 수정 요청**: 경로 무관 동일 규칙. `resolvePlayerWaveDefeatDisposition`의 `territorialAttack`을 **플레이어 크림슨 웨이브 전체**(분쟁 차례·[전투]·`chat_armed`·`endgame_boss`)로 확장 — 패배 시 비레드면 RED(증서 해제·분쟁 재편입) + 공통 귀환(격침=생존포드·생존=거점). 확인: [전투]는 레드 행성에서만 발동 → 이미 정상 · 승리 중립화(`planet.tsx:1301`)는 트리거 무관 정상. 남은 구멍 = `chat_armed`·`endgame_boss` 블루/중립 패배.
+- **플레이봇 반영은 10-07(내일) 일괄**(대표님 지시) — 아래 차기 목록 `PB-BATCH-1007`.
+- P2: 같은 diff에 튜토리얼 오프닝 습격 게이트 변경 동봉(별도 검수) · 퀘스트 처리(A4)·플레이봇 동일 규칙(A5) 미반영.
+
 ## 📤 김클로드 구현 검수 요청 — 웨이브 패배 크림슨 점령 + 기함 귀환 · 2026-10-05
 
 ```text

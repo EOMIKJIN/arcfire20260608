@@ -2,6 +2,7 @@
  * 스캔 완료 1회 — 스텔라 인게임 A1만. 메신저 자동 오픈 없음.
  * persist는 once 씬 seen. 틱 없음. 허브 1.5초 뒤 present.
  */
+import { emitPlayVerb } from '../devPlayVerbLog';
 import { notifyStellaHubTutorial } from '../hubTutorial/stellaHubTutorialGuide';
 import { tryFireIngameDialogTrigger } from './ingameDialogApi';
 import { runAfterIngameDialogFeatureLinkDelay } from './ingameDialogFeatureLink';
@@ -33,6 +34,7 @@ function schedulePendingScanDialog(): void {
 export function tryPresentScanToMainQuestDialog(planetId: string): boolean {
   const pid = (planetId ?? '').trim();
   if (!pid) return false;
+  emitPlayVerb('scan', pid);
   pendingScanPlanetId = pid;
   schedulePendingScanDialog();
   return true;

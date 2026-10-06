@@ -1,0 +1,14 @@
+id,priority,detector,paramA,paramB,motiveId,channel,cooldownHours,dutyGate,enabled,lineKo,lineEn,anchorVerb
+sit_rough_day,1,destroy_or_loss_streak,2,3,worry,ask,6,any,0,"오늘 {nth} 실려 왔어. 괜찮아? 뭐가 꼬였는지 같이 볼래?","They brought you in {nth} today. You okay? Want to look at what went wrong together?",destroy
+sit_advice_ignored_hurt,1,advice_ignored_then_destroy,0,0,want_right,ask,24,any,0,"내가 더 분명히 말했어야 했는데. 지금이라도 같이 정비하고 갈까?","I should have said it more clearly. Want to get things sorted together before you go again?",destroy
+sit_risky_launch,2,hull_low,30,0,worry,remark,12,any,0,"함선 상태가 좀 마음에 걸려. 나가기 전에 한 번만 봐 줄래?","Your ship's condition is bugging me a little. Take a look before you head out?",
+sit_welcome_back,2,session_gap_hours,36,0,check_in,message,24,any,0,"왔구나. {d} 만이네. 나는 그동안 당직만 서고 있었어.","There you are. It's been {d}. I've just been standing watch.",session
+sit_first_ship,3,first_bit,1,0,proud,remark,0,off_only,0,"새 함선 봤어. 마음에 들어?","Saw the new ship. Do you like it?",ship
+sit_first_annex,3,first_bit,2,0,proud,remark,0,off_only,0,"편입 소식 들었어. 우리 쪽이 하나 늘었네.","Heard about the annexation. One more on our side.",annex
+sit_first_develop,3,first_bit,4,0,proud,remark,0,off_only,0,"공사 시작했다며. 다 지으면 나도 보러 갈래.","Heard you started construction. I want to see it when it's done.",develop
+sit_advice_followed_ok,4,advice_followed_then_win,0,0,proud,remark,24,off_only,0,"아까 그거, 잘 풀렸네. 나도 기분 좋다.","That thing earlier worked out. Makes me happy too.",combat
+sit_level_mark,5,level_multiple,5,0,proud,remark,0,off_only,0,"한 단계 또 올라섰다며. 축하해, 진짜로.","Heard you moved up again. Congrats, really.",level
+sit_quest_stall,5,objective_stall,6,40,need_you,ask,24,off_only,0,"요즘 한 군데서 좀 막힌 것 같아. 얘기해 볼래?","Seems like you're a bit stuck on something. Want to talk it through?",
+sit_grind_loop,6,same_planet_combat_run,8,60,curious,remark,24,off_only,0,"거기서 계속 싸우는 이유가 있어? 궁금해서.","Any reason you keep fighting there? Just curious.",combat
+sit_long_session,7,long_session_or_late,120,2,check_in,remark,12,off_only,0,"오래 했다. 잠깐 쉬었다 해도 괜찮아.","You've been at it a while. It's okay to take a break.",
+sit_trade_run,8,trade_count_today,10,0,want_share,remark,24,off_only,0,"오늘 장사 많이 했네. 재밌어?","Lots of trading today. Having fun?",trade

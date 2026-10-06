@@ -321,6 +321,11 @@ export interface PlayerShip {
    * 저장: `player.uid`와 같은 레코드의 `arcfire_player_v1` JSON 안 `ship`에 포함 · `persist()` 시 계정 프로필 요약 동기.
    */
   equipSlots?: Partial<Record<ShipyardEquipSlotId, ShipEquipSlotAssignment | null>>;
+  /**
+   * 기함 격침 후 생존포드에 있는 동안만 둔다.
+   * 다음 전함 탑승 시 equipSlots로 되돌리고 비운다. 계정 `ship` JSON에 포함.
+   */
+  preservedEquipSlots?: Partial<Record<ShipyardEquipSlotId, ShipEquipSlotAssignment | null>>;
   /** 선체 내구도 0~100. 0%면 출항·전투 불가(조선소 수리). 미설정 시 100% */
   durabilityPct?: number;
 }

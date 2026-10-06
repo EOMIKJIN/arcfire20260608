@@ -61,6 +61,7 @@ import { markPlanetHubIngressReclaim } from '../../src/game/nativeReclaim/planet
 import { isPlayerShipCombatCapable, resolvePlayerTravelBlock } from '../../src/game/playerSurvivalPod';
 import { useStageNavGate, runStageNavAfterTeardown } from '../../src/navigation/stageNavGate';
 import { StageLoadingOverlay } from '../../src/components/StageLoadingOverlay';
+import { CombatStanceRow } from '../../src/game/combat/CombatStanceRow';
 
 /** 이동중 전투 패럴랙스 — 허브 베이크 + space_cd01~03 Screen. 물리 궤도 밖 풀화면. */
 const CombatOrbitTransitBackdrop = memo(function CombatOrbitTransitBackdrop({
@@ -437,6 +438,11 @@ export default function CombatScreen() {
         </View>
 
         <QuestHUD />
+
+        <CombatStanceRow
+          routeFocused={isCombatRouteFocused && !exitPending}
+          planetId={null}
+        />
 
         <View style={styles.battleStage} onLayout={handleBattleStageLayout}>
           <View

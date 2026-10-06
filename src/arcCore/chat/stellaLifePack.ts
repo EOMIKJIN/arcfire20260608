@@ -4,10 +4,34 @@ import type { StellaLifeResolved, StellaLifeSnapshot } from './stellaLifeTypes';
 
 export const STELLA_LIFE_PACK_MAX = 400;
 
+export type StellaLifePackParts = {
+  now: string;
+  feel: string;
+  yesterday: string;
+  story: string;
+  memory: string;
+};
+
 export type StellaLifePackFragment = {
   block: string;
   lifeLine: string;
+  parts: StellaLifePackParts | null;
 };
+
+export const STELLA_LIFE_TOOL_NAME = 'get_stella_now';
+
+/** 서버는 lifeBlock 을 읽지 않고 toolResults 만 프롬프트에 싣는다 — 같은 재료를 도구 결과로 보낸다. */
+export function stellaLifeToolData(parts: StellaLifePackParts | null): Record<string, string> | null {
+  if (!parts) return null;
+  const out: Record<string, string> = {};
+  let n = 0;
+  if (parts.now) { out.now = parts.now; n += 1; }
+  if (parts.feel) { out.feel = parts.feel; n += 1; }
+  if (parts.yesterday) { out.yesterday = parts.yesterday; n += 1; }
+  if (parts.story) { out.story = parts.story; n += 1; }
+  if (parts.memory) { out.memory = parts.memory; n += 1; }
+  return n > 0 ? out : null;
+}
 
 function cut(text: string, max: number): string {
   const raw = text.trim();
@@ -21,9 +45,9 @@ export function buildStellaLifePackFragment(input: {
   humanFirst: boolean;
   locale: 'ko' | 'en';
 }): StellaLifePackFragment {
-  if (input.humanFirst || !input.resolved) return { block: '', lifeLine: '' };
+  if (input.humanFirst || !input.resolved) return { block: '', lifeLine: '', parts: null };
   if (!stellaLifeAllowsLifeLine(input.snapshot, input.humanFirst)) {
-    return { block: '', lifeLine: '' };
+    return { block: '', lifeLine: '', parts: null };
   }
   const r = input.resolved;
   const ko = input.locale !== 'en';
@@ -44,14 +68,18 @@ export function buildStellaLifePackFragment(input: {
   );
   const budget = stellaLifePackAnchorBudget(input.snapshot, input.humanFirst);
   const anchors = input.snapshot.anchors.slice(0, Math.max(0, budget)).join(' / ').slice(0, 80);
-  const parts = [nowLine, driveLine, digestLine, narrative, anchors].filter(Boolean);
+  const lines = [nowLine, driveLine, digestLine, narrative, anchors].filter(Boolean);
   let block = '';
-  for (let i = 0; i < parts.length; i += 1) {
-    const next = block ? `${block}\n${parts[i]}` : parts[i]!;
+  for (let i = 0; i < lines.length; i += 1) {
+    const next = block ? `${block}\n${lines[i]}` : lines[i]!;
     if (next.length > STELLA_LIFE_PACK_MAX) break;
     block = next;
   }
-  return { block, lifeLine: nowLine };
+  return {
+    block,
+    lifeLine: nowLine,
+    parts: { now: nowLine, feel: driveLine, yesterday: digestLine, story: narrative, memory: anchors },
+  };
 }
 
 export function shouldAttachStellaLifeToPack(input: {

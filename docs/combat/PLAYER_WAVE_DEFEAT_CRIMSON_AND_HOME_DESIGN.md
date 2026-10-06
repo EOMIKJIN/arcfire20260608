@@ -59,6 +59,8 @@
 `resolvePlayerWaveDefeatDisposition` · `app/(game)/planet.tsx` `handleWaveDefenseRunEnded` 결과창 `onResultClosed`.  
 점유 소스 `player_wave_defense_loss`. 주둔·승리금은 쓰지 않는다. 승리의 블루 유지·레드 승리 중립화는 그대로다.
 
+45초 미마운트·10분 정체(`endCause=failsafe`)는 싸운 패배가 아니다. 결과 창은 패배로 두되 점유·귀환·격침은 하지 않는다. 분쟁 차례는 루프를 막기 위해 완료하고, 학습에는 레드로 적지 않는다. 김클로드 협의 2026-10-06 Q1·Q2 AGREE, Q3 PARTIAL 반영.
+
 ## 5. 설계 당시와 옛 코드의 차이 (기록)
 
 | 지금 | 이 설계 |

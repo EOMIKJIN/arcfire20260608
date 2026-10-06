@@ -7,7 +7,7 @@ export const CapitalHullPurchasePolicy_FROM_BALANCE_CSV = [
   { "hullTierKey": "cruiser", "labelKo": "순양함(Cruiser)", "labelEn": "Cruiser", "purchaseCredits": "5000000", "requiredPilotLevelMin": "31", "recommendedAfterZoneIndex": "12", "notesKo": "오라클 순양함" },
   { "hullTierKey": "cruiser_upgraded", "labelKo": "순양함 개량형", "labelEn": "Cruiser Mk.II", "purchaseCredits": "7500000", "requiredPilotLevelMin": "40", "recommendedAfterZoneIndex": "15", "notesKo": "오라클 Mk.II" },
   { "hullTierKey": "battlecruiser", "labelKo": "순양전함(Battlecruiser)", "labelEn": "Battlecruiser", "purchaseCredits": "15000000", "requiredPilotLevelMin": "52", "recommendedAfterZoneIndex": "18", "notesKo": "소버린 순양전함" },
-  { "hullTierKey": "battlecruiser_max", "labelKo": "순양전함 최종 풀강", "labelEn": "Battlecruiser (Max)", "purchaseCredits": "0", "requiredPilotLevelMin": "60", "recommendedAfterZoneIndex": "20", "notesKo": "소버린 완성형(업그레이드 정점)" },
+  { "hullTierKey": "battlecruiser_max", "labelKo": "순양전함 최종 풀강", "labelEn": "Battlecruiser (Max)", "purchaseCredits": "20000000", "requiredPilotLevelMin": "60", "recommendedAfterZoneIndex": "20", "notesKo": "소버린 완성형(업그레이드 정점)" },
   { "hullTierKey": "dreadnought", "labelKo": "드레드노트", "labelEn": "Dreadnought", "purchaseCredits": "25000000", "requiredPilotLevelMin": "65", "recommendedAfterZoneIndex": "20", "notesKo": "엔드 이후 장기 목표·1" },
   { "hullTierKey": "super_capital", "labelKo": "슈퍼캐피털", "labelEn": "Super Capital", "purchaseCredits": "50000000", "requiredPilotLevelMin": "72", "recommendedAfterZoneIndex": "20", "notesKo": "엔드 이후 장기 목표·2" },
   { "hullTierKey": "apex_legend", "labelKo": "아펙스 레전드", "labelEn": "Apex Legend", "purchaseCredits": "100000000", "requiredPilotLevelMin": "80", "recommendedAfterZoneIndex": "20", "notesKo": "6개월+ 장기 정점 함선" },

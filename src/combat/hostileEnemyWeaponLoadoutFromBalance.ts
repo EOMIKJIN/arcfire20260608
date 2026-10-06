@@ -28,6 +28,8 @@ let curveByFamily: Map<WeaponFamily, CurveEntry[]> | null = null;
 
 function isCurveEligibleWeaponId(id: string): boolean {
   if (id.includes('wave') || id.includes('vmock')) return false;
+  // 전설 일격(arc_029, 피해 999)은 진열·적 곡선에서 제외. 행은 콘셉트용으로 남긴다.
+  if (id === 'w_laser_arc_029') return false;
   return true;
 }
 

@@ -30,6 +30,8 @@ export type StallSnap = {
   devSum: number;
   combatWins: number;
   credits: number;
+  /** 진행을 막는 축 한 줄(progressWall). 판정에는 쓰지 않고 기록만 한다. */
+  wall?: string;
 };
 
 export type StallMemory = {
@@ -60,6 +62,7 @@ export type StallMark = {
   devSum: number;
   combatWins: number;
   credits: number;
+  wall?: string;
   reanalysis: string;
 };
 
@@ -198,13 +201,14 @@ export function observeStall(
     return { restart: false, reason: '', sectionStreak: stepped.sectionStreak, reanalysis: '' };
   }
   const phase = designPhase(snap.level).phase;
-  const reanalysis = reanalysisText(baseline, {
+  const text = reanalysisText(baseline, {
     reason: stepped.reason,
     day: snap.day,
     level: snap.level,
     questCleared: snap.questCleared,
     independent: snap.independent,
   });
+  const reanalysis = snap.wall ? `${text} 벽: ${snap.wall}` : text;
   restarts += 1;
   const mark: StallMark = {
     restartIndex: restarts,
@@ -222,6 +226,7 @@ export function observeStall(
     devSum: snap.devSum,
     combatWins: snap.combatWins,
     credits: snap.credits,
+    wall: snap.wall ?? '',
     reanalysis,
   };
   history = [mark, ...history].slice(0, 8);

@@ -1,0 +1,169 @@
+{
+  "version": 1,
+  "handoff": "tools/kim-team-lead/reports/kim-play-handoff-stella-o4-20261006.md",
+  "twinMirrorPaths": [
+    "tables/balance/capital_hull_purchase_policy.csv",
+    "tables/balance/planet_defense_satellite_level_policy.csv",
+    "tables/balance/arc_core_daily_ops_policy.csv",
+    "tables/content/missions.csv",
+    "tables/content/mission_objectives.csv",
+    "tables/content/player_level_exp.csv",
+    "src/game/waveDefense/playerWaveDefeatDisposition.ts",
+    "src/game/waveDefense/waveDefenseStore.ts"
+  ],
+  "items": [
+    {
+      "id": "PB-G1",
+      "lane": 3,
+      "owner": "김팀장",
+      "title": "교역 순익 추정 거리 배율 이중 적용 (PB-G 1차 · 김팀장 지시 15:02)",
+      "since": "2026-10-06T12:10:00+09:00",
+      "doneWhen": {
+        "kind": "changed",
+        "paths": [
+          "src/arcCore/economy/tradeRouteTransportCost.ts"
+        ]
+      },
+      "done": true
+    },
+    {
+      "id": "PB-G2",
+      "lane": 3,
+      "owner": "대표님",
+      "title": "교역로 차익 크기 검토 — tg_090 개당 139,217cr vs 함선 250,000cr (PB-G 1차 · 김팀장 판정 유지 · 대표님 기존값 결정 대기)",
+      "since": "2026-10-06T12:10:00+09:00",
+      "doneWhen": {
+        "kind": "changed",
+        "paths": [
+          "tables/balance/trade_route_economy_policy.csv",
+          "tables/content/item_defs.csv"
+        ]
+      }
+    },
+    {
+      "id": "PB-G3",
+      "lane": 3,
+      "owner": "대표님",
+      "title": "챕터1 수락 레벨이 설계보다 높음 — L25·L28 vs Lv15~23 (PB-G 1차 · 김팀장 판정 유지 · 대표님 기존값 결정 대기)",
+      "since": "2026-10-06T10:40:00+09:00",
+      "doneWhen": {
+        "kind": "changed",
+        "paths": [
+          "tables/content/missions.csv"
+        ]
+      }
+    },
+    {
+      "id": "PB-G4",
+      "lane": 3,
+      "owner": "김팀장",
+      "title": "전설 일격 무기 w_laser_arc_029 피해 999 — 진열·적 tcl17 무장에서 빼기 (PB-G 2차 · 대표님 승인 18:33)",
+      "since": "2026-10-06T18:33:00+09:00",
+      "doneWhen": {
+        "kind": "changed",
+        "paths": [
+          "tables/content/weapon_list.csv"
+        ]
+      }
+    },
+    {
+      "id": "PB-G5",
+      "lane": 3,
+      "owner": "김팀장",
+      "title": "함선 등급 성능 곡선 — 등급·레벨 따라 상승, 같은 등급은 파이터·레인저 성향만 차이 (PB-G 2차 · 대표님 승인 18:33)",
+      "since": "2026-10-06T18:33:00+09:00",
+      "doneWhen": {
+        "kind": "manual"
+      }
+    },
+    {
+      "id": "PB-G6",
+      "lane": 3,
+      "owner": "김팀장",
+      "title": "기함 파괴 시 장착 복원 · 내구도 0 장비 소멸 차단 (PB-G 2차 · 대표님 승인 18:33)",
+      "since": "2026-10-06T18:33:00+09:00",
+      "doneWhen": {
+        "kind": "changed",
+        "paths": [
+          "src/game/playerSurvivalPod.ts",
+          "src/game/durability/durabilityModel.ts"
+        ]
+      }
+    },
+    {
+      "id": "PB-G7",
+      "lane": 3,
+      "owner": "김팀장",
+      "title": "가격 0 해소 — 요격미사일 · battlecruiser_max (PB-G 2차 · 대표님 승인 18:33 · 금액은 김팀장 제안 후 대표님 확인)",
+      "since": "2026-10-06T18:33:00+09:00",
+      "doneWhen": {
+        "kind": "manual"
+      }
+    },
+    {
+      "id": "PB-S0",
+      "lane": 3,
+      "owner": "김팀장",
+      "title": "김플레이 전체 설계안 일괄 검수 — 스텔라 0단계·O1·O2 코드 커밋 포함 (kim-play-review-request-all-designs-20261006.md)",
+      "since": "2026-10-06T20:05:00+09:00",
+      "doneWhen": {
+        "kind": "committed",
+        "paths": [
+          "src/game/playerObserve/playerObserveSink.ts",
+          "src/store/arcCoreChatStore.ts",
+          "src/arcCore/chat/stellaLifePack.ts"
+        ]
+      }
+    },
+    {
+      "id": "A-10",
+      "lane": 1,
+      "owner": "김플레이",
+      "title": "트윈 수입 모델 검증 후 「교역 없이 함선 미도달」 재판정 (확정 전 게임 개선 목록 미등록)",
+      "since": "2026-10-06T15:00:00+09:00",
+      "doneWhen": {
+        "kind": "manual"
+      }
+    },
+    {
+      "id": "A-9",
+      "lane": 1,
+      "owner": "김플레이",
+      "title": "전투 파괴 원인 수정 — a 함선 예비금이 무기·장비 구매를 막음 · b 방어 장비·스킬·숙련 HP 승률 미반영, 파괴 후 장착·귀환·내구도 불일치 · c 전멸시켜도 패배 판정 (감사 §6-C)",
+      "since": "2026-10-06T12:10:00+09:00",
+      "doneWhen": {
+        "kind": "manual"
+      }
+    },
+    {
+      "id": "A-7a",
+      "lane": 1,
+      "owner": "김플레이",
+      "title": "트윈 웨이브 패배 처분 반영 (허브 패배=크림슨 처분)",
+      "since": "2026-10-06T11:30:00+09:00",
+      "doneWhen": {
+        "kind": "manual"
+      }
+    },
+    {
+      "id": "A-7b",
+      "lane": 1,
+      "owner": "김플레이",
+      "title": "트윈 globalEngageHpMul 반영",
+      "since": "2026-10-06T11:30:00+09:00",
+      "doneWhen": {
+        "kind": "manual"
+      }
+    },
+    {
+      "id": "A-7c",
+      "lane": 1,
+      "owner": "김플레이",
+      "title": "트윈 개척 금고 비용 정합",
+      "since": "2026-10-06T11:30:00+09:00",
+      "doneWhen": {
+        "kind": "manual"
+      }
+    }
+  ]
+}

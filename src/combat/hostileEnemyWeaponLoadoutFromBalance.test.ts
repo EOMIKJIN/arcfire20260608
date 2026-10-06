@@ -71,6 +71,16 @@ test('이동중 TCL — 목적지 상한 · 플레이어 캡', () => {
   assert.equal(resolveTransitCombatEncounterTargetLevel('eternity'), 60);
 });
 
+test('전설 일격 arc_029 는 적 곡선에 없다', () => {
+  for (let level = 1; level <= 80; level += 1) {
+    for (let spawn = 0; spawn < 3; spawn += 1) {
+      const loadout = resolveHostileEnemyWeaponLoadout(spawn, level);
+      assert.notEqual(loadout.laserWeaponId, 'w_laser_arc_029');
+      assert.notEqual(loadout.missileWeaponId, 'w_laser_arc_029');
+    }
+  }
+});
+
 test('이동중 TCL — 신스 캠프 성계는 colonization 행', () => {
   assert.equal(resolveCombatEncounterTargetLevel('__transit__', 'synth_011'), 18);
   assert.equal(resolvePlayScenarioPrimaryPlanetId('synth_011'), 'synth_011_p');

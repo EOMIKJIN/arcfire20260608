@@ -98,4 +98,6 @@ writeOut('csvStellaLifeNarrative.ts', 'STELLA_LIFE_NARRATIVE_FROM_CSV', loadCsv(
 writeOut('csvStellaQuestDossier.ts', 'STELLA_QUEST_DOSSIER_FROM_CSV', loadCsv('stella_quest_dossier.csv'));
 writeOut('csvStellaQuestAside.ts', 'STELLA_QUEST_ASIDE_FROM_CSV', loadCsv('stella_quest_aside.csv'));
 writeOut('csvStellaCaptainNote.ts', 'STELLA_CAPTAIN_NOTE_FROM_CSV', loadCsv('stella_captain_note.csv'));
-console.log('build-arc-core-chat-tables: wrote persona/operator-persona/speakers/topics/knowledge/purposes/modes/gm-beats/stella-life/stella-quest-notes');
+writeOut('csvStellaObserveSituations.ts', 'STELLA_OBSERVE_SITUATIONS_FROM_CSV', loadCsv('stella_observe_situations.csv'));
+writeOut('csvStellaObserveGatePolicy.ts', 'STELLA_OBSERVE_GATE_POLICY_FROM_CSV', loadCsv('stella_observe_gate_policy.csv'));
+console.log('build-arc-core-chat-tables: wrote persona/operator-persona/speakers/topics/knowledge/purposes/modes/gm-beats/stella-life/stella-quest-notes/stella-observe');

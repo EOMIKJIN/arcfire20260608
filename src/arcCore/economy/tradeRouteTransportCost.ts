@@ -78,8 +78,9 @@ export function computeTradeRouteTransportCostPerUnit(
 }
 
 /**
- * 총차익(gross) → 순차익(net).
- * 가까운 공급·수요 쌍은 거리 스케일로 차익이 작고, 먼 쌍은 상대적으로 커진다.
+ * 총차익(gross) → 순차익(net) = 총차익 − 운송비.
+ * 거리 가중은 시세 차익(`resolveDistanceScaledTradeRouteGrossProfit`)에 이미 들어 있다.
+ * 여기서 `거리/기준거리`를 다시 곱하면 먼 노선의 순익이 총차익보다 커진다.
  */
 export function applyTradeRouteNetProfitPerUnit(
   grossProfitPerUnit: number,
@@ -88,11 +89,7 @@ export function applyTradeRouteNetProfitPerUnit(
   goodId: string,
 ): number {
   if (grossProfitPerUnit <= 0) return 0;
-  const refDist = getTradeRouteReferenceMapDistance();
   const minNet = getTradeRouteMinNetProfitPerUnit();
-  const distance = resolvePlanetSystemMapDistance(supplyPlanetId, demandPlanetId);
   const transport = computeTradeRouteTransportCostPerUnit(supplyPlanetId, demandPlanetId, goodId);
-  const scale = refDist > 0 ? distance / refDist : 1;
-  const scaledGross = Math.floor(grossProfitPerUnit * scale);
-  return Math.max(minNet, scaledGross - transport);
+  return Math.max(minNet, Math.floor(grossProfitPerUnit) - transport);
 }

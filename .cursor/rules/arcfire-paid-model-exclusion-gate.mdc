@@ -1,12 +1,12 @@
 ---
-description: 김팀장 핵심=글록 4.5 · Composer·Cursor Auto 폴백만 분석 전용 (2026-08-04)
+description: 김팀장 핵심=글록 4.7 · Composer·Cursor Auto 폴백만 분석 전용 (2026-10-06)
 alwaysApply: true
 ---
 
-# 모델 게이트 — 김팀장 핵심 **글록 4.5** · Composer·Auto 폴백 분석 전용
+# 모델 게이트 — 김팀장 핵심 **글록 4.7** · Composer·Auto 폴백 분석 전용
 
-> **대표님 지시 (2026-08-04)**: **김팀장 에이전트 핵심 모델 = `glock 4.5` (글록 4.5 · Cursor Grok 4.5)**.  
-> Task slug: `cursor-grok-4.5-high-fast` · 정본 앵커 `SUBSCRIPTION_RENEWAL_ANCHOR.json` → `kimTeamLeadCoreModel`.  
+> **대표님 지시 (2026-10-06)**: **김팀장 에이전트 핵심 모델 = `glock 4.7` (글록 4.7 · Grok 4.7)**.  
+> Task slug: `grok-4.7-xhigh-fast` · 정본 앵커 `SUBSCRIPTION_RENEWAL_ANCHOR.json` → `kimTeamLeadCoreModel`.  
 > **Composer · Cursor Auto/미지정 폴백** 은 기존과 같이 **분석 전용**(코드·로그 수정 금지).  
 > 교훈(2026-08-02): worldmap 「고착 방지」 안전망 — **미지정 Auto/Composer** 가 예방 코드를 넣는 것은 계속 금지.
 
@@ -24,23 +24,23 @@ alwaysApply: true
 
 | 필드 | 값 |
 |------|-----|
-| `kimTeamLeadCoreModel.displayName` | **glock 4.5** |
-| `kimTeamLeadCoreModel.taskSlug` | `cursor-grok-4.5-high-fast` |
+| `kimTeamLeadCoreModel.displayName` | **glock 4.7** |
+| `kimTeamLeadCoreModel.taskSlug` | `grok-4.7-xhigh-fast` |
 
 ---
 
-## 1. 김팀장 핵심 — **글록 4.5 (개발 허용)**
+## 1. 김팀장 핵심 — **글록 4.7 (개발 허용)**
 
 | 항목 | 내용 |
 |------|------|
-| **표시명** | **glock 4.5** / **글록 4.5** |
-| **제품명** | Cursor Grok 4.5 |
-| **Task slug** | `cursor-grok-4.5-high-fast` |
+| **표시명** | **glock 4.7** / **글록 4.7** |
+| **제품명** | Grok 4.7 |
+| **Task slug** | `grok-4.7-xhigh-fast` |
 | **권한** | 김팀장 페르소나 — **코드·검수·커밋(요청 시)·런타임 개발 전부 허용** |
 | **본 세션** | Cursor에서 김팀장 창 = 본 모델로 동작 |
 
-**구분**: 「글록 4.5」≠ 예전 금지 대상이던 **미지정 Cursor Auto 폴백**.  
-별칭(`Grok 4.5` · `cursor-grok-4.5*`)은 모두 **김팀장 핵심**으로 취급한다.
+**구분**: 「글록 4.7」≠ 예전 금지 대상이던 **미지정 Cursor Auto 폴백**.  
+별칭(`Grok 4.7` · `grok-4.7*`)은 모두 **김팀장 핵심**으로 취급한다.
 
 ---
 
@@ -62,7 +62,7 @@ alwaysApply: true
 ### 2-2. 허용 (분석만 — Composer·Auto)
 
 - 원인 분석 · 읽기 · 수정 **제안문**(텍스트)
-- 대화 요약 · 「글록 4.5(김팀장)/Fable/Sonnet으로 전환」 안내
+- 대화 요약 · 「글록 4.7(김팀장)/Fable/Sonnet으로 전환」 안내
 
 ---
 
@@ -70,39 +70,39 @@ alwaysApply: true
 
 | 역할 | 모델 slug (Task 위임 시) |
 |------|--------------------------|
-| **김팀장 (핵심 · 런타임·Skia·STAGE·arcCore)** | **`cursor-grok-4.5-high-fast` (glock 4.5)** |
+| **김팀장 (핵심 · 런타임·Skia·STAGE·arcCore)** | **`grok-4.7-xhigh-fast` (glock 4.7)** |
 | Fable (Table-First) | `claude-fable-5-thinking-high` |
 | Sonnet (logcat·tsc·adb) | `claude-4.6-sonnet-medium-thinking` |
 | (보조·명시 시) | `claude-opus-4-8-thinking-high` · `claude-sonnet-5-thinking-high` |
 
-**김팀장 코드 수정 기본** = **글록 4.5 세션**. Opus는 대표님/`@Opus` **명시 시에만** 보조.
+**김팀장 코드 수정 기본** = **글록 4.7 세션**. Opus는 대표님/`@Opus` **명시 시에만** 보조.
 
 ---
 
 ## 4. API 소진 플래그
 
 `API_EXHAUST_FALLBACK_ACTIVE.flag` 가 있어도 **Composer·미지정 Auto**는 코드를 쓰지 않는다.  
-김팀장 핵심(글록 4.5) 세션이 가능하면 **그 세션에서 개발**한다.
+김팀장 핵심(글록 4.7) 세션이 가능하면 **그 세션에서 개발**한다.
 
 ### 4-1~4-3 (Composer·Auto만)
 
 - 플래그 있어도 코드·로그 diff · audit PASS · 커밋 선언 **금지**
-- handoff/문서 문구·텍스트 수정안만 · 「글록 4.5 복구 후 적용」 명시
+- handoff/문서 문구·텍스트 수정안만 · 「글록 4.7 복구 후 적용」 명시
 
 ---
 
 ## 5. 에이전트·훅·Task 의무
 
 1. Composer/미지정 Auto 감지 시: **코드 diff 전 중단** · 분석만
-2. `Task` `model` = **`allowedPaidModels`만** — 김팀장 위임 기본 = **`cursor-grok-4.5-high-fast`**
-3. Composer/Auto 폴백 응답 첫 줄: `【분석전용·개발금지】 Composer/Auto — 패치는 글록 4.5(김팀장)/Fable/Sonnet`
-4. 김팀장(글록 4.5) 세션은 **개발·검수 정상 진행**
+2. `Task` `model` = **`allowedPaidModels`만** — 김팀장 위임 기본 = **`grok-4.7-xhigh-fast`**
+3. Composer/Auto 폴백 응답 첫 줄: `【분석전용·개발금지】 Composer/Auto — 패치는 글록 4.7(김팀장)/Fable/Sonnet`
+4. 김팀장(글록 4.7) 세션은 **개발·검수 정상 진행**
 
 ---
 
 ## 6. 우선순위
 
-**김팀장 핵심=글록 4.5 (본 게이트)** > Composer/Auto 분석전용 > `gemini-code-agent-routing` 페르소나 > 기능 일정.
+**김팀장 핵심=글록 4.7 (본 게이트)** > Composer/Auto 분석전용 > `gemini-code-agent-routing` 페르소나 > 기능 일정.
 
 ---
 

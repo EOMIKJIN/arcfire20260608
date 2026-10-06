@@ -3,10 +3,10 @@ import { describe, it } from 'node:test';
 import { resolvePlayerWaveDefeatDisposition } from './playerWaveDefeatDisposition';
 
 describe('resolvePlayerWaveDefeatDisposition', () => {
-  it('크림슨 공격에 지면 블루·중립 모두 크림슨으로 바꾸고 기함을 보낸다', () => {
+  it('크림슨 웨이브에 지면 블루·중립 모두 크림슨으로 바꾸고 기함을 보낸다', () => {
     const blue = resolvePlayerWaveDefeatDisposition({
       outcome: 'lose',
-      territorialAttack: true,
+      crimsonWave: true,
       wasRedOccupied: false,
       sunk: false,
     });
@@ -16,7 +16,7 @@ describe('resolvePlayerWaveDefeatDisposition', () => {
 
     const sunk = resolvePlayerWaveDefeatDisposition({
       outcome: 'lose',
-      territorialAttack: true,
+      crimsonWave: true,
       wasRedOccupied: false,
       sunk: true,
     });
@@ -26,18 +26,19 @@ describe('resolvePlayerWaveDefeatDisposition', () => {
   it('이미 크림슨인 성계에서 지면 점유는 다시 쓰지 않고 기함만 보낸다', () => {
     const red = resolvePlayerWaveDefeatDisposition({
       outcome: 'lose',
-      territorialAttack: false,
+      crimsonWave: true,
       wasRedOccupied: true,
       sunk: false,
     });
     assert.equal(red.occupyCrimson, false);
     assert.equal(red.sendHome, true);
+    assert.equal(red.destroyShip, false);
   });
 
-  it('승리하면 블루를 유지하고 기함을 보내지 않는다', () => {
+  it('승리하면 점유를 쓰지 않고 기함을 보내지 않는다', () => {
     const win = resolvePlayerWaveDefeatDisposition({
       outcome: 'win',
-      territorialAttack: true,
+      crimsonWave: true,
       wasRedOccupied: false,
       sunk: true,
     });
@@ -46,10 +47,23 @@ describe('resolvePlayerWaveDefeatDisposition', () => {
     assert.equal(win.destroyShip, false);
   });
 
-  it('분쟁 공격이 아닌 패배는 점유·귀환을 하지 않는다', () => {
+  it('엔진 실패 패배는 점유와 귀환을 하지 않는다', () => {
+    const stalled = resolvePlayerWaveDefeatDisposition({
+      outcome: 'lose',
+      crimsonWave: true,
+      wasRedOccupied: false,
+      sunk: true,
+      failsafe: true,
+    });
+    assert.equal(stalled.occupyCrimson, false);
+    assert.equal(stalled.sendHome, false);
+    assert.equal(stalled.destroyShip, false);
+  });
+
+  it('크림슨 웨이브가 아닌 패배는 점유·귀환을 하지 않는다', () => {
     const quest = resolvePlayerWaveDefeatDisposition({
       outcome: 'lose',
-      territorialAttack: false,
+      crimsonWave: false,
       wasRedOccupied: false,
       sunk: true,
     });

@@ -25,8 +25,12 @@ export function isNpcSlotCloneWeapon(id, tierLabel = '') {
   return false;
 }
 
+/** 콘셉트 무기 — 진열·적 곡선에서 뺀다. 행과 피해 999는 유지. */
+const TRADE_PORT_CONCEPT_EXCLUSION = new Set(['w_laser_arc_029']);
+
 export function isTradePortEligibleWeapon(id, tierLabel = '') {
   const normalized = String(id ?? '').trim();
+  if (TRADE_PORT_CONCEPT_EXCLUSION.has(normalized)) return false;
   if (!normalized.startsWith('w_')) return false;
   return !isNpcSlotCloneWeapon(normalized, tierLabel);
 }

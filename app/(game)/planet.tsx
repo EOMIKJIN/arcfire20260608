@@ -1272,6 +1272,7 @@ export default function PlanetScreen() {
     const endedPlanetId = (ended.planetId ?? '').trim();
     const endedSystemId = (ended.systemId ?? '').trim();
     const endedOutcome = ended.outcome ?? 'win';
+    const failsafeLoss = ended.endCause === 'failsafe' && endedOutcome === 'lose';
     // 1-shot [전투] intent — 승패·systemId 무관하게 종료 즉시 해제(결과창 중 재발화 방지)
     clearPlanetAssaultIntent();
     // 승리 → 30분 재개 대기 마킹 (결과창 중 즉시 재트리거 차단 · 대표님 지시 2026-07-22)
@@ -1325,11 +1326,11 @@ export default function PlanetScreen() {
       }
     }
     // 분쟁 차례 웨이브면 승/패 모두 패스 완료 → 다음 순차.
-    // 승리의 블루 유지는 점유를 쓰지 않는다. 크림슨 공격 패배의 RED 기록은 결과창이 닫힌 뒤.
+    // 승리의 블루 유지는 점유를 쓰지 않는다. 크림슨 웨이브 패배의 RED 기록은 결과창이 닫힌 뒤(트리거 무관).
     // 관측만 기록 — 주둔·승리금은 applyOnPlayerWave=false.
     const pendingSnap = endedPlanetId ? getTerritorialPlayerWavePending() : null;
     const territorialAttack = Boolean(pendingSnap && pendingSnap.planetId === endedPlanetId);
-    const territorialAttackLoss = territorialAttack && endedOutcome === 'lose';
+    const territorialAttackLoss = territorialAttack && endedOutcome === 'lose' && !failsafeLoss;
     const passDecision = waveHoldChanged || territorialAttackLoss ? 'battle' : 'status_quo';
     const passHoldChanged = waveHoldChanged || territorialAttackLoss;
     if (endedPlanetId) {
@@ -1360,11 +1361,13 @@ export default function PlanetScreen() {
       const outcome = (s.outcome ?? endedOutcome) === 'lose' ? 'lose' : 'win';
       const rawSunk = consumeCombatPlayerShipSinkPending();
       const sunk = shouldApplyShipSinkForDirectCombat(outcome, rawSunk);
+      // 허브 웨이브는 분쟁 차례·[전투]·채팅 무장·엔드게임 보스 모두 크림슨 공격 — 시작 경로 무관 동일 처분(대표님 2026-10-06)
       const defeat = resolvePlayerWaveDefeatDisposition({
         outcome,
-        territorialAttack,
+        crimsonWave: Boolean(endedPlanetId),
         wasRedOccupied,
         sunk,
+        failsafe: failsafeLoss,
       });
       runCombatEndOutcomeFlow({
         result: {
@@ -1418,7 +1421,7 @@ export default function PlanetScreen() {
           useWaveDefenseStore.getState().reset();
         },
         notice: sunk ? resolveCombatShipDestroyedNotice() : null,
-        applyCapitalShipDestruction: sunk && !defeat.sendHome,
+        applyCapitalShipDestruction: sunk && !defeat.sendHome && !failsafeLoss,
         // RED 퇴거 — 미션 대사는 건너뛰고 레벨업(4순위) 뒤에 월드맵으로
         shouldSkipMissionClear: () => {
           const pid = usePlayerStore.getState().player?.currentPlanetId?.trim() ?? '';

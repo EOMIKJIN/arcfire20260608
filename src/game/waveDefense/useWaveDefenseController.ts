@@ -127,7 +127,7 @@ export function useWaveDefenseController(args: WaveDefenseControllerArgs): void 
     const stallTimer = setTimeout(() => {
       const s = useWaveDefenseStore.getState();
       if (!s.active) return;
-      s.endRun('lose');
+      s.endRun('lose', 'failsafe');
     }, WAVE_DEFENSE_STALL_FAILSAFE_MS);
     return () => clearTimeout(stallTimer);
   }, [active, phase, waveIndex, appActive, routeFocused, combatSimActive]);
@@ -138,7 +138,7 @@ export function useWaveDefenseController(args: WaveDefenseControllerArgs): void 
     const orphanTimer = setTimeout(() => {
       const s = useWaveDefenseStore.getState();
       if (!s.active || s.phase !== 'combat') return;
-      s.endRun('lose');
+      s.endRun('lose', 'failsafe');
     }, WAVE_DEFENSE_COMBAT_NEVER_MOUNTED_MS);
     return () => clearTimeout(orphanTimer);
   }, [active, phase, waveIndex, appActive, routeFocused, combatSimActive]);

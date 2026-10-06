@@ -37,6 +37,8 @@ export type FqaReviewState = {
   seenEvidence: Record<string, number>;
   reviews: number;
   consultPending: boolean;
+  /** 응답 문구를 쓴 시점의 카드. 카드가 바뀌면 이슈가 같아도 문구를 다시 쓴다. */
+  cardSig?: string;
 };
 
 export type FqaReviewPlan = {
@@ -68,8 +70,17 @@ export function issueSignature(issues: readonly GameIssue[]): string {
   return parts.join('|');
 }
 
-export function reviewNeeded(state: FqaReviewState, issues: readonly GameIssue[]): boolean {
+export function cardSignature(card: Pick<PlayIntelligenceCard, 'mineCap' | 'fairFightMin'>): string {
+  return `${card.mineCap}|${card.fairFightMin}`;
+}
+
+export function reviewNeeded(
+  state: FqaReviewState,
+  issues: readonly GameIssue[],
+  card?: Pick<PlayIntelligenceCard, 'mineCap' | 'fairFightMin'>,
+): boolean {
   if (state.consultPending) return true;
+  if (card && state.cardSig !== cardSignature(card)) return true;
   return issueSignature(issues) !== state.lastSig;
 }
 
@@ -126,7 +137,7 @@ export function planFqaReview(
           : `증거 ${row.evidence} 유지. 채굴 상한 ${next.mineCap} 유지.`);
       responses.push({
         id: row.id,
-        text: `${step} 돈은 퀘스트 보상, 없으면 채굴 후 매도 310으로 번다. 매수는 820 이상. 가격·개발비·바닥 400은 유지.`,
+        text: `${step} 돈은 퀘스트 보상·이동중 조우 보상, 없으면 채굴 후 실기 광물 시세로 판다. 교역품은 산 것만 판다. 매수는 820 이상. 가격·개발비·바닥 400은 유지.`,
       });
       continue;
     }

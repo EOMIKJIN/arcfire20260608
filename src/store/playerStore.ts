@@ -697,6 +697,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
         lastHubPlanetId: planetId,
       },
     });
+    if (player.currentPlanetId !== planetId) emitPlayVerb('land', planetId);
   },
 
   spendCredits: (amount) => {
@@ -1037,6 +1038,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     });
     if (levelsGained > 0) {
       get().schedulePersist();
+      emitPlayVerb('level', String(p.level));
     }
   },
 

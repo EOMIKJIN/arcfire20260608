@@ -59,6 +59,8 @@ export type JournalEntry = {
   reason?: string;
   /** 이미착륙 연속 — 콘솔·저널 미기록 */
   silent?: boolean;
+  /** 앱 emitPlayVerb 와 같은 행동 문자열. 스텔라 판단 재생용. */
+  obs?: Array<{ verb: import('../../../src/game/playerObserve/playerObserveSink').PlayerObserveVerb; detail: string }>;
 };
 
 export type PlanetSlot = {
@@ -115,6 +117,15 @@ export type WorldState = {
   combatLosses: number;
   trades: number;
   mineralCargo: number;
+  /** 무역소에서 산 교역품 단위. 매도는 이게 있을 때만. 옛 세계 파일에는 없을 수 있다. */
+  goodsCargo?: number;
+  /** 도착 전까지 지키는 이동 목적지와 정한 틱. */
+  travelGoal?: string;
+  travelGoalTick?: number;
+  /** tg_* 교역로 왕복 중이면 그 화물. 사기 전이면 qty 0. */
+  tgRun?: { goodId: string; supply: string; demand: string; qty: number; costUnit: number; sellNetUnit: number };
+  /** 공급지·품목별 당일 매입량. 재고 상한 근사용. */
+  tgBought?: Record<string, { day: number; qty: number }>;
   gems: number;
   gemExchangeDay: number;
   gemExchangeWeek: number;
@@ -161,6 +172,10 @@ export type WorldState = {
   hullRank: number;
   hullSaveDay: number;
   hullJustBought: boolean;
+  /** 마지막으로 land 를 남긴 행성. 앱 landOnPlanet 의 같은 행성 재착륙 무시와 맞춘다. */
+  obsLand?: string;
+  /** 다음 저널 줄에 붙일 앱 형식 행동. */
+  obsPending?: Array<{ verb: import('../../../src/game/playerObserve/playerObserveSink').PlayerObserveVerb; detail: string }>;
   /** 퀘스트 전투 연패. 승률이 회복되거나 이기면 0. */
   questCombatLossStreak: number;
   /** 이기기 어려운 퀘스트를 피해 머무는 수련 행성. */

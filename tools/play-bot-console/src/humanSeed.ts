@@ -38,6 +38,7 @@ const VERB_TO_KIND: Record<string, ActionKind> = {
   talk: 'quest',
   annex: 'annex_path',
   skill: 'skill',
+  develop: 'develop',
   /** 전함 구매 — 트윈은 장비·함선 구매를 gear 행동에서 처리 */
   ship: 'gear',
 };

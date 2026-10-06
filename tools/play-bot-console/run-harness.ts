@@ -26,7 +26,7 @@ import { reloadPlayIntelligence } from './src/playIntelligence';
 import { loadStallReplay, observeStall, resetStallStreak, stallRestartCount } from './src/stallReplay';
 import { reloadHumanSeedIfChanged } from './src/humanSeed';
 import { flushLearnedWrites } from './src/learnedIo';
-import { enableCombatEfficiencyMemory, rememberCombatDay } from './src/combatEfficiency';
+import { enableCombatEfficiencyMemory, progressWall, rememberCombatDay } from './src/combatEfficiency';
 import { resetRawPlayData } from './src/housekeep';
 import { compareKpi, formatCompare } from './src/compare';
 import { runSimulation } from './src/simulate';
@@ -38,6 +38,7 @@ import {
 } from './src/learnGate';
 import type { AnalyzeReport, JournalEntry, PersonaId, WorldState } from './src/types';
 import { continuePastWall, resolveUntilWallMs } from './src/untilWall';
+import { takeObs } from './src/observeVocab';
 
 function arg(flag: string, fallback: string): string {
   const i = process.argv.indexOf(flag);
@@ -56,6 +57,8 @@ function emit(
   entry: JournalEntry,
 ): void {
   if (entry.silent) return;
+  const obs = takeObs(world);
+  if (obs) entry.obs = obs;
   const line = formatMudLine(world, entry);
   pushMudTail(mudTail, line, 80);
   appendJournal(paths, entry, line);
@@ -269,6 +272,7 @@ async function main(): Promise<void> {
               devSum: kpi.devSum,
               combatWins: kpi.combatWins,
               credits: kpi.credits,
+              wall: progressWall(world),
             }, world.runId, Date.now());
             const issues = commitGameIssues(learnedDir(), {
               runId: world.runId,

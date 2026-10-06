@@ -26,6 +26,10 @@ const PLAY_VERBS: Record<string, string> = {
   annex: 'annex',
   skill: 'skill',
   ship: 'ship',
+  mine: 'mine',
+  scan: 'scan',
+  talk: 'talk',
+  develop: 'develop',
 };
 const TS_RE = /^(\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})/;
 
