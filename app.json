@@ -7,6 +7,7 @@
     "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "light",
     "scheme": "arcfire",
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
@@ -33,7 +34,15 @@
       "expo-font",
       "expo-splash-screen",
       "expo-navigation-bar",
-      "@react-native-firebase/app"
+      "@react-native-firebase/app",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "useLegacyPackaging": false
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

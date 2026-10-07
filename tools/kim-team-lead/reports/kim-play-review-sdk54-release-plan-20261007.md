@@ -101,4 +101,46 @@
 
 김플레이는 게임 본체 코드를 고치지 않는다 (발견 → 김팀장). 전제: 실기 A34 연결 유지 + 16KB 에뮬레이터 이미지 준비.
 
+## 11. 단계 검수 — SDK 52 (2026-10-08 02:50 · 김플레이)
+
+판정: **중간 PASS (헤드리스·정적)** · 실기 왕복은 빌드 설치 후. **커밋은 실기 PASS 뒤.**
+
+| 항목 | 결과 |
+|---|---|
+| 착수 조건 | HEAD `3dfc926 snapshot 2026-10-08` · 태그 `pre-sdk54` · 브랜치 `sdk54-upgrade` — **OK** |
+| `android/` 백업 | `D:\arcfire-android-backup-pre-sdk54` 존재. prebuild 재생성(02:37)과 비교: `android.enableJetifier=true` 만 사라짐 → 빌드가 support 라이브러리 오류를 내면 여기부터 |
+| RN 0.74 패치 | `patches/` 에서 빠지고 `held-patches/` 보관 — 계획대로. JS 리로드 가드 유지 |
+| 아키텍처 | `app.json newArchEnabled:false` · `gradle.properties newArchEnabled=false` · Reanimated 3.16.7 — OK |
+| babel | reanimated 플러그인 마지막 위치 유지 — OK |
+| 설치 버전 | expo 52.0.49 · RN 0.76.9 · React 18.3.1 · Skia 1.5.0 · RNFB 24.0.0 |
+| tsc (client) | **PASS** |
+| 플레이봇 테스트 | **114/114 PASS** |
+| 헤드리스 1일 (`sdk52-gate-1d`, seed 7) | 정상 종료 · `EARLY_SPINE_OK` |
+| generated diff | `src/` generated 변경 없음 — OK |
+
+메모 (차단 아님, 54 단계에서 다시 본다):
+- `.npmrc legacy-peer-deps=true` 신규(미추적) — peer 충돌을 전부 숨긴다. 54 완료 후 제거 가능 여부 확인.
+- `"expo": "^52.0.49"` 캐럿 — Expo 관례는 `~`. 52 범위 안이라 동작 영향 없음.
+- 디버그 ABI x86/x86_64 유지 (합의 5번대로).
+
+owner-auto: 02:50 설치 직전 김플레이가 정지 (합의 11번). 헤드리스 하니스는 계속. 새 빌드 부팅 확인 후 김플레이가 재기동.
+
+### 11-1. 실기 1차 (04:35) — SDK 52 디버그 설치 04:29:34 · pid 12049 · 포그라운드
+
+- FATAL·SIGSEGV **0**. 부팅·허브 진입은 됨 (사용자 조작 없음 → 왕복·`[PLAY_VERB]` 미확인).
+- **E1 (확인 요망)** 04:30:08 부팅 직후 1회 `Error: Requiring unknown module "undefined"` (Component Stack). 앱은 계속 동작. Metro가 `expo start --port 8081`(캐시 유지)로 떠 있음 → 먼저 `--clear` 재기동 후 재현 여부 확인. 재현되면 lazy `require` 경로 조사 (김팀장).
+- **E2 (관측)** `[arc-hitch] tick arc_core_spy_subcore` 평균 150ms · 최대 215ms · 6분간 468회(약 0.6초마다). 김클로드 handoff R-B(스파이 빈 결과 매 프레임)와 같은 축. 업그레이드 전 프로세스(19729) 같은 로그에는 0회지만 포그라운드 여부 미확인이라 **SDK 원인으로 단정하지 않음**. 디버그 번들 비용 포함 가능 → 업그레이드 전 빌드와 같은 조건 비교 필요.
+- 04:05 `Cannot find native module 'ExpoAsset'` · `"main" has not been registered` — **구 바이너리(21:28 설치)에 새 JS 번들이 로드된 것**, 새 설치 후 미발생. 무시.
+
+### 11-2. 실기 2차 (05:45) — 대표님 플레이 중 · 재설치 05:37:20 · pid 16391
+
+- FATAL·SIGSEGV **0** (04:29~05:45 전 구간).
+- **E1 해결 확인**: 04:52(pid 13053)에 재현됐으나, 김팀장 `devLoadingViewSuppress.ts` 수정(RN 0.76 `LoadingView`→`DevLoadingView`, `module.exports` 형태 확인) 후 05:37 빌드에서 **0건**.
+- **`[PLAY_VERB]` 방출 정상**: talk · scan · mine · trade · combat(hub_orbit) — 튜토리얼 b1(조선소)까지 진행 중.
+- 왕복: 13053 세션에서 `combat transit:win` → `land draco_haven` 확인 (은하 지도 이동·이동 전투·착륙 경로). 16391 세션은 아직 허브 튜토리얼.
+- **E2 지속**: 스파이 서브코어 tick 평균 166ms(203회). 판정 보류 — 업그레이드 전 디버그 빌드와 비교 필요 (김팀장 판단).
+- 추가 변경 검수: `arcfire-native-memory` devDep `expo-modules-core ~2.2.3` (SDK 52 정합) · `patches/@react-native-firebase+analytics+24.0.0.patch` (ESM `type:module` 표기 제거) — 동의.
+
+남은 실기 항목 (설치 후): 무선 Metro 8081 연결 · 부팅 · 허브→은하 지도→전투 왕복 · logcat FATAL 0 · `[PLAY_VERB]` 방출.
+
 리스크: SDK 54는 레거시 아키텍처 마지막 SDK → 출시 후 2027-08 API 37 대응 시 New Architecture 전환 필수. 출시 전에 하지 말고 출시 후 첫 대형 업데이트로 분리 권장.

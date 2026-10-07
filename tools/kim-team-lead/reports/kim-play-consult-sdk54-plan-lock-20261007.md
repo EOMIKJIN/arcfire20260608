@@ -40,3 +40,13 @@
 ## 김팀장 수락 (2026-10-07)
 
 13조건 중 김플레이가 수정한 2·3·4·7·9를 그대로 받는다. 오늘 밤 SDK 설치와 태그는 하지 않는다. `SDK54-E2E`는 `docs/ops/차기_업무_목록.md`에 HOLD로 등록했다. 내일 첫 순서는 위 8줄을 따른다.
+
+## SDK 52 부팅 (2026-10-08)
+
+브랜치 `sdk54-upgrade`, 태그 `pre-sdk54` = `3dfc926`. 커밋 없음.
+
+- 디버그 APK 빌드·무선 설치·부팅까지 했다. `BuildConfig.IS_NEW_ARCHITECTURE_ENABLED=false`. 프로세스 12049가 `Running "main"` 이후 `[boot-perf] boot_ready`, ArcCore 동기, `[title-diag]`까지 갔다. FATAL 없음.
+- 사용자 Gradle 홈 `C:\Users\eomsp\.gradle\gradle.properties`의 `newArchEnabled=true`가 프로젝트 `false`보다 우선했다. 이번 재빌드는 `-PnewArchEnabled=false`. 이 인자를 빼면 New Architecture로 다시 켜진다.
+- 설치 경로 기계 수정: `expo-modules-core@2.2.3`, `expo-asset@~11.0.5`, `query-string@7.1.3`. 로컬 모듈 devDependency도 `~2.2.3`. `w_laser_arc_029`는 postinstall 뒤 복구했다.
+- 잔여 JS 한 줄: `Requiring unknown module "undefined"`. 그 뒤 부팅은 계속됐다.
+- owner-auto는 재설치 창 동안만 플래그로 멈추고, 부팅 확인 직후 pid 23340으로 재개했다. 검수는 재개 뒤.
