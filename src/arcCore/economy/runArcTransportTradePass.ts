@@ -187,6 +187,7 @@ export async function settleArcTransportDwellTrade(
 
       await applyPlanetTradeTransactionFee(planetId, sellGross, 'convoy');
 
+      const tUnload = ARC_HITCH_DEV ? performance.now() : 0;
       const profitScale = existing.qty > 0 ? unloadQty / existing.qty : 1;
       const netMarginBeforeAabs = Math.floor(settlement.netProfitTotal * profitScale);
       const transportCostTotal = Math.floor(settlement.transportCostPerUnit * unloadQty);
@@ -215,6 +216,7 @@ export async function settleArcTransportDwellTrade(
       );
       shipCargoById.delete(shipId);
       persistRamCargoLots();
+      if (ARC_HITCH_DEV) logArcHitchSegment('convoy_unload', tUnload);
     }
     return;
   }
@@ -222,12 +224,14 @@ export async function settleArcTransportDwellTrade(
   if (!getPlanetTradeRouteProfile(planetId)) return;
 
   const planned = opts?.routePlan;
+  const tPlan = ARC_HITCH_DEV ? performance.now() : 0;
   const plan =
     planned && planned.srcPlanetId === planetId
       ? planned
       : planArcConvoyRouteAtSupply(planetId, shipId, bank.getBalance(), {
           ignoreBankAffordability: vaultAllowsNegativeBalance(),
         });
+  if (ARC_HITCH_DEV) logArcHitchSegment('convoy_plan', tPlan);
   if (!plan) return;
   if (!isPlanetConvoyTradeEnabled(plan.destPlanetId)) return;
 
@@ -255,6 +259,7 @@ export async function settleArcTransportDwellTrade(
 
   await applyPlanetTradeTransactionFee(planetId, cost, 'convoy');
 
+  const tLoad = ARC_HITCH_DEV ? performance.now() : 0;
   adjustPlanetTradeMarketStock(planetId, plan.tgId, -plan.qty);
   shipCargoById.set(shipId, {
     tgId: plan.tgId,
@@ -265,6 +270,16 @@ export async function settleArcTransportDwellTrade(
     attrs,
   });
   persistRamCargoLots();
+  if (ARC_HITCH_DEV) logArcHitchSegment('convoy_load', tLoad);
+}
+
+/** headless 감사(node)에는 __DEV__ 전역이 없다. */
+const ARC_HITCH_DEV = typeof __DEV__ !== 'undefined' && __DEV__;
+
+function logArcHitchSegment(label: string, t0: number): void {
+  const ms = performance.now() - t0;
+  // eslint-disable-next-line no-console
+  if (ms >= 30) console.log('[arc-hitch] settle', label, Math.round(ms));
 }
 
 /** 일일 정산·백필 — 생산지 적재 후 수요지 하역까지 1회 왕복 */

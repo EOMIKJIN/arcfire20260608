@@ -6,6 +6,7 @@ import { countGoodInInventory, normalizeInventorySlots } from '../game/playerInv
 import { useMissionStore } from '../store/missionStore';
 import { usePlayerStore } from '../store/playerStore';
 import { listActiveMissionBundles } from './missionActiveBundles';
+import { noteDeliveryBuyCompletedAtSystem } from './deliveryBuyHold';
 
 export function applyBuyGoodsMissionObjectives(): void {
   const player = usePlayerStore.getState().player;
@@ -23,6 +24,19 @@ export function applyBuyGoodsMissionObjectives(): void {
       const required = obj.quantity ?? 1;
       if (countGoodInInventory(slots, obj.targetId) >= required) {
         completeObjective(active.mission.id, obj.id);
+        if (obj.type === 'buy_goods') {
+          let hasReach = false;
+          for (let j = 0; j < objs.length; j += 1) {
+            if (objs[j]!.type === 'reach_system') {
+              hasReach = true;
+              break;
+            }
+          }
+          const systemId = player.currentSystemId?.trim() ?? '';
+          if (hasReach && systemId) {
+            noteDeliveryBuyCompletedAtSystem(active.mission.id, systemId);
+          }
+        }
       }
     }
   }

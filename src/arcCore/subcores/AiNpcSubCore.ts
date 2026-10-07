@@ -238,7 +238,20 @@ export class AiNpcSubCore extends BaseArcSubCore {
     });
   }
 
+  private waveCombatActive: (() => boolean) | null = null;
+
+  private isWaveCombatActive(): boolean {
+    if (!this.waveCombatActive) {
+      const { useWaveDefenseStore } = require('../../game/waveDefense/waveDefenseStore') as typeof import('../../game/waveDefense/waveDefenseStore');
+      this.waveCombatActive = () => useWaveDefenseStore.getState().active;
+    }
+    return this.waveCombatActive();
+  }
+
   private publishSnapshot(): void {
+    // 웨이브 교전 중 planet.tsx는 살아 있다. phase가 바뀔 때마다 허브 전체가 다시 그려지지 않게 발행을 멈춘다.
+    // 시뮬은 계속 돌고, 교전이 끝난 다음 주기(250ms)에 한 번 반영한다. lastPublishedShipKey는 건드리지 않는다.
+    if (this.isWaveCombatActive()) return;
     /**
      * 적분 단일화(2026-07-27, arc-transport-dwell-jank) — 체류 각도(orbitAngleRad)는
      * worklet **한 곳에서만** 적분한다(`computeArcNpcShipScreenPacked`: orbitAngleRad(고정 앵커,
@@ -333,6 +346,8 @@ export class AiNpcSubCore extends BaseArcSubCore {
       for (let j = 0; j < published.length; j += 1) {
         const pub = published[j]!;
         if (pub.id !== live.id) continue;
+        // 웨이브 중 발행 보류로 phase가 어긋나면 새 phase 경과초를 옛 phase에 쓰지 않는다(재-pack 시 위치 튐).
+        if (pub.phase !== live.phase || pub.planetId !== live.planetId) break;
         if (pub.phaseElapsedSec !== live.phaseElapsedSec) {
           pub.phaseElapsedSec = live.phaseElapsedSec;
         }

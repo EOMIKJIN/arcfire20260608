@@ -103,9 +103,13 @@ export function resolveStellaHumanAsk(input: {
   tutorialForce: boolean;
   operatorIntroPlayed: boolean;
   nowMs: number;
+  /** 하루 1회 대신 스텔라 판단의 쿨다운을 쓸 때. 튜토리얼·첫 인사는 그대로 막는다. */
+  ignoreDailyQuota?: boolean;
 }): StellaLifeAskResolved | null {
   const today = stellaLifeDayKey(input.nowMs);
-  if (
+  if (input.ignoreDailyQuota) {
+    if (input.tutorialForce || !input.operatorIntroPlayed) return null;
+  } else if (
     shouldSuppressStellaLifeAsk({
       tutorialForce: input.tutorialForce,
       operatorIntroPlayed: input.operatorIntroPlayed,

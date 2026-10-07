@@ -130,6 +130,24 @@ class ArcCoreHubImpl implements ArcCoreHub {
 
     this.unsubGameLoop = gameLoop.subscribe((wallDeltaSec) => {
       if (this.suspendWallClock) return;
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        // [arc-hitch] 전투 중 수 초 주기 정지 추적 — 30ms 이상 걸린 서브코어 틱만 기록.
+        for (const subCore of this.subCores.values()) {
+          const t0 = performance.now();
+          subCore._advanceWallClock(wallDeltaSec);
+          const ms = performance.now() - t0;
+          // eslint-disable-next-line no-console
+          if (ms >= 30) console.log('[arc-hitch] tick', subCore.id, Math.round(ms));
+        }
+        for (const p of this.processes.values()) {
+          const t0 = performance.now();
+          p._advanceWallClock(wallDeltaSec);
+          const ms = performance.now() - t0;
+          // eslint-disable-next-line no-console
+          if (ms >= 30) console.log('[arc-hitch] process', p.id, Math.round(ms));
+        }
+        return;
+      }
       for (const subCore of this.subCores.values()) {
         subCore._advanceWallClock(wallDeltaSec);
       }

@@ -146,7 +146,12 @@ import {
   createFormationAnchorPose,
   resolveLineFormationAnchor,
 } from '../../combat/maneuver/capitalFormation';
-import { useNpcCaptainProgressStore, NPC_CAPTAIN_PROGRESS_EXP } from '../../store/npcCaptainProgressStore';
+import {
+  useNpcCaptainProgressStore,
+  NPC_CAPTAIN_PROGRESS_EXP,
+  flushNpcCaptainProgressPersist,
+  scheduleNpcCaptainProgressPersist,
+} from '../../store/npcCaptainProgressStore';
 import { usePlayerStore } from '../../store/playerStore';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 import { recordMatchSummary } from '../../store/combatMatchTelemetryStore';
@@ -2176,7 +2181,7 @@ function finalizeShipDestroyed(victim: Agent, owner: Agent | undefined, elapsedM
       exp: NPC_CAPTAIN_PROGRESS_EXP.kill,
       killCount: 1,
     });
-    void s.persistNpcCaptainProgress();
+    scheduleNpcCaptainProgressPersist();
   }
 }
 
@@ -3047,7 +3052,7 @@ export function usePlanetEdenRaidSim(
     if (captainIds.length > 0) {
       const s = useNpcCaptainProgressStore.getState();
       s.ensureCaptainsRegistered(captainIds);
-      void s.persistNpcCaptainProgress();
+      flushNpcCaptainProgressPersist();
     }
   }, [active, combatPlanetId, combatSystemId, margin, orbitSize, waveGenKey]);
 
@@ -3205,6 +3210,9 @@ export function usePlanetEdenRaidSim(
       return () => {};
     }
     let lastWallNowMs = performance.now();
+    let longFrameMs = 0;
+    let hitchPrevNumGCs = -1;
+    let hitchPrevGcTime = -1;
     let raf = 0;
     const clampSkillPos = (x: number, y: number) => {
       skillClampScratch.x = clampOrbitCoord(x, margin, orbitSize);
@@ -3217,6 +3225,7 @@ export function usePlanetEdenRaidSim(
       const rawDt = Math.max(0, nowMs - lastWallNowMs);
       lastWallNowMs = nowMs;
       const dt = Math.min(33, rawDt);
+      if (rawDt > longFrameMs) longFrameMs = rawDt;
       const elapsed = lastElapsedRef.current + dt;
       lastElapsedRef.current = elapsed;
       COMBAT_SKILL_NOW_MS = elapsed;
@@ -3361,7 +3370,7 @@ export function usePlanetEdenRaidSim(
         if (participants.length > 0) {
           const s = useNpcCaptainProgressStore.getState();
           s.grantBattleWaveResult(participants, winners);
-          void s.persistNpcCaptainProgress();
+          flushNpcCaptainProgressPersist();
           if (hadPlayerCombat && !playerDurabilityWearAppliedRef.current) {
             playerDurabilityWearAppliedRef.current = true;
             void usePlayerStore.getState().applyPostCombatDurabilityWear(elapsed);
@@ -4037,6 +4046,26 @@ export function usePlanetEdenRaidSim(
         fpsAccumRef.current = 0;
         fpsSampleRef.current = 0;
         lastFpsUiUpdateRef.current = elapsed;
+        if (__DEV__) {
+          const hermes = (globalThis as { HermesInternal?: { getInstrumentedStats?: () => Record<string, number> } })
+            .HermesInternal;
+          const gcStats = hermes?.getInstrumentedStats?.();
+          const numGCs = gcStats?.js_numGCs ?? -1;
+          const gcTime = gcStats?.js_gcTime ?? -1;
+          if (longFrameMs >= 50) {
+            // gcΔ/gcTimeΔ(ms) = 이 FPS 창(≥240ms) 안의 Hermes GC 횟수·시간 — 끊김과 GC 동시 발생 판별용.
+            // eslint-disable-next-line no-console
+            console.log(
+              '[combat-hitch] longFrameMs', Math.round(longFrameMs),
+              'fps', fpsRef.current,
+              'gcΔ', numGCs >= 0 && hitchPrevNumGCs >= 0 ? numGCs - hitchPrevNumGCs : -1,
+              'gcTimeΔ', gcTime >= 0 && hitchPrevGcTime >= 0 ? Math.round((gcTime - hitchPrevGcTime) * 1000) : -1,
+            );
+          }
+          hitchPrevNumGCs = numGCs;
+          hitchPrevGcTime = gcTime;
+        }
+        longFrameMs = 0;
       }
 
       tMsRef.current = elapsed;

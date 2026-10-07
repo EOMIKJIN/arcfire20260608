@@ -37,6 +37,7 @@ import {
 import { usePlayerStore } from '../../src/store/playerStore';
 import { useMissionStore } from '../../src/store/missionStore';
 import { ENEMY_TEMPLATES } from '../../src/data/d20tables';
+import { resolveTransitHopRewardTemplateId } from '../../src/combat/transitHopDangerPolicy';
 import { resolveNpcCapitalShip, getNpcCapitalShip } from '../../src/npc';
 import { resolveTransitPirateShipIdFromTables } from '../../src/combat/capitalTransitCombatSeed';
 import { resolveTransitHostileCaptainForSystem } from '../../src/npc/transitHostileCaptainResolve';
@@ -182,10 +183,12 @@ export default function CombatScreen() {
       missionState.activeMissionId,
     );
     const templateId = transitLock?.templateId;
-    const templates = Object.values(ENEMY_TEMPLATES);
+    const hopRewardId = templateId ? '' : resolveTransitHopRewardTemplateId(destSystemId);
     const enemyTemplate = templateId && ENEMY_TEMPLATES[templateId]
       ? ENEMY_TEMPLATES[templateId]
-      : templates[Math.floor(Math.random() * Math.min(2, templates.length))];
+      : hopRewardId && ENEMY_TEMPLATES[hopRewardId]
+        ? ENEMY_TEMPLATES[hopRewardId]
+        : ENEMY_TEMPLATES.pirate_fighter;
     if (templateId) {
       useTransitCombatSessionStore.getState().bindMission({
         missionEnemyTemplateId: templateId,

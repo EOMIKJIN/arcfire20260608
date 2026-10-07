@@ -101,6 +101,8 @@ export function dispatchEconomyTradePortBulk(input: {
 type Listener = (command: ArcCoreCommand) => void;
 
 const listeners = new Set<Listener>();
+/** headless 감사(node)에는 __DEV__ 전역이 없다. */
+const ARC_HITCH_DEV = typeof __DEV__ !== 'undefined' && __DEV__;
 
 export function subscribeArcCoreCommands(listener: Listener): () => void {
   listeners.add(listener);
@@ -111,7 +113,13 @@ export function subscribeArcCoreCommands(listener: Listener): () => void {
 
 /** 동기 분배 — 벽시계 틱과 독립, 즉시 실행 */
 export function dispatchArcCoreCommand(command: ArcCoreCommand): void {
+  const t0 = ARC_HITCH_DEV ? performance.now() : 0;
   for (const l of listeners) {
     l(command);
+  }
+  if (ARC_HITCH_DEV) {
+    const ms = performance.now() - t0;
+    // eslint-disable-next-line no-console
+    if (ms >= 30) console.log('[arc-hitch] cmd', command.type, Math.round(ms));
   }
 }

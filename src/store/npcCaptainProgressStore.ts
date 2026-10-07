@@ -8,6 +8,15 @@ const STORAGE_KEY = 'arcfire_npc_captain_progress_v1';
 
 /** persist 게이트 — UI 구독 없이 모듈 플래그만. 틱 경로 set 유발 금지. */
 let captainProgressDirty = false;
+/** 격추마다 전체 JSON 저장을 하지 않는다. 전투 종료 flush가 남은 분을 바로 쓴다. */
+const CAPTAIN_PROGRESS_PERSIST_MS = 1500;
+let captainProgressPersistTimer: ReturnType<typeof setTimeout> | null = null;
+
+function clearCaptainProgressPersistTimer(): void {
+  if (!captainProgressPersistTimer) return;
+  clearTimeout(captainProgressPersistTimer);
+  captainProgressPersistTimer = null;
+}
 
 const CAPTAIN_BATTLE_BASE_EXP = 12;
 const CAPTAIN_WIN_BONUS_EXP = 8;
@@ -126,12 +135,15 @@ export const useNpcCaptainProgressStore = create<NpcCaptainProgressState>((set, 
   persistNpcCaptainProgress: async () => {
     if (!captainProgressDirty) return;
     const { records } = get();
-    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ records }));
+    const payload = JSON.stringify({ records });
     captainProgressDirty = false;
+    await AsyncStorage.setItem(STORAGE_KEY, payload);
     scheduleUserCloudSync();
+    if (captainProgressDirty) scheduleNpcCaptainProgressPersist();
   },
 
   resetLocalNpcCaptainProgress: async () => {
+    clearCaptainProgressPersistTimer();
     await AsyncStorage.removeItem(STORAGE_KEY);
     captainProgressDirty = false;
     set({ records: {}, hydrated: true });
@@ -191,6 +203,21 @@ export const useNpcCaptainProgressStore = create<NpcCaptainProgressState>((set, 
 
   getCaptainProgress: (captainId) => get().records[captainId],
 }));
+
+/** 격추 직후. 타이머가 이미 있으면 다시 걸지 않는다. */
+export function scheduleNpcCaptainProgressPersist(): void {
+  if (captainProgressPersistTimer) return;
+  captainProgressPersistTimer = setTimeout(() => {
+    captainProgressPersistTimer = null;
+    void useNpcCaptainProgressStore.getState().persistNpcCaptainProgress();
+  }, CAPTAIN_PROGRESS_PERSIST_MS);
+}
+
+/** 전투 시작·종료. 대기 중인 저장을 취소하고 지금 한 번 쓴다. */
+export function flushNpcCaptainProgressPersist(): void {
+  clearCaptainProgressPersistTimer();
+  void useNpcCaptainProgressStore.getState().persistNpcCaptainProgress();
+}
 
 export const NPC_CAPTAIN_PROGRESS_EXP = {
   battleBase: CAPTAIN_BATTLE_BASE_EXP,

@@ -62,6 +62,7 @@ import { hasPrimaryActiveCombatMission } from '../../src/missions/missionActiveB
 import { applyReachSystemMissionObjectives } from '../../src/missions/applyReachSystemMissionObjectives';
 import { tryPresentPendingMissionClearDialog } from '../../src/missions/missionPlanetHubSync';
 import { resolveTransitEncounterChance } from '../../src/missions/missionCombatEncounter';
+import { takeTransitCaptainPickOrdinal } from '../../src/combat/transitCaptainPickOrdinal';
 import { useTransitCombatSessionStore } from '../../src/game/transitCombat/transitCombatSession';
 import { useClanWarFoundationStore } from '../../src/store/clanWarFoundationStore';
 import { resolveTempClanColor } from '../../src/clanWar/tempClanColors';
@@ -1876,24 +1877,9 @@ export default function WorldMapScreen() {
         }
       }
 
-      // 조우전 여부만 애니메이션 전에 미리 판정(순수 확률 롤, 부작용 없음).
-      // 조우전이 아니면 좌표 커밋(moveToSystem+persist)도 애니메이션 "전"에 확정 —
-      // 이후 애니메이션은 순수 연출이라 재생 중 리로드/백그라운드가 끼어들어도 이미
-      // 커밋된 도착 결과는 보존된다. 조우전 분기(begin·전투 진입)는 기존과 동일하게
-      // 애니메이션 뒤(allFinished 확인 후)에서만 실행 — 그 경로는 동작 변경 없음.
-      // (2026-08-02 대표님 실측: 이동 애니메이션 후 로딩 → 출발지에 그대로 남는 회귀 대응)
-      const missionState = useMissionStore.getState();
-      const missionProgresses = missionState.progresses;
-      const encounterChance = resolveTransitEncounterChance(
-        targetSystem.zone,
-        hasPrimaryActiveCombatMission(missionProgresses, missionState.activeMissionId),
-        missionProgresses,
-        missionState.activeMissionId,
-        targetSystem.id,
-      );
-      const willEncounter =
-        Math.random() < encounterChance && isPlayerShipCombatCapable(player.ship);
-
+      // 홉마다 1회 판정. 전투가 없는 홉만 애니 전에 좌표를 확정한다.
+      // 전투가 난 홉과 그 뒤는 커밋하지 않는다. 경로 전체를 한 번에 확정하지 않는다.
+      // 무조우 구간은 애니 전 커밋 — 리로드 시 출발지로 되돌아가는 회귀를 막는다.
       const originId = pathSystemIds[0]!;
       const originSystem = systems[originId];
       const unlockedNow = new Set(useWorldStore.getState().unlockedSystemIds);
@@ -1927,24 +1913,53 @@ export default function WorldMapScreen() {
       transitPresentSystemIdRef.current = originId;
       setShipTransit({ fromSystemId: originId });
 
-      if (!willEncounter) {
-        moveToSystem(targetSystem.id);
-        // 성계 본명은 전함 마크가 해당 성계에 도착한 뒤에만 markVisited.
-        // 좌표 커밋은 기존처럼 애니 전 — 리로드 시 출발지 원복 회귀 방지.
+      const missionState = useMissionStore.getState();
+      const missionProgresses = missionState.progresses;
+      const activeMissionId = missionState.activeMissionId;
+      const combatMission = hasPrimaryActiveCombatMission(missionProgresses, activeMissionId);
+      const combatCapable = isPlayerShipCombatCapable(player.ship);
+      let encounterDestId: string | null = null;
+      let encounterOriginId = originId;
+      let encounterPathIndex = -1;
+      let lastCommittedId = originId;
+      for (let hop = 1; hop < pathSystemIds.length; hop += 1) {
+        const arrivedId = pathSystemIds[hop]!;
+        const arrived = systems[arrivedId];
+        const chance = resolveTransitEncounterChance(
+          arrived?.zone ?? '',
+          combatMission,
+          missionProgresses,
+          activeMissionId,
+          arrivedId,
+        );
+        if (combatCapable && Math.random() < chance) {
+          encounterDestId = arrivedId;
+          encounterOriginId = lastCommittedId;
+          encounterPathIndex = hop;
+          break;
+        }
+        moveToSystem(arrivedId);
+        lastCommittedId = arrivedId;
         const playerAfterMove = usePlayerStore.getState().player;
         if (playerAfterMove) {
-          applyReachSystemMissionObjectives(targetSystem.id, playerAfterMove, {
+          applyReachSystemMissionObjectives(arrivedId, playerAfterMove, {
             deliverFailTitle: t('worldmap.deliverFailTitle'),
             deliverFailBody: t('worldmap.deliverFailBody'),
           });
           tryPresentPendingMissionClearDialog();
         }
+      }
+      if (lastCommittedId !== originId) {
         void persist();
       }
 
+      const animHopCount = encounterPathIndex > 0
+        ? encounterPathIndex
+        : screenPts.length - 1;
+
         const hopDists: number[] = [];
         let totalDist = 0;
-        for (let i = 0; i < screenPts.length - 1; i += 1) {
+        for (let i = 0; i < animHopCount; i += 1) {
           const a = screenPts[i]!;
           const b = screenPts[i + 1]!;
           const d = Math.hypot(b.x - a.x, b.y - a.y) || 1;
@@ -1978,7 +1993,7 @@ export default function WorldMapScreen() {
         });
 
         let allFinished = true;
-        for (let hopIdx = 0; hopIdx < hopAnims.length; hopIdx += 1) {
+        for (let hopIdx = 0; hopIdx < animHopCount && hopIdx < hopAnims.length; hopIdx += 1) {
           if (!isMountedRef.current || !isFocusedRef.current) {
             allFinished = false;
             break;
@@ -2032,12 +2047,13 @@ export default function WorldMapScreen() {
 
         if (!allFinished || !isMountedRef.current || !isFocusedRef.current) return;
 
-        if (willEncounter) {
+        if (encounterDestId) {
+          takeTransitCaptainPickOrdinal(encounterDestId);
           useTransitCombatSessionStore.getState().begin({
-            originSystemId: pathSystemIds[0]!,
-            destinationSystemId: targetSystem.id,
+            originSystemId: encounterOriginId,
+            destinationSystemId: encounterDestId,
           });
-          selectSystem(targetSystem.id);
+          selectSystem(encounterDestId);
           navigateToCombatAfterTeardown();
           return;
         }

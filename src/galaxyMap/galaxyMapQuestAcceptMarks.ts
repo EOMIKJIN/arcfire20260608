@@ -4,7 +4,8 @@
  * 복구: GALAXY_MAP_QUEST_ACCEPT_MARKS_ENABLED = false
  *       → 계산 스킵 · Path 미표시 · 지금 지도와 동일
  *
- * 미수락·바 sandbox_001–033 · 튜토리얼 mission_* 는 찍지 않음.
+ * 미수락·바 sandbox_001–033 은 찍지 않음.
+ * 튜토리얼 mission_* 현재 세부미션 목적지는 녹색(tutorial)만 찍음.
  * 여행 안개로 노드가 꺼진 성계에도 찍음(좌표만 있으면).
  * 메인 = ready story_* · 서브 = 챕터1 정식 13종(sandbox_034–038 · 056–063).
  */
@@ -17,6 +18,8 @@ import {
 import { STAR_SYSTEMS } from '../data/systems';
 import { CHAPTER1_NAMED_SIDE_QUEST_IDS } from '../missions/missionTrack';
 import { getCurrentSequentialObjective } from '../missions/missionObjectiveSequence';
+import { MISSION_QUEST_COMBAT_OPS_FROM_CSV } from '../data/generated/csvMissionQuestCombatOps';
+import { MISSION_QUEST_PLACEMENTS_FROM_CSV } from '../data/generated/csvMissionQuestPlacements';
 
 let planetToSystemId: Map<string, string> | null = null;
 
@@ -105,6 +108,9 @@ export const GALAXY_MAP_QUEST_MARK_MAIN_STROKE = '#163A72';
 /** 허브 흰점과 위치·형태로 구분. 어두운 테두리로 성운 위 가독 */
 export const GALAXY_MAP_QUEST_MARK_SIDE_FILL = '#FFFFFF';
 export const GALAXY_MAP_QUEST_MARK_SIDE_STROKE = 'rgba(16,22,36,0.88)';
+/** 튜토리얼 mission_* 목적지. 점유 블루·메인 다이아와 구분 */
+export const GALAXY_MAP_QUEST_MARK_TUTORIAL_FILL = '#3DDC7A';
+export const GALAXY_MAP_QUEST_MARK_TUTORIAL_STROKE = '#0E3D22';
 export const GALAXY_MAP_QUEST_MARK_STROKE_WIDTH = 0.9;
 
 /** 다이아 중심→꼭짓점 (원 r=8 위, 작게·인지 가능) */
@@ -114,11 +120,13 @@ export const GALAXY_MAP_QUEST_MARK_ABOVE_GAP_PX = 3.4;
 /** 메인+서브 동시 — 좌 블루 · 우 흰 */
 export const GALAXY_MAP_QUEST_MARK_PAIR_DX_PX = 5.4;
 
-export type GalaxyMapQuestAcceptMarkSlot = 'solo' | 'main' | 'side';
+export type GalaxyMapQuestAcceptMarkSlot = 'solo' | 'main' | 'side' | 'tutorial';
 
 export type GalaxyMapQuestAcceptMarkFlags = {
   readonly main: boolean;
   readonly side: boolean;
+  /** 튜토리얼 mission_* 만. 없으면 필드 자체를 두지 않는다. */
+  readonly tutorial?: boolean;
 };
 
 export type GalaxyMapQuestAcceptMarks = Readonly<
@@ -160,20 +168,79 @@ function listReadyMainStoryBindIds(): readonly string[] {
 }
 
 function markSystem(
-  out: Record<string, { main: boolean; side: boolean }>,
+  out: Record<string, { main: boolean; side: boolean; tutorial?: boolean }>,
   systemId: string,
-  kind: 'main' | 'side',
+  kind: 'main' | 'side' | 'tutorial',
 ): void {
   const prev = out[systemId];
   if (prev) {
     if (kind === 'main') prev.main = true;
-    else prev.side = true;
+    else if (kind === 'side') prev.side = true;
+    else prev.tutorial = true;
     return;
   }
   out[systemId] = {
     main: kind === 'main',
     side: kind === 'side',
+    ...(kind === 'tutorial' ? { tutorial: true } : {}),
   };
+}
+
+let tutorialMissionIds: string[] | null = null;
+let combatAnchorByObjectiveId: Map<string, string> | null = null;
+let placementPlanetByObjectiveId: Map<string, string> | null = null;
+
+function listTutorialMissionIds(): readonly string[] {
+  if (tutorialMissionIds) return tutorialMissionIds;
+  const ids: string[] = [];
+  const keys = Object.keys(MISSIONS_FROM_CSV);
+  for (let i = 0; i < keys.length; i += 1) {
+    const id = keys[i]!;
+    if (id.startsWith('mission_')) ids.push(id);
+  }
+  tutorialMissionIds = ids;
+  return ids;
+}
+
+function combatAnchorPlanetId(objectiveId: string): string | null {
+  if (!combatAnchorByObjectiveId) {
+    const map = new Map<string, string>();
+    const rows = MISSION_QUEST_COMBAT_OPS_FROM_CSV;
+    for (let i = 0; i < rows.length; i += 1) {
+      const planetId = rows[i]!.anchorPlanetId?.trim() ?? '';
+      if (planetId) map.set(rows[i]!.objectiveId, planetId);
+    }
+    combatAnchorByObjectiveId = map;
+  }
+  return combatAnchorByObjectiveId.get(objectiveId) ?? null;
+}
+
+function placementPlanetId(objectiveId: string): string | null {
+  if (!placementPlanetByObjectiveId) {
+    const map = new Map<string, string>();
+    const rows = MISSION_QUEST_PLACEMENTS_FROM_CSV;
+    for (let i = 0; i < rows.length; i += 1) {
+      const planetId = rows[i]!.planetId.trim();
+      if (planetId) map.set(rows[i]!.objectiveId, planetId);
+    }
+    placementPlanetByObjectiveId = map;
+  }
+  return placementPlanetByObjectiveId.get(objectiveId) ?? null;
+}
+
+/** 튜토리얼만 — 격파 앵커·구매 배치 행성. 본편 격파는 여기로 넘기지 않는다. */
+function resolveTutorialObjectiveDestSystemId(obj: MissionObjective): string | null {
+  const direct = resolveObjectiveDestSystemId(obj);
+  if (direct) return direct;
+  if (obj.type === 'defeat_enemy') {
+    const planetId = combatAnchorPlanetId(obj.id);
+    return planetId ? resolvePlanetToSystemId(planetId) : null;
+  }
+  if (obj.type === 'buy_goods') {
+    const planetId = placementPlanetId(obj.id);
+    return planetId ? resolvePlanetToSystemId(planetId) : null;
+  }
+  return null;
 }
 
 export function resolveQuestMarkCenter(
@@ -188,6 +255,10 @@ export function resolveQuestMarkCenter(
   }
   if (slot === 'side') {
     return { x: nodeX + GALAXY_MAP_QUEST_MARK_PAIR_DX_PX, y };
+  }
+  if (slot === 'tutorial') {
+    const lift = GALAXY_MAP_QUEST_MARK_HALF_PX * 2 + 2;
+    return { x: nodeX, y: y - lift };
   }
   return { x: nodeX, y };
 }
@@ -217,6 +288,16 @@ export function readGalaxyMapQuestAcceptMarkRevision(
     main += `${id}:${obj?.id ?? '.'};`;
   }
   let side = '';
+  const tutorials = listTutorialMissionIds();
+  let tutorial = '';
+  for (let i = 0; i < tutorials.length; i += 1) {
+    const id = tutorials[i]!;
+    const progress = progresses[id];
+    if (progress?.status !== 'active') continue;
+    const mission = getCsvMission(id);
+    const obj = mission ? getCurrentSequentialObjective(mission, progress) : undefined;
+    tutorial += `${id}:${obj?.id ?? '.'};`;
+  }
   for (let i = 0; i < CHAPTER1_NAMED_SIDE_QUEST_IDS.length; i += 1) {
     const id = CHAPTER1_NAMED_SIDE_QUEST_IDS[i]!;
     const progress = progresses[id];
@@ -225,7 +306,7 @@ export function readGalaxyMapQuestAcceptMarkRevision(
     const obj = mission ? getCurrentSequentialObjective(mission, progress) : undefined;
     side += `${id}:${obj?.id ?? '.'};`;
   }
-  return `${main}|${side}`;
+  return `${main}|${side}|${tutorial}`;
 }
 
 export function resolveGalaxyMapQuestAcceptMarks(
@@ -233,7 +314,7 @@ export function resolveGalaxyMapQuestAcceptMarks(
 ): GalaxyMapQuestAcceptMarks {
   if (!input.enabled) return EMPTY_GALAXY_MAP_QUEST_ACCEPT_MARKS;
 
-  const out: Record<string, { main: boolean; side: boolean }> = {};
+  const out: Record<string, { main: boolean; side: boolean; tutorial?: boolean }> = {};
   const { progresses } = input;
 
   const mains = listReadyMainStoryBindIds();
@@ -249,6 +330,18 @@ export function resolveGalaxyMapQuestAcceptMarks(
     if (!mission) continue;
     const systemId = resolveActiveDestSystemId(mission, progresses[mission.id]);
     if (systemId) markSystem(out, systemId, 'side');
+  }
+
+  const tutorials = listTutorialMissionIds();
+  for (let i = 0; i < tutorials.length; i += 1) {
+    const mission = getCsvMission(tutorials[i]!);
+    if (!mission) continue;
+    const progress = progresses[mission.id];
+    if (progress?.status !== 'active') continue;
+    const obj = getCurrentSequentialObjective(mission, progress);
+    if (!obj) continue;
+    const systemId = resolveTutorialObjectiveDestSystemId(obj);
+    if (systemId) markSystem(out, systemId, 'tutorial');
   }
 
   return Object.keys(out).length === 0 ? EMPTY_GALAXY_MAP_QUEST_ACCEPT_MARKS : out;

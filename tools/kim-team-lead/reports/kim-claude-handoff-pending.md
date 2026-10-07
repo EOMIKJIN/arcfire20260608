@@ -1,5 +1,18 @@
 # 김클로드 → 김팀장 검수 handoff
 
+## ⏳ PENDING — 전투 끊김 검수 리스크 2건 · 2026-10-07
+
+```text
+task_id=combat-hitch-review-risks-20261007
+status=PENDING
+kind=BUGFIX
+상세=tools/kim-team-lead/reports/kim-claude-ready-combat-hitch-risks-20261007.md
+```
+
+- R-A: 날짜 전환 시 `resolveConvoyDemandGrossRoomCredits`가 `ensureDay` 이전 장부를 읽고, 계획 캐시가 그 값을 수요지 전체에 유지한다. `ensureDay` 다음 `getState()`로 다시 읽는다.
+- R-B: 스파이 조회 결과가 비면 1초 간격이 풀려 매 프레임 전 함장 인덱스까지 간다. 빈 결과도 1초를 지키고, phase 변경으로 전량 재생성이 반복되면 명단·펄스 값은 유지한 채 그 재생성만 줄인다.
+- 순이익을 `applyTradeRouteNetProfitPerUnit`로 되돌리지 말 것. 구름·33ms 클램프·SkPicture dispose·VFX 임계는 범위 밖. 커밋 금지.
+
 ## 검수 요청 — PB-G1 순익 이중 거리 가중 제거 · 2026-10-06
 
 ```text

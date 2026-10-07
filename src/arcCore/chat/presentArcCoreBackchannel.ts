@@ -3,6 +3,8 @@ import { t } from '../../i18n';
 import {
   filterArcCoreChatReplyPrior,
   hasArchivedArcCoreChatConversation,
+  liveArcCoreChatSession,
+  pickArcCoreChatSessionHistory,
   useArcCoreChatStore,
 } from '../../store/arcCoreChatStore';
 import {
@@ -41,6 +43,14 @@ import {
   resolveChatReplySpeaker,
   shouldHoldOriginMouth,
 } from './resolveChatReplySpeaker';
+import { markStellaReachRead, readStellaObserveGate } from './stellaObserveGateMemory';
+import { STELLA_REACH_REASON, stellaReachSessionLines } from './stellaReachCatchUp';
+
+/** 새 줄로 붙을 안 읽은 연락(최대 STELLA_REACH_KEEP)은 기록에서 뺀다 — 같은 말이 두 번 보이지 않게. */
+function isQueuedReach(fresh: readonly { atMs: number }[], atMs: number): boolean {
+  for (let i = 0; i < fresh.length; i += 1) if (fresh[i]!.atMs === atMs) return true;
+  return false;
+}
 
 function isArcCoreChatOpen(): boolean {
   if (isArcCoreAgentSurfaceOpen()) return true;
@@ -111,16 +121,25 @@ export async function presentArcCoreBackchannel(
           ? t('arcCoreChat.operator.welcomeBack')
           : t('arcCoreChat.session.welcomeBack'),
     });
+    const archive = useArcCoreChatStore.getState().messages;
+    const fresh = stellaReachSessionLines(archive, readStellaObserveGate().lastReadAtMs);
+    const history = pickArcCoreChatSessionHistory(
+      archive,
+      fresh.length === 0
+        ? undefined
+        : (row) => row.reason === STELLA_REACH_REASON && isQueuedReach(fresh, row.atMs),
+    );
     useArcCoreChatStore.getState().beginFreshSession({
       text: speech.text,
       reason: speech.reason,
       speakerId: openSpeaker,
+      history,
     });
     if (playIntro) {
       useArcCoreChatStore.getState().markOperatorIntroPlayed();
     }
   } else if (opener) {
-    useArcCoreChatStore.getState().appendSessionOnly({
+    useArcCoreChatStore.getState().appendMessage({
       role: 'arc',
       text: opener,
       reason: input.reason,
@@ -128,11 +147,30 @@ export async function presentArcCoreBackchannel(
     });
   }
 
+  let queuedReach = false;
+  if (openSpeaker === 'operator') {
+    const gate = readStellaObserveGate();
+    const queued = stellaReachSessionLines(useArcCoreChatStore.getState().messages, gate.lastReadAtMs);
+    for (let i = 0; i < queued.length; i += 1) {
+      useArcCoreChatStore.getState().appendSessionOnly({
+        role: 'arc',
+        text: queued[i]!.text,
+        reason: 'stella_reach',
+        speakerId: 'operator',
+      });
+    }
+    queuedReach = true;
+  }
+
   if (!alreadyOpen) {
     if (!presentChatPanel()) return false;
     if (input.reason !== 'inbound_request') {
       noteArcCoreChatPresented();
     }
+  }
+  if (queuedReach) {
+    markStellaReachRead(Date.now());
+    useArcCoreChatStore.getState().touchPersist();
   }
   return true;
 }
@@ -162,7 +200,7 @@ export async function submitArcCoreBackchannelMessage(
   chat.consumeRestoreOperatorOnNextSend();
   const stayOperator =
     isArcCoreTutorialForceActive()
-    || isFirstScanSession(useArcCoreChatStore.getState().sessionMessages);
+    || isFirstScanSession(liveArcCoreChatSession(useArcCoreChatStore.getState().sessionMessages));
   const speaker = resolveChatReplySpeaker({
     activeSpeaker: useArcCoreChatStore.getState().activeSpeakerId,
     userText: text,
@@ -174,7 +212,7 @@ export async function submitArcCoreBackchannelMessage(
   if (!user) return { ok: false, reply: null };
   try {
     resetArcCoreChatCloudSkip();
-    const session = useArcCoreChatStore.getState().sessionMessages;
+    const session = liveArcCoreChatSession(useArcCoreChatStore.getState().sessionMessages);
     const prior = filterArcCoreChatReplyPrior(session.slice(0, -1));
     const result = await buildArcCoreBackchannelReply(user.text, prior, speaker);
     if (useArcCoreChatStore.getState().originHold || speaker === 'arc_core') {

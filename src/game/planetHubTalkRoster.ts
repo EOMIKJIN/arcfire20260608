@@ -60,6 +60,7 @@ import {
   getOperatorNlCaptainId,
 } from '../arcCore/chat/arcCoreChatTableIndex';
 import { isArcCoreOriginPlayerTalkUnlocked } from '../arcCore/chat/arcCoreOriginTalkUnlock';
+import { readStellaHubTalkBadge } from '../arcCore/chat/stellaMessageNotice';
 import { resolveDictionaryLocale } from '../i18n';
 import { useAppSettingsStore } from '../store/appSettingsStore';
 
@@ -173,7 +174,7 @@ export function listPlanetHubTalkRosterRows(
         ? (operator?.displayNameEn || operator?.displayNameKo || t('conversation.operatorName'))
         : (operator?.displayNameKo || t('conversation.operatorName')),
       subtitle: t('hubTalk.operatorSubtitle'),
-      showInitiatedBadge: false,
+      showInitiatedBadge: readStellaHubTalkBadge(),
     },
   ];
   if (isArcCoreOriginPlayerTalkUnlocked()) {

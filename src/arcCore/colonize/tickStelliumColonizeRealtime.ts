@@ -26,6 +26,7 @@ import {
   applyStelliumColonizeDailyOpex,
   bindStelliumColonizeRuntimeFiscal,
 } from './stelliumColonizeFiscal';
+import { cancelStelliumColonizeArrivalsForAnnexedHolds } from './cancelStelliumColonizeForAnnex';
 import { resolveStelliumColonizePolicy } from './stelliumColonizePolicy';
 import { usePlanetCoreRuntimeStore } from '../../store/planetCoreRuntimeStore';
 import type { StelliumColonizeCoreGauges } from './stelliumColonizeTypes';
@@ -65,6 +66,7 @@ export function tickStelliumColonizeRealtime(input?: {
     });
     return { outposts: 0, succeeded: 0, failed: 0 };
   }
+  cancelStelliumColonizeArrivalsForAnnexedHolds();
   const fleet = resolveStelliumColonizeFleet(policy);
   const nowMs = input?.nowMs ?? Date.now();
   const todayKey = input?.todayKey ?? planetAttackKstDayKey();
@@ -191,6 +193,7 @@ export function scheduleStelliumColonizeHandoffWatch(nowMs: number = Date.now())
 }
 
 function fireStelliumColonizeOutpostTick(): void {
+  cancelStelliumColonizeArrivalsForAnnexedHolds();
   const policy = resolveStelliumColonizePolicy();
   const store = useStelliumColonizeStore.getState();
   const nowMs = Date.now();

@@ -1,7 +1,7 @@
 ﻿{
     "reason":  "mem_anomaly",
     "handoff":  "tools/long-run-monitor/outbox/cursor-incident-handoff.md",
-    "triggeredAt":  "2026-10-05T09:50:37.8147333Z",
+    "triggeredAt":  "2026-10-06T16:24:37.3259925Z",
     "action":  "P0: logcat root cause -\u003e code fix -\u003e tsc -\u003e ack-incident-handoff.cjs",
-    "alertLine":  "[2026-10-05 18:47:37] GL_HARD_CEILING gl=67.8 pss=965.8 views=401"
+    "alertLine":  "[2026-10-07 01:22:26] GL_HARD_CEILING gl=44.7 pss=1052.4 views=323"
 }

@@ -3,11 +3,16 @@ import { test } from 'node:test';
 import {
   ARC_CORE_CHAT_MAX_MESSAGES,
   ARC_CORE_CHAT_MAX_TEXT,
+  ARC_CORE_CHAT_SESSION_RESUME_REASON,
+  ARC_CORE_CHAT_SESSION_WELCOME_BACK_REASON,
   ARC_CORE_CHAT_SESSION_WELCOME_REASON,
   clampArcCoreChatText,
   filterArcCoreChatReplyPrior,
   hasArchivedArcCoreChatConversation,
+  liveArcCoreChatSession,
   normalizeArcCoreChatPayload,
+  pickArcCoreChatSessionHistory,
+  useArcCoreChatStore,
 } from './arcCoreChatStore';
 
 test('clampArcCoreChatText cuts at max text', () => {
@@ -113,6 +118,58 @@ test('filterArcCoreChatReplyPrior drops session welcome', () => {
   assert.equal(prior.length, 2);
   assert.equal(prior[0]?.text, '여기 어디야?');
   assert.equal(prior[1]?.text, '에덴에 있다.');
+});
+
+test('pickArcCoreChatSessionHistory keeps talk, drops greetings and skipped rows', () => {
+  const rows = [
+    { id: 'w', role: 'arc' as const, text: '반가워', atMs: 1, reason: ARC_CORE_CHAT_SESSION_WELCOME_REASON },
+    { id: 'u', role: 'user' as const, text: '안녕', atMs: 2, reason: 'manual' },
+    { id: 'r', role: 'arc' as const, text: '다시 왔네', atMs: 3, reason: ARC_CORE_CHAT_SESSION_RESUME_REASON },
+    { id: 'n', role: 'arc' as const, text: '안 읽은 연락', atMs: 4, reason: 'stella_reach' },
+    { id: 'a', role: 'arc' as const, text: '응', atMs: 5 },
+  ];
+  const picked = pickArcCoreChatSessionHistory(rows, (row) => row.reason === 'stella_reach');
+  assert.deepEqual(picked.map((m) => m.id), ['u', 'a']);
+  const many = Array.from({ length: 50 }, (_, i) => ({ id: `m${i}`, role: 'user' as const, text: `t${i}`, atMs: i }));
+  const capped = pickArcCoreChatSessionHistory(many);
+  assert.equal(capped.length, ARC_CORE_CHAT_MAX_MESSAGES - 1);
+  assert.equal(capped[capped.length - 1]?.id, 'm49');
+});
+
+test('beginFreshSession lays history under the greeting and keeps it out of the reply', () => {
+  const history = [
+    { id: 'h1', role: 'user' as const, text: '어제 그 얘기', atMs: 1, reason: 'manual' },
+    { id: 'h2', role: 'arc' as const, text: '기억해', atMs: 2, speakerId: 'operator' as const },
+  ];
+  const greet = useArcCoreChatStore.getState().beginFreshSession({
+    text: '다시 왔네',
+    reason: ARC_CORE_CHAT_SESSION_WELCOME_BACK_REASON,
+    speakerId: 'operator',
+    history,
+  });
+  const session = useArcCoreChatStore.getState().sessionMessages;
+  assert.deepEqual(session.map((m) => m.id), ['h1', 'h2', greet!.id]);
+  assert.equal(greet?.reason, ARC_CORE_CHAT_SESSION_RESUME_REASON);
+  const live = liveArcCoreChatSession(session);
+  assert.deepEqual(live.map((m) => m.id), [greet!.id]);
+  assert.equal(filterArcCoreChatReplyPrior(live).length, 0);
+});
+
+test('beginFreshSession archives a real opener but not a greeting', () => {
+  const before = useArcCoreChatStore.getState().messages.length;
+  useArcCoreChatStore.getState().beginFreshSession({
+    text: '반가워',
+    reason: ARC_CORE_CHAT_SESSION_WELCOME_REASON,
+    speakerId: 'operator',
+  });
+  assert.equal(useArcCoreChatStore.getState().messages.length, before);
+  const opener = useArcCoreChatStore.getState().beginFreshSession({
+    text: '나야, 스텔라.',
+    reason: 'inbound_request',
+    speakerId: 'operator',
+  });
+  const archive = useArcCoreChatStore.getState().messages;
+  assert.equal(archive[archive.length - 1]?.id, opener?.id);
 });
 
 test('v4 payload hydrates empty life; schema 5 keeps anchors', () => {

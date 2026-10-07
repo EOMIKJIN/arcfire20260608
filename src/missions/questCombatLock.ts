@@ -11,6 +11,7 @@ import {
   SynthSystemColonization_FROM_BALANCE_CSV,
 } from '../data/balance/generated';
 import { resolvePlanetTargetCombatLevel } from '../arcCore/balance/balanceTableRegistry';
+import { getCurrentSequentialObjective } from './missionObjectiveSequence';
 import { missionTrackHudPriority, resolveMissionTrack } from './missionTrack';
 
 export const QUEST_COMBAT_VENUES = ['transit', 'hub_orbit', 'wave_assault'] as const;
@@ -133,17 +134,14 @@ function resolveLockAnchorPlanetId(
 function incompleteDefeatOnBundle(
   bundle: QuestLockBundle,
 ): { objectiveId: string; templateId: string; policy: QuestCombatEncounterPolicy } | null {
-  for (const objective of bundle.mission.objectives) {
-    if (objective.type !== 'defeat_enemy') continue;
-    if (bundle.progress.objectives[objective.id] === true) continue;
-    const op = combatOpByObjectiveId.get(objective.id);
-    const policy = parseQuestCombatEncounterPolicy(op?.encounterPolicy);
-    if (!policy) continue;
-    const templateId = objective.targetId?.trim() || '';
-    if (!templateId) continue;
-    return { objectiveId: objective.id, templateId, policy };
-  }
-  return null;
+  const current = getCurrentSequentialObjective(bundle.mission, bundle.progress);
+  if (!current || current.type !== 'defeat_enemy') return null;
+  const op = combatOpByObjectiveId.get(current.id);
+  const policy = parseQuestCombatEncounterPolicy(op?.encounterPolicy);
+  if (!policy) return null;
+  const templateId = current.targetId?.trim() || '';
+  if (!templateId) return null;
+  return { objectiveId: current.id, templateId, policy };
 }
 
 function lockFromBundle(
@@ -161,7 +159,8 @@ function lockFromBundle(
 }
 
 /**
- * 활성 미완료 defeat_enemy 1건.
+ * 지금 순차 목표가 defeat_enemy 이고 전투 op 가 있을 때만 락.
+ * 앞 세부미션이 남아 있으면 뒤의 격파는 열지 않는다.
  * 핀 미션 우선 → 트랙(tutorial > main_story > quest) → 번들 순.
  */
 export function resolveQuestCombatLock(

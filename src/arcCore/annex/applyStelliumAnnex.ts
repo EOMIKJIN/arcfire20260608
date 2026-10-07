@@ -20,6 +20,10 @@ import {
   type StelliumAnnexIneligibleReason,
 } from './stelliumAnnexEligibility';
 import { resolveStelliumAnnexPolicy } from './stelliumAnnexPolicy';
+import {
+  cancelStelliumColonizeArrival,
+  isStelliumColonizeBlockingAnnex,
+} from '../colonize/cancelStelliumColonizeForAnnex';
 import { emitPlayVerb } from '../../game/devPlayVerbLog';
 
 export const STELLIUM_ANNEX_OPERATION_SOURCE = 'player_stellium_annex';
@@ -70,6 +74,7 @@ export function resolveStelliumAnnexOffer(planetId: string): StelliumAnnexOffer 
       : false,
     vaultCredits,
     costCredits: policy.costCredits,
+    colonizeUnfinished: isStelliumColonizeBlockingAnnex(id),
   });
   return {
     showAction: shouldShowStelliumAnnexAction(gate),
@@ -118,6 +123,7 @@ export function applyStelliumAnnex(planetId: string): StelliumAnnexApplyResult {
     });
     return { ok: false, reason: 'apply_failed' };
   }
+  cancelStelliumColonizeArrival(id);
   emitPlayVerb('annex', id);
   return {
     ok: true,

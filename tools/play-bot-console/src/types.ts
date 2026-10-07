@@ -124,6 +124,8 @@ export type WorldState = {
   travelGoalTick?: number;
   /** tg_* 교역로 왕복 중이면 그 화물. 사기 전이면 qty 0. */
   tgRun?: { goodId: string; supply: string; demand: string; qty: number; costUnit: number; sellNetUnit: number };
+  /** 교역로 매도 이후 연속 수련 전투 수. 상한을 넘으면 교역로를 먼저 본다. */
+  trainStreak?: number;
   /** 공급지·품목별 당일 매입량. 재고 상한 근사용. */
   tgBought?: Record<string, { day: number; qty: number }>;
   gems: number;

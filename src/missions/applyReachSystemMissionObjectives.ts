@@ -14,6 +14,7 @@ import {
 } from './missionCategory';
 import { doesReachSystemObjectiveMatch } from './missionNeighborReach';
 import { resolveMissionOfferOriginSystemId } from './missionNeighborReachLookups';
+import { isDeliveryReachDeferred } from './deliveryBuyHold';
 import { showArcAlert } from '../utils/showArcAlert';
 import {
   countGoodInInventory,
@@ -49,6 +50,12 @@ export function applyReachSystemMissionObjectives(
         && !active.progress.objectives[obj.id]
       ) {
         if (pendingBuyObjectives.length > 0) return;
+        if (
+          buyObjectives.length > 0
+          && isDeliveryReachDeferred(active.mission.id, targetSystemId)
+        ) {
+          return;
+        }
 
         if (buyObjectives.length > 0) {
           playerSnap = usePlayerStore.getState().player ?? playerSnap;

@@ -17,11 +17,14 @@ import {
   noteStellaObserveIgnored,
   noteStellaObserveShown,
   stellaLifeAskHit,
+  stellaReachHit,
   stellaYieldsToOrigin,
   type StellaObserveContext,
   type StellaObserveRecent,
 } from './stellaObserveGate';
 import { getStellaObserveGatePolicy, listStellaObserveSituations } from './stellaObserveTableIndex';
+import { isStellaLifeFreeSlot } from './stellaLifeResolve';
+import { listStellaLifeSlots } from './stellaLifeTableIndex';
 
 const ROWS = listStellaObserveSituations();
 const POLICY = getStellaObserveGatePolicy();
@@ -189,15 +192,15 @@ function speak(d: ReturnType<typeof decideStellaObserve>) {
 test('게이트 정책 — 표 값 (예산 없음 · 판단 문턱·타이밍)', () => {
   assert.deepEqual(
     [POLICY.speakThreshold, POLICY.askThreshold, POLICY.minGapMin, POLICY.failsafeMaxPerDay],
-    [0.4, 0.7, 15, 6],
+    [0.4, 0.7, 15, 8],
   );
   assert.deepEqual(
     [POLICY.fitFreshMin, POLICY.fitHalfLifeMin, POLICY.fitFloor, POLICY.busyWindowMin, POLICY.busyActions, POLICY.busyDamp],
     [10, 30, 0.3, 5, 6, 0.5],
   );
   assert.deepEqual(
-    [POLICY.newsRestraintScale, POLICY.ignoreHalfLifeHours, POLICY.repeatWindowHours, POLICY.repeatDamp, POLICY.lifeCooldownHours],
-    [0.5, 72, 72, 0.4, 24],
+    [POLICY.newsRestraintScale, POLICY.ignoreHalfLifeHours, POLICY.repeatWindowHours, POLICY.repeatDamp, POLICY.lifeCooldownHours, POLICY.unreadDamp],
+    [0.5, 72, 72, 0.4, 24, 0.85],
   );
   assert.equal(POLICY.motiveWeight.worry, 1);
   assert.ok(!('askPerDay' in POLICY), '하루 예산은 폐지');
@@ -211,7 +214,7 @@ test('기술 조정 — 말할 수 없는 순간 · 다른 팝업 · 근원체 �
   assert.deepEqual(decideStellaObserve(h, s, ctx({ originLastAtMs: T0 - 10 * MIN }), POLICY), { kind: 'silent', reason: 'gap' });
   speak(decideStellaObserve(h, s, ctx({ originLastAtMs: T0 - 16 * MIN }), POLICY));
   s.day = 20000;
-  s.count = 6;
+  s.count = POLICY.failsafeMaxPerDay;
   assert.deepEqual(decideStellaObserve(h, s, ctx(), POLICY), { kind: 'silent', reason: 'failsafe' });
 });
 
@@ -391,4 +394,27 @@ test('일상 질문과 걱정이 겹치면 더 말하고 싶은 쪽 하나만', 
   const life = stellaLifeAskHit('check_in', 'care', POLICY);
   const d = speak(decideStellaObserve([life, hit('sit_rough_day', 2)], emptyStellaObserveGateState(), ctx({ recent: recent(['destroy', 1]) }), POLICY));
   assert.equal(d.hit.row.id, 'sit_rough_day');
+});
+
+test('접속 안 한 동안 메신저 연락 — 쉬는 시간에, 방금 보냈으면 참고, 안 읽은 게 쌓이면 덜 보낸다', () => {
+  const s = emptyStellaObserveGateState();
+  const reach = stellaReachHit('check_in');
+  const at = (h: number) => T0 + h * HOUR;
+  const c = (h: number, unread: number) => ctx({ nowMs: at(h), day: 20000 + Math.floor(h / 24), unread });
+  const d0 = speak(decideStellaObserve([reach], s, c(0, 0), POLICY));
+  assert.equal(d0.channel, 'message');
+  noteStellaObserveShown(s, d0, { nowMs: at(0), day: 20000, level: 3 });
+  assert.deepEqual(decideStellaObserve([reach], s, c(0.5, 1), POLICY), { kind: 'silent', reason: 'restraint' }, '방금 보냈으면 참음');
+  speak(decideStellaObserve([reach], s, c(3, 1), POLICY));
+  assert.deepEqual(decideStellaObserve([reach], s, c(30, 5), POLICY), { kind: 'silent', reason: 'restraint' }, '안 읽은 연락이 쌓이면 그만');
+  speak(decideStellaObserve([reach], s, c(30, 0), POLICY));
+  speak(decideStellaObserve([reach], s, c(54, 0), POLICY));
+});
+
+test('스텔라 일과 — 깨어 있고 근무 아닌 칸만 연락할 수 있는 시간', () => {
+  const byId = new Map(listStellaLifeSlots().map((r) => [r.id, r]));
+  assert.equal(isStellaLifeFreeSlot(byId.get('sl_meal_a')!), true);
+  assert.equal(isStellaLifeFreeSlot(byId.get('sl_eve_a')!), true);
+  assert.equal(isStellaLifeFreeSlot(byId.get('sl_sleep_a')!), false);
+  assert.equal(isStellaLifeFreeSlot(byId.get('sl_morning_a')!), false);
 });

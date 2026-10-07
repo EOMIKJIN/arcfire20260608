@@ -10,8 +10,11 @@ export type TransitHostileCaptainPickOpts = {
   hasShip: (shipId: string) => boolean;
   allowedInCombat: (captainId: string) => boolean;
   fallbackCaptainId?: string | null;
-  destTcl: number;
-  tclForSystem: (systemId: string | null) => number;
+  /** 홉 정책 레벨 하한. 있으면 전용적 1순위 대신 이 범위에서 고른다. */
+  levelMin?: number;
+  levelMax?: number;
+  /** 같은 성계 재조우 순환. 없으면 0. */
+  pickOrdinal?: number;
 };
 
 /** 플레이어와 적대적인 항로 조직 — 허브 우호 팩션 제외 */
@@ -69,9 +72,44 @@ function collectDedicatedForSystem(
   return out;
 }
 
-function pickNearestDedicatedByTcl(
+function captainLevel(captain: NpcCaptain): number {
+  const lv = captain.progression?.initialLevel;
+  return typeof lv === 'number' && Number.isFinite(lv) ? Math.floor(lv) : 1;
+}
+
+function byCaptainId(a: NpcCaptain, b: NpcCaptain): number {
+  return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+}
+
+function pickOrdinalFrom(list: NpcCaptain[], ordinal: number): NpcCaptain | undefined {
+  if (list.length === 0) return undefined;
+  const sorted = list.slice().sort(byCaptainId);
+  const index = ((ordinal % sorted.length) + sorted.length) % sorted.length;
+  return sorted[index];
+}
+
+function collectInLevelRange(
   captains: readonly NpcCaptain[],
-  destTcl: number,
+  levelMin: number,
+  levelMax: number,
+  opts: Pick<TransitHostileCaptainPickOpts, 'hasShip' | 'allowedInCombat'>,
+  systemId?: string,
+): NpcCaptain[] {
+  const out: NpcCaptain[] = [];
+  for (const captain of captains) {
+    if (!isDedicatedTransitEnemyCaptain(captain)) continue;
+    if (!isEligibleTransitHostileCaptain(captain, opts.hasShip, opts.allowedInCombat)) continue;
+    const lv = captainLevel(captain);
+    if (lv < levelMin || lv > levelMax) continue;
+    if (systemId && !captainBelongsToTransitSystem(captain, systemId)) continue;
+    out.push(captain);
+  }
+  return out;
+}
+
+function pickNearestDedicatedByLevel(
+  captains: readonly NpcCaptain[],
+  targetLevel: number,
   opts: TransitHostileCaptainPickOpts,
 ): NpcCaptain | undefined {
   let best: NpcCaptain | undefined;
@@ -79,9 +117,8 @@ function pickNearestDedicatedByTcl(
   for (const captain of captains) {
     if (!isDedicatedTransitEnemyCaptain(captain)) continue;
     if (!isEligibleTransitHostileCaptain(captain, opts.hasShip, opts.allowedInCombat)) continue;
-    const tcl = opts.tclForSystem(captain.baseSystemId);
-    const delta = Math.abs(tcl - destTcl);
-    if (delta < bestDelta) {
+    const delta = Math.abs(captainLevel(captain) - targetLevel);
+    if (delta < bestDelta || (delta === bestDelta && best && captain.id < best.id)) {
       bestDelta = delta;
       best = captain;
     }
@@ -126,8 +163,22 @@ export function pickTransitHostileCaptain(
 ): NpcCaptain | undefined {
   const sid = systemId?.trim() ?? '';
   if (!sid) return undefined;
+  const ordinal = opts.pickOrdinal ?? 0;
+  if (opts.levelMin != null && opts.levelMax != null) {
+    const levelMin = Math.min(opts.levelMin, opts.levelMax);
+    const levelMax = Math.max(opts.levelMin, opts.levelMax);
+    const local = collectInLevelRange(captains, levelMin, levelMax, opts, sid);
+    const localPick = pickOrdinalFrom(local, ordinal);
+    if (localPick) return localPick;
+    const global = collectInLevelRange(captains, levelMin, levelMax, opts);
+    const globalPick = pickOrdinalFrom(global, ordinal);
+    if (globalPick) return globalPick;
+    const nearest = pickNearestDedicatedByLevel(captains, levelMin, opts);
+    if (nearest) return nearest;
+  }
+
   const dedicated = collectDedicatedForSystem(captains, sid, opts);
-  if (dedicated.length > 0) return dedicated[0];
+  if (dedicated.length > 0) return dedicated.slice().sort(byCaptainId)[0];
 
   const fallbackId = opts.fallbackCaptainId?.trim() ?? '';
   if (fallbackId) {
@@ -137,7 +188,7 @@ export function pickTransitHostileCaptain(
     }
   }
 
-  return pickNearestDedicatedByTcl(captains, opts.destTcl, opts);
+  return pickNearestDedicatedByLevel(captains, opts.levelMin ?? 1, opts);
 }
 
 /**

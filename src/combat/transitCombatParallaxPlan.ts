@@ -7,19 +7,20 @@
  */
 import { STAGE_BOTTOM_MIN_INSET_PX, STAGE_TOP_INSET_PX } from '../stages/layout';
 
-export const TRANSIT_SPACE_CD_COUNT = 3;
+/** space_cd01·02 두 장만 흐른다 (03 제거 · 대표님 2026-10-07). */
+export const TRANSIT_SPACE_CD_COUNT = 2;
 /** 동시에 흘리는 장 수 — 1~2장. 타일 격자로 화면을 메우지 않음. */
 export const TRANSIT_CLOUD_LAYER_COUNT = 2;
 /** 같은 대각, 겹마다 다른 속도. 빨라지지 않음. */
 export const TRANSIT_CLOUD_LAYER_SPEEDS_PX_PER_SEC = [1.15, 1.7] as const;
 export const TRANSIT_CLOUD_SPEED_CAP_PX_PER_SEC = 2.4;
-/** 0.5 = 한 장은 중앙, 다른 장은 랩의 반대편(살짝 겹침). */
+/** 0.5 = 화면 중앙에서 시작, 0 = 화면 밖에서 들어온다. */
 export const TRANSIT_CLOUD_LAYER_WRAP_PHASE_FRAC = [0.5, 0] as const;
 export const TRANSIT_CLOUD_LAYER_ALPHA = [0.40, 0.34] as const;
 /** 짧은 변 × 1.25. 정사각 +30%라 가로가 차 보인다. */
 export const TRANSIT_CLOUD_SPRITE_FILL_FRAC = 1.25;
-/** 랩 ≈ 한 변. 3/2면 대각으로 한 장만 남는다. */
-export const TRANSIT_CLOUD_CROSS_SPAN_FRAC = 0.92;
+/** 구름이 화면 밖으로 완전히 나간 뒤 되돌아가기 전 여유(px). */
+export const TRANSIT_CLOUD_OFFSCREEN_MARGIN_PX = 24;
 /** 틱에서 SkImage.width() 금지(JsiSkImage::width SIGSEGV). */
 export const TRANSIT_SPACE_CD_NATIVE_PX = 150;
 /** 베이크 PNG 실제 변(vega 등 768). 툴 내부 1024와 다름. 틱 width() 금지. */
@@ -135,7 +136,7 @@ export const TRANSIT_SESSION_STAR_BIAS_SPAN_SEC = 240;
 export type TransitSessionViewStart = {
   /** 구름 랩에 더하는 공통 시점 [0,1). 겹 상대 위상(0.5/0)은 유지 */
   cloudStartFrac: number;
-  /** space_cd 시작 장. 01~03 세트는 같고 첫 장만 다름 */
+  /** space_cd 시작 장. 01·02 세트는 같고 첫 장만 다름 */
   cloudIndexBias: number;
   /** 별 필드 elapsed에 더하는 초 */
   starElapsedBiasSec: number;
@@ -364,31 +365,51 @@ export function wrapParallaxOffset(t: number, period: number): number {
   return m < 0 ? m + period : m;
 }
 
-/** 랩 주기 = 스프라이트 × 3/2. */
-export function resolveTransitCloudWrapPeriod(spriteSpan: number): number {
-  return Math.max(1, spriteSpan * TRANSIT_CLOUD_CROSS_SPAN_FRAC);
+/**
+ * 구름 한 바퀴 이동량(x축 px). 화면 중앙을 지나 대각선으로 흐르다
+ * 스프라이트가 화면 밖으로 완전히 나간 뒤에만 반대편(역시 화면 밖)으로 되돌아간다.
+ * 화면 안에서 위치가 튀면 구름이 깜박이며 새로 생기는 것처럼 보인다.
+ */
+export function resolveTransitCloudTravelPeriod(
+  canvasW: number,
+  canvasH: number,
+  spriteW: number,
+  spriteH: number,
+): number {
+  const slope = TRANSIT_DIAGONAL_SY / TRANSIT_DIAGONAL_SX;
+  const exitByX = (canvasW + spriteW) * 0.5;
+  const exitByY = slope > 0 ? (canvasH + spriteH) * 0.5 / slope : exitByX;
+  const exit = Math.min(exitByX, exitByY);
+  return Math.max(1, exit * 2 + TRANSIT_CLOUD_OFFSCREEN_MARGIN_PX * 2);
 }
 
+/** ox·oy = 화면 중앙 기준 구름 중심 이동량. 위상 0.5면 정중앙. */
 export function resolveTransitCloudScrollOrigin(input: {
+  canvasW: number;
+  canvasH: number;
   spriteW: number;
   spriteH: number;
   elapsedSec: number;
   vx: number;
-  vy: number;
   wrapPhaseFrac: number;
   /** 조우마다 다른 시점. 기본 0이면 기존 중앙(0.5) 규칙 그대로 */
   sessionStartFrac?: number;
 }): { ox: number; oy: number } {
-  const periodX = resolveTransitCloudWrapPeriod(input.spriteW);
-  const periodY = resolveTransitCloudWrapPeriod(input.spriteH);
+  const period = resolveTransitCloudTravelPeriod(
+    input.canvasW,
+    input.canvasH,
+    input.spriteW,
+    input.spriteH,
+  );
   const frac = wrapParallaxOffset(input.wrapPhaseFrac + (input.sessionStartFrac ?? 0), 1);
+  const u = wrapParallaxOffset(input.elapsedSec * input.vx + frac * period, period) - period * 0.5;
   return {
-    ox: wrapParallaxOffset(input.elapsedSec * input.vx + frac * periodX, periodX),
-    oy: wrapParallaxOffset(input.elapsedSec * input.vy + frac * periodY, periodY),
+    ox: u,
+    oy: u * (TRANSIT_DIAGONAL_SY / TRANSIT_DIAGONAL_SX),
   };
 }
 
-/** ox=period/2 일 때 화면 중앙. */
+/** ox=oy=0 일 때 화면 중앙. */
 export function resolveTransitCloudSpriteDest(input: {
   canvasW: number;
   canvasH: number;
@@ -397,11 +418,9 @@ export function resolveTransitCloudSpriteDest(input: {
   ox: number;
   oy: number;
 }): { x: number; y: number; w: number; h: number } {
-  const periodX = resolveTransitCloudWrapPeriod(input.spriteW);
-  const periodY = resolveTransitCloudWrapPeriod(input.spriteH);
   return {
-    x: (input.canvasW - input.spriteW) * 0.5 + (input.ox - periodX * 0.5),
-    y: (input.canvasH - input.spriteH) * 0.5 + (input.oy - periodY * 0.5),
+    x: (input.canvasW - input.spriteW) * 0.5 + input.ox,
+    y: (input.canvasH - input.spriteH) * 0.5 + input.oy,
     w: input.spriteW,
     h: input.spriteH,
   };

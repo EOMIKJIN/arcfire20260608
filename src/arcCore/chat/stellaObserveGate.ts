@@ -37,6 +37,8 @@ export type StellaObserveGatePolicy = {
   repeatDamp: number;
   /** 같은 일상 질문을 한 뒤 이 시간 안에는 다시 묻지 않는다. */
   lifeCooldownHours: number;
+  /** 대표님이 아직 안 읽은 연락 1건마다 곱한다 — 답이 없으면 덜 보낸다. */
+  unreadDamp: number;
   motiveWeight: Record<string, number>;
 };
 
@@ -51,7 +53,7 @@ export const STELLA_OBSERVE_GATE_FALLBACK: StellaObserveGatePolicy = {
   dutyDamp: 0.5,
   casualDamp: 0.7,
   minGapMin: 15,
-  failsafeMaxPerDay: 6,
+  failsafeMaxPerDay: 8,
   fitFreshMin: 10,
   fitHalfLifeMin: 30,
   fitFloor: 0.3,
@@ -63,6 +65,7 @@ export const STELLA_OBSERVE_GATE_FALLBACK: StellaObserveGatePolicy = {
   repeatWindowHours: 72,
   repeatDamp: 0.4,
   lifeCooldownHours: 24,
+  unreadDamp: 0.85,
   motiveWeight: {},
 };
 
@@ -88,6 +91,14 @@ export type StellaObserveGateState = {
   ignAt: Record<string, number>;
   announcedFirsts: number;
   lastLevelMark: number;
+  /** 허브에 마지막으로 있던 시각. 그 이후 쉬는 칸만 메신저로 소급한다. 0이면 아직 한 번도 없다. */
+  lastHubAtMs: number;
+  /** 메신저를 연 시각. 그 전 연락은 안 읽은 것으로 둔다. */
+  lastReadAtMs: number;
+  /** 아직 메신저를 열지 않은 연락 수. */
+  unread: number;
+  /** 「메시지가 있습니다」 팝업을 띄운 시각. lastReadAtMs 보다 크면 이번 안 읽은 묶음은 이미 알렸다. */
+  notifiedAtMs: number;
 };
 
 const STELLA_RECENT_SHOWS_MAX = 3;
@@ -106,6 +117,10 @@ export function emptyStellaObserveGateState(): StellaObserveGateState {
     ignAt: {},
     announcedFirsts: 0,
     lastLevelMark: 0,
+    lastHubAtMs: 0,
+    lastReadAtMs: 0,
+    unread: 0,
+    notifiedAtMs: 0,
   };
 }
 
@@ -127,6 +142,8 @@ export type StellaObserveContext = {
   casualFirstHigh: boolean;
   /** 최근 행동 최신순 (forEachRecentPlayerObserve 로 결정 순간에 채움). */
   recent: readonly StellaObserveRecent[];
+  /** 대표님이 아직 안 읽은 스텔라 메신저 연락 수. 없으면 0. */
+  unread?: number;
 };
 
 export type StellaObserveRecent = { verb: string; at: number };
@@ -159,7 +176,12 @@ export const STELLA_LIFE_HIT_PREFIX = 'life_';
  * 스텔라 일상 질문(§16)을 관찰 상황과 같은 판단에 올린다 — 하루 1회 규칙 대신 마음 × 때.
  * motiveId·askId 는 resolveStellaAskMotive·bindStellaAskWhy 결과. 문장은 그쪽이 낸다.
  */
-export function stellaLifeAskHit(motiveId: string, askId: string, policy: StellaObserveGatePolicy): StellaObserveHit {
+export function stellaLifeAskHit(
+  motiveId: string,
+  askId: string,
+  policy: StellaObserveGatePolicy,
+  channel: StellaObserveChannel = 'ask',
+): StellaObserveHit {
   return {
     row: {
       id: STELLA_LIFE_HIT_PREFIX + askId,
@@ -168,8 +190,35 @@ export function stellaLifeAskHit(motiveId: string, askId: string, policy: Stella
       paramA: 0,
       paramB: 0,
       motiveId,
-      channel: 'ask',
+      channel,
       cooldownHours: policy.lifeCooldownHours,
+      dutyGate: 'any',
+      enabled: true,
+      lineKo: '',
+      lineEn: '',
+      anchorVerb: '',
+    },
+    vars: { nth: 0, d: 0, intensity: 1 },
+  };
+}
+
+export const STELLA_REACH_ID = 'reach';
+
+/**
+ * 대표님이 접속 안 한 동안 스텔라가 자기 쉬는 시간에 메신저로 먼저 연락 (스텔라 하루 기준 · 대표님 2026-10-06).
+ * 내용은 그때그때 자기 하루라 「같은 말 반복」 감쇠는 걸지 않는다. 자제·무시 기억·안 읽은 연락 수로만 조절.
+ */
+export function stellaReachHit(motiveId: string): StellaObserveHit {
+  return {
+    row: {
+      id: STELLA_REACH_ID,
+      priority: 0,
+      detector: 'reach_out',
+      paramA: 0,
+      paramB: 0,
+      motiveId,
+      channel: 'message',
+      cooldownHours: 0,
       dutyGate: 'any',
       enabled: true,
       lineKo: '',
@@ -254,12 +303,13 @@ export function stellaObserveWant(
   u *= Math.pow(policy.ignoreDamp, fadedIgnore(state.ign[row.id] ?? 0, state.ignAt[row.id] ?? 0, ctx.nowMs, policy));
   u *= Math.pow(policy.globalIgnoreDamp, fadedIgnore(state.globalIgn, state.globalIgnAt, ctx.nowMs, policy));
   const shows = state.recentShows[row.id];
-  if (shows && policy.repeatWindowHours > 0) {
+  if (shows && policy.repeatWindowHours > 0 && row.detector !== 'reach_out') {
     const since = ctx.nowMs - policy.repeatWindowHours * HOUR_MS;
     for (let i = 0; i < shows.length; i += 1) if (shows[i]! >= since) u *= policy.repeatDamp;
   }
   if (row.dutyGate === 'off_only' && ctx.stellaOnDuty) u *= policy.dutyDamp;
   if (ctx.casualFirstHigh && row.motiveId !== 'worry') u *= policy.casualDamp;
+  if (ctx.unread && ctx.unread > 0) u *= Math.pow(policy.unreadDamp, ctx.unread);
   return u;
 }
 

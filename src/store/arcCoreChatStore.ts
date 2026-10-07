@@ -1,8 +1,8 @@
 // ============================================================
 // 아크코어 백채널 채팅 — 계정 귀속 · 40건 FIFO · 전송 후 persist
 // 틱/키입력 persist 금지. 부트 동기 hydrate 금지.
-// 화면은 sessionMessages (오픈마다 인사 1줄). archive(messages)는
-// 「최근항목」 추후 로드용 — 오픈 시 화면에 올리지 않음.
+// 화면은 sessionMessages. 오픈 시 archive(messages) 최근분을 앞에 깔고 인사 1줄.
+// 깔린 기록은 회신 문맥에서 뺀다 — 지난 대화 기억은 rollingSummary 담당.
 // ============================================================
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -46,6 +46,14 @@ import {
   resetPlayerObserve,
   type PlayerObserveDigest,
 } from '../game/playerObserve/playerObserveSink';
+import {
+  exportStellaObserveGate,
+  hydrateStellaObserveGate,
+  isStellaObserveGateEmpty,
+  parseStellaObserveGate,
+  resetStellaObserveGate,
+} from '../arcCore/chat/stellaObserveGateMemory';
+import type { StellaObserveGateState } from '../arcCore/chat/stellaObserveGate';
 
 export const ARC_CORE_CHAT_STORAGE_KEY = 'arcfire_arc_core_chat_v1';
 export const ARC_CORE_CHAT_MAX_MESSAGES = 40;
@@ -85,6 +93,8 @@ export type ArcCoreChatPayload = {
   life: StellaLifeSnapshot;
   /** 플레이어 행동 요약 — life 클램프와 별개 상한(512B) */
   observe: PlayerObserveDigest;
+  /** 스텔라 판단 기억 — 상황 수 · 최근 3회 · 안 읽은 수 */
+  stellaGate: StellaObserveGateState;
 };
 
 const EMPTY_PAYLOAD: ArcCoreChatPayload = {
@@ -104,6 +114,7 @@ const EMPTY_PAYLOAD: ArcCoreChatPayload = {
   operatorIntroPlayed: false,
   life: parseStellaLifeSnapshot(undefined),
   observe: parsePlayerObserveDigest(undefined),
+  stellaGate: parseStellaObserveGate(undefined),
 };
 
 const ROLE_OK: ReadonlySet<string> = new Set(['user', 'arc', 'system']);
@@ -120,6 +131,27 @@ export function isArcCoreChatSessionOpenerReason(reason: string | undefined): bo
   return typeof reason === 'string' && SESSION_OPENER_REASONS.has(reason);
 }
 
+/** 기록 아래에 붙는 인사 줄. 히어로 대신 대화 줄로 보이고, 회신 문맥에는 넣지 않는다. */
+export const ARC_CORE_CHAT_SESSION_RESUME_REASON = 'session_resume';
+
+/** 오픈 시 화면에 다시 깔 보관 기록. 인사 1줄 자리를 남긴다. */
+export function pickArcCoreChatSessionHistory(
+  messages: readonly ArcCoreChatMessage[],
+  skip?: (row: ArcCoreChatMessage) => boolean,
+): ArcCoreChatMessage[] {
+  const out: ArcCoreChatMessage[] = [];
+  for (let i = 0; i < messages.length; i += 1) {
+    const row = messages[i];
+    if (!row) continue;
+    if (isArcCoreChatSessionOpenerReason(row.reason)) continue;
+    if (row.reason === ARC_CORE_CHAT_SESSION_RESUME_REASON) continue;
+    if (skip && skip(row)) continue;
+    out.push(row);
+  }
+  const keep = ARC_CORE_CHAT_MAX_MESSAGES - 1;
+  return out.length > keep ? out.slice(-keep) : out;
+}
+
 /** 이전 대화가 있으면 재방문 인사. 유저 줄만 본다. */
 export function hasArchivedArcCoreChatConversation(
   messages: readonly ArcCoreChatMessage[],
@@ -130,7 +162,7 @@ export function hasArchivedArcCoreChatConversation(
   return false;
 }
 
-/** 회신 문맥에서 세션 인사·방금 보낸 유저 줄을 뺀다. */
+/** 회신 문맥에서 세션 인사·깔린 기록을 뺀다. */
 export function filterArcCoreChatReplyPrior(
   messages: readonly ArcCoreChatMessage[],
 ): Array<{ role: ArcCoreChatRole; text: string }> {
@@ -138,6 +170,7 @@ export function filterArcCoreChatReplyPrior(
   for (let i = 0; i < messages.length; i += 1) {
     const row = messages[i];
     if (!row || isArcCoreChatSessionOpenerReason(row.reason)) continue;
+    if (row.reason === ARC_CORE_CHAT_SESSION_RESUME_REASON) continue;
     out.push({ role: row.role, text: row.text });
   }
   return out;
@@ -206,6 +239,7 @@ export function normalizeArcCoreChatPayload(raw: unknown): ArcCoreChatPayload {
     operatorIntroPlayed: o.operatorIntroPlayed === true,
     life: parseStellaLifeSnapshot(o.life),
     observe: parsePlayerObserveDigest(o.observe),
+    stellaGate: parseStellaObserveGate(o.stellaGate),
   };
 }
 
@@ -221,10 +255,12 @@ type ArcCoreChatState = {
   hydrate: () => Promise<void>;
   ensureHydrated: () => Promise<void>;
   persist: () => Promise<void>;
+  /** history = pickArcCoreChatSessionHistory 결과. 인사가 아닌 첫마디는 보관에도 남긴다. */
   beginFreshSession: (input: {
     text: string;
     reason: string;
     speakerId?: NlMouthId;
+    history?: readonly ArcCoreChatMessage[];
   }) => ArcCoreChatMessage | null;
   appendSessionOnly: (input: {
     role: ArcCoreChatRole;
@@ -237,6 +273,15 @@ type ArcCoreChatState = {
     text: string;
     reason?: string;
     speakerId?: NlMouthId;
+    atMs?: number;
+  }) => ArcCoreChatMessage | null;
+  /** 메신저를 열기 전 보관. 화면 세션에는 넣지 않는다. */
+  appendArchiveMessage: (input: {
+    role: ArcCoreChatRole;
+    text: string;
+    reason?: string;
+    speakerId?: NlMouthId;
+    atMs?: number;
   }) => ArcCoreChatMessage | null;
   setActiveSpeakerId: (speakerId: NlMouthId) => void;
   markOperatorIntroPlayed: () => void;
@@ -251,6 +296,20 @@ type ArcCoreChatState = {
 
 let persistTimer: ReturnType<typeof setTimeout> | null = null;
 let hydratePromise: Promise<void> | null = null;
+let sessionHistoryIds: Set<string> = new Set();
+
+/** 화면 세션에서 오픈 때 깔린 기록을 뺀 이번 세션 줄. 회신 문맥·첫 스캔 판정용. */
+export function liveArcCoreChatSession(
+  session: readonly ArcCoreChatMessage[],
+): ArcCoreChatMessage[] {
+  if (sessionHistoryIds.size === 0) return session.slice();
+  const out: ArcCoreChatMessage[] = [];
+  for (let i = 0; i < session.length; i += 1) {
+    const row = session[i];
+    if (row && !sessionHistoryIds.has(row.id)) out.push(row);
+  }
+  return out;
+}
 let storeEpoch = 0;
 let resetInFlight = false;
 
@@ -272,6 +331,7 @@ function snapshotPersistPayload(
     judgment: snapshotArcCoreChatJudgmentMemory(),
     life: clampStellaLifeSnapshotToMaxBytes(snapshotStellaLifeMemory()),
     observe: exportPlayerObserveDigest(),
+    stellaGate: exportStellaObserveGate(),
   };
 }
 
@@ -287,7 +347,8 @@ async function writePersistPayload(payload: ArcCoreChatPayload): Promise<void> {
     && payload.judgment.counts.length === 0
     && !payload.operatorIntroPlayed
     && isStellaLifeSnapshotEmpty(payload.life)
-    && isPlayerObserveDigestEmpty(payload.observe);
+    && isPlayerObserveDigestEmpty(payload.observe)
+    && isStellaObserveGateEmpty(payload.stellaGate);
   if (empty) {
     await AsyncStorage.removeItem(ARC_CORE_CHAT_STORAGE_KEY);
     return;
@@ -312,11 +373,11 @@ function schedulePersist(persist: () => Promise<void>): void {
 }
 
 function makeChatMessage(
-  input: { role: ArcCoreChatRole; text: string; reason?: string; speakerId?: NlMouthId },
+  input: { role: ArcCoreChatRole; text: string; reason?: string; speakerId?: NlMouthId; atMs?: number },
 ): ArcCoreChatMessage | null {
   const text = clampArcCoreChatText(input.text);
   if (!text) return null;
-  const atMs = Date.now();
+  const atMs = typeof input.atMs === 'number' && Number.isFinite(input.atMs) ? input.atMs : Date.now();
   return {
     id: makeMessageId(atMs, input.role),
     role: input.role,
@@ -349,6 +410,7 @@ export const useArcCoreChatStore = create<ArcCoreChatState>((set, get) => ({
         resetArcCoreChatJudgmentMemory();
         resetStellaLifeMemory();
         hydratePlayerObserveDigest(undefined);
+        resetStellaObserveGate();
         set({
           hydrated: true,
           messages: [],
@@ -366,6 +428,7 @@ export const useArcCoreChatStore = create<ArcCoreChatState>((set, get) => ({
       hydrateArcCoreChatJudgmentMemory(parsed.judgment);
       hydrateStellaLifeMemory(parsed.life);
       hydratePlayerObserveDigest(parsed.observe);
+      hydrateStellaObserveGate(parsed.stellaGate);
       set({
         hydrated: true,
         messages: parsed.messages,
@@ -381,6 +444,7 @@ export const useArcCoreChatStore = create<ArcCoreChatState>((set, get) => ({
       resetArcCoreChatJudgmentMemory();
       resetStellaLifeMemory();
       hydratePlayerObserveDigest(undefined);
+      resetStellaObserveGate();
       set({
         hydrated: true,
         messages: [],
@@ -447,13 +511,27 @@ export const useArcCoreChatStore = create<ArcCoreChatState>((set, get) => ({
 
   beginFreshSession: (input) => {
     resetArcCoreChatDialogueState({ keepMemory: true });
+    const history = input.history ?? [];
+    const greeting = isArcCoreChatSessionOpenerReason(input.reason);
     const next = makeChatMessage({
       role: 'arc',
       text: input.text,
-      reason: input.reason,
+      reason: greeting && history.length > 0 ? ARC_CORE_CHAT_SESSION_RESUME_REASON : input.reason,
       speakerId: input.speakerId,
     });
-    set({ sessionMessages: next ? [next] : [] });
+    const ids = new Set<string>();
+    for (let i = 0; i < history.length; i += 1) ids.add(history[i]!.id);
+    sessionHistoryIds = ids;
+    const session = next ? [...history, next] : history.slice();
+    if (next && !greeting) {
+      set((s) => ({
+        sessionMessages: session,
+        messages: [...s.messages, next].slice(-ARC_CORE_CHAT_MAX_MESSAGES),
+      }));
+      schedulePersist(() => get().persist());
+    } else {
+      set({ sessionMessages: session });
+    }
     return next;
   },
 
@@ -501,6 +579,16 @@ export const useArcCoreChatStore = create<ArcCoreChatState>((set, get) => ({
     return next;
   },
 
+  appendArchiveMessage: (input) => {
+    const next = makeChatMessage(input);
+    if (!next) return null;
+    set((s) => ({
+      messages: [...s.messages, next].slice(-ARC_CORE_CHAT_MAX_MESSAGES),
+    }));
+    schedulePersist(() => get().persist());
+    return next;
+  },
+
   markTriggerFired: (key, id) => {
     const k = key.trim();
     const i = id.trim();
@@ -531,6 +619,7 @@ export const useArcCoreChatStore = create<ArcCoreChatState>((set, get) => ({
     resetArcCoreChatJudgmentMemory();
     resetStellaLifeMemory();
     resetPlayerObserve();
+    resetStellaObserveGate();
     resetInFlight = true;
     storeEpoch += 1;
     if (persistTimer) {
@@ -538,6 +627,7 @@ export const useArcCoreChatStore = create<ArcCoreChatState>((set, get) => ({
       persistTimer = null;
     }
     hydratePromise = null;
+    sessionHistoryIds = new Set();
     set({
       hydrated: true,
       messages: [],

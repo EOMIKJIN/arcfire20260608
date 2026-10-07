@@ -17,7 +17,9 @@ export type StellaObserveDetector =
   | 'long_session_or_late'
   | 'trade_count_today'
   /** 표 행이 아님 — 스텔라 일상 질문을 같은 판단에 올릴 때만 (stellaLifeAskHit). 감지기는 늘 false. */
-  | 'life_ask';
+  | 'life_ask'
+  /** 표 행이 아님 — 대표님이 접속 안 한 동안 스텔라가 자기 하루에 남기는 메신저 연락 (stellaReachHit). */
+  | 'reach_out';
 
 export const STELLA_OBSERVE_DETECTORS: readonly StellaObserveDetector[] = [
   'destroy_or_loss_streak',

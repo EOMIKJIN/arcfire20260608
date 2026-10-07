@@ -44,6 +44,12 @@ test('정책 OFF — 버튼 숨김', () => {
   assert.equal(shouldShowStelliumAnnexAction(gate), false);
 });
 
+test('개척선 진행 중 — 편입 버튼 숨김', () => {
+  const gate = evaluateStelliumAnnexEligibility({ ...BASE, colonizeUnfinished: true });
+  assert.deepEqual(gate, { ok: false, reason: 'colonize_pending' });
+  assert.equal(shouldShowStelliumAnnexAction(gate), false);
+});
+
 test('위성 미달 — sat_required · 버튼은 보임', () => {
   const gate = evaluateStelliumAnnexEligibility({ ...BASE, defenseSatLevel: 0 });
   assert.deepEqual(gate, { ok: false, reason: 'sat_required' });

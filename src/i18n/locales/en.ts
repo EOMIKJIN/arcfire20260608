@@ -1057,6 +1057,9 @@ export const EN_DICTIONARY: I18nDictionary = {
   'arcCoreChat.inbound.body': 'The enemy mouth is requesting a conversation',
   'arcCoreChat.inbound.accept': 'Accept',
   'arcCoreChat.inbound.reject': 'Decline',
+  'arcCoreChat.stellaMessage.body': 'You have a message from Stella Aris.',
+  'arcCoreChat.stellaMessage.later': 'Later',
+  'arcCoreChat.stellaMessage.open': 'Read',
 
   // ── Defense Satellite Dev (defenseSat) ──
   'defenseSat.homeOnlyTitle': 'Home Planet Only',
@@ -1162,6 +1165,7 @@ export const EN_DICTIONARY: I18nDictionary = {
   'stelliumAnnex.reason.sat_required': 'Install a defense satellite first.',
   'stelliumAnnex.reason.no_adjacency': 'Need an adjacent Stellium or independent holding.',
   'stelliumAnnex.reason.vault_short': 'Stellium Alliance vault balance is too low.',
+  'stelliumAnnex.reason.colonize_pending': 'Annex stays closed until colonization of this planet finishes.',
   'stelliumAnnex.reason.apply_failed': 'Occupation could not be changed.',
 
   // ── Heavy UI Data Session (heavyUi) ──

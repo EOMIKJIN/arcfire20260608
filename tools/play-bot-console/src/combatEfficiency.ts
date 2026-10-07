@@ -114,6 +114,16 @@ export function nextHullStep(world: WorldState): HullStep | null {
   return null;
 }
 
+/** 지금 탄 함선의 실기 구매가. 기본 프리깃은 0. */
+export function currentHullValue(world: WorldState): number {
+  const rank = world.hullRank ?? 0;
+  if (rank <= 0) return 0;
+  for (let i = 0; i < HULLS.length; i += 1) {
+    if (HULLS[i].rank === rank) return HULLS[i].price;
+  }
+  return 0;
+}
+
 /** 레벨은 열렸는데 실기 가격이 부족하면 그 차액. 아니면 0. */
 export function hullFundGap(world: WorldState): number {
   const next = nextHullStep(world);

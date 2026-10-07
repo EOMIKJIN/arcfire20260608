@@ -20,13 +20,13 @@ import {
   resolveTransitCloudScrollOrigin,
   resolveTransitCloudSpriteDest,
   resolveTransitCloudSpriteSize,
-  resolveTransitCloudWrapPeriod,
+  resolveTransitCloudTravelPeriod,
   resolveTransitFullscreenContentBox,
   resolveTransitNearbyNebulaPlanetId,
   resolveTransitSessionViewStart,
   resolveTransitSpaceDrift,
   resolveTransitStageInsets,
-  TRANSIT_CLOUD_CROSS_SPAN_FRAC,
+  TRANSIT_CLOUD_OFFSCREEN_MARGIN_PX,
   TRANSIT_CLOUD_LAYER_COUNT,
   TRANSIT_CLOUD_LAYER_SPEEDS_PX_PER_SEC,
   TRANSIT_CLOUD_SPEED_CAP_PX_PER_SEC,
@@ -53,8 +53,8 @@ function test(name: string, fn: () => void): void {
   }
 }
 
-test('space_cd index stays in 0..2 (01~03 only)', () => {
-  assert.equal(TRANSIT_SPACE_CD_COUNT, 3);
+test('space_cd index stays in 0..1 (01·02 only)', () => {
+  assert.equal(TRANSIT_SPACE_CD_COUNT, 2);
   assert.equal(pickTransitSpaceCdIndex('vega_outpost') >= 0, true);
   assert.equal(pickTransitSpaceCdIndex('vega_outpost') < TRANSIT_SPACE_CD_COUNT, true);
   assert.equal(pickTransitSpaceCdIndex(''), pickTransitSpaceCdIndex('transit'));
@@ -256,10 +256,37 @@ test('wrap offset stays in [0, period)', () => {
   assert.equal(wrapParallaxOffset(0, 0), 0);
 });
 
-test('wrap period stays near one sprite so the pair overlaps instead of splitting', () => {
-  assert.equal(TRANSIT_CLOUD_CROSS_SPAN_FRAC, 0.92);
-  assert.equal(resolveTransitCloudWrapPeriod(360), 360 * 0.92);
-  assert.equal(resolveTransitCloudWrapPeriod(450), 450 * 0.92);
+test('cloud wraps only after it fully leaves the screen (no on-screen pop)', () => {
+  for (const [canvasW, canvasH] of [[360, 800], [1080, 2340], [1080, 1080]] as const) {
+    const sprite = resolveTransitCloudSpriteSize(canvasW, canvasH);
+    const period = resolveTransitCloudTravelPeriod(canvasW, canvasH, sprite.w, sprite.h);
+    for (const layer of resolveTransitCloudLayerMotions()) {
+      // 랩 직전·직후 시점: elapsed*vx + frac*period 가 period 경계를 넘는 순간
+      const frac = layer.wrapPhaseFrac;
+      const tWrap = ((1 - frac) * period) / layer.vx;
+      for (const dt of [-0.01, 0.01]) {
+        const origin = resolveTransitCloudScrollOrigin({
+          canvasW,
+          canvasH,
+          spriteW: sprite.w,
+          spriteH: sprite.h,
+          elapsedSec: tWrap + dt,
+          vx: layer.vx,
+          wrapPhaseFrac: frac,
+        });
+        const d = resolveTransitCloudSpriteDest({
+          canvasW,
+          canvasH,
+          spriteW: sprite.w,
+          spriteH: sprite.h,
+          ox: origin.ox,
+          oy: origin.oy,
+        });
+        assert.equal(intersectRects(d.x, d.y, d.w, d.h, 0, 0, canvasW, canvasH), null);
+      }
+    }
+  }
+  assert.equal(TRANSIT_CLOUD_OFFSCREEN_MARGIN_PX > 0, true);
 });
 
 test('phase 0.5 starts one cloud centered; 1 or 2 stay on screen', () => {
@@ -269,11 +296,12 @@ test('phase 0.5 starts one cloud centered; 1 or 2 stay on screen', () => {
   const layers = resolveTransitCloudLayerMotions();
   const dests = layers.map((layer) => {
     const origin = resolveTransitCloudScrollOrigin({
+      canvasW,
+      canvasH,
       spriteW: sprite.w,
       spriteH: sprite.h,
       elapsedSec: 0,
       vx: layer.vx,
-      vy: layer.vy,
       wrapPhaseFrac: layer.wrapPhaseFrac,
     });
     return resolveTransitCloudSpriteDest({
@@ -308,29 +336,31 @@ test('session view seed keeps layer rules but changes start origin', () => {
   const layers = resolveTransitCloudLayerMotions();
   const originsA = layers.map((layer) =>
     resolveTransitCloudScrollOrigin({
+      canvasW,
+      canvasH,
       spriteW: sprite.w,
       spriteH: sprite.h,
       elapsedSec: 0,
       vx: layer.vx,
-      vy: layer.vy,
       wrapPhaseFrac: layer.wrapPhaseFrac,
       sessionStartFrac: a.cloudStartFrac,
     }),
   );
   const originsB = layers.map((layer) =>
     resolveTransitCloudScrollOrigin({
+      canvasW,
+      canvasH,
       spriteW: sprite.w,
       spriteH: sprite.h,
       elapsedSec: 0,
       vx: layer.vx,
-      vy: layer.vy,
       wrapPhaseFrac: layer.wrapPhaseFrac,
       sessionStartFrac: b.cloudStartFrac,
     }),
   );
   assert.notEqual(originsA[0]!.ox, originsB[0]!.ox);
   assert.notEqual(originsA[0]!.oy, originsB[0]!.oy);
-  const periodX = resolveTransitCloudWrapPeriod(sprite.w);
+  const periodX = resolveTransitCloudTravelPeriod(canvasW, canvasH, sprite.w, sprite.h);
   const relA = wrapParallaxOffset(originsA[0]!.ox - originsA[1]!.ox, periodX);
   const relB = wrapParallaxOffset(originsB[0]!.ox - originsB[1]!.ox, periodX);
   assert.equal(Math.abs(relA - relB) < 0.01, true);
@@ -398,11 +428,12 @@ test('later ticks keep one or two clouds in view, never a tile grid', () => {
   for (let t = 0; t < 200; t += 17) {
     const dests = layers.map((layer) => {
       const origin = resolveTransitCloudScrollOrigin({
+        canvasW,
+        canvasH,
         spriteW: sprite.w,
         spriteH: sprite.h,
         elapsedSec: t,
         vx: layer.vx,
-        vy: layer.vy,
         wrapPhaseFrac: layer.wrapPhaseFrac,
       });
       return resolveTransitCloudSpriteDest({

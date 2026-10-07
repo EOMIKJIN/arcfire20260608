@@ -1,0 +1,98 @@
+﻿hop,systemId,name,zone,sysEnemyLv,encounterPct,destTcl,weaponTcl,captain,captainLv,dedicated,ship,baseHp,baseShield,hullPlanet,hp,shield,armor,exp
+0,arcadia,아르카디아,safe,1,0,1,1,npc_cpt_enemy_arcadia_02,1,1,npc_enemy_arcadia_02,314,95,arcadia_prime,314,95,8,48
+1,solar_port,솔라 항구,safe,2,5,5,2,npc_cpt_enemy_solar_01,2,2,npc_enemy_solar_01,328,100,arcadia_prime,328,100,9,56
+1,synth_073,미개척-73,neutral,1,5,1,1,npc_cpt_enemy_arcadia_02,1,0,npc_enemy_arcadia_02,314,95,arcadia_prime,314,95,8,48
+1,vega_outpost,베가 전초기지,safe,3,5,3,1,npc_cpt_enemy_arcadia_02,1,2,npc_enemy_arcadia_02,314,95,arcadia_prime,314,95,8,48
+2,draco_nebula,드라코 성운,neutral,7,5,9,1,npc_cpt_enemy_draco_01,1,3,npc_enemy_draco_01,314,95,arcadia_prime,314,95,8,48
+2,minerva,미네르바,safe,3,5,7,3,npc_cpt_enemy_minerva_01,3,1,npc_enemy_minerva_01,342,105,vega_base,342,105,9,64
+2,new_eden,뉴에덴,neutral,5,5,12,1,npc_cpt_enemy_arcadia_02,1,1,npc_enemy_arcadia_02,314,95,arcadia_prime,314,95,8,48
+2,synth_033,미개척-33,neutral,1,5,1,1,npc_cpt_enemy_arcadia_02,1,0,npc_enemy_arcadia_02,314,95,arcadia_prime,314,95,8,48
+2,synth_052,미개척-52,neutral,1,5,1,1,npc_cpt_enemy_arcadia_02,1,0,npc_enemy_arcadia_02,314,95,arcadia_prime,314,95,8,48
+3,iron_cross,아이언 크로스,neutral,6,15,15,6,npc_cpt_enemy_iron_01,6,3,npc_enemy_iron_01,384,120,solar_station,384,120,10,88
+3,omega_station,오메가 스테이션,neutral,8,15,37,8,npc_cpt_enemy_omega_01,8,3,npc_enemy_omega_01,412,130,minerva_deep,433,137,11,104
+3,perseus,페르세우스,neutral,11,15,21,5,npc_cpt_enemy_hop_l05_a,5,4,npc_enemy_hop_l05_a,370,115,solar_station,370,115,10,80
+3,sirius,시리우스,neutral,10,15,18,4,npc_cpt_enemy_hop_l04_a,4,4,npc_enemy_hop_l04_a,356,110,vega_base,356,110,9,72
+3,synth_002,미개척-2,neutral,1,15,3,5,npc_cpt_enemy_eden_01,5,0,npc_enemy_eden_01,370,115,solar_station,370,115,10,80
+3,synth_031,미개척-31,neutral,1,15,3,5,npc_cpt_enemy_eden_01,5,0,npc_enemy_eden_01,370,115,solar_station,370,115,10,80
+3,synth_054,미개척-54,neutral,1,15,3,5,npc_cpt_enemy_eden_01,5,0,npc_enemy_eden_01,370,115,solar_station,370,115,10,80
+4,crimson_zone,크림슨 구역,pvp,15,35,25,9,npc_cpt_enemy_helios_01,9,3,npc_enemy_helios_01,426,135,draco_haven,469,162,12,112
+4,helios,헬리오스,neutral,9,35,31,9,npc_cpt_enemy_helios_01,9,3,npc_enemy_helios_01,426,135,draco_haven,469,162,12,112
+4,synth_036,미개척-36,neutral,1,35,3,9,npc_cpt_enemy_helios_01,9,0,npc_enemy_helios_01,426,135,draco_haven,469,162,12,112
+4,synth_049,미개척-49,neutral,1,35,3,9,npc_cpt_enemy_helios_01,9,0,npc_enemy_helios_01,426,135,draco_haven,469,162,12,112
+4,synth_062,미개척-62,neutral,1,35,5,9,npc_cpt_enemy_helios_01,9,0,npc_enemy_helios_01,426,135,draco_haven,469,162,12,112
+4,synth_067,미개척-67,neutral,1,35,15,9,npc_cpt_enemy_helios_01,9,0,npc_enemy_helios_01,426,135,draco_haven,469,162,12,112
+4,synth_078,미개척-78,neutral,1,35,5,9,npc_cpt_enemy_helios_01,9,0,npc_enemy_helios_01,426,135,draco_haven,469,162,12,112
+4,titan_gate,타이탄 게이트,neutral,10,35,34,10,npc_cpt_enemy_titan_01,10,3,npc_enemy_titan_01,440,140,draco_haven,484,168,12,120
+5,blood_field,블러드 필드,pvp,18,50,28,18,npc_cpt_enemy_blood_01,18,3,npc_enemy_blood_01,552,180,sirius_border,718,216,15,184
+5,dark_rift,다크 리프트,pvp,17,50,48,17,npc_cpt_enemy_dark_01,17,3,npc_enemy_dark_01,538,175,iron_remnant,673,210,14,176
+5,shadow_nexus,섀도우 넥서스,pvp,16,50,44,16,npc_cpt_enemy_shadow_01,16,3,npc_enemy_shadow_01,524,170,iron_remnant,655,204,14,168
+5,synth_005,미개척-5,neutral,1,50,5,20,npc_cpt_enemy_abyss_01,20,0,npc_enemy_abyss_01,580,190,sirius_border,754,228,15,200
+5,synth_008,미개척-8,neutral,1,50,25,20,npc_cpt_enemy_abyss_01,20,0,npc_enemy_abyss_01,580,190,sirius_border,754,228,15,200
+5,synth_014,미개척-14,neutral,1,50,9,20,npc_cpt_enemy_abyss_01,20,0,npc_enemy_abyss_01,580,190,sirius_border,754,228,15,200
+5,synth_023,미개척-23,neutral,1,50,7,20,npc_cpt_enemy_abyss_01,20,0,npc_enemy_abyss_01,580,190,sirius_border,754,228,15,200
+5,synth_041,미개척-41,neutral,1,50,5,20,npc_cpt_enemy_abyss_01,20,0,npc_enemy_abyss_01,580,190,sirius_border,754,228,15,200
+5,synth_044,미개척-44,neutral,1,50,5,20,npc_cpt_enemy_abyss_01,20,0,npc_enemy_abyss_01,580,190,sirius_border,754,228,15,200
+5,synth_057,미개척-57,neutral,1,50,7,20,npc_cpt_enemy_abyss_01,20,0,npc_enemy_abyss_01,580,190,sirius_border,754,228,15,200
+6,abyss,어비스,pvp,20,60,52,22,npc_cpt_enemy_hop_l22_a,22,5,npc_enemy_hop_l22_a,580,190,perseus_memorial,783,228,15,200
+6,nightfall,나이트폴,pvp,19,60,40,26,npc_cpt_enemy_hop_l26_a,26,5,npc_enemy_hop_l26_a,580,190,crimson_base,841,238,16,200
+6,synth_010,미개척-10,neutral,1,60,9,30,npc_cpt_enemy_core_01,30,0,npc_enemy_core_01,720,240,blood_station,1080,288,23,280
+6,synth_013,미개척-13,neutral,1,60,7,30,npc_cpt_enemy_core_01,30,0,npc_enemy_core_01,720,240,blood_station,1080,288,23,280
+6,synth_017,미개척-17,neutral,1,60,12,30,npc_cpt_enemy_core_01,30,0,npc_enemy_core_01,720,240,blood_station,1080,288,23,280
+6,synth_026,미개척-26,neutral,1,60,7,30,npc_cpt_enemy_core_01,30,0,npc_enemy_core_01,720,240,blood_station,1080,288,23,280
+6,synth_034,미개척-34,neutral,1,60,7,30,npc_cpt_enemy_core_01,30,0,npc_enemy_core_01,720,240,blood_station,1080,288,23,280
+6,synth_039,미개척-39,neutral,1,60,7,30,npc_cpt_enemy_core_01,30,0,npc_enemy_core_01,720,240,blood_station,1080,288,23,280
+6,synth_047,미개척-47,neutral,1,60,34,30,npc_cpt_enemy_core_01,30,0,npc_enemy_core_01,720,240,blood_station,1080,288,23,280
+6,synth_066,미개척-66,neutral,1,60,9,30,npc_cpt_enemy_core_01,30,0,npc_enemy_core_01,720,240,blood_station,1080,288,23,280
+6,synth_070,미개척-70,neutral,1,60,9,30,npc_cpt_enemy_core_01,30,0,npc_enemy_core_01,720,240,blood_station,1080,288,23,280
+7,arcfire_core,아크파이어 코어,endgame,30,70,56,35,npc_cpt_enemy_eternity_01,35,5,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+7,genesis,제네시스,endgame,40,70,60,35,npc_cpt_enemy_eternity_01,35,2,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+7,synth_006,미개척-6,neutral,1,70,12,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+7,synth_015,미개척-15,neutral,1,70,12,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+7,synth_016,미개척-16,neutral,1,70,12,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+7,synth_025,미개척-25,neutral,1,70,21,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+7,synth_028,미개척-28,neutral,1,70,18,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+7,synth_046,미개척-46,neutral,1,70,9,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+7,synth_050,미개척-50,neutral,1,70,28,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+7,synth_069,미개척-69,neutral,1,70,15,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+8,eternity,이터니티,endgame,35,70,60,35,npc_cpt_enemy_eternity_01,35,4,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+8,synth_001,미개척-1,neutral,1,70,18,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+8,synth_009,미개척-9,neutral,1,70,21,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+8,synth_020,미개척-20,neutral,1,70,25,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+8,synth_022,미개척-22,neutral,1,70,21,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+8,synth_024,미개척-24,neutral,1,70,18,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+8,synth_045,미개척-45,neutral,1,70,31,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+8,synth_051,미개척-51,neutral,1,70,15,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+8,synth_055,미개척-55,neutral,1,70,34,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+8,synth_060,미개척-60,neutral,1,70,21,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+8,synth_065,미개척-65,neutral,1,70,21,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+8,synth_068,미개척-68,neutral,1,70,18,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+8,synth_072,미개척-72,neutral,1,70,15,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+9,synth_003,미개척-3,neutral,1,70,15,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+9,synth_011,미개척-11,neutral,1,70,18,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+9,synth_018,미개척-18,neutral,1,70,28,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+9,synth_019,미개척-19,neutral,1,70,28,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+9,synth_021,미개척-21,neutral,1,70,25,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+9,synth_029,미개척-29,neutral,1,70,25,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+9,synth_030,미개척-30,neutral,1,70,37,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+9,synth_037,미개척-37,neutral,1,70,12,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+9,synth_053,미개척-53,neutral,1,70,31,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+9,synth_058,미개척-58,neutral,1,70,31,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+9,synth_059,미개척-59,neutral,1,70,28,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+9,synth_075,미개척-75,neutral,1,70,28,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+9,synth_076,미개척-76,neutral,1,70,25,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+10,synth_004,미개척-4,neutral,1,70,34,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+10,synth_027,미개척-27,neutral,1,70,37,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+10,synth_035,미개척-35,neutral,1,70,40,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+10,synth_042,미개척-42,neutral,1,70,21,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+10,synth_043,미개척-43,neutral,1,70,31,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+10,synth_056,미개척-56,neutral,1,70,37,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+10,synth_064,미개척-64,neutral,1,70,37,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+10,synth_071,미개척-71,neutral,1,70,34,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+10,synth_074,미개척-74,neutral,1,70,37,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+10,synth_077,미개척-77,neutral,1,70,37,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+10,synth_079,미개척-79,neutral,1,70,34,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+11,synth_032,미개척-32,neutral,1,70,31,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+11,synth_040,미개척-40,neutral,1,70,40,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+11,synth_048,미개척-48,neutral,1,70,40,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+11,synth_061,미개척-61,neutral,1,70,40,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320
+11,synth_063,미개척-63,neutral,1,70,40,35,npc_cpt_enemy_eternity_01,35,0,npc_enemy_eternity_01,790,265,titan_ruins,1383,318,24,320

@@ -35,7 +35,10 @@ import {
   isCapitalCraftVisible,
   type CapitalCraft,
 } from '../../combat/capitalCraftPool';
-import { registerCombatSkiaPresentationReclaim } from '../../combat/combatSkiaPresentationReclaim';
+import {
+  markCombatOrbitPresenting,
+  registerCombatSkiaPresentationReclaim,
+} from '../../combat/combatSkiaPresentationReclaim';
 import { disposePlanetSkiaHitFxModuleCaches } from './planetSkiaHitFxContract';
 import {
   acquireSkPathFromPool,
@@ -201,12 +204,23 @@ type CombatOrbitVfxBudget = {
   missileHeadDotEnabled: boolean;
 };
 
-function quadBezier(p0: Pt, p1: Pt, p2: Pt, t: number): Pt {
+const TRAIL_SAMPLE: Pt = { x: 0, y: 0 };
+const TRAIL_HEAD: Pt = { x: 0, y: 0 };
+const TRAIL_OUT = {
+  path: null as unknown as SkPath,
+  head: TRAIL_HEAD,
+  headOpacity: 0,
+  trailOpacity: 0,
+  headVisible: false,
+  visible: false,
+};
+
+function writeQuadBezier(out: Pt, p0: Pt, p1: Pt, p2: Pt, t: number): void {
   const u = 1 - t;
-  return {
-    x: u * u * p0.x + 2 * u * t * p1.x + t * t * p2.x,
-    y: u * u * p0.y + 2 * u * t * p1.y + t * t * p2.y,
-  };
+  const uu = u * u;
+  const tt = t * t;
+  out.x = uu * p0.x + 2 * u * t * p1.x + tt * p2.x;
+  out.y = uu * p0.y + 2 * u * t * p1.y + tt * p2.y;
 }
 
 /** Quadratic Bézier 접선 각 — 탄두(타원) 장축을 실제 비행 방향에 맞출 때 사용. `p0→p2` 직선 각과 다르면 곡선 구간에서 “좌우 흔들림”처럼 보임. */
@@ -269,6 +283,50 @@ const VFX_MISSILES_SEVERE = 40;
 /** fps 백스톱 — 부하가 낮아도 프레임이 무너지면 디테일 삭감(25fps 바닥 방어) */
 const VFX_FPS_MILD = 30;
 const VFX_FPS_SEVERE = 25;
+/** 단계 복귀 임계 — 진입 임계와 같으면 경계에서 글로우·궤적이 240ms마다 깜빡인다. */
+const VFX_MISSILES_HEAVY_EXIT = 24;
+const VFX_MISSILES_SEVERE_EXIT = 34;
+const VFX_FPS_MILD_EXIT = 34;
+const VFX_FPS_SEVERE_EXIT = 28;
+
+// 미사일 탄두(head)는 게임 가독성 핵심이라 어떤 단계에서도 끄지 않는다.
+// (메인 트레일 패스가 off라 탄두까지 끄면 미사일이 흐린 잔상만 남아 "탄두 미표시" 회귀가 됨)
+// 비용 큰 요소만 단계 축소: 트레일 세그먼트·베지어 샘플 캡, 레이저 글로우 패스.
+const VFX_BUDGET_FULL: Readonly<CombatOrbitVfxBudget> = Object.freeze({
+  missileSegmentBudget: MISSILE_MAX_TRAIL_SEGMENTS,
+  bezierSampleCap: BEZIER_SAMPLES,
+  renderLaserGlow: true,
+  missileHeadDotEnabled: true,
+});
+const VFX_BUDGET_HEAVY: Readonly<CombatOrbitVfxBudget> = Object.freeze({
+  missileSegmentBudget: Math.max(6, Math.round(MISSILE_MAX_TRAIL_SEGMENTS * 0.75)),
+  bezierSampleCap: Math.max(10, Math.round(BEZIER_SAMPLES * 0.8)),
+  renderLaserGlow: false,
+  missileHeadDotEnabled: true,
+});
+const VFX_BUDGET_SEVERE: Readonly<CombatOrbitVfxBudget> = Object.freeze({
+  missileSegmentBudget: Math.max(4, Math.round(MISSILE_MAX_TRAIL_SEGMENTS * 0.5)),
+  bezierSampleCap: Math.max(8, Math.round(BEZIER_SAMPLES * 0.6)),
+  renderLaserGlow: false,
+  missileHeadDotEnabled: true,
+});
+
+/** 0=full 1=heavy 2=severe. 미사일 축·fps 축을 따로 유지하고 큰 쪽을 쓴다. */
+let _vfxMissileTier = 0;
+let _vfxFpsTier = 0;
+
+function resetCombatOrbitVfxTier(): void {
+  _vfxMissileTier = 0;
+  _vfxFpsTier = 0;
+}
+
+function stepVfxTier(tier: number, toSevere: boolean, toHeavy: boolean, leaveSevere: boolean, leaveHeavy: boolean): number {
+  if (toSevere) return 2;
+  if (tier === 2 && !leaveSevere) return 2;
+  if (toHeavy) return 1;
+  if (tier >= 1 && !leaveHeavy) return 1;
+  return 0;
+}
 
 /**
  * 전투 VFX 버짓 — fps·미사일 수 인지 단계적 축소.
@@ -280,34 +338,25 @@ function resolveCombatOrbitVfxBudget(
   _agentCount: number,
   approxActiveMissiles: number,
   fpsNow: number,
-): CombatOrbitVfxBudget {
-  // 미사일 탄두(head)는 게임 가독성 핵심이라 어떤 단계에서도 끄지 않는다.
-  // (메인 트레일 패스가 off라 탄두까지 끄면 미사일이 흐린 잔상만 남아 "탄두 미표시" 회귀가 됨)
-  // 비용 큰 요소만 단계 축소: 트레일 세그먼트·베지어 샘플 캡, 레이저 글로우 패스.
-  const severe = approxActiveMissiles >= VFX_MISSILES_SEVERE || fpsNow < VFX_FPS_SEVERE;
-  if (severe) {
-    return {
-      missileSegmentBudget: Math.max(4, Math.round(MISSILE_MAX_TRAIL_SEGMENTS * 0.5)),
-      bezierSampleCap: Math.max(8, Math.round(BEZIER_SAMPLES * 0.6)),
-      renderLaserGlow: false,
-      missileHeadDotEnabled: true,
-    };
-  }
-  const heavy = approxActiveMissiles >= VFX_MISSILES_HEAVY || fpsNow < VFX_FPS_MILD;
-  if (heavy) {
-    return {
-      missileSegmentBudget: Math.max(6, Math.round(MISSILE_MAX_TRAIL_SEGMENTS * 0.75)),
-      bezierSampleCap: Math.max(10, Math.round(BEZIER_SAMPLES * 0.8)),
-      renderLaserGlow: false,
-      missileHeadDotEnabled: true,
-    };
-  }
-  return {
-    missileSegmentBudget: MISSILE_MAX_TRAIL_SEGMENTS,
-    bezierSampleCap: BEZIER_SAMPLES,
-    renderLaserGlow: true,
-    missileHeadDotEnabled: true,
-  };
+): Readonly<CombatOrbitVfxBudget> {
+  _vfxMissileTier = stepVfxTier(
+    _vfxMissileTier,
+    approxActiveMissiles >= VFX_MISSILES_SEVERE,
+    approxActiveMissiles >= VFX_MISSILES_HEAVY,
+    approxActiveMissiles < VFX_MISSILES_SEVERE_EXIT,
+    approxActiveMissiles < VFX_MISSILES_HEAVY_EXIT,
+  );
+  _vfxFpsTier = stepVfxTier(
+    _vfxFpsTier,
+    fpsNow < VFX_FPS_SEVERE,
+    fpsNow < VFX_FPS_MILD,
+    fpsNow >= VFX_FPS_SEVERE_EXIT,
+    fpsNow >= VFX_FPS_MILD_EXIT,
+  );
+  const tier = _vfxMissileTier > _vfxFpsTier ? _vfxMissileTier : _vfxFpsTier;
+  if (tier === 2) return VFX_BUDGET_SEVERE;
+  if (tier === 1) return VFX_BUDGET_HEAVY;
+  return VFX_BUDGET_FULL;
 }
 
 function buildLaserBolt(
@@ -373,6 +422,7 @@ function getCombatPictureRecorder(): ReturnType<typeof Skia.PictureRecorder> {
   return _combatPictureRecorder;
 }
 
+let _recordRect: ReturnType<typeof Skia.XYWHRect> | null = null;
 let _thrusterSrcRect: ReturnType<typeof Skia.XYWHRect> | null = null;
 let _thrusterDestRect: ReturnType<typeof Skia.XYWHRect> | null = null;
 
@@ -460,17 +510,17 @@ function makeMissileTrailPath(
   visible: boolean;
 } {
   resetPath(path);
+  TRAIL_OUT.path = path;
   const tSince = tMs - m.startMs;
   const lifeEnd = m.travelMs + MISSILE_TRAIL_FADE_MS;
   if (tSince >= lifeEnd) {
-    return {
-      path,
-      head: { x: 0, y: 0 },
-      headOpacity: 0,
-      trailOpacity: 0,
-      headVisible: false,
-      visible: false,
-    };
+    TRAIL_HEAD.x = 0;
+    TRAIL_HEAD.y = 0;
+    TRAIL_OUT.headOpacity = 0;
+    TRAIL_OUT.trailOpacity = 0;
+    TRAIL_OUT.headVisible = false;
+    TRAIL_OUT.visible = false;
+    return TRAIL_OUT;
   }
   const p0 = m.p0;
   const p1 = m.p1;
@@ -497,20 +547,22 @@ function makeMissileTrailPath(
   }
   const n = Math.max(2, Math.min(missileSegmentBudget, Math.ceil(bezierSampleCap * Math.max(span, 0.004))));
   if (span >= 0.004) {
-    const q0 = quadBezier(p0, p1, p2, uTail);
-    path.moveTo(q0.x, q0.y);
+    writeQuadBezier(TRAIL_SAMPLE, p0, p1, p2, uTail);
+    path.moveTo(TRAIL_SAMPLE.x, TRAIL_SAMPLE.y);
     for (let k = 1; k <= n; k++) {
       const t = uTail + (k / n) * span;
-      const q = quadBezier(p0, p1, p2, t);
-      path.lineTo(q.x, q.y);
+      writeQuadBezier(TRAIL_SAMPLE, p0, p1, p2, t);
+      path.lineTo(TRAIL_SAMPLE.x, TRAIL_SAMPLE.y);
     }
   }
   // 탄두는 항상 궤적 선두(uHead)에 고정한다.
   // (중간 샘플점 사용 시 "끝까지 안 날아감"처럼 보이는 시각 오해가 발생)
-  const head = quadBezier(p0, p1, p2, uHead);
-  const headVisible = !m.hitApplied && tSince < m.travelMs;
-  const visible = trailOpacity > 0.01 && (span >= 0.004 || headVisible);
-  return { path, head, headOpacity, trailOpacity, headVisible, visible };
+  writeQuadBezier(TRAIL_HEAD, p0, p1, p2, uHead);
+  TRAIL_OUT.headOpacity = headOpacity;
+  TRAIL_OUT.trailOpacity = trailOpacity;
+  TRAIL_OUT.headVisible = !m.hitApplied && tSince < m.travelMs;
+  TRAIL_OUT.visible = trailOpacity > 0.01 && (span >= 0.004 || TRAIL_OUT.headVisible);
+  return TRAIL_OUT;
 }
 
 /** 풀 동기화만 전역 스크래치 Set 사용(JS 단일 스레드·전투 틱 직렬 전제). */
@@ -676,6 +728,7 @@ function reclaimCombatSkiaModuleCaches(): void {
   _combatPictureRecorder = null;
   _thrusterSrcRect = null;
   _thrusterDestRect = null;
+  _recordRect = null;
 }
 
 registerCombatSkiaPresentationReclaim(reclaimCombatSkiaModuleCaches);
@@ -779,7 +832,9 @@ function recordCombatOrbitPicture(
   );
 
   const recorder = getCombatPictureRecorder();
-  const canvas = recorder.beginRecording(Skia.XYWHRect(0, 0, orbitSize, orbitSize));
+  if (!_recordRect) _recordRect = Skia.XYWHRect(0, 0, orbitSize, orbitSize);
+  else _recordRect.setXYWH(0, 0, orbitSize, orbitSize);
+  const canvas = recorder.beginRecording(_recordRect);
 
   _recCanvas = canvas;
   const draw = recDraw;
@@ -1110,7 +1165,10 @@ export const PlanetEdenRaidOrbitSkiaCombat = memo(function PlanetEdenRaidOrbitSk
   // (동작 변경 없음, 카운트 전용 — 콤뱃 GL 급증 원인 조사, 2026-07-10).
   useEffect(() => {
     registerGpuLayer('skia_combat_orbit', 'T0');
+    const releasePresenting = markCombatOrbitPresenting();
+    resetCombatOrbitVfxTier();
     return () => {
+      releasePresenting();
       unregisterGpuLayer('skia_combat_orbit');
     };
   }, []);

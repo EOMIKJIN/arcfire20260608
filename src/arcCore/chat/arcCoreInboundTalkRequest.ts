@@ -179,9 +179,12 @@ export function resetArcCoreInboundTalkRequestForAccountPurge(): void {
   resetArcCoreInboundTalkSchedule();
 }
 
-/** 행성 허브 포커스 동안만 타이머 보유 — blur/세션 dispose에서 해제 */
+/**
+ * 행성 허브 포커스. 8–15분 타이머 선제는 끈다 (대표님 2026-10-06).
+ * 말은 허브 진입의 스텔라 판단이 한다. 여기 남은 일은 켜져 있던 타이머를 지우는 것.
+ */
 export function bindArcCoreInboundTalkRequestToPlanetSession(planetId: string): () => void {
-  armArcCoreInboundTalkHubSlot();
+  disarmArcCoreInboundTalkHubSlot();
   const token = registerPlanetSessionResource({
     ownerId: 'arc_core_inbound_talk_request',
     planetId,

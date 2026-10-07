@@ -1,0 +1,8 @@
+hopMin,hopMax,encounterChance,levelMin,levelMax,rewardTemplateId,notesKo
+0,0,0,1,4,pirate_fighter,집(아르카디아). 코드의 도착 0%와 같다
+1,2,0.05,1,4,pirate_fighter,0~2홉 구간 상한 5%. 홉 0은 위 행
+3,3,0.15,4,8,pirate_cruiser,3홉
+4,4,0.35,8,14,bounty_hunter,4홉
+5,5,0.5,14,22,void_wraith,5홉. 기존 템플릿 최고 레벨은 20
+6,6,0.6,22,32,void_wraith,6홉. 보상은 기존 최고 템플릿
+7,99,0.7,32,60,void_wraith,7홉 이상. 그래프에 없는 성계도 이 행

@@ -116,6 +116,26 @@
       }
     },
     {
+      "id": "PB-P0a",
+      "lane": 3,
+      "owner": "김팀장",
+      "title": "P0 릴리즈 SIGSEGV 재발 — mqt_v_js WorkletRuntime::executeSync → ShareableWorklet (6월 수정 스택 재발 · 대표님 우선 지시 17:47 · kim-play-request-p0-crash-drok-20261007.md)",
+      "since": "2026-10-07T17:47:00+09:00",
+      "doneWhen": {
+        "kind": "manual"
+      }
+    },
+    {
+      "id": "PB-P0b",
+      "lane": 3,
+      "owner": "김팀장",
+      "title": "P0 미네르바 드록 한 퀘스트 전투 무한 반복 — questCombatLock이 세부미션 순서 무시(obj_story_002_c 선락) (대표님 우선 지시 17:47 · kim-play-request-p0-crash-drok-20261007.md)",
+      "since": "2026-10-07T17:47:00+09:00",
+      "doneWhen": {
+        "kind": "manual"
+      }
+    },
+    {
       "id": "A-10",
       "lane": 1,
       "owner": "김플레이",

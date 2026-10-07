@@ -34,6 +34,7 @@ import {
   type QuestCombatLock,
 } from '../missions/questCombatLock';
 import { applyPlanetHostileHullScale } from './planetHostileHullScale';
+import { resolvePlanetIdForCombatLevel } from './transitHopDangerPolicy';
 import type { MissionProgress } from '../types';
 
 function test(name: string, fn: () => void): void {
@@ -109,11 +110,11 @@ test('라이브 정책 — 전투퀘는 전부 hub_orbit · tq만 수락행성 �
   }
 });
 
-test('존 dest-org 확률 — 0.1 / 0.3 / 0.7 유지', () => {
-  assert.equal(resolveTransitEncounterChance('safe', false), 0.1);
-  assert.equal(resolveTransitEncounterChance('neutral', false), 0.3);
-  assert.equal(resolveTransitEncounterChance('pvp', false), 0.7);
-  assert.equal(resolveTransitEncounterChance('safe', true), 0.5);
+test('홉 조우 확률 — 집 0 · 가까운 항로 0.05 · 먼 항로 0.70', () => {
+  assert.equal(resolveTransitEncounterChance('pvp', false, undefined, null, 'arcadia'), 0);
+  assert.equal(resolveTransitEncounterChance('safe', false, undefined, null, 'vega_outpost'), 0.05);
+  assert.equal(resolveTransitEncounterChance('neutral', false, undefined, null, 'eternity'), 0.7);
+  assert.equal(resolveTransitEncounterChance('safe', true), 0.45);
 });
 
 test('코어 21행성 — 유휴 착륙에서 허브·웨이브 이중 발화 없음', () => {
@@ -238,14 +239,16 @@ test('라이브 hub_orbit — 웨이브/항로 승으로 클리어 안 됨', () 
   );
 });
 
-test('C dest-org TCL — 21성계 min(player, destTCL) · 퀘스트 락 없이 dest 픽', () => {
+test('C 홉 전투 레벨 — 플레이어 레벨과 무관 · 같은 성계는 같은 레벨', () => {
   for (const row of CORE_ROWS) {
     const systemId = String(row.systemId ?? '').trim();
-    const destTcl = resolvePlanetTargetCombatLevel(String(row.primaryPlanetId ?? '').trim());
-    assert.equal(resolveTransitCombatEncounterTargetLevel(systemId, 1), 1, systemId);
-    assert.equal(resolveTransitCombatEncounterTargetLevel(systemId, destTcl), destTcl, systemId);
-    assert.equal(resolveTransitCombatEncounterTargetLevel(systemId, destTcl + 20), destTcl, systemId);
+    const low = resolveTransitCombatEncounterTargetLevel(systemId, 1);
+    const high = resolveTransitCombatEncounterTargetLevel(systemId, 80);
+    assert.equal(low, high, systemId);
+    assert.ok(low >= 1 && low <= 60, `${systemId} ${low}`);
   }
+  assert.equal(resolveTransitCombatEncounterTargetLevel('arcadia', 40), 1);
+  assert.equal(resolveTransitCombatEncounterTargetLevel('eternity', 40), 35);
 });
 
 test('D 항로 락 TCL/헐 — tq는 궤도 일반전투 · toward_anchor 오프로드는 dest-org', () => {
@@ -265,12 +268,12 @@ test('D 항로 락 TCL/헐 — tq는 궤도 일반전투 · toward_anchor 오프
   const encounterLevel = questSeedActive
     ? resolveQuestLockTransitEncounterLevel(toward, 40)
     : resolveTransitCombatEncounterTargetLevel('eternity', 40);
-  assert.equal(encounterLevel, 40);
+  assert.equal(encounterLevel, 35);
   assert.notEqual(encounterLevel, 1);
   const hullPlanetId = questSeedActive
     ? resolveQuestLockTransitHullPlanetId(toward)
-    : 'eternal_throne';
-  assert.equal(hullPlanetId, 'eternal_throne');
+    : resolvePlanetIdForCombatLevel(encounterLevel ?? 1);
+  assert.equal(hullPlanetId, 'titan_ruins');
 });
 
 test('웨이브 티어 공식 · 슬롯 있으면 공식 미사용 · 동시 12캡', () => {

@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useMemo } from 'react';
+import React, { memo, useCallback, useMemo, useSyncExternalStore } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { resolveNpcCaptainPortraitSource } from '../../../game/npcCaptainPortraitAssets';
 import { getArcCoreChatSpeakerRow } from '../../../arcCore/chat/arcCoreChatTableIndex';
@@ -18,6 +18,10 @@ import {
   planetFacilityScreenStyles as fs,
 } from '../../planetFacility/PlanetFacilityTitleHeader';
 import { openPlanetHubTalkRosterRow } from '../../../game/planetHubTalkRoster';
+import {
+  readStellaHubTalkBadge,
+  subscribeStellaHubTalkBadge,
+} from '../../../arcCore/chat/stellaMessageNotice';
 import { ArcCoreLensIcon } from '../../arcCore/ArcCoreLensIcon';
 import { ARC_CORE_LENS_ROSTER_PX } from '../../../game/arcCoreSymbolAssets';
 
@@ -47,7 +51,17 @@ export const HubTalkRosterOverlayContent = memo(function HubTalkRosterOverlayCon
 }: Props) {
   const t = useT();
   const visualTheme = resolveArcOverlayVisualTheme('hubTalkRoster');
-  const { rows } = entry;
+  const stellaUnread = useSyncExternalStore(
+    subscribeStellaHubTalkBadge,
+    readStellaHubTalkBadge,
+    readStellaHubTalkBadge,
+  );
+  const rows = useMemo(
+    () => entry.rows.map((row) => (
+      row.kind === 'operator' ? { ...row, showInitiatedBadge: stellaUnread } : row
+    )),
+    [entry.rows, stellaUnread],
+  );
   const { agentRows, captainRows } = useMemo(() => splitHubTalkRosterRows(rows), [rows]);
 
   const onTalk = useCallback((row: ArcOverlayHubTalkRosterRow) => {

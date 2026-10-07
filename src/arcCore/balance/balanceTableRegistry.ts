@@ -331,12 +331,13 @@ export function resolvePlayScenarioPrimaryPlanetId(
  */
 export function resolveTransitCombatEncounterTargetLevel(
   systemId?: string | null,
-  playerLevel?: number | null,
+  _playerLevel?: number | null,
 ): number {
-  const destTcl = resolveCombatEncounterTargetLevel(TRANSIT_COMBAT_PLANET_ID, systemId);
-  if (playerLevel == null || !Number.isFinite(Number(playerLevel))) return destTcl;
-  const cap = Math.max(1, Math.floor(Number(playerLevel)));
-  return Math.min(destTcl, cap);
+  // 정적 import는 함장 선택 ↔ 밸런스 조회 순환이 된다. 시드 1회 require.
+  const { resolveTransitHopCombatLevelForSystem } = require('../../combat/transitHopCombatLevel') as {
+    resolveTransitHopCombatLevelForSystem: (id: string | null) => number;
+  };
+  return resolveTransitHopCombatLevelForSystem(systemId ?? null);
 }
 
 export function getWeaponTradePriceBounds(): { min: number; max: number } {

@@ -1056,6 +1056,9 @@ export const KO_DICTIONARY: I18nDictionary = {
   'arcCoreChat.inbound.body': '적의 입이 대화를 요청합니다',
   'arcCoreChat.inbound.accept': '수락',
   'arcCoreChat.inbound.reject': '거절',
+  'arcCoreChat.stellaMessage.body': '스텔라 아리스의 메시지가 있습니다.',
+  'arcCoreChat.stellaMessage.later': '나중에',
+  'arcCoreChat.stellaMessage.open': '확인',
 
   // ── 방위위성 개발 (defenseSat) ──
   'defenseSat.homeOnlyTitle': '거점 행성 전용',
@@ -1161,6 +1164,7 @@ export const KO_DICTIONARY: I18nDictionary = {
   'stelliumAnnex.reason.sat_required': '방위위성을 먼저 설치해야 합니다.',
   'stelliumAnnex.reason.no_adjacency': '인접한 스텔리움 또는 독립국 영토가 필요합니다.',
   'stelliumAnnex.reason.vault_short': '스텔리움 연합 금고 잔액이 부족합니다.',
+  'stelliumAnnex.reason.colonize_pending': '개척이 끝나기 전에는 편입할 수 없습니다.',
   'stelliumAnnex.reason.apply_failed': '점유를 바꿀 수 없습니다.',
 
   // ── Heavy UI Data Session (heavyUi) ──

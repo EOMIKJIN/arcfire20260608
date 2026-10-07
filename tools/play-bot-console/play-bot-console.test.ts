@@ -32,7 +32,8 @@ import { questFightPlanet, nextPlayableMissionId, canLearnAny, isCapitalAssaultR
 import { nextDevCost, durationTicks } from './src/facilityTwin';
 import { buildDailyLearningReport, learningHealthWarnings } from './src/dailyLearningReport';
 import { decideIntentKind, pickStepKind } from './src/intent';
-import { seedWorld, snapshotKpi, toHolds, addExp, countPaints, paintOf } from './src/world';
+import { seedWorld, snapshotKpi, toHolds, addExp, countPaints, paintOf, moveTo } from './src/world';
+import { pickTgPlan } from './src/tradeRun';
 import { assessLearnCycle, nextLearnCycleWrite, LEARN_CYCLE_FLUSH_MIN_MS } from './src/learnCycle';
 import {
   commitGameIssues,
@@ -68,7 +69,7 @@ import { cardSignature, planFqaReview, reviewNeeded, emptyFqaReviewState } from 
 import { clampPlayIntelligence, defaultPlayIntelligence } from './src/playIntelligence';
 import type { GameIssue } from './src/gameIssues';
 import { pickCreditExchange, starterGemBalance, takeCreditExchange, gemExchangeCap } from './src/bmWallet';
-import { alreadyLanded, stepAction, fightHere, earnCredits, trainOrRelocate, winChance } from './src/actions';
+import { alreadyLanded, stepAction, fightHere, earnCredits, trainOrRelocate, winChance, TRAIN_STREAK_CAP } from './src/actions';
 import { fightOdds, hopFuelCredits, transitEncounterChance } from './src/liveCombat';
 import { buildDailyTriage } from './src/dailyUrgentTriage';
 import { createRng } from './src/rng';
@@ -2519,3 +2520,68 @@ test('O3 스텔라 감지기·게이트는 봇이 그대로 import (D-5 순수 �
 });
 
 console.log('play-bot-console tests done');
+
+function levelGatedWorld(runId: string) {
+  const w = seedWorld({ runId, persona: 'mixed_ref' });
+  w.earlyFeelClosed = true;
+  for (let k = 0; k < 4000 && w.level < 35; k += 1) addExp(w, 2000);
+  for (let i = 0; i < 300; i += 1) {
+    const id = nextPlayableMissionId(w);
+    if (!id) break;
+    if ((getMission(id)?.levelRequired ?? 1) > w.level) break;
+    w.completedLookup[id] = true;
+    w.completedMissionIds.push(id);
+    w.questCleared += 1;
+  }
+  for (const id of listPlayableMissionIds()) {
+    if ((getMission(id)?.levelRequired ?? 1) > w.level || w.completedLookup[id]) continue;
+    w.completedLookup[id] = true;
+    w.completedMissionIds.push(id);
+    w.questCleared += 1;
+  }
+  moveTo(w, 'eden_city');
+  w.credits = 5022;
+  return w;
+}
+
+test('레벨게이트 수련이 상한에 닿으면 교역로를 탄다 (c12 정체)', () => {
+  const w = levelGatedWorld('gate-trade');
+  const next = nextPlayableMissionId(w);
+  assert.ok(next && (getMission(next)?.levelRequired ?? 1) > w.level, '레벨게이트 상태여야 함');
+  let planned = false;
+  let fights = 0;
+  for (let i = 0; i < TRAIN_STREAK_CAP * 3 && !planned; i += 1) {
+    const row = earnCredits(w, () => 0.1);
+    if (row.line.includes('수련')) fights += 1;
+    planned = !!w.tgRun || row.line.startsWith('교역 매입');
+    w.tick += 1;
+  }
+  assert.ok(planned, '교역로 계획이 잡혀야 함');
+  assert.ok(fights <= TRAIN_STREAK_CAP + 1, `수련 ${fights}`);
+});
+
+test('레벨게이트 정체 400틱 — 함선 자금이 필요할 때 연속 수련이 상한을 크게 넘지 않는다', () => {
+  const w = levelGatedWorld('gate-streak');
+  const rng = createRng(37);
+  let maxStreak = 0;
+  let tgBuys = 0;
+  for (let i = 0; i < 400; i += 1) {
+    const fundWall = needsHullFund(w);
+    const row = stepAction(w, rng, 'mixed_ref', { allowSides: true });
+    if (fundWall) maxStreak = Math.max(maxStreak, w.trainStreak ?? 0);
+    if (row.line.startsWith('교역 매입')) tgBuys += 1;
+    w.tick += 1;
+  }
+  assert.ok(tgBuys >= 3, `교역로 매입 ${tgBuys}`);
+  assert.ok(maxStreak <= TRAIN_STREAK_CAP + 1, `연속 수련 ${maxStreak}`);
+});
+
+test('교역로 계획은 경로 손실 위험을 순익에서 뺀다', () => {
+  const w = levelGatedWorld('tg-risk');
+  const safe = pickTgPlan(w, 800);
+  assert.ok(safe && safe.profit > 0);
+  const risky = pickTgPlan(w, 800, () => 1e9);
+  assert.equal(risky, null);
+  const some = pickTgPlan(w, 800, () => 100);
+  assert.ok(some && some.profit <= safe!.profit);
+});

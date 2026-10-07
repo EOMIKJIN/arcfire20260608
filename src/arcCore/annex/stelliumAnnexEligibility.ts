@@ -17,7 +17,8 @@ export type StelliumAnnexIneligibleReason =
   | 'not_landed'
   | 'sat_required'
   | 'no_adjacency'
-  | 'vault_short';
+  | 'vault_short'
+  | 'colonize_pending';
 
 export type StelliumAnnexEligibilityInput = {
   policyEnabled: boolean;
@@ -31,6 +32,8 @@ export type StelliumAnnexEligibilityInput = {
   hasFriendlyAdjacency: boolean;
   vaultCredits: number;
   costCredits: number;
+  /** 개척선이 대기·비행·전초기지·재시도 중. 성공 장부는 false. */
+  colonizeUnfinished?: boolean;
 };
 
 export function evaluateStelliumAnnexEligibility(
@@ -49,6 +52,7 @@ export function evaluateStelliumAnnexEligibility(
   const side = resolveHoldFactionSide(hold?.occupierClanId);
   if (side === 'INDEPENDENT') return { ok: false, reason: 'player_hold' };
   if (side !== 'NEUTRAL') return { ok: false, reason: 'not_neutral' };
+  if (input.colonizeUnfinished) return { ok: false, reason: 'colonize_pending' };
 
   if (!input.landedHere) return { ok: false, reason: 'not_landed' };
   if (input.defenseSatLevel < input.requireDefenseSatLevel) {

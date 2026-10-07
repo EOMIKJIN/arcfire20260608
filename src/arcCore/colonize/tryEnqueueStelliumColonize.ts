@@ -14,6 +14,7 @@ import {
 } from './stelliumColonizeHop';
 import { evaluateStelliumColonizeEligibility } from './stelliumColonizeEligibility';
 import { enqueueStelliumColonizeRecord } from './stelliumColonizeEngine';
+import { cancelStelliumColonizeArrival } from './cancelStelliumColonizeForAnnex';
 import {
   resolveStelliumColonizeFleet,
   scaleStelliumColonizeTravelDays,
@@ -111,7 +112,7 @@ function tryEnqueueStelliumColonize(
     return false;
   }
   const existing = useStelliumColonizeStore.getState().byPlanetId[id];
-  if (existing) return false;
+  if (existing?.phase === 'success') return false;
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { useWorldStore } = require('../../store/worldStore') as typeof import('../../store/worldStore');
@@ -128,6 +129,12 @@ function tryEnqueueStelliumColonize(
 
   const seed = getPlanetOccupationSeedRow(id);
   const hold = useClanWarFoundationStore.getState().getHold(id);
+  if (resolveHoldFactionSide(hold?.occupierClanId) === 'BLUE') {
+    if (existing) cancelStelliumColonizeArrival(id);
+    logColonizeSkip(id, 'already_blue');
+    return false;
+  }
+  if (existing) return false;
   const inspected = world.inspectedPlanetInfoIds.includes(id);
   const eligible = evaluateStelliumColonizeEligibility({
     planetId: id,

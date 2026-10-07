@@ -52,7 +52,7 @@ export const STELLA_OBSERVE_GATE_POLICY_FROM_CSV = [
   },
   {
     "key": "failsafeMaxPerDay",
-    "value": "6",
+    "value": "8",
     "noteKo": "고장 방지 상한 — 판단 규칙 아님 · O4 에서 닿으면 판단 쪽을 고친다"
   },
   {
@@ -104,6 +104,11 @@ export const STELLA_OBSERVE_GATE_POLICY_FROM_CSV = [
     "key": "lifeCooldownHours",
     "value": "24",
     "noteKo": "같은 일상 질문을 한 뒤 이 시간 안에는 다시 묻지 않는다 (하루 1회 규칙 대신 판단 — 대표님 2026-10-06)"
+  },
+  {
+    "key": "unreadDamp",
+    "value": "0.85",
+    "noteKo": "대표님이 아직 안 읽은 연락 1건마다 곱한다 — 답이 없으면 덜 보낸다"
   },
   {
     "key": "w_worry",

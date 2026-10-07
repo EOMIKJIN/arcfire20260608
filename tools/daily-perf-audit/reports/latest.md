@@ -1,4 +1,4 @@
-# Daily audit — 2026-10-06T15:00:12.806Z
+# Daily audit — 2026-10-07T11:57:57.646Z
 
 ## TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -52,18 +52,18 @@ PASS — buy_goods/defeat_enemy 배치·tq_* materialize·tq_anom 월드이벤�
 ## Largest TS/TSX under `src/` + `app/` (bytes)
 
 - 660,019 — `src/data/generated/galaxySystems100.generated.ts`
-- 512,853 — `src/data/generated/csvStoryScenes.ts`
-- 500,299 — `src/data/generated/csvNpcCaptains.ts`
-- 484,114 — `src/data/generated/csvNpcCapitalShips.ts`
+- 520,504 — `src/data/generated/csvNpcCaptains.ts`
+- 512,714 — `src/data/generated/csvStoryScenes.ts`
+- 502,112 — `src/data/generated/csvNpcCapitalShips.ts`
 - 383,336 — `src/data/generated/csvItemDefs.ts`
 - 200,040 — `src/data/generated/csvNpcCapitalShipEquipSlots.ts`
-- 177,470 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
+- 178,730 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
 - 161,657 — `src/data/generated/csvMissions.ts`
-- 127,031 — `src/i18n/locales/ko.ts`
+- 127,324 — `src/i18n/locales/ko.ts`
 - 121,265 — `src/data/generated/csvMainStorySpine.ts`
-- 115,919 — `src/i18n/locales/en.ts`
-- 105,977 — `app/(game)/worldmap.tsx`
-- 101,299 — `app/(game)/planet.tsx`
+- 116,198 — `src/i18n/locales/en.ts`
+- 106,314 — `app/(game)/worldmap.tsx`
+- 101,222 — `app/(game)/planet.tsx`
 - 90,835 — `src/data/generated/csvBarPatronage.ts`
 - 71,316 — `src/data/balance/generated/csvSynthSystemColonization.ts`
 - 71,074 — `src/data/generated/csvWeapons.ts`
@@ -98,12 +98,14 @@ PASS — buy_goods/defeat_enemy 배치·tq_* materialize·tq_anom 월드이벤�
 
 **subscribe**
 - `src/arcCore/ArcCoreHub.ts`
+- `src/arcCore/chat/bindStellaLifeAskToPlanetSession.ts`
 - `src/game/hubTutorial/stellaHubTutorialGuide.ts`
 - `src/store/playerStore.ts`
 - `app/(game)/planet.tsx`
 
 **addEventListener**
 - `src/arcCore/ArcCoreHub.ts`
+- `src/arcCore/chat/bindStellaLifeAskToPlanetSession.ts`
 - `src/components/IdleSessionRestartGuard.tsx`
 - `src/galaxyMap/GalaxyMapColonizeHubPulseOverlay.tsx`
 - `src/galaxyMap/GalaxyMapContestedZoneRingOverlay.tsx`

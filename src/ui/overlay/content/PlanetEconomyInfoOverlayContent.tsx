@@ -13,6 +13,7 @@ import { useArcCoreTransportFleetBankStore } from '../../../store/factionVault/a
 import { useArcCoreVaultStore } from '../../../store/factionVault/arcCoreVaultStore';
 import { useBlueTeamSharedVaultStore } from '../../../store/factionVault/blueTeamSharedVaultStore';
 import { useClanWarFoundationStore } from '../../../store/clanWarFoundationStore';
+import { useStelliumColonizeStore } from '../../../store/stelliumColonizeStore';
 import { usePlanetCoreRuntimeStore } from '../../../store/planetCoreRuntimeStore';
 import { usePlanetTradeFeeLedgerStore } from '../../../store/planetTradeFeeLedgerStore';
 import { formatCredits } from '../../../utils/formatCredits';
@@ -131,6 +132,7 @@ const RevealedPlanetEconomyInfoOverlayContent = memo(function RevealedPlanetEcon
   const planetHold = useClanWarFoundationStore((s) => s.planetHolds[planetId]);
   const planetHolds = useClanWarFoundationStore((s) => s.planetHolds);
   const playerPlanetId = usePlayerStore((s) => s.player?.currentPlanetId ?? '');
+  const colonizePhase = useStelliumColonizeStore((s) => s.byPlanetId[planetId]?.phase ?? '');
 
   const sessionConfig = useMemo(
     () => createPlanetEconomyInfoSession(planetId, planetName),
@@ -143,7 +145,7 @@ const RevealedPlanetEconomyInfoOverlayContent = memo(function RevealedPlanetEcon
 
   const annexOffer = useMemo(
     () => resolveStelliumAnnexOffer(planetId),
-    [planetId, planetHold, planetHolds, playerPlanetId, blueVaultBalance, coreSlice],
+    [planetId, planetHold, planetHolds, playerPlanetId, blueVaultBalance, coreSlice, colonizePhase],
   );
 
   const annexReasonLabel = !annexOffer.gate.ok

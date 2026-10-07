@@ -20,6 +20,7 @@ import { resetWaveCombatCooldownsForAccountPurge } from '../game/waveDefense/wav
 import { clearTerritorialPlayerWavePending } from '../arcCore/territorial/territorialPlayerWavePending';
 import { clearChatArmedWavePending } from '../game/waveDefense/chatArmedWavePending';
 import { useMissionStore } from '../store/missionStore';
+import { clearDeliveryBuyHolds } from '../missions/deliveryBuyHold';
 import { useMainStoryProgressStore } from '../store/mainStoryProgressStore';
 import { useArcCoreInstanceMissionBoardStore } from '../store/arcCoreInstanceMissionBoardStore';
 import { useNpcCaptainProgressStore } from '../store/npcCaptainProgressStore';
@@ -214,6 +215,7 @@ export async function purgeLocalAccountData(params: LocalAccountResetParams): Pr
 
   resetRepairDroneHubPresence();
   await usePlayerStore.getState().resetLocalPlayer();
+  clearDeliveryBuyHolds();
   await useMissionStore.getState().resetLocalMissions();
   await useMainStoryProgressStore.getState().resetLocal();
   await useArcCoreInstanceMissionBoardStore.getState().resetLocalArcCoreInstanceMissionBoard();

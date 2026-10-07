@@ -65,10 +65,10 @@ test('차원항로 __transit__ 는 성계 시나리오 레벨', () => {
   assert.equal(resolveCombatEncounterTargetLevel('eternal_throne', 'ignored'), 60);
 });
 
-test('이동중 TCL — 목적지 상한 · 플레이어 캡', () => {
-  assert.equal(resolveTransitCombatEncounterTargetLevel('crimson_zone', 8), 8);
-  assert.equal(resolveTransitCombatEncounterTargetLevel('crimson_zone', 40), 25);
-  assert.equal(resolveTransitCombatEncounterTargetLevel('eternity'), 60);
+test('이동중 전투 레벨 — 홉 대역 · 플레이어 캡 없음', () => {
+  assert.equal(resolveTransitCombatEncounterTargetLevel('crimson_zone', 8), 9);
+  assert.equal(resolveTransitCombatEncounterTargetLevel('crimson_zone', 40), 9);
+  assert.equal(resolveTransitCombatEncounterTargetLevel('eternity'), 35);
 });
 
 test('전설 일격 arc_029 는 적 곡선에 없다', () => {
@@ -81,11 +81,12 @@ test('전설 일격 arc_029 는 적 곡선에 없다', () => {
   }
 });
 
-test('이동중 TCL — 신스 캠프 성계는 colonization 행', () => {
+test('이동중 — 신스 캠프도 홉 레벨 · 시나리오 TCL은 별도', () => {
   assert.equal(resolveCombatEncounterTargetLevel('__transit__', 'synth_011'), 18);
   assert.equal(resolvePlayScenarioPrimaryPlanetId('synth_011'), 'synth_011_p');
-  assert.equal(resolveTransitCombatEncounterTargetLevel('synth_011', 10), 10);
-  assert.equal(resolveTransitCombatEncounterTargetLevel('synth_011', 40), 18);
+  const hopLevel = resolveTransitCombatEncounterTargetLevel('synth_011', 10);
+  assert.equal(hopLevel, resolveTransitCombatEncounterTargetLevel('synth_011', 40));
+  assert.ok(hopLevel >= 1 && hopLevel <= 60);
 });
 
 console.log('hostileEnemyWeaponLoadoutFromBalance.test.ts — all PASS');

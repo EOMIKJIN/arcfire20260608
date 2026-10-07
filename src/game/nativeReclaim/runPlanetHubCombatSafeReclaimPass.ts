@@ -1,5 +1,8 @@
 import { trimNativeBitmapCachesAsync } from 'arcfire-native-memory';
-import { runCombatSkiaPresentationReclaim } from '../../combat/combatSkiaPresentationReclaim';
+import {
+  isCombatOrbitPresenting,
+  runCombatSkiaPresentationReclaim,
+} from '../../combat/combatSkiaPresentationReclaim';
 import { compactPlanetMemoRegistryShells } from '../planetMemoCache';
 import { prunePlanetNebulaProfilesLru } from '../../store/planetNebulaStore';
 import { NEBULA_PROFILE_KEEP_ON_HUB_BLUR } from './processMemoryBudgetPolicy';
@@ -12,7 +15,9 @@ import { NEBULA_PROFILE_KEEP_ON_HUB_BLUR } from './processMemoryBudgetPolicy';
  * 주도 하드실링 인시던트 — GL은 정상이었는데 native_heap+views만 급증한 케이스로 확인).
  *
  * 여기서 부르는 것들은 mid-frame에도 안전한 것만 골랐다:
- * - `runCombatSkiaPresentationReclaim` — lazy 재생성 getter 패턴이라 다음 draw 시 자동 재생성.
+ * - `runCombatSkiaPresentationReclaim` — 전투 궤도가 화면에 있으면 건너뛴다. Picture를 비워 한 프레임
+ *   빈 화면이 되고 Paint·maskfilter를 다시 만들어 교전 중 끊김이 된다(2026-10-07). 캐시 크기는 고정이고
+ *   언마운트 정리가 회수한다. 전투 시작 전 호출(PreCombat)에서는 그대로 회수.
  * - `trimNativeBitmapCachesAsync`(Fresco) — 현재 마운트된 Image가 참조 중인 비트맵은 안 건드리고
  *   "안 쓰는 재사용 풀"만 비움(RN Image key 리마운트가 아님) — 화면 끊김 없이 안전하다고 판단.
  *   (네이티브 Fresco 내부 동작은 TS 브릿지 시그니처 기반 추론 — 실기 검증 필요)
@@ -25,7 +30,7 @@ import { NEBULA_PROFILE_KEEP_ON_HUB_BLUR } from './processMemoryBudgetPolicy';
  * 전투 중 시각적 끊김 위험이 있어 여전히 여기서 호출하지 않는다.
  */
 export function runPlanetHubCombatSafeReclaimPass(reason: string): void {
-  runCombatSkiaPresentationReclaim();
+  if (!isCombatOrbitPresenting()) runCombatSkiaPresentationReclaim();
   void trimNativeBitmapCachesAsync();
   prunePlanetNebulaProfilesLru(NEBULA_PROFILE_KEEP_ON_HUB_BLUR);
   compactPlanetMemoRegistryShells();

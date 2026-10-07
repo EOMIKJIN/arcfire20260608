@@ -180,9 +180,42 @@ test('행성 id 만으로는 퀘스트를 끝내지 못한다', () => {
   assert.equal(isQuestHubOrbitLockAtPlanet(lock, 'arcadia_prime'), false);
 });
 
+test('미네르바 본편은 지금 세부미션이 격파일 때만 드록 한을 연다', () => {
+  const beforeBar = resolveQuestCombatLock(
+    {
+      story_002: active('story_002', {
+        obj_story_002_a: true,
+        obj_story_002_b: false,
+      }),
+    },
+    'story_002',
+  );
+  assert.equal(beforeBar, null);
+  const onEscort = resolveQuestCombatLock(
+    {
+      story_002: active('story_002', {
+        obj_story_002_a: true,
+        obj_story_002_b: true,
+        obj_story_002_c: false,
+      }),
+    },
+    'story_002',
+  );
+  assert.equal(onEscort?.objectiveId, 'obj_story_002_c');
+  assert.equal(onEscort?.venue, 'hub_orbit');
+  assert.equal(onEscort?.anchorPlanetId, 'minerva_deep');
+  assert.equal(isQuestHubOrbitLockAtPlanet(onEscort, 'minerva_deep'), true);
+});
+
 test('미네르바 샌드박스 전투는 본편 밀수조와 앵커가 갈린다', () => {
   const story = resolveQuestCombatLock(
-    { story_002: active('story_002', { obj_story_002_c: false }) },
+    {
+      story_002: active('story_002', {
+        obj_story_002_a: true,
+        obj_story_002_b: true,
+        obj_story_002_c: false,
+      }),
+    },
     'story_002',
   );
   const mine = resolveQuestCombatLock(

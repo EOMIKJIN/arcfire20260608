@@ -165,6 +165,8 @@ function presentOfferPages(input: {
       label: input.captainName,
       text,
       imageSource,
+      replaceActiveAdhoc: true,
+      bypassScreenShell: true,
       buttonText: isLast ? t('dialog.accept') : t('dialog.next'),
       secondaryButtonText: isLast ? t('dialog.later') : undefined,
       showAcceptCancelChoice: isLast,

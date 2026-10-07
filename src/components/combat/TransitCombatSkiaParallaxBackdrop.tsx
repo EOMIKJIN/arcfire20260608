@@ -1,5 +1,5 @@
 /**
- * 이동중 전투 전용 Skia 패럴랙스 — 허브 베이크 고정 + space_cd01~03 Screen + ColorDodge.
+ * 이동중 전투 전용 Skia 패럴랙스 — 허브 베이크 고정 + space_cd01·02 Screen + ColorDodge.
  * 허브/행성 궤도 성운과 분리. Zero-Allocation: 모듈 Paint·Rect + Picture 1장.
  * React `<Picture>` SkPicture · useImage SkImage 수동 dispose 금지.
  */
@@ -312,11 +312,10 @@ export const TransitCombatSkiaParallaxBackdrop = memo(function TransitCombatSkia
   const bakedImage = useImage((bakedSource as any) ?? null);
   const cloud0 = useImage(TRANSIT_SPACE_CD_SOURCES[0]);
   const cloud1 = useImage(TRANSIT_SPACE_CD_SOURCES[1]);
-  const cloud2 = useImage(TRANSIT_SPACE_CD_SOURCES[2]);
   const dodgeImage = useImage(require('../../../assets/images/effects/color_dodge_02.png'));
 
   const bakedImageRef = useRef<SkImage | null>(null);
-  const cloudRefs = useRef<[SkImage | null, SkImage | null, SkImage | null]>([null, null, null]);
+  const cloudRefs = useRef<[SkImage | null, SkImage | null]>([null, null]);
   const dodgeImageRef = useRef<SkImage | null>(null);
 
   useEffect(() => {
@@ -325,8 +324,7 @@ export const TransitCombatSkiaParallaxBackdrop = memo(function TransitCombatSkia
   useEffect(() => {
     cloudRefs.current[0] = resolveHeldTransitLayerImage(cloud0, cloudRefs.current[0]);
     cloudRefs.current[1] = resolveHeldTransitLayerImage(cloud1, cloudRefs.current[1]);
-    cloudRefs.current[2] = resolveHeldTransitLayerImage(cloud2, cloudRefs.current[2]);
-  }, [cloud0, cloud1, cloud2]);
+  }, [cloud0, cloud1]);
   useEffect(() => {
     dodgeImageRef.current = dodgeImage ?? dodgeImageRef.current;
   }, [dodgeImage]);
@@ -335,7 +333,7 @@ export const TransitCombatSkiaParallaxBackdrop = memo(function TransitCombatSkia
   useEffect(() => {
     if (!active) return;
     flushPictureRef.current(true);
-  }, [active, bakedImage, cloud0, cloud1, cloud2, dodgeImage]);
+  }, [active, bakedImage, cloud0, cloud1, dodgeImage]);
 
   useEffect(() => {
     registerGpuLayer('skia_transit_parallax', 'T0');
@@ -411,11 +409,12 @@ export const TransitCombatSkiaParallaxBackdrop = memo(function TransitCombatSkia
       if (!img || !motion || !paint) continue;
       paint.setAlphaf(motion.alpha);
       const origin = resolveTransitCloudScrollOrigin({
+        canvasW,
+        canvasH,
         spriteW: sprite.w,
         spriteH: sprite.h,
         elapsedSec,
         vx: motion.vx,
-        vy: motion.vy,
         wrapPhaseFrac: motion.wrapPhaseFrac,
         sessionStartFrac: view.cloudStartFrac,
       });

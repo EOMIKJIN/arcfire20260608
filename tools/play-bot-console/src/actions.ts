@@ -50,6 +50,7 @@ import {
 } from './progress';
 import { addExp, addFlag, markMissionDone, moveTo, paintOf, toHolds } from './world';
 import {
+  currentHullValue,
   hullFundGap,
   hullMarketPlanet,
   liveCombatCredit,
@@ -346,18 +347,38 @@ function bestTrainPlanet(world: WorldState): string | null {
   return trainPick;
 }
 
-/** 수련·유랑은 승률 공정선 미만이면 굴리지 않는다. 기대 경험치가 가장 큰 공정 전장으로 가거나 번다. */
+/** 함선 자금이 모자란 채 연속 수련이 이만큼 쌓이면 교역로를 먼저 본다. */
+export const TRAIN_STREAK_CAP = 16;
+
+/**
+ * 수련·유랑은 승률 공정선 미만이면 굴리지 않는다. 기대 경험치가 가장 큰 공정 전장으로 가거나 번다.
+ * 유료 함선을 탄 채로는 경험치가 목적이 아닌 자금·유랑 전투를 하지 않는다 (패배 시 기함 상실).
+ */
 export function trainOrRelocate(world: WorldState, rng: Rng, reason: string): JournalEntry {
   useHopRng(rng);
+  if (world.tgRun) {
+    const run = tgRunStep(world, 0);
+    if (run) return run;
+  }
+  if ((world.trainStreak ?? 0) >= TRAIN_STREAK_CAP && needsHullFund(world)) {
+    world.trainStreak = 0;
+    return tgRunStep(world) ?? mineOrSellFund(world);
+  }
+  if (reason !== '수련' && currentHullValue(world) > 0) return tgRunStep(world) ?? mineOrSell(world);
   const card = currentPlayIntelligence();
-  if (!card.fairFightEnabled) return fightHere(world, rng, reason);
+  if (!card.fairFightEnabled) return trainFight(world, rng, reason);
   const pick = bestTrainPlanet(world);
   if (pick && pick !== world.currentPlanetId && canPayHop(world, pick)) return travelOneHop(world, pick);
   const slot = world.planets[world.currentPlanetId];
-  if (slot && winChance(world, slot.tcl) >= fairLine(world)) return fightHere(world, rng, reason);
+  if (slot && winChance(world, slot.tcl) >= fairLine(world)) return trainFight(world, rng, reason);
   const fair = fairFightPlanet(world);
   if (fair && fair !== world.currentPlanetId) return travelOneHop(world, fair);
   return mineOrSell(world);
+}
+
+function trainFight(world: WorldState, rng: Rng, reason: string): JournalEntry {
+  world.trainStreak = (world.trainStreak ?? 0) + 1;
+  return fightHere(world, rng, reason);
 }
 
 function nextHopFuel(world: WorldState, destPlanetId: string): number | null {
@@ -465,14 +486,58 @@ function mineOrSellFund(world: WorldState): JournalEntry {
   return mineOnce(world);
 }
 
+const hopLossBySystem = new Map<string, number>();
+let hopLossKey = '';
+
+/** 이 성계로 들어갈 때 조우해서 질 확률. 하루·함선·레벨·퀘스트가 바뀌면 다시 잰다. */
+function hopLossChance(world: WorldState, systemId: string): number {
+  const key = `${world.runId}|${world.day}|${world.hullRank ?? 0}|${world.level}|${world.activeQuest?.missionId ?? ''}`;
+  if (key !== hopLossKey) {
+    hopLossBySystem.clear();
+    hopLossKey = key;
+  }
+  const cached = hopLossBySystem.get(systemId);
+  if (cached !== undefined) return cached;
+  let loss = 0;
+  const encounter = transitEncounterChance(world, systemId);
+  const planet = lookupPrimaryPlanet(systemId);
+  if (encounter > 0 && planet) {
+    const tcl = world.planets[planet]?.tcl ?? world.level;
+    loss = encounter * (1 - winChance(world, tcl, planet));
+  }
+  hopLossBySystem.set(systemId, loss);
+  return loss;
+}
+
+/** 산 함선으로 from→to 를 지나며 잃을 기대 손실(cr). 기본 프리깃이면 0. */
+function routeLossRisk(world: WorldState, fromPlanetId: string, toPlanetId: string): number {
+  const value = currentHullValue(world);
+  if (value <= 0) return 0;
+  let sys = lookupSystemId(fromPlanetId);
+  const dest = lookupSystemId(toPlanetId);
+  if (!sys || !dest) return 0;
+  let keep = 1;
+  for (let guard = 0; sys !== dest && guard < 32; guard += 1) {
+    const next = bfsNextSystem(sys, dest);
+    if (!next) break;
+    keep *= 1 - hopLossChance(world, next);
+    sys = next;
+  }
+  return Math.round(value * (1 - keep));
+}
+
+function pickSafeTgPlan(world: WorldState) {
+  return pickTgPlan(world, CASH_FLOOR * 2, (from, to) => routeLossRisk(world, from, to));
+}
+
 /**
  * tg_* 교역로 한 걸음. 실은 화물이 있으면 수요지로, 없으면 홉당 순익이 채굴보다 나은 교역로를 고른다.
- * 할 일이 없으면 null.
+ * 산 함선이면 경로에서 잃을 기대 손실을 순익에서 뺀다. 할 일이 없으면 null.
  */
 function tgRunStep(world: WorldState, minProfit = 0): JournalEntry | null {
   let run = world.tgRun;
   if (!run) {
-    const plan = pickTgPlan(world, CASH_FLOOR * 2);
+    const plan = pickSafeTgPlan(world);
     if (!plan || plan.profit < minProfit) return null;
     if (plan.profit / plan.hops < liveMineralUnitPrice(world.currentPlanetId, world.level) * 2) return null;
     const r = plan.route;
@@ -481,7 +546,7 @@ function tgRunStep(world: WorldState, minProfit = 0): JournalEntry | null {
   }
   if (run.qty === 0) {
     if (world.currentPlanetId !== run.supply) return travelOneHop(world, run.supply);
-    const plan = pickTgPlan(world, CASH_FLOOR * 2);
+    const plan = pickSafeTgPlan(world);
     const qty = plan && plan.route.goodId === run.goodId && plan.route.supply === run.supply ? plan.qty : 0;
     if (qty <= 0) {
       world.tgRun = undefined;
@@ -501,6 +566,7 @@ function tgRunStep(world: WorldState, minProfit = 0): JournalEntry | null {
   world.trades += 1;
   noteObs(world, 'trade', obsDetail.trade('sell', world.currentPlanetId));
   world.tgRun = undefined;
+  world.trainStreak = 0;
   clearHoldStreak(world);
   return ev(world, 'TRADE', `교역 매도 ${run.goodId} ×${run.qty} +${gain}cr (잔 ${world.credits})`);
 }
@@ -536,8 +602,8 @@ export function earnCredits(world: WorldState, rng: Rng): JournalEntry {
   if (world.hangarShips <= 0 && world.tick % 4 === 0) return restockInsteadOfFight(world);
   if (world.activeQuest || nextPlayableMissionId(world)) {
     const row = doQuest(world, rng, true, true);
-    if (row.line.includes('레벨게이트')) return trainOrRelocate(world, rng, '수련');
-    return row;
+    if (!row.line.includes('레벨게이트')) return row;
+    return trainOrRelocate(world, rng, '수련');
   }
   const devCost = cheapestOpenDevCost(world);
   const target = Math.max(CASH_FLOOR, devCost > 0 ? devCost + CASH_FLOOR : CASH_FLOOR);
@@ -945,7 +1011,7 @@ function doTrade(
   forceBuy: boolean,
   afterBuy?: () => void,
 ): JournalEntry {
-  if (needsHullFund(world) && !forceBuy) return mineOrSellFund(world);
+  if (needsHullFund(world) && !forceBuy) return tgRunStep(world) ?? mineOrSellFund(world);
   const slot = world.planets[world.currentPlanetId];
   if (!slot?.hasTrade) {
     const hub = nearestTradePlanet(world.currentPlanetId);

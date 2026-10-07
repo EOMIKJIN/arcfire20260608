@@ -139,6 +139,18 @@ export function playerGapDaysFromSnapshot(dayKey: string, snapshot: StellaLifeSn
   return Math.min(30, Math.round((b - a) / 86400000));
 }
 
+/** 그 시각 스텔라 일과 한 칸 — resolveStellaLifeAt 과 같은 고르기. */
+export function stellaLifeSlotAt(nowMs: number, uid: string): StellaLifeSlotRow {
+  const slotIndex = stellaLifeSlotIndex(nowMs);
+  const seed = stellaLifeHash32(uid || 'anon', stellaLifeDayKey(nowMs), String(slotIndex));
+  return pickSlot(slotIndex, stellaLifeWeekdayMaskKey(nowMs), seed);
+}
+
+/** 깨어 있고 근무가 아닌 칸 — 스텔라가 먼저 연락할 수 있는 시간. */
+export function isStellaLifeFreeSlot(row: StellaLifeSlotRow): boolean {
+  return row.dutyOrOff === 'off' && row.topicHint !== 'rest';
+}
+
 export function resolveStellaLifeAt(
   nowMs: number,
   uid: string,
@@ -147,9 +159,7 @@ export function resolveStellaLifeAt(
 ): StellaLifeResolved {
   const dayKey = stellaLifeDayKey(nowMs);
   const slotIndex = stellaLifeSlotIndex(nowMs);
-  const weekdayKey = stellaLifeWeekdayMaskKey(nowMs);
-  const seed = stellaLifeHash32(uid || 'anon', dayKey, String(slotIndex));
-  const slot = pickSlot(slotIndex, weekdayKey, seed);
+  const slot = stellaLifeSlotAt(nowMs, uid);
   const goal = pickGoal(uid || 'anon', dayKey, snapshot);
   const moodBase = 50 + (snapshot?.sessionMoodDelta ?? 0);
   const envApplied = applyEnv(env, moodBase, 50 + slot.focusDelta);

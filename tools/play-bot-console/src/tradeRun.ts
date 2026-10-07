@@ -122,7 +122,12 @@ export type TgPlan = { route: TgRoute; qty: number; profit: number; hops: number
  * 지금 잔액·재고로 홉당 순익이 가장 큰 교역로. 연료를 뺀 순익이 없으면 null.
  * reserve 는 사고 나서도 남겨 둘 돈(연료·지급불능선).
  */
-export function pickTgPlan(world: WorldState, reserve: number): TgPlan | null {
+/** riskOf(from, to) — 그 구간을 지나며 함선을 잃을 기대 손실(cr). 순익에서 뺀다. */
+export function pickTgPlan(
+  world: WorldState,
+  reserve: number,
+  riskOf?: (fromPlanetId: string, toPlanetId: string) => number,
+): TgPlan | null {
   const list = listTgRoutes();
   const cap = stockPerDay();
   let best: TgPlan | null = null;
@@ -138,7 +143,8 @@ export function pickTgPlan(world: WorldState, reserve: number): TgPlan | null {
     const spend = world.credits - reserve - fuel;
     if (spend < r.costUnit) continue;
     const qty = Math.min(avail, Math.floor(spend / r.costUnit));
-    const profit = qty * r.netUnit - fuel;
+    const risk = riskOf ? riskOf(world.currentPlanetId, r.supply) + riskOf(r.supply, r.demand) : 0;
+    const profit = qty * r.netUnit - fuel - risk;
     if (profit <= 0) continue;
     const hops = toSupply + leg + 1;
     const rate = profit / hops;

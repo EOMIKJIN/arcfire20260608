@@ -113,7 +113,7 @@ test('defeat_enemy without planet is unmarked', () => {
   assert.equal(marks, EMPTY_GALAXY_MAP_QUEST_ACCEPT_MARKS);
 });
 
-test('named side dest marks; bar and tutorial never mark', () => {
+test('named side dest marks; bar board does not; tutorial mission_001 is green on vega', () => {
   const marks = resolveGalaxyMapQuestAcceptMarks({
     enabled: true,
     progresses: {
@@ -126,8 +126,22 @@ test('named side dest marks; bar and tutorial never mark', () => {
   assert.deepEqual(marks.synth_075, { main: false, side: true });
   assert.deepEqual(marks.synth_052, { main: false, side: true });
   assert.equal(marks.solar_port, undefined);
-  assert.equal(marks.vega_outpost, undefined);
+  assert.deepEqual(marks.vega_outpost, { main: false, side: false, tutorial: true });
   assert.equal(marks.arcadia, undefined);
+});
+
+test('tutorial combat and buy objectives mark their anchor systems', () => {
+  const combat = resolveGalaxyMapQuestAcceptMarks({
+    enabled: true,
+    progresses: { mission_002: progress('mission_002', 'active') },
+  });
+  assert.deepEqual(combat.arcadia, { main: false, side: false, tutorial: true });
+
+  const buy = resolveGalaxyMapQuestAcceptMarks({
+    enabled: true,
+    progresses: { mission_003: progress('mission_003', 'active') },
+  });
+  assert.deepEqual(buy.solar_port, { main: false, side: false, tutorial: true });
 });
 
 test('wave2 named side 056 dest is synth_054', () => {
@@ -177,6 +191,9 @@ test('diamond sits above the node; pair is left main / right side', () => {
   assert.equal(side.x, 100 + GALAXY_MAP_QUEST_MARK_PAIR_DX_PX);
   assert.equal(main.y, side.y);
   assert.ok(solo.y < 100 - 8);
+  const stacked = resolveQuestMarkCenter(100, 100, 8, 'tutorial');
+  assert.equal(stacked.x, 100);
+  assert.ok(stacked.y < solo.y);
 });
 
 test('diamond path is a closed quad', () => {

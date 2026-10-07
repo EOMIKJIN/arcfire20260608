@@ -1,4 +1,8 @@
 import type { MissionProgress } from '../types';
+import {
+  resolveTransitHopDangerPolicy,
+  resolveTransitHopDangerPolicyForSystem,
+} from '../combat/transitHopDangerPolicy';
 import { resolveQuestCombatLock, shouldGuaranteeQuestTransitEncounter } from './questCombatLock';
 
 /**
@@ -23,9 +27,11 @@ export function resolveTransitEncounterChance(
   }
   const dest = destSystemId?.trim() || '';
   if (dest && TRANSIT_ENCOUNTER_SUPPRESS_DEST_SYSTEM_IDS.has(dest)) return 0;
-  let base = 0.1;
-  if (zone === 'neutral') base = 0.3;
-  if (zone === 'pvp') base = 0.7;
+  // 도착 성계의 아르카디아 홉이 확률을 정한다. zone(dest-org)는 쓰지 않는다.
+  void zone;
+  const base = dest
+    ? resolveTransitHopDangerPolicyForSystem(dest).encounterChance
+    : resolveTransitHopDangerPolicy(2).encounterChance;
   if (combatMissionBump) return Math.min(1, base + 0.4);
   return base;
 }

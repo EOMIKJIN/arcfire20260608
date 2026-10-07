@@ -1,6 +1,6 @@
 # 김플레이 → 김팀장 · 스텔라 O4 (=D3) · 봇 빈도 검증
 
-status: **PENDING**
+status: **REVIEWED**
 task: `stella-o4-bot-frequency-20261006`
 선행: `kim-play-handoff-stella-o3-20261006.md` — REVIEWED
 설계: `docs/playbot/STELLA_KNOWN_COLLEAGUE_DESIGN_v1.md` §C-8 · §C-4
@@ -92,6 +92,31 @@ B 내역: 관찰 1.11 · 일상 질문 0.83.
 
 **잠금 5 해제에 따른 김팀장 배정 필요**: 허브 타이머 대화 요청(`arcCoreInboundTalkRequest` 스케줄 · `planet.tsx` 호출부)을 끄고, 그 자리를 O5 연결(결정 순간에 `decideStellaObserve` + `stellaLifeAskHit`)로 대체. 일상 질문 하루 1회 경로(`bindStellaLifeAskToPlanetSession` → `resolveStellaHumanAsk` 의 `lastAskDay`)도 O5 에서 이 판단으로 바뀜.
 
+## 5-c. 대표님 지시 — 스텔라 하루 3~4회 (재측정 `stella-o4c-20261006`)
+
+대표님: 「깨어 있는 일상 활동 8시간에 3시간당 1회 → 하루 3~4회」 · 기준 = **스텔라의 하루** (대표님 선택). 대표님이 접속하지 않은 동안에도 스텔라가 자기 쉬는 시간에 메신저로 연락하고, 접속하면 읽는다.
+
+| 파일 | 내용 |
+|---|---|
+| `src/arcCore/chat/stellaLifeResolve.ts` | `stellaLifeSlotAt(nowMs, uid)` (기존 `resolveStellaLifeAt` 고르기 그대로 꺼냄) · `isStellaLifeFreeSlot` (근무 아님 + `rest` 아님 — 식사·저녁·밤 ≈ 8시간) |
+| `src/arcCore/chat/stellaObserveGate.ts` | `stellaReachHit(motiveId)` — 메신저 연락 후보 (id `reach` 하나 · 상태 크기 고정). 내용이 그때그때 자기 하루라 반복 감쇠 제외. ctx `unread` · 정책 `unreadDamp` (안 읽은 연락마다 ×0.85) |
+| `src/arcCore/chat/stellaObserveSituations.ts` | 감지기 타입 `reach_out` (표 행 아님) |
+| `tables/content/stella_observe_gate_policy.csv` (Fable) | `unreadDamp,0.85` 추가 · `failsafeMaxPerDay` 6→8 (오늘 신규 키 — 목표 빈도가 올라 고장 방지 상한도 같이) → 29행 |
+| 테스트 | 메신저 연락: 방금 보냈으면 참음 · 3시간 뒤 다시 · 안 읽은 게 쌓이면 그만 · 일과 칸 판정 |
+| `stellaReplay.ts` | `reach` — 접속 사이 스텔라 일과 30분 칸마다 판단. 접속 시 읽음(읽은 것은 무시 아님, 답 50%). 지표 `request_stella_day` (달력 일 기준) 3~4 · 옛 합격선(플레이일 0.5~3 · 침묵일 20~60%)은 대표님 지시로 참고값 |
+
+| 지표 | 합격선 | A 지금 앱 | B 결정안 (전 행) | C 켤 수 있는 행만 |
+|---|---|---|---|---|
+| 스텔라 하루당 대화 요청 (일상 질문 제외) | 3~4 | 8.66 ✗ | **3.57** ✓ | **3.07** ✓ |
+| 그중 접속 안 한 동안 메신저 연락 | — | 0 | 약 2.4 | 약 2.4 |
+| ask 2회 이상인 날 | ≤10% | 100% ✗ | 1% ✓ | 1% ✓ |
+| 한 상황 점유율 | ≤40% | — | 38% ✓ | 51% ✗ (quest_stall · 봇 정체) |
+| 연속 3일 | 0 | 0 | 5 ✗ (rough_day · 봇 파괴율) | 0 ✓ |
+| 새 힘든 시기 포착 | ≥80% | 0% | 94% ✓ | — |
+| 고장 방지 상한 도달 | 0 | 0 | 1 (약 2,900 달력일 중) | 0 |
+
+**O5 연결 시 앱 쪽 할 일 (김팀장 배정)**: 메신저 연락은 백그라운드 없이 **접속 순간 소급** — 마지막 접속 이후 스텔라 쉬는 칸을 30분 간격으로 같은 판단에 돌려 메신저 큐에 남김 (안 읽은 수만큼 감쇠라 오래 비워도 몇 건으로 끝남). 문장은 그 칸의 스텔라 일과·일상 엔진. 큐는 대화 store 기존 메신저 경로 · 새 persist 필드는 안 읽은 수와 시각 정도.
+
 ## 6. 앱 후보 행 (B 재생 기준 · 차단 사유 없는 것)
 
 first_ship · first_develop · level_mark · quest_stall · grind_loop · long_session · trade_run. first_ship/first_develop/long_session 은 표본 3~4회라 약함.
@@ -108,4 +133,7 @@ first_ship · first_develop · level_mark · quest_stall · grind_loop · long_s
 
 ## verdict (김팀장)
 
-_(대기)_
+- **REVIEWED (2026-10-07)** — O4 측정은 수용. 대표님 결정(타이머 제거 · 일상 질문도 판단 · 포착은 새 힘든 시기)을 앱에 반영했다. 커밋은 대표님 요청 후.
+- 앱: 허브 8–15분 타이머는 더 이상 켜지 않는다. 허브 진입에서 판단 1회. 질문은 기존 연락 팝업, 물음이 약하면 메신저 보관. 접속 사이 쉬는 칸은 메신저에만 남기고, 메신저를 열면 읽은 것으로 친다.
+- 말풍선(remark) 표면은 시안 전이라 만들지 않았다. 상황 13행은 `enabled=0` 유지. 켜면 말할 곳이 없는 말이 된다.
+- 게이트: 판단·소급·대화 store 테스트 PASS · `tsc` PASS · `audit:memory:all` PASS (resident-set 리포트 잠김 1회 후 재실행 PASS).

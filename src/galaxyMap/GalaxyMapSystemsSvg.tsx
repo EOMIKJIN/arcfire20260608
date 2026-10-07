@@ -16,6 +16,8 @@ import {
   GALAXY_MAP_QUEST_MARK_MAIN_STROKE,
   GALAXY_MAP_QUEST_MARK_SIDE_FILL,
   GALAXY_MAP_QUEST_MARK_SIDE_STROKE,
+  GALAXY_MAP_QUEST_MARK_TUTORIAL_FILL,
+  GALAXY_MAP_QUEST_MARK_TUTORIAL_STROKE,
   GALAXY_MAP_QUEST_MARK_STROKE_WIDTH,
   diamondPathD,
   resolveQuestMarkCenter,
@@ -337,13 +339,14 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
 
   const questMarkPaths = useMemo(() => {
     if (questAcceptMarks === EMPTY_GALAXY_MAP_QUEST_ACCEPT_MARKS) {
-      return { mainD: '', sideD: '' };
+      return { mainD: '', sideD: '', tutorialD: '' };
     }
     let mainD = '';
     let sideD = '';
+    let tutorialD = '';
     for (const systemId in questAcceptMarks) {
       const mark = questAcceptMarks[systemId];
-      if (!mark || (!mark.main && !mark.side)) continue;
+      if (!mark || (!mark.main && !mark.side && !mark.tutorial)) continue;
       const sys = systemById[systemId];
       if (!sys) continue;
       const pos = toScreen(sys.position);
@@ -357,8 +360,13 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
         const c = resolveQuestMarkCenter(pos.x, pos.y, r, both ? 'side' : 'solo');
         sideD += diamondPathD(c.x, c.y);
       }
+      if (mark.tutorial) {
+        const onlyTutorial = !mark.main && !mark.side;
+        const c = resolveQuestMarkCenter(pos.x, pos.y, r, onlyTutorial ? 'solo' : 'tutorial');
+        tutorialD += diamondPathD(c.x, c.y);
+      }
     }
-    return { mainD, sideD };
+    return { mainD, sideD, tutorialD };
   }, [systemById, currentId, questAcceptMarks, toScreen]);
 
   return (
@@ -400,6 +408,15 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
           d={questMarkPaths.sideD}
           fill={GALAXY_MAP_QUEST_MARK_SIDE_FILL}
           stroke={GALAXY_MAP_QUEST_MARK_SIDE_STROKE}
+          strokeWidth={GALAXY_MAP_QUEST_MARK_STROKE_WIDTH}
+          strokeLinejoin="miter"
+        />
+      ) : null}
+      {questMarkPaths.tutorialD ? (
+        <Path
+          d={questMarkPaths.tutorialD}
+          fill={GALAXY_MAP_QUEST_MARK_TUTORIAL_FILL}
+          stroke={GALAXY_MAP_QUEST_MARK_TUTORIAL_STROKE}
           strokeWidth={GALAXY_MAP_QUEST_MARK_STROKE_WIDTH}
           strokeLinejoin="miter"
         />

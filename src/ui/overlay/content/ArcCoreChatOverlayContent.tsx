@@ -53,6 +53,110 @@ const CHAT_BREATH_SCALE = 0.72;
 /** 대사 아래·생각 중. 옆에 붙이던 16은 숨숨이 안 보임 */
 const CHAT_TURN_LENS_PX = 22;
 const SENTENCE_END_RE = /[.!?。\n]/;
+
+type ArcCoreChatLineRole = 'user' | 'arc' | 'system';
+
+/** 타이핑 tick은 이 줄만 다시 그린다. 기록 줄은 props가 같으면 건너뛴다. */
+const ArcCoreChatLine = memo(function ArcCoreChatLine({
+  role,
+  text,
+  reveal,
+  lensLabel,
+  onRevealDone,
+  onRevealTick,
+}: {
+  role: ArcCoreChatLineRole;
+  text: string;
+  reveal: boolean;
+  lensLabel: string;
+  onRevealDone: () => void;
+  onRevealTick: () => void;
+}) {
+  const [shown, setShown] = useState(0);
+  const doneRef = useRef(onRevealDone);
+  const tickRef = useRef(onRevealTick);
+  doneRef.current = onRevealDone;
+  tickRef.current = onRevealTick;
+
+  useEffect(() => {
+    if (!reveal) return;
+    setShown(0);
+    const ends = chunkEndOffsets(text);
+    let pause = 0;
+    let cursor = 0;
+    const timer = setInterval(() => {
+      if (pause > 0) {
+        pause -= 1;
+        return;
+      }
+      const nextShown = Math.min(text.length, cursor + CHAT_TYPE_CHARS);
+      const last = text.charAt(nextShown - 1);
+      let chunkEnd = -1;
+      for (let i = 0; i < ends.length; i += 1) {
+        if (ends[i] === nextShown) {
+          chunkEnd = ends[i]!;
+          break;
+        }
+      }
+      if (chunkEnd > 0) {
+        let prev = 0;
+        for (let i = 0; i < ends.length; i += 1) {
+          const at = ends[i]!;
+          if (at < chunkEnd) prev = at;
+        }
+        pause = Math.max(
+          CHAT_SENTENCE_PAUSE_TICKS,
+          Math.ceil(delayMsForChatTurnChunk(text.slice(prev, chunkEnd)) / CHAT_TYPE_INTERVAL_MS),
+        );
+      } else if (SENTENCE_END_RE.test(last)) {
+        pause = CHAT_SENTENCE_PAUSE_TICKS;
+      }
+      if (nextShown !== cursor) {
+        cursor = nextShown;
+        setShown(nextShown);
+      }
+      tickRef.current();
+      if (nextShown >= text.length) {
+        clearInterval(timer);
+        doneRef.current();
+      }
+    }, CHAT_TYPE_INTERVAL_MS);
+    return () => {
+      clearInterval(timer);
+    };
+  }, [reveal, text]);
+
+  const revealing = reveal && shown < text.length;
+  const body = revealing ? text.slice(0, shown) : text;
+  const caret = revealing ? '▌' : '';
+  if (role === 'user') {
+    return (
+      <View style={styles.rowUser}>
+        <View style={styles.userBubble}>
+          <Text style={styles.userBody}>{body}</Text>
+        </View>
+      </View>
+    );
+  }
+  if (role === 'system') {
+    return (
+      <View style={styles.rowSystem}>
+        <Text style={styles.systemBody}>{body}</Text>
+      </View>
+    );
+  }
+  return (
+    <View style={styles.rowArc}>
+      <Text style={styles.arcBody}>
+        {body}
+        {caret}
+      </Text>
+      <View style={styles.lensSlot}>
+        <ArcCoreLensIcon size={CHAT_TURN_LENS_PX} accessibilityLabel={lensLabel} />
+      </View>
+    </View>
+  );
+});
 /** 아이콘은 채팅 줄 3배. 인사는 한 줄(최장 「다시 돌아오셨군요.」)에 맞춤 */
 const CHAT_WELCOME_LENS_PX = ARC_CORE_LENS_BUBBLE_PX * 3;
 /** 본문 위 스텔라 얼굴만 4배. 헤더·아크코어 렌즈는 현행 유지 */
@@ -95,6 +199,7 @@ export const ArcCoreChatOverlayContent = memo(function ArcCoreChatOverlayContent
     [chatMessages],
   );
   const showWelcomeHero = welcome != null && !chatting;
+  const lensLabel = t('arcCore.symbolA11y');
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [draft, setDraft] = useState('');
   const [busy, setBusy] = useState(false);
@@ -104,13 +209,11 @@ export const ArcCoreChatOverlayContent = memo(function ArcCoreChatOverlayContent
     providerId: 'local' | 'cloud';
     fallbackUsed: boolean;
   } | null>(null);
-  const [typing, setTyping] = useState<{ id: string; full: string; shown: number } | null>(null);
+  const [typingId, setTypingId] = useState<string | null>(null);
   const inputRef = useRef<TextInput>(null);
   const scrollRef = useRef<ScrollView>(null);
   const mountedRef = useRef(true);
   const busyRef = useRef(false);
-  const typePauseRef = useRef(0);
-  const typeChunkEndsRef = useRef<number[]>([]);
   const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const scrollWaitResolveRef = useRef<(() => void) | null>(null);
   const thinkTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -281,55 +384,12 @@ export const ArcCoreChatOverlayContent = memo(function ArcCoreChatOverlayContent
     };
   }, [busy, showWelcomeHero, surfaceActive]);
 
-  useEffect(() => {
-    if (!typing || typing.shown >= typing.full.length) return;
-    const timer = setInterval(() => {
-      if (typePauseRef.current > 0) {
-        typePauseRef.current -= 1;
-        return;
-      }
-      setTyping((cur) => {
-        if (!cur) return cur;
-        const nextShown = Math.min(cur.full.length, cur.shown + CHAT_TYPE_CHARS);
-        const last = cur.full.charAt(nextShown - 1);
-        const ends = typeChunkEndsRef.current;
-        let chunkEnd = -1;
-        for (let i = 0; i < ends.length; i += 1) {
-          if (ends[i] === nextShown) {
-            chunkEnd = ends[i]!;
-            break;
-          }
-        }
-        if (chunkEnd > 0) {
-          let prev = 0;
-          for (let i = 0; i < ends.length; i += 1) {
-            const at = ends[i]!;
-            if (at < chunkEnd) prev = at;
-          }
-          typePauseRef.current = Math.max(
-            CHAT_SENTENCE_PAUSE_TICKS,
-            Math.ceil(delayMsForChatTurnChunk(cur.full.slice(prev, chunkEnd)) / CHAT_TYPE_INTERVAL_MS),
-          );
-        } else if (SENTENCE_END_RE.test(last)) {
-          typePauseRef.current = CHAT_SENTENCE_PAUSE_TICKS;
-        }
-        return nextShown === cur.shown ? cur : { ...cur, shown: nextShown };
-      });
-      scrollToLatest();
-    }, CHAT_TYPE_INTERVAL_MS);
-    return () => {
-      clearInterval(timer);
-    };
-  }, [typing?.id, typing?.shown === typing?.full.length, scrollToLatest]);
-
-  useEffect(() => {
-    if (!typing) return;
-    if (typing.shown < typing.full.length) return;
-    setTyping(null);
+  const finishTyping = useCallback(() => {
+    setTypingId(null);
     busyRef.current = false;
     setBusy(false);
     scrollToLatest();
-  }, [typing, scrollToLatest]);
+  }, [scrollToLatest]);
 
   const onSend = useCallback(async () => {
     const text = draft.trim();
@@ -390,9 +450,7 @@ export const ArcCoreChatOverlayContent = memo(function ArcCoreChatOverlayContent
       busyRef.current = false;
       return;
     }
-    typePauseRef.current = 0;
-    typeChunkEndsRef.current = chunkEndOffsets(result.reply);
-    setTyping({ id: arc.id, full: result.reply, shown: 0 });
+    setTypingId(arc.id);
   }, [draft, normalizeScrollThen, scrollToLatest, startBreath, stopBreath, waitThinkBeat]);
 
   const footer = useMemo(
@@ -543,41 +601,17 @@ export const ArcCoreChatOverlayContent = memo(function ArcCoreChatOverlayContent
         <Text style={styles.empty}>{t('arcCoreChat.empty')}</Text>
       ) : (
         <>
-          {chatMessages.map((m) => {
-            const revealing = typing != null && typing.id === m.id;
-            const body = revealing ? typing.full.slice(0, typing.shown) : m.text;
-            const caret = revealing && typing.shown < typing.full.length ? '▌' : '';
-            if (m.role === 'user') {
-              return (
-                <View key={m.id} style={styles.rowUser}>
-                  <View style={styles.userBubble}>
-                    <Text style={styles.userBody}>{body}</Text>
-                  </View>
-                </View>
-              );
-            }
-            if (m.role === 'system') {
-              return (
-                <View key={m.id} style={styles.rowSystem}>
-                  <Text style={styles.systemBody}>{body}</Text>
-                </View>
-              );
-            }
-            return (
-              <View key={m.id} style={styles.rowArc}>
-                <Text style={styles.arcBody}>
-                  {body}
-                  {caret}
-                </Text>
-                <View style={styles.lensSlot}>
-                  <ArcCoreLensIcon
-                    size={CHAT_TURN_LENS_PX}
-                    accessibilityLabel={t('arcCore.symbolA11y')}
-                  />
-                </View>
-              </View>
-            );
-          })}
+          {chatMessages.map((m) => (
+            <ArcCoreChatLine
+              key={m.id}
+              role={m.role === 'user' || m.role === 'system' ? m.role : 'arc'}
+              text={m.text}
+              reveal={typingId === m.id}
+              lensLabel={lensLabel}
+              onRevealDone={finishTyping}
+              onRevealTick={scrollToLatest}
+            />
+          ))}
           {thinking ? (
             <View
               style={styles.rowArc}

@@ -28,7 +28,7 @@ const num = (v: number) => String(Math.round(v * 100) / 100);
 type Mode = 'timer' | 'judge' | 'candidates';
 const MODE_LABEL: Record<Mode, string> = {
   timer: 'A. 지금 앱 그대로 — 허브 타이머 대화 요청(8~15분) + 관찰 선제',
-  judge: 'B. 대표님 결정안 — 타이머 없음 · 일상 질문도 스텔라 판단',
+  judge: 'B. 대표님 결정안 — 타이머 없음 · 일상 질문도 판단 · 접속 안 한 동안 스텔라 하루에 메신저 연락',
   candidates: 'C. B 에서 지금 켤 수 있는 상황만 (차단 사유 있는 행 제외 · 포착은 rough_day 가 없어 0)',
 };
 
@@ -38,7 +38,7 @@ function runScenario(mode: Mode, days: number, seeds: number, clock: HumanClock)
   const policy = getStellaObserveGatePolicy();
   const results: StellaReplayResult[] = [];
   for (let s = 1; s <= seeds; s += 1) {
-    const replay = createStellaReplay({ seed: s, rows, policy, clock, cfg: mode === 'timer' ? { inbound: 'timer', life: 'daily' } : { inbound: 'off', life: 'judge' } });
+    const replay = createStellaReplay({ seed: s, rows, policy, clock, cfg: mode === 'timer' ? { inbound: 'timer', life: 'daily' } : { inbound: 'off', life: 'judge', reach: true } });
     runSimulation({
       persona: 'mixed_ref',
       days,
@@ -61,12 +61,14 @@ function section(mode: Mode, results: StellaReplayResult[], sum: StellaReplaySum
   out.push(`판정: **${pass ? 'PASS' : 'FAIL'}** · 플레이일 ${sum.playDays} · 사람 시간 합 ${results.reduce((a, r) => a + r.humanHours, 0).toFixed(1)}h`, '');
   out.push('| 지표 | 값 | 합격선 | 판정 |', '|---|---|---|---|');
   for (const c of sum.criteria) {
-    const v = c.id === 'streak3' || c.id === 'failsafe' || c.id === 'per_day' ? num(c.value) : pct(c.value);
+    const v = c.id === 'streak3' || c.id === 'failsafe' || c.id === 'request_stella_day' ? num(c.value) : pct(c.value);
     out.push(`| ${c.label} | ${v} | ${c.target} | ${c.pass ? 'PASS' : '**FAIL**'} |`);
   }
   out.push(
     '',
-    `플레이일당 내역: 관찰 선제 ${num(sum.observePerDay)} · 일상 질문 ${num(sum.lifePerDay)} · 타이머 대화 요청 ${num(sum.inboundPerDay)}`,
+    `스텔라 하루(달력 ${sum.calendarDays}일) 기준: 대화 요청 ${num(sum.requestPerStellaDay)} (그중 접속 안 한 동안 메신저 연락 ${num(sum.reachPerStellaDay)}) · 일상 질문 ${num(sum.lifePerStellaDay)}`,
+    '',
+    `플레이일당 참고: 선제 총합 ${num(sum.perDay)} · 관찰 선제 ${num(sum.observePerDay)} · 일상 질문 ${num(sum.lifePerDay)} · 타이머 대화 요청 ${num(sum.inboundPerDay)} · 침묵일 ${pct(sum.silentDayRatio)} (이전 합격선 0.5~3 · 20~60% — 대표님 3~4회 지시로 참고값)`,
     '',
     `힘든 날 전체 ${sum.captureAllDays}일 포착 ${pct(sum.captureAll)} (매일 반복되는 날은 일부러 덜 말함 · 정보용) · 놓친 순간의 판정: ${Object.entries(sum.captureMiss).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(' · ') || '-'}`,
     '',
@@ -118,6 +120,7 @@ function main(): void {
     '- 결정 순간: 세션 시작 · 착륙 · 전투 복귀. 다른 팝업·당직·casualFirst 는 없음으로 둠',
     `- 타이머 대화 요청: 세션 동안 허브에 있다고 보고 첫 ${c.inboundFirstMinSec}~${c.inboundFirstMaxSec}초 · 이후 ${c.inboundCooldownMinMin}~${c.inboundCooldownMaxMin}분 (앱 상수 그대로). 스텔라 관찰 선제가 먼저 말하면 다음 창으로 밀림`,
     '- 일상 질문: A 는 지금 앱처럼 허브 진입 하루 1회 (관찰 상황이 말하지 않았고 대화 요청 대기도 없을 때). B 는 관찰 상황과 같은 판단에 후보 하나로 올림',
+    `- B·C 메신저 연락: 접속 안 한 동안 스텔라 일과(stella_life_slots)에서 깨어 있고 근무 아닌 칸마다 ${c.reachStepMin}분 간격으로 같은 판단 (동기 ${c.reachMotive}). 안 읽은 연락만큼 덜 보냄. 접속하면 읽음 — 읽은 것은 무시로 치지 않고, 답(수락) ${pct(c.acceptP)}`,
     `- B 의 일상 질문거리: 봇에 스텔라 기분·대화 기억이 없어 허브 진입마다 늘 ${c.lifeMotive}·${c.lifeAskId} 질문거리가 있다고 봄 — 실제 앱보다 자주 묻는 쪽 가정`,
     `- 반응: 1차 통신·메신저 받아 줌 ${pct(c.acceptP)} · 말걸기는 반응 없음`,
     '- 봇 사실성 한계: 봇은 플레이일 대부분이 「기함 2회 이상 파괴」 날이고(위 「힘든 날 전체」), 콘텐츠 끝에서 목표가 오래 멈춘다. rough_day·quest_stall 의 점유율·연속은 사람보다 높게 나온다',

@@ -225,10 +225,13 @@ import { PlanetMainPilotInfoPanel } from '../../src/components/planet/PlanetMain
 import { resolvePlayerPilotPortraitSource } from '../../src/game/playerPilotProfessionModel';
 import { collectPlanetHubCaptainIds } from '../../src/game/planetHubNpcDialog';
 import {
-  planetHubTalkRosterHasBadge,
   presentHubNlMouthThenMessenger,
   rememberPlanetHubTalkRosterSession,
 } from '../../src/game/planetHubTalkRoster';
+import {
+  readStellaHubTalkBadge,
+  subscribeStellaHubTalkBadge,
+} from '../../src/arcCore/chat/stellaMessageNotice';
 import { presentArcCoreBackchannel } from '../../src/arcCore/chat/presentArcCoreBackchannel';
 import {
   hasInboundTalkPending,
@@ -1672,10 +1675,11 @@ export default function PlanetScreen() {
     );
   }, [planet?.id, system?.id, planetHubCoPresencePairs]);
   useEffect(() => () => resetPlanetHubCoPresenceObservationThrottle(), []);
-  const hubTalkRosterHasUnread = useMemo(() => {
-    if (!planet?.id) return false;
-    return planetHubTalkRosterHasBadge(planet.id, planetHubCaptainIds, planetHubCoPresenceHints);
-  }, [planet?.id, planetHubCaptainIds, planetHubCoPresenceHints, hubDialogBadgeRev, missionProgressRev, spyIntelAlertRev]);
+  const stellaHubTalkBadge = useSyncExternalStore(
+    subscribeStellaHubTalkBadge,
+    readStellaHubTalkBadge,
+    readStellaHubTalkBadge,
+  );
   const inboundTalkPending = useSyncExternalStore(
     subscribeInboundTalkPending,
     hasInboundTalkPending,
@@ -2301,7 +2305,7 @@ export default function PlanetScreen() {
               miningLabel={miningSession.status === 'running' ? t('planet.miningStop') : t('planet.mining')}
               miningDisabled={!canOrbitalMine}
               miningPrimary={miningSession.status === 'running'}
-              dialogShowBadge={hubTalkRosterHasUnread || inboundTalkPending}
+              dialogShowBadge={stellaHubTalkBadge || inboundTalkPending}
               searchDisabled={!activeSalvageWreck}
               onScanComplete={handlePlanetScanComplete}
               onScanReset={handlePlanetScanReset}

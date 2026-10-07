@@ -3,90 +3,30 @@
 // 시드 1회 조회 전용(틱/렌더 금지). 전용적 인덱스 모듈 1회.
 // ============================================================
 
-import { TransitCombatCaptainFallback_FROM_BALANCE_CSV } from '../data/balance/generated';
-import { resolveCombatEncounterTargetLevel } from '../arcCore/balance/balanceTableRegistry';
-import { isCaptainAllowedInCombat } from './mainStoryCaptainDeathGate';
 import {
-  getNpcCaptain,
-  hasNpcCapitalShipId,
-  listNpcCaptains,
-} from './npcFleetRegistry';
+  resolvePlanetIdForCombatLevel,
+} from '../combat/transitHopDangerPolicy';
 import {
-  indexDedicatedTransitHostileCaptains,
-  pickTransitHostileCaptain,
-  resolveTransitHostileHullScalePlanetIdForCaptain,
-} from './pickTransitHostileCaptain';
+  resolveTransitHopCaptainForSystem,
+  resolveTransitHopCombatLevelForSystem,
+} from '../combat/transitHopCombatLevel';
 import type { NpcCaptain } from '../types';
 
-const TRANSIT_PLANET_ID = '__transit__';
-
-let fallbackCaptainIdBySystemId: Map<string, string> | null = null;
-let dedicatedIndex: {
-  bySystem: Map<string, NpcCaptain[]>;
-  list: NpcCaptain[];
-} | null = null;
-
-function getFallbackCaptainIdBySystem(): Map<string, string> {
-  if (fallbackCaptainIdBySystemId) return fallbackCaptainIdBySystemId;
-  fallbackCaptainIdBySystemId = new Map();
-  for (const row of TransitCombatCaptainFallback_FROM_BALANCE_CSV) {
-    const systemId = String(row.systemId ?? '').trim();
-    const captainId = String(row.captainId ?? '').trim();
-    if (!systemId || !captainId) continue;
-    if (!fallbackCaptainIdBySystemId.has(systemId)) {
-      fallbackCaptainIdBySystemId.set(systemId, captainId);
-    }
-  }
-  return fallbackCaptainIdBySystemId;
-}
-
-function getDedicatedIndex(): { bySystem: Map<string, NpcCaptain[]>; list: NpcCaptain[] } {
-  if (!dedicatedIndex) {
-    dedicatedIndex = indexDedicatedTransitHostileCaptains(listNpcCaptains(), {
-      hasShip: hasNpcCapitalShipId,
-      allowedInCombat: isCaptainAllowedInCombat,
-    });
-  }
-  return dedicatedIndex;
-}
-
-function resolveNearestFromIndex(destTcl: number): NpcCaptain | undefined {
-  let best: NpcCaptain | undefined;
-  let bestDelta = Infinity;
-  for (const captain of getDedicatedIndex().list) {
-    const tcl = resolveCombatEncounterTargetLevel(TRANSIT_PLANET_ID, captain.baseSystemId);
-    const delta = Math.abs(tcl - destTcl);
-    if (delta < bestDelta) {
-      bestDelta = delta;
-      best = captain;
-    }
-  }
-  return best;
-}
-
 /**
- * 목적지 성계 전용적(`npc_cpt_enemy_*`) → CSV 폴백 → TCL 최근접 전용적.
- * 허브 트래픽 해적(`raid_scar` · `vega_red_*`)은 전용적보다 뒤에 있어 선택되지 않는다.
+ * 홉 레벨 범위 안 전용적 → 같은 범위의 전 성계 전용적 → CSV 폴백 → 레벨 최근접.
+ * 출항 때 발급한 번호로 시드·전투가 같은 함장을 고른다.
  */
 export function resolveTransitHostileCaptainForSystem(
   systemId: string | null,
 ): NpcCaptain | undefined {
-  const sid = systemId?.trim() ?? '';
-  if (!sid) return undefined;
+  return resolveTransitHopCaptainForSystem(systemId);
+}
 
-  const dedicated = getDedicatedIndex().bySystem.get(sid);
-  if (dedicated && dedicated.length > 0) return dedicated[0];
-
-  const fallbackId = getFallbackCaptainIdBySystem().get(sid);
-  if (fallbackId) {
-    const fallback = getNpcCaptain(fallbackId);
-    const shipId = fallback?.assignedShipId?.trim() ?? '';
-    if (fallback && shipId && hasNpcCapitalShipId(shipId) && isCaptainAllowedInCombat(fallback.id)) {
-      return fallback;
-    }
-  }
-
-  return resolveNearestFromIndex(resolveCombatEncounterTargetLevel(TRANSIT_PLANET_ID, sid));
+/** 이번 성계에서 고른 함장 레벨을 홉 대역에 맞춘 전투 레벨. 무기·선체 공통. */
+export function resolveTransitHostileCombatLevelForSystem(
+  systemId: string | null,
+): number {
+  return resolveTransitHopCombatLevelForSystem(systemId);
 }
 
 /** @deprecated `resolveTransitHostileCaptainForSystem` — 호환 별칭 */
@@ -98,12 +38,10 @@ export function resolveTransitPirateCaptainForSystem(
 
 export function resolveTransitHostileHullScalePlanetId(
   combatSystemId: string | null,
-  captainId: string | null,
+  _captainId: string | null,
 ): string {
-  return resolveTransitHostileHullScalePlanetIdForCaptain(
-    combatSystemId,
-    captainId ? getNpcCaptain(captainId) : undefined,
-  );
+  const level = resolveTransitHostileCombatLevelForSystem(combatSystemId);
+  return resolvePlanetIdForCombatLevel(level);
 }
 
 export {
