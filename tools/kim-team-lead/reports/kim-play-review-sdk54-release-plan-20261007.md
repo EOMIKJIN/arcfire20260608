@@ -141,6 +141,39 @@ owner-auto: 02:50 설치 직전 김플레이가 정지 (합의 11번). 헤드리
 - **E2 지속**: 스파이 서브코어 tick 평균 166ms(203회). 판정 보류 — 업그레이드 전 디버그 빌드와 비교 필요 (김팀장 판단).
 - 추가 변경 검수: `arcfire-native-memory` devDep `expo-modules-core ~2.2.3` (SDK 52 정합) · `patches/@react-native-firebase+analytics+24.0.0.patch` (ESM `type:module` 표기 제거) — 동의.
 
+### 11-3. SDK 52 마감 (09:15 · 김플레이)
+
+- **SDK 52 PASS** — 커밋 `5ffb943` 수용. 05:37~09:00 pid 16391 단일 프로세스 **3.4시간 생존 · FATAL 0 · JS 오류 0**. 왕복은 13053 세션(은하 지도 → 이동 전투 승 → 착륙)으로 확인.
+- **E2 = 기존 버그로 판정 (SDK 원인 아님)**: 스파이 tick 3.4시간 15,598회 · 평균 168ms · 최대 348ms. 김클로드 handoff R-B(「스파이 조회 결과가 비면 1초 간격이 풀려 매 프레임 전 함장 인덱스」)와 증상 일치. 유휴에도 JS 스레드를 상시 점유 → **출시 전 수정 대상 (김팀장, SDK 작업과 분리)**. 디버그 로그도 3.4시간 3.8MB로 불어남.
+
+## 12. 단계 검수 — SDK 53 (09:15 · 진행 중, 미커밋)
+
+판정: **정적 PASS** · 빌드·실기 대기.
+
+| 항목 | 결과 |
+|---|---|
+| 설치 | expo 53.0.27 · RN 0.79.6 · React 19.0.0 · Skia 2.0.0-next.4 · Reanimated 3.17.5 · TS 5.8.3 |
+| 아키텍처 | `newArchEnabled:false` 유지 (SDK 53은 신규 프로젝트 기본 New Arch → 명시값 필수, OK) |
+| tsc (client) | **PASS** (React 19 · Skia 2 타입 포함) |
+| 플레이봇 | **114/114 PASS** · 헤드리스 1일 `sdk53-gate-1d` `EARLY_SPINE_OK` |
+
+실기에서 꼭 볼 것 (SDK 53 고유):
+1. **저장 데이터 유지** — AsyncStorage 1.23 → **2.1.2 메이저**. 덮어 설치 후 기존 계정·진행이 그대로 로드되는지 (새 시작 화면이면 즉시 중단).
+2. **Skia 2 (`next` 프리릴리스 · Expo 53 지정 버전)** — 허브 성운·궤도, 이동 전투 배경, 전투 렌더. `audit:skia-memory` · `audit:worklet-contract` 김팀장 재실행.
+3. React 19 · safe-area-context 5 — 상단 크롬·바텀시트 위치 (레이아웃 상수 변경 금지, 깨지면 기록만).
+4. RNFB 24.0.0 + RN 0.79 — 부팅 시 Firebase 초기화 오류 유무.
+
+### 12-1. SDK 53 실기 1차 (09:45 · 설치 09:27:34 · pid 31787)
+
+- FATAL·SIGSEGV **0** · JS 오류 **0**. 경고만: RNFB 네임스페이스 API deprecated(3) · `expo-av` deprecated(1).
+- **저장 데이터 유지 판정 OK(간접)**: 재설치 후 인트로·초반 튜토리얼 재생 없이 `land arcadia_prime` → `obj_002_a` → `combat hub_orbit:win` → `complete:mission_002` → `level 2` 로 이어짐 (어제 세션 진행 다음 단계). 대표님 눈으로 계정명·크레딧 한 번 확인 요망.
+- `[PLAY_VERB]` 정상 (land · quest · combat · level).
+- 상단 「Refreshing…」 깜빡임: 김팀장 수정 중. 개발 서버 로딩 표시(DevLoadingView) 계열이면 **릴리스 빌드엔 없는 표시** — 보류된 RN 0.74 패치가 끄던 기능. 앱 코드가 `tools/` 보고서를 import하지 않음을 확인(플레이봇·감사 산출이 갱신을 유발하지 않음).
+- 스파이 tick(R-B) 464회 · 평균 **205ms** (SDK 52: 168ms). 디버그 조건이지만 악화 경향 기록.
+- **SDK 54 대비**: `expo-av` 경고가 「SDK 54에서 제거」라고 표시 → 54 설치 시 `expo-av` 존속 여부 확인, 없으면 `expo-audio`/`expo-video` 이전이 54 단계 선행 작업.
+
+메모: `"expo": "^53.0.0"` 캐럿 반복 (54 단계에서 `~` 정리 권장).
+
 남은 실기 항목 (설치 후): 무선 Metro 8081 연결 · 부팅 · 허브→은하 지도→전투 왕복 · logcat FATAL 0 · `[PLAY_VERB]` 방출.
 
 리스크: SDK 54는 레거시 아키텍처 마지막 SDK → 출시 후 2027-08 API 37 대응 시 New Architecture 전환 필수. 출시 전에 하지 말고 출시 후 첫 대형 업데이트로 분리 권장.

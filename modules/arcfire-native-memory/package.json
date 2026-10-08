@@ -6,6 +6,6 @@
     "expo": "*"
   },
   "devDependencies": {
-    "expo-modules-core": "~2.2.3"
+    "expo-modules-core": "~2.5.0"
   }
 }
