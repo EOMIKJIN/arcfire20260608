@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFacilityHatchHeaderWindowBottom } from '../../planetFacility/facilityHatchHeaderMeasure';
 import type { ArcOverlayNarrativeEntry } from '../arcOverlayStore';
 import { NarrativeDialogRow } from '../NarrativeDialogRow';
+import { resolveOverlayContentHeight } from '../overlayInsets';
 import { resolveNarrativeDialogStageFill } from '../narrativeDialogLayout';
 import { resolveArcOverlayVisualTheme } from '../tacticalOverlayRollout';
 
@@ -22,16 +23,17 @@ export const NarrativeOverlayContent = memo(function NarrativeOverlayContent({
   const { height: windowHeight } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const hatchBottomY = useFacilityHatchHeaderWindowBottom();
+  const layoutHeight = resolveOverlayContentHeight(windowHeight, insets);
   const stageFill = useMemo(
     () => (
       entry.anchor === 'center'
-        ? resolveNarrativeDialogStageFill(windowHeight, {
+        ? resolveNarrativeDialogStageFill(layoutHeight, {
             hatchBottomY,
             safeBottomPx: insets.bottom,
           })
         : null
     ),
-    [entry.anchor, windowHeight, hatchBottomY, insets.bottom],
+    [entry.anchor, layoutHeight, hatchBottomY, insets.bottom],
   );
   return (
     <NarrativeDialogRow

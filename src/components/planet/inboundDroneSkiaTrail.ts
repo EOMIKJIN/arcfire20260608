@@ -139,6 +139,24 @@ function radialTrailPoint(
   };
 }
 
+type TrailRibbonPoint = { x: number; y: number };
+
+/** 프레임마다 새 좌표 객체를 만들지 않는다. JS 단일 스레드에서만 쓴다. */
+const trailRibbonLeft: TrailRibbonPoint[] = [];
+const trailRibbonRight: TrailRibbonPoint[] = [];
+
+function trailRibbonPoint(buf: TrailRibbonPoint[], index: number, x: number, y: number): TrailRibbonPoint {
+  const prev = buf[index];
+  if (prev) {
+    prev.x = x;
+    prev.y = y;
+    return prev;
+  }
+  const created = { x, y };
+  buf[index] = created;
+  return created;
+}
+
 /** uTail(얇음) → uHead(두꺼움) 단일 fill 리본 — stroke 세그먼트 분할 없음 */
 export function writeInboundDroneTaperedTrailFillPath(
   path: SkPath,
@@ -148,10 +166,11 @@ export function writeInboundDroneTaperedTrailFillPath(
   ang: number,
   uTail: number,
   uHead: number,
+  append = false,
 ): boolean {
   const span = uHead - uTail;
   if (span < 0.004) {
-    resetPath(path);
+    if (!append) resetPath(path);
     return false;
   }
   const n = Math.max(
@@ -172,9 +191,6 @@ export function writeInboundDroneTaperedTrailFillPath(
   const nx = -ty;
   const ny = tx;
 
-  const left: Array<{ x: number; y: number }> = [];
-  const right: Array<{ x: number; y: number }> = [];
-
   for (let k = 0; k <= n; k += 1) {
     const u = uTail + (k / n) * span;
     const p = radialTrailPoint(center, edgeR, impactR, ang, u);
@@ -183,17 +199,17 @@ export function writeInboundDroneTaperedTrailFillPath(
       INBOUND_DRONE_TRAIL_TAIL_HALF_WIDTH_PX +
       (INBOUND_DRONE_TRAIL_HEAD_HALF_WIDTH_PX - INBOUND_DRONE_TRAIL_TAIL_HALF_WIDTH_PX) *
         Math.pow(along, INBOUND_DRONE_TRAIL_WIDTH_TAPER_EXP);
-    left.push({ x: p.x + nx * halfW, y: p.y + ny * halfW });
-    right.push({ x: p.x - nx * halfW, y: p.y - ny * halfW });
+    trailRibbonPoint(trailRibbonLeft, k, p.x + nx * halfW, p.y + ny * halfW);
+    trailRibbonPoint(trailRibbonRight, k, p.x - nx * halfW, p.y - ny * halfW);
   }
 
-  resetPath(path);
-  path.moveTo(left[0]!.x, left[0]!.y);
-  for (let k = 1; k < left.length; k += 1) {
-    path.lineTo(left[k]!.x, left[k]!.y);
+  if (!append) resetPath(path);
+  path.moveTo(trailRibbonLeft[0]!.x, trailRibbonLeft[0]!.y);
+  for (let k = 1; k <= n; k += 1) {
+    path.lineTo(trailRibbonLeft[k]!.x, trailRibbonLeft[k]!.y);
   }
-  for (let k = right.length - 1; k >= 0; k -= 1) {
-    path.lineTo(right[k]!.x, right[k]!.y);
+  for (let k = n; k >= 0; k -= 1) {
+    path.lineTo(trailRibbonRight[k]!.x, trailRibbonRight[k]!.y);
   }
   path.close();
   return true;

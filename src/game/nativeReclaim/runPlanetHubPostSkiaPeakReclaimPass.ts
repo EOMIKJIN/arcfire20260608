@@ -1,6 +1,6 @@
 import { InteractionManager } from 'react-native';
 
-import { trimNativeBitmapCachesAsync } from 'arcfire-native-memory';
+import { scheduleNativeHeapPurgeAfterStageExit, trimNativeBitmapCachesAsync } from 'arcfire-native-memory';
 
 import { runCombatSkiaPresentationReclaim } from '../../combat/combatSkiaPresentationReclaim';
 import { compactPlanetMemoRegistryShells } from '../planetMemoCache';
@@ -39,6 +39,9 @@ export function runPlanetHubPostSkiaPeakReclaimPass(planetId: string, reason: st
   });
 
   void trimNativeBitmapCachesAsync();
+  if (reason === 'hub_inbound_vfx_cleared') {
+    scheduleNativeHeapPurgeAfterStageExit();
+  }
 
   /**
    * peak 직후 remount 금지 — 회수 본체는 위(signalHubSkia·Picture·Fresco trim).

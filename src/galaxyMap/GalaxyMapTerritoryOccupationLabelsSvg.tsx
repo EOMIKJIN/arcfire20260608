@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import { G, Text as SvgText } from 'react-native-svg';
 import type { GalaxyTerritoryOccupationLabel } from './buildGalaxyTerritoryVoronoi';
+import { withSvgPaintAlpha } from './svgPaintAlpha';
 
 type Props = {
   labels: GalaxyTerritoryOccupationLabel[];
@@ -30,13 +31,12 @@ export const GalaxyMapTerritoryOccupationLabelsSvg = memo(function GalaxyMapTerr
           key={`occ-label-${label.key}`}
           x={label.x}
           y={label.y}
-          fill={TERRITORY_LABEL.fill}
+          fill={withSvgPaintAlpha(TERRITORY_LABEL.fill, TERRITORY_LABEL.opacity)}
           fontSize={TERRITORY_LABEL.fontSize}
           fontWeight={TERRITORY_LABEL.fontWeight}
           textAnchor="middle"
           alignmentBaseline="middle"
-          opacity={TERRITORY_LABEL.opacity}
-          stroke={TERRITORY_LABEL.stroke}
+          stroke={withSvgPaintAlpha(TERRITORY_LABEL.stroke, TERRITORY_LABEL.opacity)}
           strokeWidth={TERRITORY_LABEL.strokeWidth}
         >
           {nationLabelBySide[label.factionSide]}

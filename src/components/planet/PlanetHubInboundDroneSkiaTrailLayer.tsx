@@ -9,11 +9,12 @@
 //   언마운트 시 pathPool + trailPaint + live picture 순서대로 해제
 // ============================================================
 
-import React, { memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import {
   Canvas,
   PaintStyle,
+  Path,
   Picture,
   Skia,
   useImage,
@@ -154,7 +155,6 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
 
   // ── 사전 할당 Path 풀 + trail scratch Paint + PictureRecorder (컴포넌트 수명)
   const pathPoolRef = useRef<SkPath[]>([]);
-  const trailPaintRef = useRef<SkPaint | null>(null);
   const recorderRef = useRef<ReturnType<typeof Skia.PictureRecorder> | null>(null);
 
   const flameImage = useImage(require('../../../assets/images/effects/tail_fire_02.png'));
@@ -168,31 +168,68 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
   // use-after-free → GC FinalizerDaemon 파괴 시 SIGSEGV 를 유발한다(2026-06-17 크래시).
 
   const [picture, setPicture] = useState<SkPicture | null>(null);
+  const trailPath = useMemo(() => Skia.Path.Make(), []);
+  const trailPaint = useMemo(() => {
+    const p = Skia.Paint();
+    p.setStyle(PaintStyle.Fill);
+    p.setColor(Skia.Color(INBOUND_DRONE_TRAIL_GLOW_COLOR));
+    p.setAntiAlias(true);
+    return p;
+  }, []);
+  const trailPathSv = useSharedValue(trailPath);
 
   const flushPicture = useCallback(() => {
     rafIdRef.current = null;
     if (!mountedRef.current) return;
 
     const droneCount = trailCountRef.current;
-    // 허브 상시 누수 방지: 드론·히트FX 가 전혀 없으면 PictureRecorder 를 만들지 않는다.
-    // (orbit clock 틱마다 빈 recorder 생성/finish/dispose → 장시간 네이티브(JSI finalizer 지연) 누적 원인)
-    if (droneCount <= 0 && hitFxRef.current.length === 0) {
+    const hitFxCount = hitFxRef.current.length;
+    // 비행 중 Picture 를 매 프레임 만들면 Hermes 힙이 웨이브마다 4MB씩 남는다.
+    // 꼬리는 경로 1개를 rewind 하고, Picture 는 짧은 화염 FX 에만 쓴다.
+    resetSkPath(trailPath);
+    let drewTrail = false;
+    let maxAlpha = 0;
+    for (let i = 0; i < droneCount; i += 1) {
+      const slice = resolveInboundDroneTrailSlice(
+        i,
+        pendingOrbitMsRef.current,
+        trailFlatRef.current,
+        droneCount,
+      );
+      if (!slice) continue;
+      const wrote = writeInboundDroneTaperedTrailFillPath(
+        trailPath,
+        geomRef.current.center,
+        geomRef.current.edgeR,
+        geomRef.current.impactR,
+        slice.ang,
+        slice.uTail,
+        slice.uHead,
+        drewTrail,
+      );
+      if (!wrote) continue;
+      drewTrail = true;
+      const alpha = slice.trailOpacity * INBOUND_DRONE_TRAIL_GLOW_OPACITY_MUL;
+      if (alpha > maxAlpha) maxAlpha = alpha;
+    }
+    trailPaint.setAlphaf(drewTrail ? Math.max(0, Math.min(1, maxAlpha)) : 0);
+    trailPathSv.value = trailPath;
+
+    if (droneCount <= 0 && hitFxCount === 0) {
       if (liveFrameRef.current != null) {
         dropSkPictureReactFrame({ liveRef: liveFrameRef, setPicture });
       }
       onVfxIdleRef.current?.();
       return;
     }
-
-    // trail paint 지연 초기화
-    if (!trailPaintRef.current) {
-      const p = Skia.Paint();
-      p.setStyle(PaintStyle.Fill);
-      p.setColor(Skia.Color(INBOUND_DRONE_TRAIL_GLOW_COLOR));
-      p.setAntiAlias(true);
-      trailPaintRef.current = p;
+    if (hitFxCount === 0) {
+      if (liveFrameRef.current != null) {
+        dropSkPictureReactFrame({ liveRef: liveFrameRef, setPicture });
+      }
+      return;
     }
-    // PictureRecorder 지연 초기화 — 컴포넌트 수명 동안 1개만 만들어 매 flush마다 재사용
+
+    // PictureRecorder 지연 초기화 — 화염 FX 동안만, 컴포넌트 수명 1개 재사용
     if (!recorderRef.current) {
       recorderRef.current = Skia.PictureRecorder();
     }
@@ -200,31 +237,29 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
     const next = recordInboundDroneVfxPicture({
       orbitMs: pendingOrbitMsRef.current,
       flat: trailFlatRef.current,
-      droneCount,
+      droneCount: 0,
       center: geomRef.current.center,
       edgeR: geomRef.current.edgeR,
       impactR: geomRef.current.impactR,
       hitFxList: hitFxRef.current,
       flameImage: flameImageRef.current,
       pathPool: pathPoolRef.current,
-      trailPaint: trailPaintRef.current,
+      trailPaint,
       recorder: recorderRef.current,
     });
 
     if (!next) {
-      if (droneCount <= 0 && hitFxRef.current.length === 0) {
+      if (liveFrameRef.current != null) {
         dropSkPictureReactFrame({ liveRef: liveFrameRef, setPicture });
+      }
+      if (droneCount <= 0 && hitFxRef.current.length === 0) {
         onVfxIdleRef.current?.();
       }
       return;
     }
 
     commitSkPictureReactFrame({ liveRef: liveFrameRef, setPicture, next });
-
-    if (droneCount <= 0 && hitFxRef.current.length === 0) {
-      onVfxIdleRef.current?.();
-    }
-  }, [hitFxRef]);
+  }, [hitFxRef, trailPaint, trailPath, trailPathSv]);
 
   const scheduleFlush = useCallback(() => {
     if (rafIdRef.current != null) return;
@@ -308,16 +343,17 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
         safeSkiaDispose(p);
       }
       pathPoolRef.current = [];
-      safeSkiaDispose(trailPaintRef.current);
-      trailPaintRef.current = null;
+      safeSkiaDispose(trailPath);
+      safeSkiaDispose(trailPaint);
       safeSkiaDispose(recorderRef.current as unknown as { dispose?: () => void });
       recorderRef.current = null;
       dropSkPictureReactFrame({ liveRef: liveFrameRef, setPicture });
     };
-  }, [trailBridgeAliveSv]);
+  }, [trailBridgeAliveSv, trailPaint, trailPath]);
 
   return (
     <Canvas style={styles.canvas} pointerEvents="none">
+      <Path path={trailPathSv} paint={trailPaint} />
       {picture ? <Picture picture={picture} /> : null}
     </Canvas>
   );

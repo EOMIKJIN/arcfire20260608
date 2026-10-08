@@ -4,6 +4,7 @@
 // ============================================================
 import React, { memo, useMemo, type ReactNode, type Ref } from 'react';
 import { ScrollView, StyleSheet, View, useWindowDimensions, type StyleProp, type ViewStyle } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { OVERLAY_TOKENS, SPACING } from '../../utils/theme';
 import { ArcOverlayTitleHeader } from './ArcOverlayTitleHeader';
 import { ArcOverlayCloseButton } from './ArcOverlayCloseButton';
@@ -16,9 +17,11 @@ import {
   OVERLAY_PANEL_BODY_PADDING_TOP_PX,
   OVERLAY_PANEL_CARD_MAX_HEIGHT_PCT,
   OVERLAY_PANEL_CARD_MIN_HEIGHT_PCT,
+  resolveOverlayPanelCardBudget,
   resolveOverlayPanelMaxHeight,
   resolveOverlayPanelMinHeight,
 } from './overlayPanelLayout';
+import { resolveOverlayContentHeight } from './overlayInsets';
 
 export type ArcOverlayCardLayout = 'compact' | 'panel' | 'fill';
 
@@ -49,6 +52,8 @@ type Props = {
   children: ReactNode;
   style?: StyleProp<ViewStyle>;
   bodyStyle?: StyleProp<ViewStyle>;
+  /** footer 독만 덮어씀 — 채팅 입력 띠처럼 카드 기본 패딩을 바꿀 때 */
+  footerDockStyle?: StyleProp<ViewStyle>;
   /** phosphor(기본) · tactical(G-ARCHIVE 라이트 카드 시험) */
   visualTheme?: ArcOverlayVisualTheme;
 };
@@ -73,15 +78,25 @@ export const ArcOverlayCard = memo(function ArcOverlayCard({
   children,
   style,
   bodyStyle,
+  footerDockStyle,
   visualTheme = 'phosphor',
 }: Props) {
   const { height: winH } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const isPanel = layout === 'panel' || layout === 'fill';
   const isFill = layout === 'fill';
   const isTactical = visualTheme === 'tactical';
   const hasFooter = footer != null;
-  const panelMinPx = useMemo(() => resolveOverlayPanelMinHeight(winH), [winH]);
-  const panelMaxPx = useMemo(() => resolveOverlayPanelMaxHeight(winH), [winH]);
+  const panelMinPx = useMemo(() => {
+    const layoutHeight = resolveOverlayContentHeight(winH, insets);
+    const budget = resolveOverlayPanelCardBudget(winH, insets);
+    return Math.min(resolveOverlayPanelMinHeight(layoutHeight), budget);
+  }, [winH, insets.top, insets.bottom, insets.left, insets.right]);
+  const panelMaxPx = useMemo(() => {
+    const layoutHeight = resolveOverlayContentHeight(winH, insets);
+    const budget = resolveOverlayPanelCardBudget(winH, insets);
+    return Math.min(resolveOverlayPanelMaxHeight(layoutHeight), budget);
+  }, [winH, insets.top, insets.bottom, insets.left, insets.right]);
   const resolvedMinHeight = isFill
     ? minHeight
     : minHeight
@@ -165,7 +180,13 @@ export const ArcOverlayCard = memo(function ArcOverlayCard({
             </ScrollView>
           </View>
           {hasFooter ? (
-            <View style={[styles.footerDock, isTactical ? tacticalOverlayCardStyles.footerDock : null]}>
+            <View
+              style={[
+                styles.footerDock,
+                isTactical ? tacticalOverlayCardStyles.footerDock : null,
+                footerDockStyle,
+              ]}
+            >
               {footer}
             </View>
           ) : null}
@@ -183,7 +204,13 @@ export const ArcOverlayCard = memo(function ArcOverlayCard({
             {children}
           </View>
           {hasFooter ? (
-            <View style={[styles.footerDock, isTactical ? tacticalOverlayCardStyles.footerDock : null]}>
+            <View
+              style={[
+                styles.footerDock,
+                isTactical ? tacticalOverlayCardStyles.footerDock : null,
+                footerDockStyle,
+              ]}
+            >
               {footer}
             </View>
           ) : null}

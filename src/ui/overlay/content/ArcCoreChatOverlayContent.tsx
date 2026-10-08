@@ -3,6 +3,7 @@ import {
   Animated,
   Easing,
   Image,
+  Dimensions,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -11,8 +12,10 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  useWindowDimensions,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { resolveDictionaryLocale, useT } from '../../../i18n';
 import { useAppSettingsStore } from '../../../store/appSettingsStore';
 import {
@@ -34,6 +37,12 @@ import {
   isArcCoreBootChatFirstActive,
   isArcCoreBootChatFirstStartPhrase,
 } from '../../../arcCore/chat/arcCoreBootChatFirstGate';
+import {
+  resolveArcCoreChatColumnBottomPadPx,
+  resolveArcCoreChatComposerLiftPx,
+  resolveArcCoreChatKeyboardInsetPx,
+} from '../arcCoreChatKeyboardLayout';
+import { resolveOverlayEdgeInsets } from '../overlayInsets';
 import { ArcOverlayCard } from '../ArcOverlayCard';
 import { ArcButton } from '../ArcButton';
 import { resolveArcOverlayVisualTheme } from '../tacticalOverlayRollout';
@@ -201,14 +210,28 @@ export const ArcCoreChatOverlayContent = memo(function ArcCoreChatOverlayContent
   const showWelcomeHero = welcome != null && !chatting;
   const lensLabel = t('arcCore.symbolA11y');
   const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const { height: windowHeight } = useWindowDimensions();
+  const safeInsets = useSafeAreaInsets();
+  const hostBottom = resolveOverlayEdgeInsets(safeInsets).bottom;
+  const screenHeight = Dimensions.get('screen').height;
+  const chromeNow = Math.max(0, Math.round(screenHeight - windowHeight));
+  const restingChromeRef = useRef(chromeNow);
+  if (keyboardHeight <= 0) restingChromeRef.current = chromeNow;
+  const rawKeyboardInset = resolveArcCoreChatKeyboardInsetPx(
+    screenHeight,
+    windowHeight,
+    keyboardHeight,
+    restingChromeRef.current,
+  );
+  const keyboardOverlap = resolveArcCoreChatComposerLiftPx(rawKeyboardInset, hostBottom);
+  const keyboardLift = resolveArcCoreChatColumnBottomPadPx(keyboardOverlap, 0, windowHeight);
+  const shellStyle = useMemo(
+    () => (keyboardLift > 0 ? [styles.fillShell, { paddingBottom: keyboardLift }] : styles.fillShell),
+    [keyboardLift],
+  );
   const [draft, setDraft] = useState('');
   const [busy, setBusy] = useState(false);
   const [thinking, setThinking] = useState(false);
-  /** 개발자 진단 전용 — cloud NL vs 로컬 템플릿 확인용. 게임 로직·저장 상태와 무관, __DEV__ 빌드에만 렌더 */
-  const [lastDebug, setLastDebug] = useState<{
-    providerId: 'local' | 'cloud';
-    fallbackUsed: boolean;
-  } | null>(null);
   const [typingId, setTypingId] = useState<string | null>(null);
   const inputRef = useRef<TextInput>(null);
   const scrollRef = useRef<ScrollView>(null);
@@ -313,8 +336,12 @@ export const ArcCoreChatOverlayContent = memo(function ArcCoreChatOverlayContent
     const applyHeight = (next: number) => {
       setKeyboardHeight(Math.max(0, Math.round(next)));
     };
-    const onShow = (e: { endCoordinates?: { height?: number } }) => {
-      applyHeight(e.endCoordinates?.height ?? 0);
+    const onShow = (e: { endCoordinates?: { height?: number; screenY?: number } }) => {
+      const screenH = Dimensions.get('screen').height;
+      const screenY = e.endCoordinates?.screenY ?? 0;
+      const fromY = screenY > 0 ? Math.max(0, Math.round(screenH - screenY)) : 0;
+      const fromH = Math.round(e.endCoordinates?.height ?? 0);
+      applyHeight(Math.max(fromH, fromY));
     };
     const onHide = () => {
       applyHeight(0);
@@ -375,14 +402,15 @@ export const ArcCoreChatOverlayContent = memo(function ArcCoreChatOverlayContent
   }, [surfaceActive, stopBreath]);
 
   useEffect(() => {
-    if (!surfaceActive || busy || showWelcomeHero) return;
+    if (!surfaceActive || showWelcomeHero) return;
     const focusId = setTimeout(() => {
+      if (busyRef.current) return;
       inputRef.current?.focus();
     }, 280);
     return () => {
       clearTimeout(focusId);
     };
-  }, [busy, showWelcomeHero, surfaceActive]);
+  }, [showWelcomeHero, surfaceActive]);
 
   const finishTyping = useCallback(() => {
     setTypingId(null);
@@ -394,10 +422,12 @@ export const ArcCoreChatOverlayContent = memo(function ArcCoreChatOverlayContent
   const onSend = useCallback(async () => {
     const text = draft.trim();
     if (!text || busyRef.current) return;
+    inputRef.current?.blur();
+    requestAnimationFrame(() => {
+      Keyboard.dismiss();
+    });
     if (isArcCoreBootChatFirstActive() && isArcCoreBootChatFirstStartPhrase(text)) {
       setDraft('');
-      Keyboard.dismiss();
-      inputRef.current?.blur();
       const result = await submitArcCoreBackchannelMessage(text);
       if (result.dismissedForTitle) return;
     }
@@ -423,11 +453,6 @@ export const ArcCoreChatOverlayContent = memo(function ArcCoreChatOverlayContent
     if (__DEV__) {
       // eslint-disable-next-line no-console
       console.log('[arcCoreChat] provider=', result.providerId, 'fallback=', result.fallbackUsed);
-      setLastDebug(
-        result.providerId
-          ? { providerId: result.providerId, fallbackUsed: Boolean(result.fallbackUsed) }
-          : null,
-      );
     }
     if (!result.ok || !result.reply) {
       useArcCoreChatStore.getState().appendMessage({
@@ -456,12 +481,6 @@ export const ArcCoreChatOverlayContent = memo(function ArcCoreChatOverlayContent
   const footer = useMemo(
     () => (
       <View style={styles.composer}>
-        {__DEV__ && lastDebug ? (
-          <Text style={styles.devBadge}>
-            [dev] {lastDebug.providerId}
-            {lastDebug.fallbackUsed ? '(fallback)' : ''}
-          </Text>
-        ) : null}
         <View style={styles.inputRow}>
           <TextInput
             ref={inputRef}
@@ -479,8 +498,11 @@ export const ArcCoreChatOverlayContent = memo(function ArcCoreChatOverlayContent
             caretHidden={false}
             editable={surfaceActive}
             autoFocus={false}
+            multiline
+            scrollEnabled={false}
+            textAlignVertical="center"
             maxLength={500}
-            returnKeyType="send"
+            returnKeyType="default"
             blurOnSubmit={false}
             onSubmitEditing={() => {
               void onSend();
@@ -512,7 +534,7 @@ export const ArcCoreChatOverlayContent = memo(function ArcCoreChatOverlayContent
         </View>
       </View>
     ),
-    [activeSpeakerId, busy, draft, lastDebug, onSend, surfaceActive, t, visualTheme],
+    [activeSpeakerId, busy, draft, onSend, surfaceActive, t, visualTheme],
   );
 
   const onToggleSpeaker = useCallback(() => {
@@ -559,7 +581,7 @@ export const ArcCoreChatOverlayContent = memo(function ArcCoreChatOverlayContent
 
   return (
     <KeyboardAvoidingView
-      style={styles.fillShell}
+      style={shellStyle}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       enabled={Platform.OS === 'ios'}
       collapsable={false}
@@ -571,6 +593,7 @@ export const ArcCoreChatOverlayContent = memo(function ArcCoreChatOverlayContent
       leading={headerLeading}
       onClose={onClose}
       footer={footer}
+      footerDockStyle={styles.composerDock}
       scrollViewRef={scrollRef}
       keyboardDismissMode="none"
       bodyStyle={styles.chatBody}
@@ -751,23 +774,23 @@ const styles = StyleSheet.create({
     color: TACTICAL_OVERLAY.labelInk,
     ...androidChatText,
   },
+  composerDock: {
+    backgroundColor: '#FFFFFF',
+    borderTopColor: TACTICAL_OVERLAY.insetBorder,
+    paddingTop: 8,
+    paddingBottom: 8,
+    paddingHorizontal: SPACING.sm,
+  },
   composer: {
     width: '100%',
     gap: 4,
     paddingHorizontal: SPACING.sm,
-    paddingTop: 4,
-    paddingBottom: 8,
+    paddingTop: 6,
+    paddingBottom: 6,
     borderWidth: 1,
     borderColor: TACTICAL_OVERLAY.insetBorder,
     backgroundColor: '#FFFFFF',
     borderRadius: 18,
-  },
-  devBadge: {
-    fontFamily: FONTS.mono,
-    fontSize: 10,
-    color: TACTICAL_OVERLAY.labelInk,
-    opacity: 0.6,
-    paddingHorizontal: 4,
   },
   inputRow: {
     flexDirection: 'row',
@@ -776,12 +799,15 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    minHeight: 36,
+    minHeight: 44,
+    maxHeight: 120,
     paddingHorizontal: 4,
-    color: TACTICAL_OVERLAY.valueInk,
+    paddingVertical: 8,
+    color: '#1A2332',
     backgroundColor: '#FFFFFF',
     fontFamily: FONTS.mono,
-    fontSize: 13,
+    fontSize: 15,
+    lineHeight: 22,
     ...androidChatText,
   },
   toolRow: {

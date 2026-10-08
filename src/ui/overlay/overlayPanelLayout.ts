@@ -1,3 +1,10 @@
+import { SPACING } from '../../utils/theme';
+import {
+  resolveOverlayContentHeight,
+  resolveOverlayEdgeInsets,
+  type EdgeInsetsLike,
+} from './overlayInsets';
+
 /** 패널형·무역(구매/판매) 카드 세로 — 화면 대비 최소·최대 높이(%) */
 export const OVERLAY_PANEL_CARD_MIN_HEIGHT_PCT = '85%' as const;
 export const OVERLAY_PANEL_CARD_MAX_HEIGHT_PCT = '96%' as const;
@@ -29,6 +36,18 @@ export const PLANET_ECONOMY_PANEL_BODY_PADDING_TOP_PX = OVERLAY_PANEL_BODY_PADDI
 
 /** panel Host — 상단 고정·아래로 확장 (`getOverlayChrome().hostAnchor === 'top'`) */
 export const OVERLAY_PANEL_TOP_ANCHOR_PX = 28;
+
+/**
+ * 패널 카드가 호스트 하단 여백을 넘지 않는 최대 높이.
+ * 루트 하단 inset + 프레임 상하 패딩 + 상단 앵커를 뺀 값.
+ */
+export function resolveOverlayPanelCardBudget(windowHeight: number, insets: EdgeInsetsLike): number {
+  const edges = resolveOverlayEdgeInsets(insets);
+  const contentHeight = resolveOverlayContentHeight(windowHeight, insets);
+  const top = SPACING.sm + edges.top + OVERLAY_PANEL_TOP_ANCHOR_PX;
+  const bottom = SPACING.sm;
+  return Math.max(0, contentHeight - top - bottom);
+}
 
 /** 행성정보 bleed — 이미지 아래 설명 4줄 고정 높이 (총사령관 1줄 포함) */
 export const PLANET_INFO_DESCRIPTION_LINES = 4;

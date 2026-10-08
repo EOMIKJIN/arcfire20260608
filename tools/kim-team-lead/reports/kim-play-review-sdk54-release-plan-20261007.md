@@ -172,6 +172,67 @@ owner-auto: 02:50 설치 직전 김플레이가 정지 (합의 11번). 헤드리
 - 스파이 tick(R-B) 464회 · 평균 **205ms** (SDK 52: 168ms). 디버그 조건이지만 악화 경향 기록.
 - **SDK 54 대비**: `expo-av` 경고가 「SDK 54에서 제거」라고 표시 → 54 설치 시 `expo-av` 존속 여부 확인, 없으면 `expo-audio`/`expo-video` 이전이 54 단계 선행 작업.
 
+## 13. 단계 검수 — SDK 54 (10:55 · 미커밋 · 설치 전)
+
+판정: **정적·빌드 PASS** · 실기 대기. SDK 53 체크포인트 `c6bf83d` 수용.
+
+| 항목 | 결과 |
+|---|---|
+| 설치 | expo 54.0.37 · RN 0.81.5 · React 19.1.0 · Skia 2.2.12(정식) · Reanimated **3.19.5 고정 + `expo.install.exclude`** (계획 12번대로) · AsyncStorage 2.2.0 · RNFB 24.0.0 · expo-av 16.0.8(존속) · TS 5.9.3 |
+| 아키텍처 | `newArchEnabled:false` (app.json · gradle.properties) |
+| APK (`app-debug.apk` 10:38) | **targetSdk 36 · compileSdk 36** · minSdk 24 |
+| **16KB** | 64비트 lib 36개 **zip 정렬 실패 0 · ELF 실패 0** (어제 릴리스: 118개 중 116 실패). `librnskia`·`libreanimated`·`libhermes`·`libreactnative`·`libexpo-av` 포함 전부 통과. `libworklets.so`는 Reanimated 3.19 자체 산출(react-native-worklets 패키지 없음 확인) |
+| tsc (client) | **PASS** |
+| audit:worklet-contract · audit:skia-memory | **PASS** · 31/31 |
+| 플레이봇 | **114/114** · 헤드리스 `sdk54-gate-1d` `EARLY_SPINE_OK` |
+
+실기에서 볼 것 (SDK 54 고유):
+1. **edge-to-edge 강제** (`edgeToEdgeEnabled=true`) — 상단 크롬·하단 바텀시트·전투 HUD 가림. 깨지면 **최소 대응만** · 잠금 상수 변경 금지(SDK54-E2E HOLD).
+2. **내비게이션 바 몰입 모드** — `app/_layout.tsx:434`, `src/ui/overlay/reapplyAndroidImmersiveNavBar.ts:8` 의 `setVisibilityAsync('hidden')` + `setBehaviorAsync('overlay-swipe')`. expo-navigation-bar 5는 edge-to-edge에서 일부 API를 지원하지 않는다고 안내함 → 하단 바가 숨겨지는지·스와이프 후 다시 숨는지 확인. 경고 로그 유무 기록.
+3. 저장 데이터 유지 (AsyncStorage 2.2.0) · Firebase 초기화 · Skia 2.2 정식 렌더 (허브 성운 · 이동 전투 배경 · 전투).
+4. 예측형 뒤로가기는 opt-in이라 기본 꺼짐 — 뒤로가기 동작 변화 없어야 정상.
+
+### 13-1. SDK 54 실기 1차 (11:25 · pid 9525)
+
+- SDK 54 프로세스 9525: **FATAL 0 · JS 오류 0**. 경고는 RNFB deprecated 3건뿐.
+- 부팅 → 타이틀 활성 약 4.5초 (`post_boot_settled`). 차원항로 로딩 자체 0.6초 (`continue_prewarm_start+292s`는 타이틀 대기 시간).
+- `[PLAY_VERB]` 정상 (scan · land · quest · develop · talk).
+- **11:16 계정 초기화 실행됨** (`[reset-diag] purge=22380ms` · cloud_phase 15.0s · world_expansion 2.8s) → 이후 `story_001` 인트로부터 재시작. 대표님 의도 여부 확인 요망. 의도라면 정상이며, **초기화 22.4초**는 별도 기록(기존 동작 여부 미확인).
+- 대표님 관측(김팀장 수정 중): 키보드 자동 내림 · 인게임 대사창·팝업 하단이 시스템 바 영역 침범 → edge-to-edge 강제 영향과 일치. 잠금 상수 변경 없이 최소 대응 원칙.
+- 무시 가능: pid 31787·5334 오류(`React Native version mismatch JS 0.81.5 / Native 0.79.6`, async-require 미해결)는 **SDK 53 구 바이너리에 SDK 54 번들이 로드된 것** — 새 설치 후 미발생.
+- 스파이 tick(R-B) 평균 180ms 지속.
+- 참고: adb에 같은 기기가 2개 이름(IP·mDNS)으로 잡힘 → adb 명령은 `-s` 지정 필요.
+- **정정 (12:20)**: pid 9525는 **11:26:42에 종료됨** — `JNI DETECTED ERROR IN APPLICATION: field operation on NULL object` → SIGABRT(`mqt_js`). 위 「FATAL 0」은 11:25까지 구간 기준.
+  - 직전 11:26:40~41에 개발 모드 JS 재시작이 일어나 모든 네이티브 모듈이 「Cannot find native module」(ExponentAV · ExpoNavigationBar · ExpoFontLoader · reanimated)로 사라진 상태였고, 그 사이 도착한 Firestore `documentGet` 응답(`ReactNativeFirebaseFirestoreDocumentModule.java:130`)이 해제된 브리지에 쓰다가 중단됨.
+  - 판정: **개발 모드 리로드 중 Firestore 콜백 경합** — 릴리스 빌드에는 리로드가 없어 출시 경로와는 무관할 가능성이 높음. 단 릴리스 빌드 실기에서 같은 스택이 없는지 11월 릴리스 검수 때 재확인.
+- **13-2. 새 설치 실기 (12:20~12:34 · pid 14101)**: FATAL 0 · JS 오류 0 · 경고는 기존 3종(expo-av · RNFB 네임스페이스 · 레거시 아키텍처)+DevLoadingView 깊은 import. 일일 배치 완료(28.2초) · RTDB boot sync ok · 12:27 JS 리로드 후 정상 복귀 · 허브 Skia reclaim 정상. 메모리(12:34 허브, 디버그): TOTAL PSS 712MB · GL mtrack 44.5MB · Native Heap 372MB · **Views 389**(idle 기준 ≤380 초과, ≥450 FAIL 미만 → 김경제 30분 idle 재측 필요). 스파이 tick 평균 146ms(n=963, 최대 266). **Firestore 쓰기 로그 여전히 없음** · `[PLAY_VERB]` 0건(조작 전).
+- **13-3. 스파이 tick 수정 검수 (12:50 · 김팀장 미커밋 diff · 12:46:45 리로드로 반영)** — 판정 **PARTIAL**
+  - diff: `ArcCoreSpySubCore` 스파이 0명일 때 매 tick 조회하던 조건 제거(1초 주기로 제한) · `buildCaptainPresenceWorldIndex.arcTrafficSig`에서 `phase` 제외. tsc PASS.
+  - 실기: 1분당 스파이 지연 기록 **약 77회 → 28회**(빈도 약 63% 감소) · 1회 비용은 **평균 165ms 그대로**(12:48 163ms · 12:49 167ms, 최대 228ms). 즉 1초 조회 중 절반가량이 여전히 무거움 → `getCaptainPresenceWorldIndex` 캐시 미스(재빌드) 또는 캐시 확인 경로 자체(`listGovernorCaptainPrimaryPlanets` · govSig 정렬 · key 문자열) 비용 의심. 구간별 소요 계측으로 원인 특정 필요.
+  - 엣지 버그: 새 비교가 `lastSpyKey` 기준이라, 알림이 소비되지 않은 상태(`consumed=false` → lastSpyKey 미갱신)에서 스파이 집합이 다시 이전 집합으로 돌아가면 `cachedSpyIds`가 갱신되지 않고 떠난 스파이가 남음 → 매 tick 알림 재시도. 피해는 작음(펄스 피해는 bundle을 새로 계산해 0). 1초 주기라 비교 없이 `cachedSpyIds = nextIds` 로 항상 대입 권장.
+- 12:12 수동 빌드(`gradlew :app:assembleDebug -PnewArchEnabled=false`) 성공 · 12:17 설치. `npx expo run:android`만 reanimated `NativeWorkletsModuleSpec` 컴파일 오류로 실패(2회) → 김팀장 원인 조사 필요. 그 전까지 수동 빌드 경로 사용.
+
+## 14. 전수 조사 — 원래 목표 대비 완료 여부 (11:30 · 김플레이)
+
+**종합: SDK 업데이트는 사실상 완료(커밋·화면 보정 남음). 안드로이드 출시 수준은 미완 — 11월 항목 그대로 남음. DB는 Firestore 1건 미확인.**
+
+| 영역 | 판정 | 근거 / 남은 것 |
+|---|---|---|
+| SDK 업데이트 | **거의 완료** | Expo 54 · RN 0.81.5 · targetSdk/compileSdk 36 · 16KB 64비트 36/36 통과(디버그). **SDK 54 미커밋**(package.json·lock·`ArcCoreChatOverlayContent.tsx` 수정 중) · `main` 미병합 |
+| 코드 안정화 (정적) | **PASS** | tsc · `audit:daily` · `audit:memory:all`(memory 37/37 · skia 31/31 · worklet · native-reclaim 20/20 · resident-set 7/7 · hot-path 0) · `audit:ui-overlay` · 플레이봇 114 · 헤드리스 1일 |
+| 코드 안정화 (실기) | **PASS + 잔여** | SDK 52·53·54 새 바이너리 FATAL 0 · JS 오류 0 (52는 3.4시간 생존). 잔여: edge-to-edge 화면 침범·키보드(김팀장 수정 중) · 스파이 tick R-B 평균 180ms(기존 버그, 출시 전 수정) · 계정 초기화 22.4초 |
+| 김경제 메모리 게이트 | **미실행** | `mem-post-dev-recheck`·30분 idle PSS floor 미측정. 개발 반영 후 필수 게이트 → SDK 54 커밋 전후 배정 필요 |
+| 기존 시스템 | **PASS** | `[PLAY_VERB]` 학습 로그 · 플레이봇 · 경제 배치 마커 · 아크코어 대화(cloud ok) 동작. Firebase 패치 3종 적용 · RN 0.74 패치 보류(개발 전용 기능만 영향, DevLoadingView는 JS로 대체) |
+| 지원 중단 경고 | **출시 무관 · 기록** | RNFB 네임스페이스 API(다음 RNFB 메이저에서 제거) · `expo-av`(SDK 55에서 제거 → 출시 후 SDK 55 전 `expo-audio`/`expo-video` 이전) |
+| DB 연결 | **부분** | Firebase Auth OK(초기화 후 새 익명 uid 로그인) · RTDB OK(`boot sync ok`, learning merge). **Firestore 미확인**: 초기화 직후 닉네임 확인·예약·재확인 3회 모두 5초 타임아웃 → `cloud sync deferred (firebase offline)`. 코드 주석상 초기화 직후 기존에도 있던 패턴이나, SDK 54에서 Firestore 정상 쓰기는 **아직 한 번도 확인 못 함** → 앱 재시작 후 클라우드 저장·닉네임 예약 성공 로그 확인 필요 (P0) |
+| 프로세스 | **위험 1** | 자정 `ArcfireOnline_DailyCommit`은 **현재 브랜치에서** `git add -A`→commit→`git push`. 지금 `sdk54-upgrade`는 upstream이 없어 push 실패 → 실패 보고 생성. 또 미완 화면 수정이 그대로 스냅샷됨. → **자정 전에 SDK 54 커밋 + main 병합(또는 upstream 지정) 결정 필요** |
+| 안드로이드 출시 수준 | **미완 (계획상 11월)** | 릴리스가 `debug.keystore` 서명 · AAB·`eas.json` 없음 · ABI에 x86/x86_64 포함 · minify/shrink 꺼짐 · **SDK 54 릴리스 빌드 미생성**(16KB 릴리스 재검사 필요) · Play 계정 유형(개인/조직·D-U-N-S) 미정 · 개인정보처리방침·데이터 보안 양식 미확인 · 2027-02 메모리 vitals 미측정 |
+| 알려진 기존 실패 | 변동 없음 | `combatFourAxisPlaySim.test.ts` 1건(audit:daily 미포함, SDK 무관) |
+
+권장 순서: ① 화면 보정 마감 → ② Firestore 쓰기 실기 확인 → ③ SDK 54 커밋 + main 병합(자정 전) → ④ 김경제 메모리 재검수 → ⑤ 스파이 R-B 수정 → ⑥ 11월 릴리스 서명·AAB·arm 전용·릴리스 16KB.
+
+남은 것 (11월): 릴리스 서명·AAB·x86 제외 후 **릴리스 번들로 16KB 재검사**.
+
 메모: `"expo": "^53.0.0"` 캐럿 반복 (54 단계에서 `~` 정리 권장).
 
 남은 실기 항목 (설치 후): 무선 Metro 8081 연결 · 부팅 · 허브→은하 지도→전투 왕복 · logcat FATAL 0 · `[PLAY_VERB]` 방출.

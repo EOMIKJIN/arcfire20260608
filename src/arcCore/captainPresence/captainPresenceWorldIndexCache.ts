@@ -12,6 +12,12 @@ let lastDayBucket = Number.NaN;
 let lastShips: readonly unknown[] | null = null;
 let lastGovMap: ReadonlyMap<string, string> | null = null;
 let lastUnlockedSig = '';
+let onInvalidate: (() => void) | null = null;
+
+/** 베이스 인덱스(주둔 배정)는 빌드 모듈이 가진다. epoch 무효화 때 같이 비운다. */
+export function setCaptainPresenceCacheInvalidateHook(hook: () => void): void {
+  onInvalidate = hook;
+}
 
 export function readCaptainPresenceWorldIndexIfUnchanged(
   epochBucket: number,
@@ -70,4 +76,5 @@ export function invalidateCaptainPresenceWorldIndexCache(): void {
   lastShips = null;
   lastGovMap = null;
   lastUnlockedSig = '';
+  onInvalidate?.();
 }

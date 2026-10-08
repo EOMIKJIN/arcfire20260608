@@ -12,6 +12,7 @@ export type RestartAppResult = {
 
 type ArcfireNativeMemoryNative = {
   trimBitmapMemoryCachesAsync: () => Promise<TrimBitmapCachesResult>;
+  purgeNativeHeapAsync?: () => Promise<{ ok: boolean }>;
   restartAppAsync: () => Promise<RestartAppResult>;
 };
 
@@ -42,6 +43,34 @@ export async function trimNativeBitmapCachesAsync(): Promise<TrimBitmapCachesRes
 
 export function isNativeBitmapTrimAvailable(): boolean {
   return getNativeModule() != null;
+}
+
+/** 이미 해제된 네이티브 페이지를 OS에 반환. 지도 이탈 직후 1회. */
+export async function purgeNativeHeapAsync(): Promise<{ ok: boolean }> {
+  const mod = getNativeModule();
+  if (!mod?.purgeNativeHeapAsync) return { ok: false };
+  try {
+    return await mod.purgeNativeHeapAsync();
+  } catch {
+    return { ok: false };
+  }
+}
+
+let stageExitPurgeTimer: ReturnType<typeof setTimeout> | null = null;
+
+function logNativeHeapPurge(ok: boolean): void {
+  if (typeof __DEV__ === 'undefined' || !__DEV__) return;
+  console.log(`[MEM] native heap purge ok=${ok}`);
+}
+
+/** 뷰 detach·bitmap recycle 다음, 포커스 해제와 언마운트 사이보다 뒤에 한 번 더. */
+export function scheduleNativeHeapPurgeAfterStageExit(): void {
+  void purgeNativeHeapAsync().then((r) => logNativeHeapPurge(r.ok));
+  if (stageExitPurgeTimer) clearTimeout(stageExitPurgeTimer);
+  stageExitPurgeTimer = setTimeout(() => {
+    stageExitPurgeTimer = null;
+    void purgeNativeHeapAsync().then((r) => logNativeHeapPurge(r.ok));
+  }, 900);
 }
 
 /** Android — 런처 액티비티 재시작. iOS·미지원 환경은 ok:false */

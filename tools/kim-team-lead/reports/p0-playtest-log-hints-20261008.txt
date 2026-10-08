@@ -1,0 +1,26 @@
+10-08 20:25:13.931 12451 12556 I ReactNativeJS: [MEM] runStageNativeReclaimPass stage=galaxy_map reason=route_blur immediate=0
+10-08 20:25:13.932 12451 12556 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=56
+10-08 20:25:14.697 12451 12556 I ReactNativeJS: [MEM] galaxy_map disposed
+10-08 20:25:14.702 12451 12556 I ReactNativeJS: [MEM] runStageNativeReclaimPass stage=galaxy_map reason=route_blur immediate=0
+10-08 20:25:14.704 12451 12556 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_blur hermes_mb=56
+10-08 20:25:14.732 12451 12556 I ReactNativeJS: [MEM] planet_main_stage_hub mount
+10-08 20:25:17.470 12451 12556 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=manual hermes_mb=56 detail=departure_preflight_arcadia_prime
+10-08 20:25:17.756 12451 12556 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+10-08 20:25:18.020 12451 12556 I ReactNativeJS: [MEM] planet_main_stage_hub disposed
+10-08 20:25:18.035 12451 12556 I ReactNativeJS: [MEM] galaxy_map mount
+10-08 20:25:18.215 12451 12556 I ReactNativeJS: [MEM] runStageNativeReclaimPass stage=galaxy_map reason=ingress_from_planet_hub immediate=0
+10-08 20:25:18.218 12451 12556 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=deep_reclaim hermes_mb=60 detail=ingress_from_planet_hub
+10-08 20:25:18.223 12451 12556 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=ingress_reclaim hermes_mb=60 detail=from_planet_hub
+10-08 20:25:18.226 12451 12556 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=route_focus hermes_mb=60
+10-08 20:25:20.020 12451 12556 I ReactNativeJS: [MEM] deferredNativeReclaim stage=planet_hub listeners=2
+10-08 20:25:20.024 12451 12556 I ReactNativeJS: [MEM] deferredNativeReclaim stage=galaxy_map listeners=2
+10-08 20:25:22.252 12451 12556 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=19 reason=galaxy_map_post_ingress_settle
+10-08 20:25:22.253 12451 12556 I ReactNativeJS: [MEM] runStageNativeReclaimPass stage=galaxy_map reason=galaxy_map_post_ingress_settle immediate=0
+10-08 20:25:22.257 12451 12556 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=deep_reclaim hermes_mb=64 detail=galaxy_map_post_ingress_settle
+10-08 20:25:22.258 12451 12556 I ReactNativeJS: [MEM] runGalaxyMapResidentDeepReclaimPass reason=galaxy_map_post_ingress_settle hubSkia=true
+10-08 20:25:23.826 12451 12556 I ReactNativeJS: [MEM] deferredNativeReclaim stage=galaxy_map listeners=2
+10-08 20:26:03.253 12451 12556 I ReactNativeJS: [MEM] hubSkiaNativeReclaim epoch=20 reason=galaxy_map_post_ingress_followup
+10-08 20:26:03.254 12451 12556 I ReactNativeJS: [MEM] runStageNativeReclaimPass stage=galaxy_map reason=galaxy_map_post_ingress_followup immediate=0
+10-08 20:26:03.256 12451 12556 I ReactNativeJS: [MEM_PROFILE] stage=galaxy_map event=deep_reclaim hermes_mb=72 detail=galaxy_map_post_ingress_followup
+10-08 20:26:03.257 12451 12556 I ReactNativeJS: [MEM] runGalaxyMapResidentDeepReclaimPass reason=galaxy_map_post_ingress_followup hubSkia=true
+10-08 20:26:04.821 12451 12556 I ReactNativeJS: [MEM] deferredNativeReclaim stage=galaxy_map listeners=2

@@ -1,4 +1,4 @@
-# Daily audit — 2026-10-07T15:00:11.074Z
+# Daily audit — 2026-10-08T15:00:12.442Z
 
 ## TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -51,7 +51,7 @@ PASS — buy_goods/defeat_enemy 배치·tq_* materialize·tq_anom 월드이벤�
 
 ## Largest TS/TSX under `src/` + `app/` (bytes)
 
-- 660,019 — `src/data/generated/galaxySystems100.generated.ts`
+- 685,808 — `src/data/generated/galaxySystems100.generated.ts`
 - 520,504 — `src/data/generated/csvNpcCaptains.ts`
 - 512,714 — `src/data/generated/csvStoryScenes.ts`
 - 502,112 — `src/data/generated/csvNpcCapitalShips.ts`

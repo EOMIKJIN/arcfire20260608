@@ -2,18 +2,32 @@
 
 const WINDOW_RESIZE_SLACK_PX = 24;
 export const ARC_CORE_CHAT_MIN_COLUMN_PX = 220;
+/** 입력 글줄이 자판에 반 칸 잠기지 않도록 더하는 여유. */
+export const ARC_CORE_CHAT_IME_CLEARANCE_PX = 36;
 
 export function resolveArcCoreChatKeyboardInsetPx(
   fullWindowHeight: number,
   windowHeight: number,
   keyboardHeight: number,
+  restingChromePx = 0,
 ): number {
   if (keyboardHeight <= 0) return 0;
   const kb = Math.round(keyboardHeight);
   const shrunk = Math.max(0, Math.round(fullWindowHeight) - Math.round(windowHeight));
-  const remain = kb - shrunk;
+  const keyboardShrink = Math.max(0, shrunk - Math.max(0, Math.round(restingChromePx)));
+  const remain = kb - keyboardShrink;
   if (remain <= WINDOW_RESIZE_SLACK_PX) return 0;
   return remain;
+}
+
+export function resolveArcCoreChatComposerLiftPx(
+  keyboardInset: number,
+  hostBottomPx: number,
+): number {
+  if (keyboardInset <= 0) return 0;
+  const overlap = Math.max(0, Math.round(keyboardInset) - Math.max(0, Math.round(hostBottomPx)));
+  if (overlap <= 0) return 0;
+  return overlap + ARC_CORE_CHAT_IME_CLEARANCE_PX;
 }
 
 export function resolveArcCoreChatColumnBottomPadPx(

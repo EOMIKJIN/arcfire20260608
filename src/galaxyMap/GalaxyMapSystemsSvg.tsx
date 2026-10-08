@@ -9,6 +9,7 @@ import {
   shouldShowGalaxyMapSystemLabel,
 } from './galaxyMapUnidentifiedLabel';
 import { resolveVisitedNodeInnerR } from './galaxyMapColonizeHubPulse';
+import { withSvgPaintAlpha } from './svgPaintAlpha';
 import { COLORS, FONTS, LAYOUT, ZONE_COLORS } from '../utils/theme';
 import {
   EMPTY_GALAXY_MAP_QUEST_ACCEPT_MARKS,
@@ -235,11 +236,13 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
         ? (isGameplay ? '#FFFFFF' : '#7F93B8')
         : GALAXY_MAP_UNIDENTIFIED_LABEL_FILL;
       const showLabel = shouldShowGalaxyMapSystemLabel(isGameplay, isSelected);
+      const tint = (color: string) => withSvgPaintAlpha(color, opacity);
+      const labelOpacity = isGameplay ? 0.95 : 0.75;
 
       let body: React.ReactNode;
       if (!isGameplay) {
         body = (
-          <Circle cx={pos.x} cy={pos.y} r={r} fill="#2B3547" stroke="#526483" strokeWidth={1} />
+          <Circle cx={pos.x} cy={pos.y} r={r} fill={tint('#2B3547')} stroke={tint('#526483')} strokeWidth={1} />
         );
       } else if (isCurrent) {
         body = (
@@ -247,7 +250,7 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
             cx={pos.x}
             cy={pos.y}
             r={r}
-            fill={resolveOccupiedNodeInnerFill(clanOwnerColor)}
+            fill={tint(resolveOccupiedNodeInnerFill(clanOwnerColor))}
           />
         );
       } else if (isVisited) {
@@ -259,11 +262,11 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
               cx={pos.x}
               cy={pos.y}
               r={r}
-              fill="rgba(255,255,255,0.10)"
-              stroke="rgba(255,255,255,0.55)"
+              fill={tint('rgba(255,255,255,0.10)')}
+              stroke={tint('rgba(255,255,255,0.55)')}
               strokeWidth={1.25}
             />
-            <Circle cx={pos.x} cy={pos.y} r={innerR} fill={innerFill} />
+            <Circle cx={pos.x} cy={pos.y} r={innerR} fill={tint(innerFill)} />
           </>
         );
       } else if (isReachable) {
@@ -272,8 +275,8 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
             cx={pos.x}
             cy={pos.y}
             r={r}
-            fill={`${accent}33`}
-            stroke={clanOwnerColor ? `${clanOwnerColor}9B` : 'rgba(255,255,255,0.60)'}
+            fill={tint(`${accent}33`)}
+            stroke={tint(clanOwnerColor ? `${clanOwnerColor}9B` : 'rgba(255,255,255,0.60)')}
             strokeWidth={1.5}
           />
         );
@@ -283,41 +286,41 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
             cx={pos.x}
             cy={pos.y}
             r={r}
-            fill={clanOwnerColor ? `${clanOwnerColor}22` : 'rgba(255,255,255,0.10)'}
-            stroke={clanOwnerColor ? `${clanOwnerColor}8F` : 'rgba(255,255,255,0.39)'}
+            fill={tint(clanOwnerColor ? `${clanOwnerColor}22` : 'rgba(255,255,255,0.10)')}
+            stroke={tint(clanOwnerColor ? `${clanOwnerColor}8F` : 'rgba(255,255,255,0.39)')}
             strokeWidth={1.25}
           />
         );
       }
 
       return (
-        <G key={sys.id} opacity={opacity}>
+        <G key={sys.id}>
           {isSelected ? (
             <Circle
               cx={pos.x}
               cy={pos.y}
               r={r + 5}
-              stroke={isGameplay ? 'rgba(255,255,255,0.85)' : 'rgba(127,147,184,0.75)'}
+              stroke={tint(isGameplay ? 'rgba(255,255,255,0.85)' : 'rgba(127,147,184,0.75)')}
               strokeWidth={1}
               fill="transparent"
             />
           ) : null}
           {body}
-          {isCurrent ? <Circle cx={pos.x} cy={pos.y} r={3} fill={COLORS.bg_primary} /> : null}
-          <Circle cx={pos.x} cy={pos.y} r={HUB_DOT_R} fill={HUB_DOT_FILL} />
+          {isCurrent ? <Circle cx={pos.x} cy={pos.y} r={3} fill={tint(COLORS.bg_primary)} /> : null}
+          <Circle cx={pos.x} cy={pos.y} r={HUB_DOT_R} fill={tint(HUB_DOT_FILL)} />
           {/*
             Views: 잠금 전체 라벨은 생략. 개방 성계는 미확인/실명 라벨 유지.
             실명은 도착(방문·현재) 후에만 — 선택/도달만으로는 본명 노출 금지.
+            opacity는 글자 fill에 넣는다. SvgText opacity는 지도 전체 비트맵을 만든다.
           */}
           {showLabel ? (
             <SvgText
               x={pos.x}
               y={pos.y + r + 10}
-              fill={labelFill}
+              fill={withSvgPaintAlpha(labelFill, opacity * labelOpacity)}
               fontSize={8}
               fontFamily={FONTS.mono}
               textAnchor="middle"
-              opacity={isGameplay ? 0.95 : 0.75}
             >
               {label}
             </SvgText>

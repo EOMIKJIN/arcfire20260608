@@ -1,7 +1,10 @@
 import { useMemo } from 'react';
 import { useWindowDimensions, type StyleProp, type ViewStyle } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { resolveOverlayContentHeight } from './overlayInsets';
 import {
   OVERLAY_PANEL_BODY_PADDING_TOP_PX,
+  resolveOverlayPanelCardBudget,
   resolveOverlayPanelMaxHeight,
   resolveOverlayPanelMinHeight,
 } from './overlayPanelLayout';
@@ -13,14 +16,16 @@ export function useOverlayPanelChrome(): {
   bodyStyle: StyleProp<ViewStyle>;
 } {
   const { height: winH } = useWindowDimensions();
-  return useMemo(
-    () => ({
-      minHeight: resolveOverlayPanelMinHeight(winH),
-      maxHeight: resolveOverlayPanelMaxHeight(winH),
+  const insets = useSafeAreaInsets();
+  return useMemo(() => {
+    const layoutHeight = resolveOverlayContentHeight(winH, insets);
+    const budget = resolveOverlayPanelCardBudget(winH, insets);
+    return {
+      minHeight: Math.min(resolveOverlayPanelMinHeight(layoutHeight), budget),
+      maxHeight: Math.min(resolveOverlayPanelMaxHeight(layoutHeight), budget),
       bodyStyle: { paddingTop: OVERLAY_PANEL_BODY_PADDING_TOP_PX },
-    }),
-    [winH],
-  );
+    };
+  }, [winH, insets.top, insets.bottom, insets.left, insets.right]);
 }
 
 /** @deprecated `useOverlayPanelChrome` */

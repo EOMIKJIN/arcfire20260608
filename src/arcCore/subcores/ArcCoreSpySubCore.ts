@@ -76,7 +76,7 @@ export class ArcCoreSpySubCore extends BaseArcSubCore {
     const planetId = playerPlanetId!.trim();
     if (planetId !== this.lastPlanetId) {
       this.pulseAccSec = 0;
-      this.lookupAccSec = 0;
+      this.lookupAccSec = ArcCoreSpySubCore.LOOKUP_INTERVAL_SEC;
       this.lastPlanetId = planetId;
       this.lastSpyKey = '';
       this.cachedSpyIds = [];
@@ -85,9 +85,11 @@ export class ArcCoreSpySubCore extends BaseArcSubCore {
 
     this.lookupAccSec += wallDeltaSec;
     const arcShips = useArcNpcTrafficStore.getState().ships;
-    if (this.lookupAccSec >= ArcCoreSpySubCore.LOOKUP_INTERVAL_SEC || this.cachedSpyIds.length === 0) {
+    if (this.lookupAccSec >= ArcCoreSpySubCore.LOOKUP_INTERVAL_SEC) {
       this.lookupAccSec = 0;
-      this.cachedSpyIds = listActiveArcCoreSpyCaptainIdsAtPlanet(planetId, arcShips);
+      const nextIds = listActiveArcCoreSpyCaptainIdsAtPlanet(planetId, arcShips);
+      const nextKey = nextIds.join(',');
+      if (nextKey !== this.lastSpyKey) this.cachedSpyIds = nextIds;
     }
     const spyIds = this.cachedSpyIds;
     if (spyIds.length === 0) {

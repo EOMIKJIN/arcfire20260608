@@ -1,0 +1,99 @@
+diff --git a/node_modules/react-native-svg/android/src/main/java/com/horcrux/svg/SvgView.java b/node_modules/react-native-svg/android/src/main/java/com/horcrux/svg/SvgView.java
+index f00d54c..9130889 100644
+--- a/node_modules/react-native-svg/android/src/main/java/com/horcrux/svg/SvgView.java
++++ b/node_modules/react-native-svg/android/src/main/java/com/horcrux/svg/SvgView.java
+@@ -60,6 +60,12 @@ public class SvgView extends ReactViewGroup implements ReactCompoundView, ReactC
+ 
+   private @Nullable Bitmap mBitmap;
+   private @Nullable Bitmap mCurrentBitmap;
++  /**
++   * Same-size invalidate used to recycle()+createBitmap(). A galaxy-map SvgView
++   * (~4600x5000 ARGB) leaked one scudo buffer per redraw (5 resident / 15 virtual).
++   * Redraw into the existing bitmap unless the view size changed.
++   */
++  private boolean mBitmapDirty = true;
+   private boolean mRemovalTransitionStarted;
+ 
+   public SvgView(ReactContext reactContext) {
+@@ -101,13 +107,8 @@ public class SvgView extends ReactViewGroup implements ReactCompoundView, ReactC
+       return;
+     }
+     if (!mRemovalTransitionStarted) {
+-      // when view is removed from the view hierarchy, we want to recycle the mBitmap when
+-      // the view is detached from window, in order to preserve it for during animation, see
+-      // https://github.com/react-native-svg/react-native-svg/pull/1542
+-      if (mBitmap != null) {
+-        mBitmap.recycle();
+-      }
+-      mBitmap = null;
++      // Detach still recycles (below). Same-size redraws must not allocate again.
++      mBitmapDirty = true;
+     }
+   }
+ 
+@@ -119,10 +120,17 @@ public class SvgView extends ReactViewGroup implements ReactCompoundView, ReactC
+   @Override
+   protected void onDetachedFromWindow() {
+     super.onDetachedFromWindow();
+-    if (mBitmap != null) {
+-      mBitmap.recycle();
+-    }
++    recycleBitmap(mBitmap);
++    recycleBitmap(mCurrentBitmap);
+     mBitmap = null;
++    mCurrentBitmap = null;
++    mBitmapDirty = true;
++  }
++
++  private static void recycleBitmap(@Nullable Bitmap bitmap) {
++    if (bitmap != null && !bitmap.isRecycled()) {
++      bitmap.recycle();
++    }
+   }
+ 
+   @Override
+@@ -131,9 +139,7 @@ public class SvgView extends ReactViewGroup implements ReactCompoundView, ReactC
+       return;
+     }
+     super.onDraw(canvas);
+-    if (mBitmap == null) {
+-      mBitmap = drawOutput();
+-    }
++    ensureBitmap();
+     if (mBitmap != null) {
+       mPaint.reset();
+       mPaint.setFlags(
+@@ -264,6 +270,33 @@ public class SvgView extends ReactViewGroup implements ReactCompoundView, ReactC
+     clearChildCache();
+   }
+ 
++  private void ensureBitmap() {
++    int width = getWidth();
++    int height = getHeight();
++    boolean sizeMismatch =
++        mBitmap == null
++            || mBitmap.isRecycled()
++            || mBitmap.getWidth() != width
++            || mBitmap.getHeight() != height;
++    if (!sizeMismatch && !mBitmapDirty) {
++      return;
++    }
++    if (sizeMismatch) {
++      recycleBitmap(mBitmap);
++      if (mCurrentBitmap != null && mCurrentBitmap != mBitmap) {
++        recycleBitmap(mCurrentBitmap);
++      }
++      mBitmap = null;
++      mCurrentBitmap = null;
++      mBitmap = drawOutput();
++    } else if (mBitmap != null) {
++      mBitmap.eraseColor(Color.TRANSPARENT);
++      mRendered = true;
++      drawChildren(new Canvas(mBitmap));
++    }
++    mBitmapDirty = false;
++  }
++
+   private Bitmap drawOutput() {
+     mRendered = true;
+     float width = getWidth();

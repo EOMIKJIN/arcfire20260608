@@ -25,6 +25,7 @@ import {
   readCaptainPresenceWorldIndexCache,
   readCaptainPresenceWorldIndexIfUnchanged,
   rememberCaptainPresenceWorldIndexInputs,
+  setCaptainPresenceCacheInvalidateHook,
   writeCaptainPresenceWorldIndexCache,
 } from './captainPresenceWorldIndexCache';
 import type {
@@ -109,43 +110,33 @@ function buildHubOrbitMap(
 function arcTrafficSig(ships: readonly ArcNpcTrafficShip[]): string {
   const parts: string[] = [];
   for (const s of ships) {
-    parts.push(`${s.id}:${s.captainId}:${s.planetId}:${s.phase}`);
+    // phase는 presence에 안 들어간다. 넣으면 체류 단계가 바뀔 때마다 전 함장 인덱스를 다시 만든다.
+    parts.push(`${s.id}:${s.captainId}:${s.planetId}`);
   }
   parts.sort();
   return parts.join('|');
 }
 
 /**
- * 전역 primary presence — AiNpc arc 스냅샷·3h epoch·총사령관 배정 반영.
- * 동일 입력이면 캐시 재사용(틱 부하 최소).
+ * 주둔·총사령관·바·전투 앵커. 아크 수송 행성 변경과 무관하다.
+ * 함선이 행성을 바꿀 때마다 이 맵을 다시 만들면 스파이 틱(약 130ms)이
+ * 전 함장 배열을 매초 버리고, 네이티브 힙이 지도 체류 중에 올라간다.
  */
-export function getCaptainPresenceWorldIndex(
-  arcShips: readonly ArcNpcTrafficShip[] = [],
-): CaptainPresenceWorldIndex {
-  const epochBucket = syncCaptainOrbitAssignmentEpochMemo();
-  const dayBucket = getDwellJudgmentDayBucket();
-  const govMap = listGovernorCaptainPrimaryPlanets();
-  const unlockedSig = readUnlockedPlanetIdsSig();
-  const unchanged = readCaptainPresenceWorldIndexIfUnchanged(
-    epochBucket,
-    dayBucket,
-    arcShips,
-    govMap,
-    unlockedSig,
-  );
-  if (unchanged) return unchanged;
+let cachedBaseKey = '';
+let cachedBaseMap: Map<string, CaptainPrimaryPresence> | null = null;
 
-  const govSig = [...govMap.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([c, p]) => `${c}:${p}`)
-    .join('|');
-  const key = `${epochBucket}|${dayBucket}|${arcTrafficSig(arcShips)}|${govSig}|${unlockedSig}`;
-  const cached = readCaptainPresenceWorldIndexCache(key);
-  if (cached) {
-    rememberCaptainPresenceWorldIndexInputs(epochBucket, dayBucket, arcShips, govMap, unlockedSig);
-    return cached;
-  }
+function resetCaptainPresenceBaseCache(): void {
+  cachedBaseKey = '';
+  cachedBaseMap = null;
+}
 
+setCaptainPresenceCacheInvalidateHook(resetCaptainPresenceBaseCache);
+
+function buildBaseCaptainPresenceMap(
+  epochBucket: number,
+  dayBucket: number,
+  govMap: ReadonlyMap<string, string>,
+): Map<string, CaptainPrimaryPresence> {
   const byCaptainId = new Map<string, CaptainPrimaryPresence>();
 
   for (const captain of NPC_CAPTAINS_FROM_CSV) {
@@ -158,7 +149,7 @@ export function getCaptainPresenceWorldIndex(
     });
   }
 
-  for (const [captainId, planetId] of listGovernorCaptainPrimaryPlanets()) {
+  for (const [captainId, planetId] of govMap) {
     commitPresence(byCaptainId, {
       captainId,
       activity: 'governor_post',
@@ -180,18 +171,6 @@ export function getCaptainPresenceWorldIndex(
         shipId: null,
       });
     }
-  }
-
-  for (const ship of arcShips) {
-    const pid = String(ship.planetId ?? '').trim();
-    if (!pid || !ship.captainId) continue;
-    commitPresence(byCaptainId, {
-      captainId: ship.captainId,
-      activity: 'orbit_arc_transport',
-      planetId: pid,
-      systemId: systemIdForPlanet(pid),
-      shipId: ship.id,
-    });
   }
 
   // 함장마다 resolveCaptainTableOrbitPlanetId → listCaptainOrbitPlanetCandidates가
@@ -244,12 +223,73 @@ export function getCaptainPresenceWorldIndex(
     });
   }
   publishDwellRoleOccupancy(roleOccupancy);
+  return byCaptainId;
+}
 
-  const hubOrbitCaptainIdsByPlanet = buildHubOrbitMap(byCaptainId);
+function applyArcTraffic(
+  base: ReadonlyMap<string, CaptainPrimaryPresence>,
+  arcShips: readonly ArcNpcTrafficShip[],
+): Map<string, CaptainPrimaryPresence> {
+  const byCaptainId = new Map(base);
+  for (const ship of arcShips) {
+    const pid = String(ship.planetId ?? '').trim();
+    if (!pid || !ship.captainId) continue;
+    commitPresence(byCaptainId, {
+      captainId: ship.captainId,
+      activity: 'orbit_arc_transport',
+      planetId: pid,
+      systemId: systemIdForPlanet(pid),
+      shipId: ship.id,
+    });
+  }
+  return byCaptainId;
+}
+
+/**
+ * 전역 primary presence — AiNpc arc 스냅샷·3h epoch·총사령관 배정 반영.
+ * 동일 입력이면 캐시 재사용(틱 부하 최소).
+ * 주둔 배정은 epoch·날짜·총사령관·개방 집합이 바뀔 때만 다시 만든다.
+ */
+export function getCaptainPresenceWorldIndex(
+  arcShips: readonly ArcNpcTrafficShip[] = [],
+): CaptainPresenceWorldIndex {
+  const epochBucket = syncCaptainOrbitAssignmentEpochMemo();
+  const dayBucket = getDwellJudgmentDayBucket();
+  const govMap = listGovernorCaptainPrimaryPlanets();
+  const unlockedSig = readUnlockedPlanetIdsSig();
+  const unchanged = readCaptainPresenceWorldIndexIfUnchanged(
+    epochBucket,
+    dayBucket,
+    arcShips,
+    govMap,
+    unlockedSig,
+  );
+  if (unchanged) return unchanged;
+
+  const govSig = [...govMap.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([c, p]) => `${c}:${p}`)
+    .join('|');
+  const key = `${epochBucket}|${dayBucket}|${arcTrafficSig(arcShips)}|${govSig}|${unlockedSig}`;
+  const cached = readCaptainPresenceWorldIndexCache(key);
+  if (cached) {
+    rememberCaptainPresenceWorldIndexInputs(epochBucket, dayBucket, arcShips, govMap, unlockedSig);
+    return cached;
+  }
+
+  const baseKey = `${epochBucket}|${dayBucket}|${govSig}|${unlockedSig}`;
+  let base = cachedBaseMap;
+  if (!base || cachedBaseKey !== baseKey) {
+    base = buildBaseCaptainPresenceMap(epochBucket, dayBucket, govMap);
+    cachedBaseKey = baseKey;
+    cachedBaseMap = base;
+  }
+
+  const byCaptainId = applyArcTraffic(base, arcShips);
   const index: CaptainPresenceWorldIndex = {
     epochBucket,
     byCaptainId,
-    hubOrbitCaptainIdsByPlanet,
+    hubOrbitCaptainIdsByPlanet: buildHubOrbitMap(byCaptainId),
   };
   writeCaptainPresenceWorldIndexCache(key, index);
   rememberCaptainPresenceWorldIndexInputs(epochBucket, dayBucket, arcShips, govMap, unlockedSig);

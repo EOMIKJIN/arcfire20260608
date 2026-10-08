@@ -6,7 +6,7 @@
 import { clearCapitalRealtimeCombatPresentationCaches } from '../combat/clearCapitalRealtimeCombatCaches';
 import { resetHubInboundDroneDodgeBridge } from '../arcCore/inboundDrone/hubInboundDroneDodgeBridge';
 import { trimArcInboundDroneCampaignsForStageExit } from '../arcCore/inboundDrone/trimArcInboundDroneCampaignsForStageExit';
-import { trimNativeBitmapCachesAsync } from 'arcfire-native-memory';
+import { scheduleNativeHeapPurgeAfterStageExit, trimNativeBitmapCachesAsync } from 'arcfire-native-memory';
 import {
   invalidateAllPlanetMemoCaches,
   invalidatePlanetMemoCachesForPlanets,
@@ -123,6 +123,7 @@ function runGalaxyMapReleaseCore(reason: GalaxyMapStageReleaseReason, opts: Gala
       keepPlanetIds: keepIds,
     });
     void trimNativeBitmapCachesAsync();
+    scheduleNativeHeapPurgeAfterStageExit();
     emitMemProfileMarker({ stage: 'galaxy_map', event: 'route_blur', detail: opts.previousSystemId ?? '' });
     return;
   }

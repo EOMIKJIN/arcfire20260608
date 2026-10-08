@@ -9,7 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SPACING, OVERLAY_TOKENS } from '../../utils/theme';
 import { closeLevelUpOverlay, closeWaveResultOverlay, useArcOverlayStore } from './arcOverlayStore';
 import { getOverlayChrome } from './overlayChrome';
-import { resolveOverlayBottomAnchorPad, resolveOverlayEdgeInsets } from './overlayInsets';
+import { resolveOverlayEdgeInsets } from './overlayInsets';
 import { OVERLAY_CENTER_VERTICAL_BIAS_PX, OVERLAY_PANEL_TOP_ANCHOR_PX } from './overlayPanelLayout';
 import { NARRATIVE_DIALOG_LAYOUT } from './narrativeDialogLayout';
 import { reapplyAndroidImmersiveNavBar } from './reapplyAndroidImmersiveNavBar';
@@ -190,7 +190,6 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
   const backdropClear = chrome.backdrop === 'transparent';
   /** 인게임 대사 — 전체 딤·backdrop 터치·elevation 없음 (시설 화면 그대로 노출) */
   const isPassthroughNarrative = isNarrative && backdropClear;
-  const bottomPad = isBottomNarrative ? resolveOverlayBottomAnchorPad(insets, SPACING.md) : 0;
   const overlayHorizontalPad = isFillHost
     ? 0
     : isNarrative
@@ -222,7 +221,10 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
       : styles.narrativeFillWrap;
     return (
       <View
-        style={[styles.passthroughOverlay, { zIndex: chrome.zIndex }]}
+        style={[
+          styles.passthroughOverlay,
+          { zIndex: chrome.zIndex, paddingBottom: edges.bottom },
+        ]}
         pointerEvents="box-none"
         collapsable={false}
       >
@@ -230,7 +232,7 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
           style={[
             styles.overlayContentFrame,
             {
-              paddingBottom: bottomPad,
+              paddingBottom: isBottomNarrative ? SPACING.md : 0,
               paddingLeft: overlayHorizontalPad + edges.left,
               paddingRight: overlayHorizontalPad + edges.right,
             },
@@ -250,13 +252,13 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
   const contentFramePad = isFillHost
     ? {
         paddingTop: edges.top,
-        paddingBottom: 0,
+        paddingBottom: edges.bottom,
         paddingLeft: edges.left,
         paddingRight: edges.right,
       }
     : {
         paddingTop: isPassthroughNarrative ? 0 : SPACING.sm + edges.top,
-        paddingBottom: isBottomNarrative ? bottomPad : SPACING.sm + edges.bottom,
+        paddingBottom: (isBottomNarrative ? SPACING.md : SPACING.sm) + edges.bottom,
         paddingLeft: overlayHorizontalPad + edges.left,
         paddingRight: overlayHorizontalPad + edges.right,
       };
@@ -275,7 +277,7 @@ export const ArcOverlayHost = memo(function ArcOverlayHost() {
     >
       {!isPassthroughNarrative ? (
         <Pressable
-          style={[styles.backdropFill, { backgroundColor: chrome.backdrop }]}
+          style={[styles.backdropFill, { backgroundColor: chrome.backdrop, bottom: edges.bottom }]}
           onPressIn={isBlocking ? undefined : backdropRelease.onPressIn}
           onPressOut={isBlocking ? undefined : backdropRelease.onPressOut}
           onPress={isBlocking ? undefined : backdropRelease.onPress}
