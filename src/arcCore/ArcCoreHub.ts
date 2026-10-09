@@ -11,6 +11,7 @@ import { AppState, type AppStateStatus } from 'react-native';
 import { gameLoop } from '../engine/GameLoop';
 import type { ArcCoreHub, ArcCoreProcess, ArcCoreWallTickFn, ArcSubCore } from './types';
 import { dispatchArcCoreCommand, type ArcCoreCommand } from './ArcCoreCommandBus';
+import { recordArcHitch } from './devArcHitchLog';
 import { registerDefaultArcSubCores } from './subcores/registerDefaultArcSubCores';
 import { yieldJsThread } from './schedule/yieldJsThread';
 
@@ -128,23 +129,22 @@ class ArcCoreHubImpl implements ArcCoreHub {
       subCore.onBoot?.();
     }
 
+    // dev 또는 성능 측정 전용 release 빌드(EXPO_PUBLIC_ARC_PERF_LOG=1 · 번들 시점 인라인)에서만 틱 계측
+    const measureTicks =
+      (typeof __DEV__ !== 'undefined' && __DEV__) || process.env.EXPO_PUBLIC_ARC_PERF_LOG === '1';
     this.unsubGameLoop = gameLoop.subscribe((wallDeltaSec) => {
       if (this.suspendWallClock) return;
-      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+      if (measureTicks) {
         // [arc-hitch] 전투 중 수 초 주기 정지 추적 — 30ms 이상 걸린 서브코어 틱만 기록.
         for (const subCore of this.subCores.values()) {
           const t0 = performance.now();
           subCore._advanceWallClock(wallDeltaSec);
-          const ms = performance.now() - t0;
-          // eslint-disable-next-line no-console
-          if (ms >= 30) console.log('[arc-hitch] tick', subCore.id, Math.round(ms));
+          recordArcHitch('tick', subCore.id, performance.now() - t0);
         }
         for (const p of this.processes.values()) {
           const t0 = performance.now();
           p._advanceWallClock(wallDeltaSec);
-          const ms = performance.now() - t0;
-          // eslint-disable-next-line no-console
-          if (ms >= 30) console.log('[arc-hitch] process', p.id, Math.round(ms));
+          recordArcHitch('process', p.id, performance.now() - t0);
         }
         return;
       }

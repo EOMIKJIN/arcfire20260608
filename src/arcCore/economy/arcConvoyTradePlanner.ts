@@ -24,6 +24,7 @@ import {
 } from './tradeRouteRegistry';
 import { resolveConvoyDemandGrossRoomCredits } from './convoyDemandGrossRoom';
 import { isPlanetConvoyTradeEnabled } from './synthFrontierConvoyTradeBridge';
+import { recordArcHitch } from '../devArcHitchLog';
 
 export type ArcConvoyRoutePlan = {
   tgId: string;
@@ -80,7 +81,9 @@ export function planArcConvoyRouteAtSupply(
   const t0 = performance.now();
   const out = planArcConvoyRouteAtSupplyImpl(supplyPlanetId, shipId, bankBalance, opts);
   const total = performance.now() - t0;
-  if (total >= 100) {
+  // 행성별 라벨은 분당 요약에서 하나로 묶는다. 구간 분해 줄은 200ms 이상일 때만 남긴다.
+  recordArcHitch('plan', 'convoy_route', total);
+  if (total >= 200) {
     // eslint-disable-next-line no-console
     console.log(
       '[arc-hitch] plan', supplyPlanetId, Math.round(total),

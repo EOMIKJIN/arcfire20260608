@@ -12,14 +12,45 @@ import {
   resolveDefenseSatelliteOrbitXY,
 } from '../../worldObjects/planetWorldObjectOrbit';
 import type { ArcInboundDrone } from '../../store/arcInboundDroneStore';
-import { useArcNpcTrafficStore } from '../../store/arcNpcTrafficStore';
-import { resolveArcCoreSpyTacticalBundleAtPlanet } from '../spy/resolveArcCoreSpyTacticalBundleAtPlanet';
+import { useArcNpcTrafficStore, type ArcNpcTrafficShip } from '../../store/arcNpcTrafficStore';
+import { useArcCoreSpyExpelledStore } from '../../store/arcCoreSpyExpelledStore';
+import {
+  resolveArcCoreSpyTacticalBundleAtPlanet,
+  type ArcCoreSpyTacticalBundle,
+} from '../spy/resolveArcCoreSpyTacticalBundleAtPlanet';
+import { getCaptainPresenceWorldIndex } from '../captainPresence/buildCaptainPresenceWorldIndex';
 import { resolvePlanetCounterIntelBonuses } from '../../game/resolvePlanetCounterIntelBonuses';
 import { resolveInboundDroneScreenXY } from './inboundDroneKinematics';
 import { leakFractionFromInterceptHitPct } from './resolveInboundDroneStrikeLeak';
 import type { WorldObject } from '../../worldObjects';
 
 const ORBIT_CENTER = PLANET_MAIN_ORBIT_SCENE_SIZE / 2;
+
+/**
+ * 스파이 번들 — inbound 동안 매 프레임 재계산하던 것을 입력이 바뀔 때만 다시 만든다(결과 동일).
+ * 입력: 행성 · 함선 스냅샷 참조 · 함장 위치 인덱스 참조(epoch·날짜·총사령관·개방 집합 반영) · 색출 store 상태 참조.
+ * 정책·스파이 태그·함장 배정은 정적 캐시라 키에서 뺀다.
+ */
+let spyBundleMemo: {
+  planetId: string;
+  ships: readonly ArcNpcTrafficShip[];
+  index: object;
+  expelled: object;
+  bundle: ArcCoreSpyTacticalBundle;
+} | null = null;
+
+function resolveSpyBundleMemoized(planetId: string): ArcCoreSpyTacticalBundle {
+  const ships = useArcNpcTrafficStore.getState().ships;
+  const index = getCaptainPresenceWorldIndex(ships);
+  const expelled = useArcCoreSpyExpelledStore.getState();
+  const m = spyBundleMemo;
+  if (m && m.planetId === planetId && m.ships === ships && m.index === index && m.expelled === expelled) {
+    return m.bundle;
+  }
+  const bundle = resolveArcCoreSpyTacticalBundleAtPlanet(planetId, ships);
+  spyBundleMemo = { planetId, ships, index, expelled, bundle };
+  return bundle;
+}
 
 function resolveDroneSceneXY(
   drone: ArcInboundDrone,
@@ -104,10 +135,7 @@ export function runInboundDroneInterceptPass(
   if (satellites.length === 0) return;
 
   const counterIntel = resolvePlanetCounterIntelBonuses(planetId);
-  const spyBundle = resolveArcCoreSpyTacticalBundleAtPlanet(
-    planetId,
-    useArcNpcTrafficStore.getState().ships,
-  );
+  const spyBundle = resolveSpyBundleMemoized(planetId);
   const orbitClockMs = readPlanetOrbitClockMs();
 
   for (const drone of drones) {

@@ -2,17 +2,35 @@ import { GALAXY_SYSTEMS } from '../data/galaxy100';
 import { STAR_SYSTEMS } from '../data/systems';
 import type { StarSystem } from '../types';
 
+/**
+ * 행성 → 성계 id. 행성의 소속 성계는 바뀌지 않으므로 찾은 결과만 기억한다(못 찾은 결과는 기억하지 않음 —
+ * 확장으로 synth 성계가 나중에 붙을 수 있다).
+ * 이전: 호출마다 Object.values() 배열 생성 + 전 성계·전 행성 선형 탐색. 교역 경로 계획이 정박마다 수백 번 불러
+ * JS 정지·GC churn 의 큰 몫이었다(2026-10-09 [arc-hitch] plan destGate·cost).
+ */
+const systemIdByPlanetId = new Map<string, string>();
+
+function findSystemIdIn(systems: Record<string, StarSystem>, id: string): string | null {
+  for (const key in systems) {
+    const system = systems[key];
+    if (!system) continue;
+    const planets = system.planets;
+    for (let i = 0; i < planets.length; i++) {
+      if (planets[i]!.id === id) return system.id;
+    }
+  }
+  return null;
+}
+
 /** STAR_SYSTEMS(21) + GALAXY_SYSTEMS(synth) — worldStore import 금지(순환 참조 방지) */
 function resolveSystemIdFromGalaxy(planetId: string): string | null {
   const id = planetId.trim();
   if (!id) return null;
-  for (const system of Object.values(STAR_SYSTEMS)) {
-    if (system.planets.some((p) => p.id === id)) return system.id;
-  }
-  for (const system of Object.values(GALAXY_SYSTEMS)) {
-    if (system.planets.some((p) => p.id === id)) return system.id;
-  }
-  return null;
+  const cached = systemIdByPlanetId.get(id);
+  if (cached !== undefined) return cached;
+  const found = findSystemIdIn(STAR_SYSTEMS, id) ?? findSystemIdIn(GALAXY_SYSTEMS, id);
+  if (found) systemIdByPlanetId.set(id, found);
+  return found;
 }
 
 function readGalaxySystem(systemId: string): StarSystem | undefined {

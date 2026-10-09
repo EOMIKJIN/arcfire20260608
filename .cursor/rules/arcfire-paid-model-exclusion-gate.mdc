@@ -5,6 +5,8 @@ alwaysApply: true
 
 # 모델 게이트 — 김팀장 핵심 **글록 4.7** · Composer·Auto 폴백 분석 전용
 
+> **2026-10-09 조직 개편**: 이 게이트는 **Cursor 세션(김팀장 · UI 팀원)의 모델 규칙**이다. 메인리더 김플레이·서브리더 김클로드는 Claude Code 세션이며 이 게이트 대상이 아니다. 김팀장의 권한은 UI·간단한 서브작업이고, 커밋은 김플레이만 한다.
+
 > **대표님 지시 (2026-10-06)**: **김팀장 에이전트 핵심 모델 = `glock 4.7` (글록 4.7 · Grok 4.7)**.  
 > Task slug: `grok-4.7-xhigh-fast` · 정본 앵커 `SUBSCRIPTION_RENEWAL_ANCHOR.json` → `kimTeamLeadCoreModel`.  
 > **Composer · Cursor Auto/미지정 폴백** 은 기존과 같이 **분석 전용**(코드·로그 수정 금지).  
@@ -36,7 +38,7 @@ alwaysApply: true
 | **표시명** | **glock 4.7** / **글록 4.7** |
 | **제품명** | Grok 4.7 |
 | **Task slug** | `grok-4.7-xhigh-fast` |
-| **권한** | 김팀장 페르소나 — **코드·검수·커밋(요청 시)·런타임 개발 전부 허용** |
+| **권한** | 김팀장 페르소나 — **배정 범위(UI·서브작업) 코드 허용** · 검수·커밋·런타임 대형 작업은 메인리더 김플레이(2026-10-09~) |
 | **본 세션** | Cursor에서 김팀장 창 = 본 모델로 동작 |
 
 **구분**: 「글록 4.7」≠ 예전 금지 대상이던 **미지정 Cursor Auto 폴백**.  
@@ -70,7 +72,7 @@ alwaysApply: true
 
 | 역할 | 모델 slug (Task 위임 시) |
 |------|--------------------------|
-| **김팀장 (핵심 · 런타임·Skia·STAGE·arcCore)** | **`grok-4.7-xhigh-fast` (glock 4.7)** |
+| **김팀장 (UI·서브작업 팀원 · 2026-10-09~)** | **`grok-4.7-xhigh-fast` (glock 4.7)** |
 | Fable (Table-First) | `claude-fable-5-thinking-high` |
 | Sonnet (logcat·tsc·adb) | `claude-4.6-sonnet-medium-thinking` |
 | (보조·명시 시) | `claude-opus-4-8-thinking-high` · `claude-sonnet-5-thinking-high` |
@@ -96,7 +98,7 @@ alwaysApply: true
 1. Composer/미지정 Auto 감지 시: **코드 diff 전 중단** · 분석만
 2. `Task` `model` = **`allowedPaidModels`만** — 김팀장 위임 기본 = **`grok-4.7-xhigh-fast`**
 3. Composer/Auto 폴백 응답 첫 줄: `【분석전용·개발금지】 Composer/Auto — 패치는 글록 4.7(김팀장)/Fable/Sonnet`
-4. 김팀장(글록 4.7) 세션은 **개발·검수 정상 진행**
+4. 김팀장(글록 4.7) 세션은 **배정 범위 개발 정상 진행** (검수·커밋은 김플레이)
 
 ---
 

@@ -9,6 +9,8 @@
 //       출처 구분은 `meta.origin` (선택).
 // ============================================================
 
+import { recordArcHitch } from './devArcHitchLog';
+
 /** 명령을 누가 올렸는지 — 정책 엔진·테스트·외부 권한 등 추적·분기용 */
 export type ArcCoreCommandOrigin =
   | 'dev_runtime_bridge'
@@ -117,9 +119,5 @@ export function dispatchArcCoreCommand(command: ArcCoreCommand): void {
   for (const l of listeners) {
     l(command);
   }
-  if (ARC_HITCH_DEV) {
-    const ms = performance.now() - t0;
-    // eslint-disable-next-line no-console
-    if (ms >= 30) console.log('[arc-hitch] cmd', command.type, Math.round(ms));
-  }
+  if (ARC_HITCH_DEV) recordArcHitch('cmd', command.type, performance.now() - t0);
 }

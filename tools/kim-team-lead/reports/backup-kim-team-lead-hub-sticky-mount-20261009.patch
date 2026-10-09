@@ -1,0 +1,186 @@
+﻿diff --git a/src/components/planet/PlanetHubInboundDroneLayer.tsx b/src/components/planet/PlanetHubInboundDroneLayer.tsx
+index 7b6042a..f9be4a4 100644
+--- a/src/components/planet/PlanetHubInboundDroneLayer.tsx
++++ b/src/components/planet/PlanetHubInboundDroneLayer.tsx
+@@ -509,8 +509,10 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
+   const trailCount = trailDrones.length;
+   const droneIds = useMemo(() => trailDrones.map((d) => d.id), [trailDrones]);
+   const showVfxLayer = vfxOverlayOpen || trailCount > 0 || hitFxRef.current.length > 0;
++  // 웨이브마다 Canvas 를 내리면 GL 표면이 프로세스에 남는다. 허브가 마운트된 동안 1장만 둔다.
++  const keepTrailCanvas = devSkiaMountAllowed;
+ 
+-  if (!showVfxLayer && markCount <= 0) return null;
++  if (!keepTrailCanvas && !showVfxLayer && markCount <= 0) return null;
+ 
+   return (
+     <View
+@@ -518,9 +520,9 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
+       pointerEvents="none"
+       accessibilityLabel="아크코어 드론"
+       accessibilityRole="image"
+-      accessible
++      accessible={markCount > 0}
+     >
+-      {showVfxLayer && devSkiaMountAllowed ? (
++      {keepTrailCanvas ? (
+         <PlanetHubInboundDroneSkiaTrailLayer
+           orbitClockMs={orbitClockMs}
+           trailFlatSv={trailFlatSv}
+diff --git a/src/components/planet/SkiaPlanetNebulaShaderBackdrop.tsx b/src/components/planet/SkiaPlanetNebulaShaderBackdrop.tsx
+index fed9c44..f1ea74d 100644
+--- a/src/components/planet/SkiaPlanetNebulaShaderBackdrop.tsx
++++ b/src/components/planet/SkiaPlanetNebulaShaderBackdrop.tsx
+@@ -127,7 +127,7 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
+   const fxLoopActive = dodgeFxActive ?? active;
+   /**
+    * ColorDodge는 성운 baked 와 동일 SkCanvas 필수(투명·RN 레이어 위에서는 깨짐 — planetSkiaHitFxContract).
+-   * dodgeFxOnlyOverlay = latch OFF 시 Canvas 조기 드롭(회수)용이지, 성운 useImage 생략이 아님.
++   * dodgeFxOnlyOverlay 는 latch OFF 여도 Canvas 를 유지한다. 웨이브마다 드롭하면 GL 표면이 남는다.
+    */
+   const loadNebulaImages = true;
+   const mountedRef = useRef(true);
+@@ -315,19 +315,16 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
+     flushDodgePicture();
+   }, [flushDodgePicture, dodgeHitFxRef, dodgeTimeMsRef]);
+ 
+-  if (dodgeFxOnlyOverlay && !fxLoopActive) {
+-    return <View style={[styles.root, { opacity, width: size, height: size }]} pointerEvents="none" />;
+-  }
+-
++  const drawLive = !dodgeFxOnlyOverlay || fxLoopActive;
+   const fillWhenEmpty =
+-    !dodgeFxOnlyOverlay && !showNebulaBaked && !showBackdropImage && !everReadyRef.current;
++    drawLive && !dodgeFxOnlyOverlay && !showNebulaBaked && !showBackdropImage && !everReadyRef.current;
+ 
+   return (
+     <View style={[styles.root, { opacity, width: size, height: size }]} pointerEvents="none">
+       {deferCanvas ? null : (
+         <Canvas style={{ width: size, height: size }}>
+           {fillWhenEmpty ? <Fill color="#0a0f18" /> : null}
+-          {showBackdropImage ? (
++          {drawLive && showBackdropImage ? (
+             <SkiaImage
+               image={backdropImage}
+               x={0}
+@@ -338,7 +335,7 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
+               opacity={0.42}
+             />
+           ) : null}
+-          {showNebulaBaked ? (
++          {drawLive && showNebulaBaked ? (
+             <SkiaImage
+               image={nebulaImage}
+               x={0}
+@@ -348,7 +345,7 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
+               fit="cover"
+             />
+           ) : null}
+-          {dodgePicture ? <Picture picture={dodgePicture} /> : null}
++          {drawLive && dodgePicture ? <Picture picture={dodgePicture} /> : null}
+         </Canvas>
+       )}
+     </View>
+diff --git a/src/components/planet/planetHub/planetHubSubcomponents.tsx b/src/components/planet/planetHub/planetHubSubcomponents.tsx
+index 289a1a4..49a3272 100644
+--- a/src/components/planet/planetHub/planetHubSubcomponents.tsx
++++ b/src/components/planet/planetHub/planetHubSubcomponents.tsx
+@@ -41,10 +41,7 @@ import { resolvePlanetAtmosphereRingHex } from '../../../game/planetNebulaProfil
+ import { resolveMainStageSkiaBackdrop } from '../../../game/mainStageSkiaBackdrop';
+ import { useCapitalRealtimeCombatSimContext } from '../../../combat';
+ import { resolvePlanetNebulaBakedSource } from '../../../game/planetNebulaBakedAssets';
+-import { subscribeHubSkiaNativeReclaim } from '../../../game/nativeReclaim/hubSkiaNativeReclaimSignal';
+ import { subscribeHubBackdropNativeRemount } from '../../../game/nativeReclaim/hubBackdropNativeRemountSignal';
+-import { HUB_DODGE_OVERLAY_UNMOUNT_DEBOUNCE_MS } from '../../../game/nativeReclaim/processMemoryBudgetPolicy';
+-import { emitMemProfileMarker } from '../../../game/devMemoryProfileBridge';
+ import { useDevSkiaMountAllowed } from '../../../hooks/useDevSkiaMountAllowed';
+ import { resolveDefenseSatelliteCombatStatsForObject } from '../../../systems/planetaryDefense/resolveDefenseSatelliteCombatStats';
+ import { computeTableNpcOrbitXY } from '../planetOrbitHubWorklets';
+@@ -382,8 +379,6 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
+   const [hubSkiaDodgeNebulaReady, setHubSkiaDodgeNebulaReady] = useState(false);
+   /** deep reclaim — RN Image remount key only (Skia dodge sticky — key remount 금지) */
+   const [hubRnBackdropRemountGen, setHubRnBackdropRemountGen] = useState(0);
+-  const inboundDroneSkiaDodgeLatchRef = useRef(false);
+-  inboundDroneSkiaDodgeLatchRef.current = inboundDroneSkiaDodgeLatch;
+   const handleSkiaDodgeNebulaReady = useCallback(() => setHubSkiaDodgeNebulaReady(true), []);
+   const handleSkiaDodgeNebulaLost = useCallback(() => setHubSkiaDodgeNebulaReady(false), []);
+   const hubDodgeTimeMsRef = useRef(0);
+@@ -416,32 +411,18 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
+     };
+   }, [dodgeBridgeAliveSv, dodgeFxBridgeActive, dodgeBridgeLastSyncMs]);
+   /**
+-   * latch ON → sticky mount (SIGSEGV 회피).
+-   * latch OFF → 즉시 언마운트 금지 · 디바운스 후 언마운트해 useImage EGL 상주 해제
+-   * (이전: soft reclaim/ blur 전까지 sticky → EGL~2× 스파이크가 수분 고정).
++   * latch ON → 허브 체류 동안 Canvas 1장 유지.
++   * 웨이브마다 언마운트하면 Skia GL 표면이 회수되지 않고 PSS가 1000MB를 넘었다(2026-10-08 GL 294).
++   * 해제는 행성 변경·허브 이탈에서만.
+    */
+   useEffect(() => {
+     dodgeFxBridgeActive.value = inboundDroneSkiaDodgeLatch ? 1 : 0;
+-    if (inboundDroneSkiaDodgeLatch) {
+-      setHubDodgeSkiaOverlayMounted(true);
+-      // latch ON 직후 reaction은 ms 변경 전까지 fire 안 함 → JS 미러 1회 동기
+-      const nowMs = readPlanetOrbitClockMs();
+-      dodgeBridgeLastSyncMs.value = nowMs;
+-      bridgeNoteHubDodgeTimeMs(nowMs);
+-      return undefined;
+-    }
+-    const timer = setTimeout(() => {
+-      if (!dodgeStageMountedRef.current) return;
+-      if (inboundDroneSkiaDodgeLatchRef.current) return;
+-      setHubDodgeSkiaOverlayMounted(false);
+-      setHubSkiaDodgeNebulaReady(false);
+-      emitMemProfileMarker({
+-        stage: 'planet_hub',
+-        event: 'manual',
+-        detail: 'hub_dodge_overlay_unmount_debounce',
+-      });
+-    }, HUB_DODGE_OVERLAY_UNMOUNT_DEBOUNCE_MS);
+-    return () => clearTimeout(timer);
++    if (!inboundDroneSkiaDodgeLatch) return;
++    setHubDodgeSkiaOverlayMounted(true);
++    // latch ON 직후 reaction은 ms 변경 전까지 fire 안 함 → JS 미러 1회 동기
++    const nowMs = readPlanetOrbitClockMs();
++    dodgeBridgeLastSyncMs.value = nowMs;
++    bridgeNoteHubDodgeTimeMs(nowMs);
+   }, [inboundDroneSkiaDodgeLatch, dodgeFxBridgeActive, dodgeBridgeLastSyncMs, bridgeNoteHubDodgeTimeMs]);
+   useAnimatedReaction(
+     () => orbitClockMs.value,
+@@ -475,18 +456,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
+     dodgeBridgeLastSyncMs.value = 0;
+   }, [hubStageSkiaActive, dodgeBridgeLastSyncMs, dodgeFxBridgeActive]);
+ 
+-  /** releasePlanetMainStageSession — focus race 무관 Skia 강제 해제 */
+-  useEffect(() => {
+-    return subscribeHubSkiaNativeReclaim(() => {
+-      dodgeFxBridgeActive.value = 0;
+-      setInboundDroneSkiaDodgeLatch(false);
+-      setHubDodgeSkiaOverlayMounted(false);
+-      setHubSkiaDodgeNebulaReady(false);
+-      dodgeBridgeLastSyncMs.value = 0;
+-    });
+-  }, [dodgeFxBridgeActive, dodgeBridgeLastSyncMs]);
+-
+-  /** 주기 deep reclaim — RN 성운 Image remount만 (Skia dodge는 sticky, key cycle 금지) */
++  /** 주기 deep reclaim — RN 성운 Image remount만 (Skia dodge는 허브 체류 중 유지) */
+   useEffect(() => {
+     return subscribeHubBackdropNativeRemount(() => {
+       setHubRnBackdropRemountGen((g) => g + 1);
+@@ -820,7 +790,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
+                   combatGray={hubCapitalCombatMute}
+                 />
+               </View>
+-              {hubStageSkiaActive && (tableOrbitSlotCount > 0 || arcNpcShipsAtPlanet.length > 0 || arcInboundDronesAtPlanet.length > 0) ? (
++              {hubStageSkiaActive ? (
+                 <View
+                   style={bgStyles.orbitLayerShips}
+                   pointerEvents="none"
+@@ -839,7 +809,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
+                     arcCaptionHeads={arcSkiaCaptionHeads}
+                     combatGray={hubCapitalCombatMute}
+                   />
+-                  {!showEdenRaidTest && arcInboundDronesAtPlanet.length > 0 ? (
++                  {!showEdenRaidTest ? (
+                     <PlanetHubInboundDroneLayer
+                       orbitClockMs={orbitClockMs}
+                       drones={arcInboundDronesAtPlanet}

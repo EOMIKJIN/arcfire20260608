@@ -3,7 +3,6 @@ import { tryBeginHubNativeReclaim } from './hubNativeReclaimCoalesce';
 import { signalHubSkiaNativeReclaim } from './hubSkiaNativeReclaimSignal';
 import { runSoftNativeReclaimPass } from './runSoftNativeReclaimPass';
 import { resolveSinglePlanetSessionKeepIds } from './singlePlanetSessionKeep';
-import { runCombatSkiaPresentationReclaim } from '../../combat/combatSkiaPresentationReclaim';
 import { debugPlanetGpuLayerSnapshot } from '../planetStageGpuSupervisor';
 
 export type PlanetHubSoftNativeReclaimOpts = {
@@ -29,10 +28,9 @@ export function runPlanetHubSoftNativeReclaimPass(
 
   /** sticky dodge overlay·useImage 상주 해제 — 전투/드론 종료 후 GL/EGL floor 방지 */
   signalHubSkiaNativeReclaim(reason);
-  /** 전투 orbit 비활성 주기 reclaim — module Path/Paint 캐시 */
-  runCombatSkiaPresentationReclaim();
 
   const keep = resolveSinglePlanetSessionKeepIds(planetId);
+  /** 전투 orbit 비활성 주기 reclaim(module Path/Paint 캐시)은 runSoftNativeReclaimPass 안에서 1회(E6) */
   runSoftNativeReclaimPass(reason);
   /** Fresco는 deferred 1회만 — 즉시+deferred 이중 trim 시 native floor 톱니(6/30) */
   scheduleDeferredNativeReclaimPass({

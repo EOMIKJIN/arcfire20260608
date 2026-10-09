@@ -51,6 +51,54 @@ function Parse-Meminfo([string]$raw) {
   return $m
 }
 
+# PID 변경 사유 — Android exit-info(이전 pid) 기준. 강제종료·스와이프를 크래시로 오표시하지 않는다(2026-10-09).
+function Get-PidChangeVerdict([string]$Pkg, [string]$OldPid) {
+  $v = @{ Label = '사유 미확인 · 크래시·재시작 의심'; Color = 'Red'; Tag = '!! PID_CHANGE' }
+  $raw = ''
+  try { $raw = (adb shell dumpsys activity exit-info $Pkg 2>$null | Out-String) } catch { return $v }
+  $pattern = "timestamp=(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\S* pid=$OldPid\b[\s\S]*?reason=(\d+) \((.+?)\)\s+(?:subreason=\d+ \((.+?)\)\s+)?status="
+  if ($raw -notmatch $pattern) { return $v }
+  $exitAt = [datetime]$Matches[1]
+  # 기기·OS 마다 'EXIT SELF' / 'EXIT_SELF' 처럼 공백·밑줄이 섞인다 — 공백으로 통일해 비교한다.
+  $reason = $Matches[3] -replace '_', ' '
+  $sub = if ($Matches[4]) { $Matches[4] -replace '_', ' ' } else { '' }
+
+  if ($reason -eq 'USER REQUESTED') {
+    $v.Color = 'Yellow'
+    $v.Tag = '-- RESTART'
+    if ($sub -eq 'REMOVE TASK') {
+      $v.Label = '사용자 스와이프(최근 앱 제거)'
+    } elseif ($sub -eq 'FORCE STOP') {
+      $v.Label = '외부 강제종료(수동·측정)'
+      $remLog = Join-Path $logDir 'remediation.log'
+      if (Test-Path $remLog) {
+        # 종료 시각 ±60초 안의 모니터 relaunch 만 인정 — 수동 재시작을 모니터 탓으로 돌리지 않는다
+        $hit = Get-Content $remLog -Tail 200 -ErrorAction SilentlyContinue |
+          Where-Object {
+            $_ -match '^\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\] AUTO_FIX app relaunch reason=(\S+)' -and
+            [math]::Abs((([datetime]$Matches[1]) - $exitAt).TotalSeconds) -le 60
+          } |
+          Select-Object -Last 1
+        if ($hit -and $hit -match 'reason=(\S+)') { $v.Label = "모니터 자동복구 force-stop · $($Matches[1])" }
+      }
+    } else {
+      $v.Label = "사용자 요청 종료 · $sub"
+    }
+    return $v
+  }
+  # 앱이 스스로 끝내고 다시 켬 — dev 전체 리로드 대체(devMetroReloadGuard restartAppAsync · exitProcess(0)) 등. 크래시 아님.
+  if ($reason -eq 'EXIT SELF') {
+    $v.Color = 'Yellow'
+    $v.Tag = '-- RESTART'
+    $v.Label = '앱 자체 재시작(dev 리로드 대체 등)'
+    return $v
+  }
+  # CRASH · CRASH NATIVE · ANR · LOW MEMORY · SIGNALED 등 — 실제 이상
+  $v.Label = if ($sub -and $sub -ne 'UNKNOWN') { "$reason · $sub" } else { $reason }
+  $v.Tag = '!! PID_CHANGE'
+  return $v
+}
+
 function Emit([string]$line, [string]$color) {
   if ($color) { Write-Host $line -ForegroundColor $color } else { Write-Host $line }
   try { Add-Content -Path $heartbeatLog -Value $line -Encoding utf8 } catch {}
@@ -170,7 +218,8 @@ while ($true) {
     }
 
     if ($pidChanged) {
-      Emit "[$hhmm] !! PID_CHANGE session=$sessionPid -> $appPid (크래시·재시작 의심)" 'Red'
+      $pv = Get-PidChangeVerdict -Pkg $Package -OldPid $sessionPid
+      Emit "[$hhmm] $($pv.Tag) session=$sessionPid -> $appPid ($($pv.Label))" $pv.Color
       $sessionPid = $appPid
     } elseif ($hasCrash) {
       Emit "[$hhmm] !! 실시간 크래시 — $crashSample" 'Red'

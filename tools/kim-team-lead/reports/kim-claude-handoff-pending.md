@@ -1,5 +1,192 @@
 # 김클로드 → 김팀장 검수 handoff
 
+## ⏳ PENDING — E6 회수 패스 1단계 (중단 작업 복구 기록) · 2026-10-09
+
+```text
+task_id=e6-hub-reclaim-dedupe-step1-20261009
+status=PENDING · reviewer=김플레이 · commit=금지
+경위=사용량 문제로 세션이 중단된 뒤, handoff에 기록하지 않은 채 남아 있던 미커밋 변경을 발견해 재검수하고 기록함
+설계=tools/kim-team-lead/reports/kim-claude-e6-reclaim-inventory-20261009.md
+변경=src/game/nativeReclaim/runPlanetHubPostSkiaPeakReclaimPass.ts · src/game/nativeReclaim/runPlanetHubSoftNativeReclaimPass.ts
+```
+
+- 반영(결과 동일, 횟수만 줄임) — vfx_cleared(settle) 경로에만 적용:
+  - PostSkiaPeak 패스: `deferBitmapTrimToSettle` 옵션을 추가했다. settle이 뒤따르면 즉시 Fresco trim과 deferred 예약을 건너뛰고, settle soft의 deferred 1회로 합친다.
+  - followup_90s: settle 경로에서는 만들지 않는다. 30분 로그에서 실행 0회였다(다음 웨이브의 cleanup이 매번 취소).
+  - settle 타이머: soft 뒤에 따로 부르던 `runCombatSkiaPresentationReclaim()`·`trimNativeBitmapCachesAsync()`를 제거했다. soft 본문(runSoftNativeReclaimPass.ts:16 전투 회수 + deferred Fresco)과 중복이었다.
+  - soft 패스: 전투 회수 직접 호출을 제거했다. runSoftNativeReclaimPass 안에서 1회 실행된다.
+- 재검수: bypassCoalesce=true이면 soft는 항상 true를 반환한다(:27). 따라서 settle 경로에서 Fresco trim이 사라질 경로는 없다. heap purge(vfx_cleared)는 그대로다. 전투 orbit 종료 경로와 웨이브 사이 경로는 무변경이다(followup·즉시 trim 유지).
+- 미착수(설계 §4): flying→0 트리거(#1) 제거 · `hubReclaimScheduler` 단일 진입점 · 5분/15분 주기 통합 · `signalHubSkiaNativeReclaim` 제거. 김플레이 협의가 필요하다.
+- self-check: `tsc -p tsconfig.client.json` exit 0. Skia 코드는 무변경이라 audit은 실행하지 않았다.
+- 리스크: Fresco trim 횟수를 줄인 뒤 웨이브 후 Native floor가 오르는지 실측하지 않았다 → 허브 30분 체류에서 Native PSS·GL floor를 rdt-off-20261009-1911과 비교해야 한다.
+- 김플레이 승인 여부는 기록을 찾지 못했다. 미승인 상태라면 원복 판단도 김플레이에게 맡긴다.
+- **[김플레이 verdict 22:5x] PARTIAL** — 변경은 김플레이가 직접 반영한 것이다(`kim-play-efficiency-audit-20261009.md` §3-2). flying→0 트리거 제거 「미착수」는 사실과 다르다 → planet.tsx에서 이미 제거했다. audit 31/31과 정책 테스트 2건은 실행 완료. 원복하지 않는다. 실기 검증은 `kim-play-memory-structure-analysis-20261009.md` §6 M3 빌드에서 진행한다. status는 PENDING을 유지한다(실기 전).
+
+## ⏳ PENDING — dev 빌드 안정화: React DevTools 렌더러 연결 기본 OFF + 모니터 EXIT SELF 분류 · 2026-10-09
+
+```text
+task_id=dev-build-stabilization-rdt-off-20261009
+status=PENDING · reviewer=김플레이 · commit=금지
+지시=대표님 「개발 빌드 안정화 1순위」 · Metro 재시작 승인
+변경=index.js(신규 2줄) · src/dev/arcDisableReactDevToolsHook.js(신규) · package.json main → index.js · tools/long-run-monitor/report-watch.ps1
+연관(김플레이 소유)=src/game/devMetroReloadGuard.ts — dev 전체 리로드 → 프로세스 재시작(김클로드 교차검수 PASS, 재시작 우선 호출로 수정 반영)
+```
+
+- 근거: Hermes 힙 계단(GC 직후 alloc 약 0.8MB/분)에서 React DevTools 훅 처리를 끄자 약 0.26MB/분으로 줄었다(김플레이 8분 실험, −70%). ABA 반복은 A 구간 8분(0.41MB/분)에서 중단했고, 인과 확정은 RDT OFF 새 세션 30분 기울기로 대신한다.
+- 원리: RN InitializeCore의 setUpReactDevTools가 훅을 먼저 설치한다(react-devtools-core installHook은 기존 훅이 있으면 그대로 둠, backend.js:16913). 이미 설치된 훅 객체에 `isDisabled = true`만 켜고(객체 교체 금지 — connectToDevTools가 훅 메서드를 씀), 렌더러 injectInternals(ReactNativeRenderer-dev.js:1649-1651)가 붙지 않게 한다. index.js에서 expo-router/entry보다 먼저 import한다.
+- 기본 OFF, opt-out: `EXPO_PUBLIC_ARC_ENABLE_RDT=1`로 Metro 재시작하면 기존 동작으로 돌아간다. 켠 세션에서는 React DevTools 컴포넌트 패널과 Element Inspector를 쓸 수 없다. release는 `__DEV__` 분기라 제거된다.
+- 엔트리: Android gradle(build.gradle:12)이 resolveAppEntry → package.json main을 읽는다. 확인 결과 `D:\arcfire20260607\index.js`. app.json·eas.json·metro·babel에 경로 의존 0건.
+- report-watch.ps1: (1) exit-info `EXIT SELF` → 황색 `-- RESTART (앱 자체 재시작(dev 리로드 대체 등))`. (2) 표시 버그 수정: 이유 이름 속 괄호 때문에 「(APP CRASH(EXCEPTION)」로 괄호가 빠지던 정규식을 `\((.+?)\)\s+(…)?status=`로 고쳤고, subreason UNKNOWN은 생략한다. PS 5.1 파서 오류 0 · BOM 유지 · 실기 exit-info 회귀 6건과 합성 EXIT SELF 1건이 모두 기대대로 나왔다.
+- self-check: tsc exit 0.
+- **검증 완료(김플레이 실측 · 김클로드 원본 재확인)**: `[arc-dev] … OFF` 로그, `{isDisabled:true, renderers:0, rendererInterfaces:0}`(이전 2/2). DevSettings.reload → exit-info `EXIT_SELF` → 새 pid, SIGABRT 0. **RDT OFF 30분(pid 29913, 허브): GC 직후 alloc 22.7 → 23.7MB(+1.0, 약 0.03MB/분 = 평탄)**. RDT ON은 약 0.8MB/분 → 누수 원인 확정·해소. 부수 효과: GC 횟수 약 119회/분(이전 약 235회/분, 약 절반). 원본: tools/play-bot-console/logs/soak/rdt-off-20261009-1911/gc.jsonl.
+- 후속 수정(19:4x): report-watch.ps1에서 실기 exit-info가 `EXIT_SELF`(밑줄)라 공백 비교가 실패했다 → reason·subreason의 `_`를 공백으로 정규화. 29186 황색 확인. 모니터 콘솔 재시작 반영(김플레이).
+- 남은 항목: 드론 레이어 동기 렌더(release 측정 후 판단) · 회수 패스 일원화(E6) · meminfo Unknown(hades 확보량) 57 → 80(GC 직후 alloc은 평탄이라 우선순위 낮음).
+
+## ⏳ PENDING — 효율화 E2·E3·E4 (서브코어 틱) 분석 + 1안 · 2026-10-09 15:40
+
+```text
+task_id=efficiency-audit-e2-e4-subcore-tick-20261009
+status=PENDING (분석 완료 · 구현은 15:58 Hermes 관찰 종료 후) · reviewer=김플레이 · commit=금지
+정본 목록=tools/kim-team-lead/reports/kim-play-efficiency-audit-20261009.md
+```
+
+**공통 근본 원인 (가설, 근거 강함)** — 서브코어 틱 안의 store `set` → 거대 `planet.tsx` 리렌더
+- `[arc-hitch] tick`은 `ArcCoreHub.ts:135-140`에서 서브코어 `_advanceWallClock` 전체를 잰다. 그 안에서 동기로 일어나는 store `set`과 그 구독자 비용이 모두 이 시간에 들어간다. 이 앱은 구 아키텍처(newArchEnabled=false)라 React 이벤트 밖의 store 갱신이 동기 렌더로 흘러갈 수 있다(미계측 — 아래 계측으로 확정).
+- `planet.tsx:659` `useArcNpcTrafficStore((s) => s.ships)`와 `:671` `useArcInboundDroneStore((s) => s.drones)`는 **전체 배열**을 구독한다. 발행 때마다 배열이 새로 만들어지므로, 다른 행성의 함선이 phase를 바꿔도 허브 화면 전체가 다시 렌더된다. `:660-669`의 행성 필터 useMemo도 매번 새 배열을 만들어 하위 memo까지 연쇄로 다시 계산된다.
+- logcat 근거(`logs/soak/hermes-heap-20261009-1525/logcat-full-1.txt`): ai_npc 느린 틱(n=717, 평균 42ms, p50 40)이 **정확히 250ms 간격**(15:24:40.659 → 40.914 → 41.171)으로 찍힌다. 이 간격은 `NPC_SNAPSHOT_INTERVAL_SEC = 0.25`(AiNpcSubCore.ts:48)와 같다. 매 프레임 시뮬(tickShips · 누적 버퍼)이 아니라 발행 경로가 비용이라는 근거다.
+
+**E2 AiNpcSubCore (0.25초 스냅샷)**
+- 매 프레임: `tickShips`(:327) · `addWallTickFromTransportShips`(planetDevelopmentAccStore.ts:74, 모듈 버퍼 in-place, set 없음) · `addWallTickFromDwellOccupancy`(planetDwellCivicAcc.ts:53, in-place) · `syncLivePhaseElapsedToPublishedShips`(:341, in-place). store set이 없어 가볍다. 단 `for…of`와 `CORE_KEYS` 순회가 60Hz × 함선 수로 반복된다(경미).
+- 0.25초마다: `publishSnapshot`(:251)이 구조 키 문자열을 만들고(함선 수만큼 템플릿 문자열), 키가 바뀌면 `setSnapshot`과 `invalidateNearbyPresenceMemosOnArcTrafficPublish`를 호출한다. 변하지 않은 함선 객체는 재사용한다(:285-299) — 이 덕분에 아래 1안이 가능하다.
+- 게임성: 위치·체류·정산(`economy_transport_dwell_settled`는 async라 첫 await 뒤 microtask에서 정산, runArcTransportTradePass.ts:151 — E1 비용은 이 틱 시간에 포함되지 않음).
+- **1안(결과 동일 · 렌더만):** planet.tsx의 ships 구독을 「현재 행성 함선만 + 원소별 `===` 비교」로 바꾼다(`zustand/traditional` `useStoreWithEqualityFn`, zustand 4.5.7 · use-sync-external-store 의존 있음). 다른 행성 함선의 phase 변경은 원소 참조가 그대로라 리렌더가 생기지 않는다. 시뮬·발행 코드는 건드리지 않는다.
+
+**E3 ArcInboundDroneSubCore (0.25초 스냅샷)**
+- 발행 키(:348-351)에 `hp`가 들어 있지만, src 전체에 drone hp를 쓰는 곳이 없어(쓰기 0건) 상수다. 따라서 발행은 생성·phase 변경 때만 일어난다(정상).
+- 매 프레임(inbound 드론이 있을 때): `runInboundDroneInterceptPass`(runInboundDroneInterceptPass.ts:103-118)가 `listPlanetDefenseSatellites`(배열 생성) · `resolvePlanetCounterIntelBonuses`(시설 레벨·스킬 3회 조회) · `resolveArcCoreSpyTacticalBundleAtPlanet`(+ 결과 객체)를 **60Hz로 다시 계산**한다. 그리고 드론 × 위성마다 `resolveDefenseSatelliteCombatStatsForObject`와 {x,y}·candidate 객체를 할당한다. 입력(위성·연구소·스킬·스파이 구성)은 웨이브 중에 거의 변하지 않는다.
+- 생성·충돌 때: `setSnapshot`(드론 전량 `{...d}` 복제) → planet.tsx 리렌더, 충돌 때 `applyPlanetAttackCoreDamage` → `patchPlanetCore`(store set).
+- **1안:** (a) 스파이 번들은 `(planetId, ships 배열 참조)` 키로 메모한다. ships 참조가 같으면 결과가 같으므로 결과 동일. (b) 위성 목록·위성 전투 스탯·대테러 보너스는 웨이브 단위 캐시로 두되, 위성·시설·스킬 변경 시 무효화할 리비전 신호가 있는지 먼저 확인한다. 신호가 없으면 1초 TTL이 되는데, 이는 결과가 최대 1초 늦게 반영되는 것이라 **대표님 확인 대상**이다. (c) 좌표 {x,y}는 모듈 스크래치를 재사용한다.
+
+**E4 ArcCoreSpySubCore (1초 lookup)**
+- 매 프레임(스파이가 있을 때): `spyIds.join(',')`(:101)로 60Hz 문자열을 할당한다. lookup은 1초 주기이고 `getCaptainPresenceWorldIndex`는 ships 참조 fast path(buildCaptainPresenceWorldIndex.ts:260-267)로 캐시가 맞는다.
+- 느린 틱(n=24/7분, 평균 35ms)은 lookup(1초)보다 훨씬 드물다. 펄스(`spy_pulse_interval_sec` 기본 8초) → `applyPlanetAttackCoreDamage` → store set → 리렌더, 또는 `tryNotifyArcCoreSpyIntelAlert`와 겹친다고 추정한다(미계측).
+- **1안(결과 동일):** lookup 시점에 `cachedSpyKey`를 함께 저장하고 :101의 매 프레임 join을 제거한다.
+
+**계측 계획 (구현 전·후 비교, 15:58 이후)**
+- TEMP-DIAG(dev 한정·커밋 전 제거): 각 서브코어 틱을 「시뮬 / store set / 그 밖」 구간 ms로 나눠 30ms 이상만 1줄 남긴다. 김플레이 E5(로그 묶기)와 겹치지 않게 태그는 `[arc-hitch-split]`으로 따로 두고 측정 후 삭제한다.
+- 판정 지표: 같은 30분 허브 체류에서 ai_npc·drone·spy 느린 틱 횟수와 평균, `[MEM_HEAP]` gc/분.
+
+**리스크**: planet.tsx는 공용 대형 파일이다 — 1안 E2는 :658-669 구독부만 바꾼다(동시 편집은 김플레이와 협의). hook 개수가 바뀌지 않게 같은 자리에서 교체해 Fast Refresh hook 순서 오류를 피한다.
+
+**[구현 1단계 · 16:00 · 결과 동일 항목만 · 김플레이 승인(planet.tsx 658-669 편집 · TTL 항목 보류)]**
+```
+[pss-pre-dev] hot_path=AiNpc publish(250ms)·drone intercept(60Hz, inbound only)·spy tick(60Hz) alloc=감소(E4 60Hz join 제거, E3 스파이 번들 결과 객체 60Hz→입력 변경 시만, E2 planet 리렌더 축소) cache=E3 메모 1건(입력 참조 키, 크기 1)
+[pss-pre-dev] stage=planet_hub · 메모는 모듈 변수 1개(행성 이탈 후에도 입력 키 불일치로 자동 재계산·누적 없음) risk=P2(E3 메모 키 누락 시 스파이 변경 반영 지연 — 키 검증으로 차단)
+[pss-pre-dev] verdict=PASS
+```
+- E4 `src/arcCore/subcores/ArcCoreSpySubCore.ts`: `cachedSpyKey` 필드 추가. lookup(1초) 때 `cachedSpyIds`와 함께 설정하고, 모든 초기화 지점(onBoot · onShutdown · 행성 없음 · 행성 변경)에서 함께 비운다. 매 프레임 `spyIds.join(',')` 대신 `this.cachedSpyKey`를 쓴다. 불변식 `cachedSpyKey === cachedSpyIds.join(',')`.
+- E3 `src/arcCore/inboundDrone/runInboundDroneInterceptPass.ts`: `resolveSpyBundleMemoized` — 키 = (planetId, ships 배열 참조, `getCaptainPresenceWorldIndex(ships)` 참조, `useArcCoreSpyExpelledStore.getState()` 참조). 정책(`resolveArcCoreSpyPolicy` 캐시) · 태그 집합(CSV 해시 캐시) · 함장 배정(`assignmentCache`)은 정적이라 뺐다. **남은 위험**: `getNpcCaptain(id).operationalState` 런타임 변경은 키에 없다. 기존 위치 인덱스 캐시(buildCaptainPresenceWorldIndex.ts:260-267)도 이를 키에 두지 않으므로 동작 수준은 같다.
+- E2 `app/(game)/planet.tsx`: 모듈 함수 `pickArcShipsAtPlanet` · `sameArcShipRefs`, 상수 `EMPTY_ARC_SHIPS`, `useStoreWithEqualityFn(useArcNpcTrafficStore, 현재 행성 함선만, 원소 ===)`. hook 구조는 zustand 4.5.7 `useStore`와 같다(`useSyncExternalStoreWithSelector` + `useDebugValue`, node_modules/zustand/index.js · traditional.js 대조). 정렬 useMemo 자리를 유지했다(deps는 `[arcNpcShipsSnap]`). 빈 행성은 상수 배열을 반환한다(이전에는 렌더마다 새 `[]`).
+- self-check: `tsc` exit 0 · `audit:skia-memory` 31/31 · Fast Refresh 반영 후 pid 19243 logcat에 hook 순서·JS 오류 0건.
+- **1차 효과(김플레이 측정 pid 17218 16:28~16:48, 기준선 68분과 분당 비교 · 조건 완전 동일 아님):** ai_npc 19 → 1.1회/분 · spy 10 → 0.2 · (E1 convoy_plan 31 → 2.5). drone은 5.4 → 13.8회/분(평균 76ms)으로 남은 1순위.
+- **[E3 후속 · 16:58 저장 · 김플레이 승인 4파일]** 원인: 웨이브 중 드론 느린 틱이 약 0.3초 간격 연속(after-fix logcat 16:31:10~26) = 0.25초 발행 주기 → 발행마다 planet.tsx:696 `s.drones` 전체 구독으로 허브 전체 리렌더. 부수 결함: orbit clock effect deps에 `.length`가 있어 생성·파괴마다 `setActive(false)`→`notePlanetOrbitClockMsJs(0)`→재활성(JS orbit 미러가 순간 0 — 그 사이 spawn이면 시작 ms가 0이 될 위험).
+  - planet.tsx: 배열 구독 → 원시값 선택자 2개(`arcInboundDronesAtPlanetCount` · `arcInboundFlyingDroneCount`, 0/1). `hasHubInboundDronesAtPlanet` = 기존 :697-717과 같은 집합. 전이 `prev>0 && cur===0`과 같은 시점. `.length` 7곳 교체, PlanetStageBackground prop 제거.
+  - planetHubSubcomponents.tsx: `arcInboundDronesAtPlanet` prop·타입·미사용 import 제거 → 드론 레이어에 `planetId` 전달.
+  - PlanetHubInboundDroneLayer.tsx: `drones` prop → 내부 `useStoreWithEqualityFn` 구독(`pickHubDronesAtPlanet` 같은 필터 · 빈 결과 모듈 상수 · 원소 ===). 상시 마운트 로직 무변경.
+  - ArcInboundDroneSubCore.ts: TEMP-DIAG `[arc-hitch-split] drone`(dev · 30ms 이상) — **최종 확인 후 삭제 필수**.
+  - self-check: tsc exit 0 · audit 31/31 · 호출처 1곳 전수 확인.
+  - 김플레이 검수 PASS. 중간 측정(콜드스타트 pid 21762, 17:02~17:10): drone 느린 틱 13회/분 · 평균 약 61ms(수정 전 13.8 · 76) → **부분 개선(평균 약 −20%)**. split: campaign 1~13ms, **publish 25~75ms**(대부분 39~50).
+  - 잔여 원인: 스토어 구독자를 전수 확인한 결과 planet.tsx 원시값 선택자 2개 + 드론 레이어뿐이고, 스토어는 순수 set이다. 따라서 publish 잔여 = 드론 레이어 동기 렌더 + useLayoutEffect(:422-541: pack·공유값 직렬화 쓰기·compact) + droneIds 새 배열(:545) → Skia trail 자식 리렌더. 발행마다 드론이 `{...d}`로 복제되어 원소 === 비교가 매번 깨진다.
+  - **라운드 최종(김플레이 · pid 21762 · 17:02~17:21 · 무조작 · FATAL·hook 오류 0)**: convoy_plan 31 → 4.0회/분(73 → 36ms) · ai_npc 19 → 1.4 · spy 10 → 0.2 · drone 13.8 → 14.8회/분(평균 76 → 60ms, 부분 개선) · dev 로그 약 76 → 1줄/분. Hermes 누수(GC 직후 alloc 약 0.9MB/분)는 수정 전과 같다 → 별개 축, 원인 미특정. tsc PASS · audit 31/31 · galaxyMap 48/48 · monitor-paused.flag 삭제 · 커밋 없음.
+  - **TEMP-DIAG `[arc-hitch-split] drone`(ArcInboundDroneSubCore.ts) — 김플레이 결정으로 다음 라운드 계측용으로 유지 · 다음 라운드에서 삭제.** 커밋 전에 반드시 제거할 것.
+  - **다음 라운드(미착수)**: 레이어 내부 구간 계측으로 확정 → (a) droneIds 서명 안정화, (b) publishCampaignSnapshot에서 바뀌지 않은 드론 객체 재사용, (c) 렌더 경로 할당 제거. release 성격 빌드로 dev 부풀림 측정 필수.
+- 미측정: 효과 수치(ai_npc·drone·spy 느린 틱 횟수/평균, gc/분, planet 리렌더 횟수)는 김플레이 E1 반영 후 콜드스타트 1회 공동 측정으로 확인한다. TEMP-DIAG `[arc-hitch-split]`은 넣지 않았다. 수정 전 기준선(logcat-full-1.txt: ai_npc n=717 · 평균 42ms · 250ms 간격)과의 전후 비교로 대신한다.
+
+## ⏳ PENDING — 모니터 PID_CHANGE 오탐 분류 · 2026-10-09 03:00
+
+```text
+task_id=monitor-pid-change-exit-reason-20261009
+status=PENDING · reviewer=김플레이 · commit=금지
+변경=tools/long-run-monitor/report-watch.ps1 (Get-PidChangeVerdict 추가 · PID_CHANGE 출력 1곳)
+```
+
+- 증상: 02:35 김플레이의 수동 재시작(15250→19469)이 `!! PID_CHANGE (크래시·재시작 의심)` 적색으로 표시됨. 기존 로직은 PID만 바뀌면 사유와 상관없이 적색.
+- 수정: PID 변경 시 `dumpsys activity exit-info`에서 이전 pid의 reason/subreason을 읽어 분류한다.
+  - USER REQUESTED/REMOVE TASK → `-- RESTART (사용자 스와이프)` 황색
+  - USER REQUESTED/FORCE STOP → `-- RESTART (외부 강제종료(수동·측정))` 황색. remediation.log의 `AUTO_FIX app relaunch`가 종료 시각 ±60초 안에 있으면 `모니터 자동복구 force-stop · <reason>`
+  - CRASH · CRASH NATIVE · ANR · LOW MEMORY 등, 또는 기록 없음 → 기존처럼 `!! PID_CHANGE` 적색
+- self-check: PS 5.1 파서 오류 0 · UTF-8 BOM 유지 · 실기 exit-info로 함수 단독 실행 — 15250 수동(황) · 14071 스와이프(황) · 12330 수동(황, 김클로드 A/B) · 3439 모니터 자동복구(황) · 미존재 pid → 적색 유지.
+- 미검증: 실제 CRASH/LMK 레코드가 없어 적색 분기는 정규식으로만 확인했다(`reason=4 (CRASH)` 형식). 실행 중인 report-watch 콘솔은 재시작해야 새 로직이 적용된다(김경제 모니터 담당 판단).
+- 범위 밖: `run-playtest-1h-soak-watch.ps1` · evening 리포트에도 PID_CHANGE 문구가 있으나 손대지 않았다.
+
+## ⏳ PENDING — 허브 GL 누수 → 모니터 강제 재시작 루프 (P0 메모리) · 2026-10-09 01:55
+
+```text
+task_id=hub-trail-path-volatile-gl-leak-20261009
+status=PENDING
+kind=BUGFIX (메모리 P0)
+변경=src/components/planet/PlanetHubInboundDroneSkiaTrailLayer.tsx (setIsVolatile 2줄)
+commit=금지 · 김플레이(메인리더) 검수 후
+reviewer=김플레이 (2026-10-09 02:35 대표님 조직 변경 · 대표님 확인)
+```
+
+- **[정정 · 02:55] 3파일 유지 — 김플레이 실측 근거.** 원복(02:36~02:50, pid 19469 콜드스타트, volatile 적용) 상태에서 허브 GL이 21→30→44→51→64→72→81MB로 올랐다(웨이브당 바닥 약 +3~4MB, hook 오류 0). 상시 마운트 상태(pid 15250)는 39분간 최대 64.5MB로 평탄했다. 김플레이가 백업 patch와 같은 내용으로 재적용했다(pid 20711, 재측 중).
+  - 김클로드 재검수 판정 **PARTIAL**. 「웨이브당 ~45MB 큰 누수의 원인이 Canvas 수명」이라는 원래 전제는 여전히 틀렸다. 상시 마운트 상태에서도 큰 누수는 계속됐고, volatile만으로 해소됐다. 반면 마운트/언마운트 반복에서 오는 **별도의 작은 누수(웨이브당 ~4MB)**는 김플레이 수치로 타당하다. → volatile + 상시 마운트 **둘 다 유지**.
+  - 남은 확인: (1) 원복 측정은 14분뿐이라, 81MB가 계속 오르는지 아니면 고원에 머무는지는 미확정이다(상시 마운트도 30→50~61로 한 번 올랐다가 평탄해졌다). (2) `subscribeHubSkiaNativeReclaim` 삭제는 「STAGE 이탈 = 허브 언마운트(replace)」가 항상 성립한다는 전제에 기댄다. blur만 되고 언마운트가 안 되는 경로(모달·백그라운드 복귀)에서 Skia가 남는지 은하 왕복·백그라운드 전환 실측으로 확인할 것.
+- **[김클로드 → 김플레이 작업 재검수 · 03:45] 판정 PASS (조건부 리스크 1건)** — 대표님 지시로 재검수. 자료는 받아쓰지 않고 원본으로 다시 확인했다.
+  - 3파일 재적용: 현재 `git diff`와 백업 patch를 줄바꿈 정규화 후 비교 → identical=True. src 변경은 이 3파일과 TrailLayer volatile +3줄뿐이다.
+  - self-check 재실행(김클로드): `tsc` exit 0 · `audit:skia-memory` 31/31 · `.cursor/hooks/*.cjs` 26개 `node --check` 통과 · incidentHandoffGate 5/5 · kimClaudeHandoffCore 3/3.
+  - 원본 CSV(`tools/play-bot-console/logs/sdk54-upgrade/`) 재집계, pid 20711:
+    - 허브 구간(views 342~422) GL 최고 77.6 · PSS 최고 754.6 · Native 371~418 평탄(25분) → 기준 3) PASS. 보고서 수치와 일치.
+    - 같은 행성 반복: 복귀 후 46.7 → 50.0 → 50.7, 다른 행성(synth_073_p) 49~56 → 기준 1)·2) PASS. 3회차는 체류 60초 미달(김플레이가 이미 고지함).
+    - 원복 대조(pid 19469): GL 최고 94.4로 상승 확인 → 상시 마운트 유지 근거가 원본과 일치.
+  - **리스크 (P1, 별도 과제):** 은하 지도 체류 중 일시 피크 GL 182.3 / **PSS 931** (03:21:15, views 204), GL 173.5 / PSS 853.6 (03:31:26). 허브 기준 밖이라 보고서 「최고 753」에 포함되지 않았다. 모니터 하드 실링 950까지 19MB 남았고, 03:37에 자동 relaunch가 ON으로 복귀했다. 그래서 지도 체류가 길거나 무거우면 강제 재시작이 다시 날 수 있다. 또한 15~30초 샘플링에 지도 구간은 회당 1점만 잡혀, 실제 피크는 더 높을 수 있다. → 은하 지도 GL/PSS 피크 감축 과제로 분리할 것(후속 1안 setResourceCacheLimit도 이 피크에 직접 효과).
+  - 규칙·훅 변경(조직 개편): 대표님이 확인한 내용(김플레이 메인리더 · 김클로드 서브리더)과 일치한다. 권한 확대나 설정 변경 없음. on-stop 자동 검수 hook은 followup만 끈 것이다. 경미: CLAUDE.md READY 표에 「김팀장」 표기가 남아 있으나, 하단 주석(「김플레이 검수로 읽는다」)으로 처리돼 있다.
+  - 커밋 없음 확인(HEAD=053f06b).
+- 02:31 미커밋 3파일은 김플레이가 원복했다(백업 `backup-kim-team-lead-hub-sticky-mount-20261009.patch`). 원복 직후 Fast Refresh에서 Hooks 순서 오류가 나 허브가 멈췄다(`PlanetStageBackground` "Should have a queue"). 원복 코드의 버그가 아니라 dev 전용 현상이다. 앱을 완전히 재시작한 뒤 재측해야 하며, 02:31 이후 pid 15250 데이터는 무효다.
+
+**재시작 정체 (logcat 실측)**
+- 23:38 · 23:59 · 00:32 · 00:49 · 01:06 `PID_CHANGE`는 크래시가 아니다. `ActivityManager: Force stopping com.arcfire.online ... from pid N` → `apply-auto-remediation.ps1:140` `am force-stop` (reason=`gl_critical_active_hub`, PSS≥950 hardCeiling). crash 버퍼 0건 · LMK 0건. 00:15 `remove task`는 사용자 스와이프.
+- 모니터는 증상에 반응했을 뿐이고, 실제 문제는 GL mtrack이다. 23:03 APK(SDK 54, Skia 2.0.0-next.4→2.2.12) 이후 세션마다 GL 295~431MB에 도달했다. 그 전 pid 18710은 47~106MB였다.
+
+**원인 격리 (실기 A/B · dev-client Metro · 매 회 콜드스타트 → 이어하기 → 허브 웨이브)**
+| 조건 | GL 추이 (웨이브마다) |
+|---|---|
+| 현행 | 24 → 70 → 110 → 155 (웨이브당 +40~50MB, 회수 없음) |
+| 성운 dodge Picture OFF | 24 → 85 → 93 → 136 (여전히 증가) |
+| TrailLayer 그리기 OFF | 24 → 29~31 고정 |
+| **수정 (trailPath.setIsVolatile)** | **24 → 30~36 고정** (웨이브 2회 관측) |
+
+- HWUI(gfxinfo)는 18MB + TextureView 버퍼 4장 ≈ 23MB뿐이다. 나머지 GL은 RN Skia `OpenGLContext`(thread_local GrDirectContext)의 리소스 캐시에 있다. RN Skia 2.2.12는 캐시 한도를 설정하거나 purge를 호출하지 않는다.
+- 꼬리 fill path는 매 프레임 rewind 후 다시 쓴다. `SkPath::rewind()`→`resetFields()`가 `fIsVolatile`을 false로 되돌리고(SkPath.h:1921), 비volatile 오목 path는 GPU가 형상 캐시를 붙인다(SkPath.h:403). 프레임마다 새 캐시 키가 생겨 GL이 계단식으로 쌓인다.
+- 수정: `flushPicture`의 `resetSkPath(trailPath)` 직후, 그리고 `recordInboundDroneVfxPicture` 풀 path 직후에 `setIsVolatile(true)`. 수명·dispose·Worklet은 변경 없음.
+
+**김팀장 지시 재검수 — 작업 트리의 미커밋 변경 (00:56, 김클로드 작성 아님)**
+- `PlanetHubInboundDroneLayer` · `SkiaPlanetNebulaShaderBackdrop` · `planetHubSubcomponents`: Canvas·dodge 오버레이 상시 마운트, 디바운스 언마운트 제거, `subscribeHubSkiaNativeReclaim` 구독 삭제.
+- 판정 **DISAGREE (전제)**: 「웨이브마다 Canvas를 내리면 GL 표면이 남는다」. 위 변경이 이미 Metro로 적용된 상태(1380 TextureView 1회만 생성)에서도 GL은 웨이브당 +45MB 증가했다(pid 9481: 24→70→110→155). 원인은 Canvas 수명이 아니라 trail path 캐시다.
+- 김플레이의 독립 분석(`kim-play-analysis-restart-loop-gl-20261009.md`)도 같은 결론이다. 회귀 경계는 10-08 23:23 TrailLayer 단일 trailPath 전환이고, 23:23 이전 코드도 웨이브마다 언마운트했지만 GL은 정상이었다.
+- 권고: 세 파일은 되돌리는 방향으로 검토한다. 특히 `subscribeHubSkiaNativeReclaim` 삭제는 STAGE 이탈 시 Skia 강제 해제 경로를 없애므로 위험하다. 남의 미커밋 작업이라 김클로드는 손대지 않았다. 원복 여부는 김팀장이 결정한다.
+
+**self-check**: `npx tsc --noEmit -p tsconfig.client.json` PASS · `npm run audit:skia-memory` 31/31.
+**진단 흔적**: TEMP-DIAG 편집 2건(성운 dodge flush OFF, Trail 렌더 OFF)은 모두 원복했다. `git diff`로 확인 — TrailLayer 차이는 volatile 2줄뿐이다.
+**리스크 / 미검증**
+- 관측은 허브 웨이브 2회, 약 4분이다. 30분 이상 장기 측정과 은하 지도 왕복은 김플레이가 실기 재측한다.
+- 화염 Picture(블러 마스크 원)는 OFF 단독 측정을 못 했다(사용자 스와이프로 중단). 수정 후 GL이 고정이므로 영향은 작다고 본다.
+- RN Skia 2.2.12 GPU 캐시 무제한(256MB/컨텍스트 기본값) 자체는 그대로다. 다른 매 프레임 비volatile path(전투 Skia 등)가 같은 패턴인지는 후속 조사 대상이다(src 전체에 `setIsVolatile` 사용 0건).
+- 모니터 `monitor-paused.flag`: 측정 중에만 켰고 01:53에 삭제했다(자동 재시작 복귀). 01:57 김플레이 재측용으로 다시 생성됨.
+
+**김플레이 실기 재측 중간값 (01:50~02:06 · pid 15250 · 작업 트리 = volatile + 미커밋 3파일)**
+- 웨이브 누수 해소: 허브 웨이브 14회, 웨이브당 GL 증가 없음. 29.9~34.4MB로 평탄.
+- 은하 지도 왕복 1회(01:57:48→01:57:55): 지도에 있는 동안 GL 163.6MB(views 204)까지 일시 상승. 복귀 후 GL 기준선이 **+20MB 계단으로 남음**(30→50.4~57.3, 이후 평탄). 2회차에서 누적되는지 확인 중.
+  - 가설(미검증): 미커밋 변경이 `subscribeHubSkiaNativeReclaim`(STAGE 이탈 강제 해제)을 지운 것과 관련 있을 수 있다. 3파일 원복 후 같은 왕복에서 계단이 사라지는지로 판정.
+- 별도 축: Native Heap 326→381MB, PSS 634→744MB, 16분 동안 우상향(PSS 약 +7MB/분). GL과 별개이며 volatile 수정 범위 밖. 기존 은하/native P0 축과 같은 것으로 보임 — 후속 과제.
+- **최종 (01:50~02:29 · 39분 · 크래시 0 · 프로세스 유지)** — 상세 `kim-play-analysis-restart-loop-gl-20261009.md` §4-1
+  - 허브 웨이브 29회: GL 29.9~64.5MB, 웨이브당 증가 없음 → **PASS** (<80).
+  - 은하 지도 왕복 3회(교역·synth_073 이동 포함): 지도 위 일시 163~264MB → 허브 복귀 50~61MB. 1회차만 30→50 계단, 2·3회차는 추가 계단 없음 → **PASS** (누적 아님. 1회성 기준선 상승의 원인은 미확인).
+  - 잔여 리스크: 허브 PSS 634→790~820, Native 326→395~425 완만 상승(GL 아님 · 은하/native P0 축). 장시간 플레이 시 모니터 PSS 한도 950에 근접해 강제 재시작이 다시 발생할 수 있음 → 별도 과제.
+  - 3파일 원복 상태는 미측정 — 김팀장 원복 결정 후 김플레이가 같은 절차로 재측.
+  - 02:30 `monitor-paused.flag` 삭제 → 자동 relaunch ON 복귀.
+
 ## ⏳ PENDING — 전투 끊김 검수 리스크 2건 · 2026-10-07
 
 ```text

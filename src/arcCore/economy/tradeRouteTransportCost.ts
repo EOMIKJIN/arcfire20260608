@@ -22,13 +22,25 @@ function parseNum(raw: string | undefined, fallback: number): number {
   return Number.isFinite(n) ? n : fallback;
 }
 
+/**
+ * 행성 쌍 거리 캐시 — 성계 좌표는 바뀌지 않는다. 크기 상한 = 교역 행성 수²(고정).
+ * (품목까지 키에 넣으면 공급×수요×품목으로 끝없이 커져 JS 힙 보유분이 된다 — 2026-10-09 김클로드 검수)
+ * 좌표를 못 찾은 쌍(신규 synth 성계 등록 전)은 캐시하지 않는다.
+ */
+const planetPairDistanceCache = new Map<string, number>();
+
 /** 성계 좌표 기준 두 행성 간 유클리드 거리(맵 단위) */
 export function resolvePlanetSystemMapDistance(planetIdA: string, planetIdB: string): number {
   if (!planetIdA || !planetIdB || planetIdA === planetIdB) return 0;
+  const key = planetIdA < planetIdB ? `${planetIdA}|${planetIdB}` : `${planetIdB}|${planetIdA}`;
+  const cached = planetPairDistanceCache.get(key);
+  if (cached !== undefined) return cached;
   const posA = resolveSystemPositionForPlanetId(planetIdA);
   const posB = resolveSystemPositionForPlanetId(planetIdB);
   if (!posA || !posB) return 0;
-  return Math.hypot(posA.x - posB.x, posA.y - posB.y);
+  const distance = Math.hypot(posA.x - posB.x, posA.y - posB.y);
+  planetPairDistanceCache.set(key, distance);
+  return distance;
 }
 
 export function getTradeRouteReferenceMapDistance(): number {
@@ -62,7 +74,7 @@ export function formatConvoyTransportSpendNote(totalCredits: number): string {
   return `연료 ${fuel}·기타 ${ops} cr (합 ${total})`;
 }
 
-/** 공급→수요 1개당 운송비(CR) */
+/** 공급→수요 1개당 운송비(CR) — 거리 조회는 resolvePlanetSystemPosition 의 행성→성계 캐시를 탄다. 곱셈만 매번 한다. */
 export function computeTradeRouteTransportCostPerUnit(
   supplyPlanetId: string,
   demandPlanetId: string,

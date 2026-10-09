@@ -147,9 +147,13 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
     const campaign = this.getOrCreateCampaign(playerPlanetId);
     this.pruneCampaigns(playerPlanetId);
 
+    // TEMP-DIAG kim-claude 20261009 [arc-hitch-split] — 효율화 E3 인과 확인 후 삭제
+    const splitDiag = typeof __DEV__ !== 'undefined' && __DEV__;
+    const splitT0 = splitDiag ? performance.now() : 0;
     if (simActive) {
       this.runCampaignTick(campaign, wallDeltaSec, elapsedWallSec);
     }
+    const splitT1 = splitDiag ? performance.now() : 0;
 
     const renderTransition =
       renderEligible !== this.lastRenderEligible
@@ -165,6 +169,13 @@ export class ArcInboundDroneSubCore extends BaseArcSubCore {
       }
     } else {
       this.publishAccSec = 0;
+    }
+    if (splitDiag) {
+      const splitT2 = performance.now();
+      if (splitT2 - splitT0 >= 30) {
+        // eslint-disable-next-line no-console
+        console.log('[arc-hitch-split] drone', 'campaign', Math.round(splitT1 - splitT0), 'publish', Math.round(splitT2 - splitT1));
+      }
     }
   }
 

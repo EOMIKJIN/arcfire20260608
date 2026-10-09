@@ -98,7 +98,7 @@ function buildPaidModelGateContext() {
     );
   } else {
     lines.push(
-      `✅ 김팀장(${kim.displayName}) 세션 = 코드·검수·런타임 개발 허용.`,
+      `✅ 김팀장(${kim.displayName}) 세션 = UI·서브작업(김플레이 배정분) 코드 허용 · 검수·커밋·런타임 대형 작업은 메인리더 김플레이(2026-10-09~).`,
       '🚫 Composer·Cursor Auto/미지정 = 분석 전용 — 코드·로그·안전망 수정 금지.',
       `Task 김팀장 위임 기본 model=${kim.taskSlug} · 생략·(기본)·composer **금지**.`,
     );

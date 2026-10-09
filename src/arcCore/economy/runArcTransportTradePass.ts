@@ -3,6 +3,7 @@
 // ============================================================
 
 import { applyConvoyUnloadVaultSettlement } from './applyConvoyUnloadVaultSettlement';
+import { recordArcHitch } from '../devArcHitchLog';
 import { useArcCoreVaultStore } from '../../store/factionVault/arcCoreVaultStore';
 import { vaultAllowsNegativeBalance } from './planetUpkeepPolicy';
 import { applyPlanetTradeTransactionFee } from './applyPlanetTradeTransactionFee';
@@ -277,9 +278,7 @@ export async function settleArcTransportDwellTrade(
 const ARC_HITCH_DEV = typeof __DEV__ !== 'undefined' && __DEV__;
 
 function logArcHitchSegment(label: string, t0: number): void {
-  const ms = performance.now() - t0;
-  // eslint-disable-next-line no-console
-  if (ms >= 30) console.log('[arc-hitch] settle', label, Math.round(ms));
+  recordArcHitch('settle', label, performance.now() - t0);
 }
 
 /** 일일 정산·백필 — 생산지 적재 후 수요지 하역까지 1회 왕복 */

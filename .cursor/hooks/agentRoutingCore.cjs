@@ -15,21 +15,21 @@ const PERSONAS = {
     label: '김경제',
     emoji: '💹',
     scope: '실시간 감시 · mem/crash 탐지 · audit:balance-ops · **개발 업데이트 시 메모리 즉각 재검수·handoff 보고**',
-    avoid: '코드·CSV·SIM 수정 금지 — 김팀장 세션에서만 개발',
+    avoid: '코드·CSV·SIM 수정 금지 — 개발은 메인리더 김플레이',
   },
   teamlead: {
     id: 'teamlead',
     label: '김팀장',
     emoji: '🛠️',
-    scope: '유일한 사용자 지시 · 개발·경제 코드·UI·연동 · 김경제 감시 배정',
-    avoid: '김경제 세션에 코드 지시 금지(감시·점검 배정만)',
+    scope: 'UI 팀원 (2026-10-09~) · UI .tsx·간단한 서브작업 — 김플레이 배정분',
+    avoid: 'Skia 루프·STAGE·arcCore·일일배치·메모리 구조·크래시 근본 수정·커밋 금지 → 김플레이(메인리더)에게 넘김',
   },
   fable: {
     id: 'fable',
     label: 'Fable (Table-First 구현)',
     emoji: '📊',
     scope: 'tables/·CSV·시드·점유·소유권·총사령관·NPC·카탈로그·registry·72단계·build:*-tables',
-    avoid: 'Skia·UI·arcCore 틱·일일배치·STAGE·메모리 → 김팀장',
+    avoid: 'UI → 김팀장 · Skia·arcCore 틱·일일배치·STAGE·메모리 → 김플레이',
   },
   sonnet: {
     id: 'sonnet',
@@ -115,16 +115,19 @@ function classifyPrompt(text) {
   }
   // arcCore 일일배치·SIM·경제 런타임 → 김팀장
   if (/경제\s*런타임|일일\s*배치|daily\s*ops|sim:economy|audit:balance|runarccoredailyopsbatch|aabs|price_elasticity|planet_development_aggregate|facility_.*_level_policy/i.test(t)) {
-    return { personaId: 'teamlead', reason: '경제·일일배치 런타임 → 김팀장' };
+    return { personaId: 'teamlead', reason: '경제·일일배치 런타임 → 수정은 김플레이(메인리더) · 이 세션은 분석·리포트만' };
   }
-  if (/skia|reanimated|nativereclaim|stage.*memory|planet\.tsx|worldmap\.tsx|overlay|행성개발\s*ui|worklet|sigsegv/i.test(lower)) {
-    return { personaId: 'teamlead', reason: 'Skia·UI·STAGE·메모리 → 김팀장' };
+  if (/skia|reanimated|nativereclaim|stage.*memory|worklet|sigsegv/i.test(lower)) {
+    return { personaId: 'teamlead', reason: 'Skia·STAGE·메모리 → 수정은 김플레이(메인리더) · 이 세션은 분석·리포트만' };
+  }
+  if (/planet\.tsx|worldmap\.tsx|overlay|행성개발\s*ui|\.tsx|ui|레이아웃|화면/i.test(lower)) {
+    return { personaId: 'teamlead', reason: 'UI → 김팀장(UI 팀원)' };
   }
   // 점령·소유·행성·NPC 테이블 맥락 (Table-First 구현)
   if (/점령|점유|소유권|총사령관|행성\s*시드|voronoi.*점|planet_holds|clanwar/i.test(t)) {
     return { personaId: 'fable', reason: '점유·소유 Table-First → Fable' };
   }
-  return { personaId: 'teamlead', reason: '기본(미분류·런타임) → 김팀장' };
+  return { personaId: 'teamlead', reason: '기본(미분류) → 김팀장 · 런타임 대형 작업이면 김플레이에게 넘김' };
 }
 
 function applyLockCommands(text) {
@@ -185,7 +188,7 @@ function writeBadge(active, promptPreview) {
     '',
     '## 전환 명령 (이 채팅에 입력)',
     '- `김경제로 전환` · `@김경제` → **감시·점검 전용** 세션 잠금 (코드 수정 없음)',
-    '- `김팀장으로 전환` · `@김팀장` → 개발 총괄(런타임·Skia·STAGE) 세션 잠금',
+    '- `김팀장으로 전환` · `@김팀장` → UI 팀원 세션 잠금 (런타임 대형 작업은 메인리더 김플레이)',
     '- `페이블로 전환` · `@Fable` · `@페이블` → **Table-First 구현** 세션 잠금',
     '',
     '## 파일',

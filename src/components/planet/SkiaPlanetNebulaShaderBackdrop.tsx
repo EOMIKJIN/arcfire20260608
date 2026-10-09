@@ -127,7 +127,7 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
   const fxLoopActive = dodgeFxActive ?? active;
   /**
    * ColorDodge는 성운 baked 와 동일 SkCanvas 필수(투명·RN 레이어 위에서는 깨짐 — planetSkiaHitFxContract).
-   * dodgeFxOnlyOverlay = latch OFF 시 Canvas 조기 드롭(회수)용이지, 성운 useImage 생략이 아님.
+   * dodgeFxOnlyOverlay 는 latch OFF 여도 Canvas 를 유지한다. 웨이브마다 드롭하면 GL 표면이 남는다.
    */
   const loadNebulaImages = true;
   const mountedRef = useRef(true);
@@ -315,19 +315,16 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
     flushDodgePicture();
   }, [flushDodgePicture, dodgeHitFxRef, dodgeTimeMsRef]);
 
-  if (dodgeFxOnlyOverlay && !fxLoopActive) {
-    return <View style={[styles.root, { opacity, width: size, height: size }]} pointerEvents="none" />;
-  }
-
+  const drawLive = !dodgeFxOnlyOverlay || fxLoopActive;
   const fillWhenEmpty =
-    !dodgeFxOnlyOverlay && !showNebulaBaked && !showBackdropImage && !everReadyRef.current;
+    drawLive && !dodgeFxOnlyOverlay && !showNebulaBaked && !showBackdropImage && !everReadyRef.current;
 
   return (
     <View style={[styles.root, { opacity, width: size, height: size }]} pointerEvents="none">
       {deferCanvas ? null : (
         <Canvas style={{ width: size, height: size }}>
           {fillWhenEmpty ? <Fill color="#0a0f18" /> : null}
-          {showBackdropImage ? (
+          {drawLive && showBackdropImage ? (
             <SkiaImage
               image={backdropImage}
               x={0}
@@ -338,7 +335,7 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
               opacity={0.42}
             />
           ) : null}
-          {showNebulaBaked ? (
+          {drawLive && showNebulaBaked ? (
             <SkiaImage
               image={nebulaImage}
               x={0}
@@ -348,7 +345,7 @@ export const SkiaPlanetNebulaShaderBackdrop = memo(function SkiaPlanetNebulaShad
               fit="cover"
             />
           ) : null}
-          {dodgePicture ? <Picture picture={dodgePicture} /> : null}
+          {drawLive && dodgePicture ? <Picture picture={dodgePicture} /> : null}
         </Canvas>
       )}
     </View>

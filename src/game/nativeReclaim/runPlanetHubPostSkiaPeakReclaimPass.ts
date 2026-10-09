@@ -24,7 +24,11 @@ const POST_SKIA_PEAK_DEFER_MS = 32;
  * heavy hub Skia spike(전투 orbit·드론 dodge) 종료 후 — 프로세스 유지 중 GL floor 회수.
  * route_blur 전량 teardown 없음 · GPU supervisor 일괄 해제 없음(성운 Canvas mount 유지).
  */
-export function runPlanetHubPostSkiaPeakReclaimPass(planetId: string, reason: string): void {
+export function runPlanetHubPostSkiaPeakReclaimPass(
+  planetId: string,
+  reason: string,
+  opts?: { deferBitmapTrimToSettle?: boolean },
+): void {
   const keep = resolveSinglePlanetSessionKeepIds(planetId);
 
   runCombatSkiaPresentationReclaim();
@@ -32,13 +36,18 @@ export function runPlanetHubPostSkiaPeakReclaimPass(planetId: string, reason: st
   prunePlanetNebulaProfilesExceptPlanetIds(keep);
   compactPlanetMemoRegistryShells();
 
-  scheduleDeferredNativeReclaimPass({
-    stage: 'planet_hub',
-    reason: `${reason}:post_skia_peak`,
-    keepPlanetIds: keep,
-  });
-
-  void trimNativeBitmapCachesAsync();
+  /**
+   * settle이 뒤따르는 경로는 deferred(Fresco trim 포함)를 settle soft의 1회로 합친다(E6).
+   * 그 밖의 경로(전투 orbit 종료·웨이브 간)는 기존 그대로.
+   */
+  if (!opts?.deferBitmapTrimToSettle) {
+    scheduleDeferredNativeReclaimPass({
+      stage: 'planet_hub',
+      reason: `${reason}:post_skia_peak`,
+      keepPlanetIds: keep,
+    });
+    void trimNativeBitmapCachesAsync();
+  }
   if (reason === 'hub_inbound_vfx_cleared') {
     scheduleNativeHeapPurgeAfterStageExit();
   }
@@ -95,23 +104,32 @@ export function schedulePlanetHubPostSkiaPeakReclaim(
     if (cancelled) return;
     InteractionManager.runAfterInteractions(() => {
       if (cancelled) return;
-      runPlanetHubPostSkiaPeakReclaimPass(planetId, reason);
-      followupTimer = setTimeout(() => {
-        if (cancelled) return;
-        runPlanetHubPostSkiaPeakReclaimPass(planetId, `${reason}:followup_90s`);
-      }, POST_SKIA_PEAK_FOLLOWUP_MS);
+      runPlanetHubPostSkiaPeakReclaimPass(planetId, reason, {
+        deferBitmapTrimToSettle: scheduleInboundSettle,
+      });
+      /**
+       * 인바운드 웨이브(약 61초 간격)는 다음 웨이브의 effect cleanup이 항상 90초 타이머를 취소했다(실행 0회).
+       * → settle 경로는 followup을 만들지 않는다(E6). 전투 orbit 종료·웨이브 간은 유지.
+       */
+      if (!scheduleInboundSettle) {
+        followupTimer = setTimeout(() => {
+          if (cancelled) return;
+          runPlanetHubPostSkiaPeakReclaimPass(planetId, `${reason}:followup_90s`);
+        }, POST_SKIA_PEAK_FOLLOWUP_MS);
+      }
       if (scheduleInboundSettle) {
         settleTimer = setTimeout(() => {
           if (cancelled) return;
-          /** pending은 soft 본문 성공 시에만 소비 — coalesce no-op에 pending 유실 금지 */
+          /**
+           * pending은 soft 본문 성공 시에만 소비 — coalesce no-op에 pending 유실 금지.
+           * soft 본문이 전투 Skia 회수와 deferred(Fresco trim 1회)를 이미 수행 — 뒤이은 중복 호출 제거(E6).
+           */
           const ran = runPlanetHubSoftNativeReclaimPass(
             planetId,
             `${reason}:inbound_settle`,
             { bypassCoalesce: true },
           );
           if (ran) consumeHubSoftReclaimPending();
-          runCombatSkiaPresentationReclaim();
-          void trimNativeBitmapCachesAsync();
           if (typeof __DEV__ !== 'undefined' && __DEV__) {
             // eslint-disable-next-line no-console
             console.log(

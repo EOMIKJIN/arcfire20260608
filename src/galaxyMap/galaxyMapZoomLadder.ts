@@ -36,10 +36,14 @@ export function clampGalaxyMapContentDim(v: number): number {
 
 /**
  * Android SvgView 비트맵 = width×height ARGB. 논리 좌표는 viewBox 1x.
- * 0.5(2026-10-02 A안)는 픽셀 절반 후 scale 2 — 성계명 fontSize 8 한글이 깨짐.
- * 대표님: 시각 불변. 2026-10-03 복구 1. 재도입은 라벨 분리 후에만.
+ * 0.5(2026-10-02 A안)는 픽셀 절반 후 scale 2 — 성계명 fontSize 8 한글이 깨짐. 2026-10-03 복구 1.
+ * 2026-10-09: 성계명·국가명을 RN Text 로 분리(GALAXY_MAP_LABELS_AS_RN_TEXT)한 뒤 0.75.
+ *   최대 줌 실기 비교에서 선 노드(stroke 0.9~1.75)가 1.0 과 육안 구분 불가. 0.6 경미하게 부드러움 · 0.5 링 번짐(불합격).
+ *   4610×5034 → 3457×3774 · 비트맵 88.5 → 49.8MB (GPU 사본도 같은 비율).
+ *   근거: tools/play-bot-console/logs/sdk54-upgrade/galaxy-raster-compare-20261009/
+ * 라벨 스위치를 끄면(SvgText 복구) 이 값도 1 로 되돌린다 — 글자가 비트맵에 구워져 흐려진다.
  */
-export const GALAXY_MAP_SVG_RASTER_SCALE = 1;
+export const GALAXY_MAP_SVG_RASTER_SCALE = 0.75;
 
 export type GalaxyMapSvgRaster = {
   rasterW: number;

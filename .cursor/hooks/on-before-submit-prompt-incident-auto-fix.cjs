@@ -1,6 +1,6 @@
 'use strict';
 /**
- * beforeSubmitPrompt — incident handoff 대기 시 김팀장 P0 자동수정 컨텍스트 주입
+ * beforeSubmitPrompt — incident handoff 대기 시 P0 분석 컨텍스트 주입 (2026-10-09~ 코드 수정 = 김플레이 · Cursor 는 분석만)
  */
 const path = require('path');
 const {
@@ -33,18 +33,16 @@ function main() {
   const triggerMeta = readTriggerMeta(p.trigger);
   const reason = triggerMeta?.reason || 'incident_handoff_pending';
   const ctx = [
-    '[Arcfire 장기 감시 — 이상 감지 P0 · 즉시 정밀 원인 추적 + 코드 자동 수정]',
+    '[Arcfire 장기 감시 — 이상 감지 P0 · 원인 분석·리포트만 (코드 수정 = 메인리더 김플레이)]',
     '',
     `triggerReason: ${reason}`,
     triggerMeta?.alertLine ? `alert: ${String(triggerMeta.alertLine).slice(0, 400)}` : '',
     '',
-    '**사용자 별도 지시 없이 즉시 수행:**',
-    '0. 코드 diff 전 [pss-pre-dev] 3줄 — arcfire-memory-leak-audit-first.mdc §0-A',
-    '1. `arcfire-bug-debug-workflow.mdc` — incident-logcat / crash / mem-timeline 근거로 원인 1개 특정',
-    '2. 코드 최소 diff 수정 · `npx tsc --noEmit -p tsconfig.client.json`',
-    '3. STAGE·worldmap·planet·store: `npm run audit:memory:all` · Reanimated: `audit:worklet-contract`',
-    '4. Skia·worldmap·transit-combat 관련이면 `npm run audit:skia-memory`',
-    '5. 완료: handoff `mem-post-dev-recheck` 배정 + `node tools/long-run-monitor/ack-incident-handoff.cjs`',
+    '2026-10-09 조직 개편: Skia·STAGE·메모리·크래시 코드 수정은 김플레이(Claude Code)만 한다.',
+    '이 Cursor 세션(김팀장 · UI 팀원)은 **코드를 고치지 않는다.**',
+    '1. `arcfire-bug-debug-workflow.mdc` — incident-logcat / crash / mem-timeline / `adb shell dumpsys activity exit-info` 근거로 원인 후보 정리',
+    '2. 결과를 `tools/kim-team-lead/reports/kim-team-lead-incident-<날짜>.md` 로 남기고 대표님께 「김플레이 전달」 안내',
+    '3. ack 는 김플레이가 수정·실기 재측 후 실행한다(이 세션에서 ack 금지)',
     '',
     'handoff: tools/long-run-monitor/outbox/cursor-incident-handoff.md',
     '',

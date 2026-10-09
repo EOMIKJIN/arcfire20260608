@@ -327,6 +327,44 @@ import {
   isPlanetHubBarEnabled,
   isPlanetHubTradePortEnabled,
 } from '../../src/game/planetDevelopment/planetHubFacilityGates';
+import { useStoreWithEqualityFn } from 'zustand/traditional';
+
+const EMPTY_ARC_SHIPS: ArcNpcTrafficShip[] = [];
+
+/** 현재 행성 궤도 수송선만 — 다른 행성 함선의 phase 변경으로 허브 전체가 리렌더되지 않게 한다. */
+function pickArcShipsAtPlanet(ships: ArcNpcTrafficShip[], planetId: string): ArcNpcTrafficShip[] {
+  if (!planetId) return EMPTY_ARC_SHIPS;
+  const out: ArcNpcTrafficShip[] = [];
+  for (const sh of ships) {
+    if (sh.planetId === planetId) out.push(sh);
+  }
+  return out;
+}
+
+/** AiNpcSubCore.publishSnapshot 이 바뀌지 않은 함선 객체를 재사용한다 → 원소 참조가 같으면 내용도 같다. */
+function sameArcShipRefs(a: ArcNpcTrafficShip[], b: ArcNpcTrafficShip[]): boolean {
+  if (a === b) return true;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i += 1) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
+}
+
+/** planet.tsx 기존 필터와 같다: 이 행성 + phase inbound/destroyed/impacted. flyingOnly 면 inbound 만. */
+function hasHubInboundDronesAtPlanet(
+  drones: readonly { planetId: string; phase: string }[],
+  planetId: string,
+  flyingOnly: boolean,
+): boolean {
+  if (!planetId) return false;
+  for (const d of drones) {
+    if (d.planetId !== planetId) continue;
+    if (d.phase === 'inbound') return true;
+    if (!flyingOnly && (d.phase === 'destroyed' || d.phase === 'impacted')) return true;
+  }
+  return false;
+}
 
 export default function PlanetScreen() {
   const player = usePlayerStore(s => s.player);
@@ -656,40 +694,31 @@ export default function PlanetScreen() {
   }, [planet, resolvedPlanetId, hubFacilityDevRev, missionProgressRev]);
 
   const arcNpcCaptainsSnap = useArcNpcTrafficStore((s) => s.captains);
-  const arcNpcShipsSnap = useArcNpcTrafficStore((s) => s.ships);
+  // 이 행성 함선만 구독 · 원소 참조 비교 — 다른 행성 함선 phase 변경은 리렌더를 만들지 않는다(효율화 E2 · 2026-10-09).
+  const arcShipsPlanetId = planet?.id ?? '';
+  const arcNpcShipsSnap = useStoreWithEqualityFn(
+    useArcNpcTrafficStore,
+    (s) => pickArcShipsAtPlanet(s.ships, arcShipsPlanetId),
+    sameArcShipRefs,
+  );
   const arcNpcShipsAtPlanet = useMemo(() => {
-    const pid = planet?.id;
-    if (!pid) return [];
-    const out: typeof arcNpcShipsSnap = [];
-    for (const sh of arcNpcShipsSnap) {
-      if (sh.planetId === pid) out.push(sh);
-    }
+    if (arcNpcShipsSnap.length === 0) return EMPTY_ARC_SHIPS;
+    const out = arcNpcShipsSnap.slice();
     out.sort((a, b) => a.id.localeCompare(b.id));
     return out;
-  }, [arcNpcShipsSnap, planet?.id]);
+  }, [arcNpcShipsSnap]);
 
-  const arcInboundDronesSnap = useArcInboundDroneStore((s) => s.drones);
-  const arcInboundDronesAtPlanet = useMemo(() => {
-    const pid = planet?.id;
-    if (!pid) return [];
-    const out: typeof arcInboundDronesSnap = [];
-    for (const d of arcInboundDronesSnap) {
-      if (d.planetId !== pid) continue;
-      if (d.phase === 'inbound' || d.phase === 'destroyed' || d.phase === 'impacted') {
-        out.push(d);
-      }
-    }
-    return out;
-  }, [arcInboundDronesSnap, planet?.id]);
-
+  // 드론 배열은 PlanetHubInboundDroneLayer 가 직접 구독한다. 허브는 「있음/없음」 전이만 본다 —
+  // 생성·파괴(웨이브 중 초당 약 4회 발행)마다 허브 전체가 리렌더되던 것 제거(효율화 E3 · 2026-10-09).
+  // 아래 두 값은 0/1 이며, 기존 개수 기준 전이(prev>0 && cur===0)와 같은 시점에 참이 된다.
+  const arcInboundPlanetId = planet?.id ?? '';
+  const arcInboundDronesAtPlanetCount = useArcInboundDroneStore((s) =>
+    hasHubInboundDronesAtPlanet(s.drones, arcInboundPlanetId, false) ? 1 : 0,
+  );
   /** Skia dodge·inbound 마크 — trail(destroyed/impacted) 잔존과 분리 (reclaim 게이트) */
-  const arcInboundFlyingDroneCount = useMemo(() => {
-    let n = 0;
-    for (const d of arcInboundDronesAtPlanet) {
-      if (d.phase === 'inbound') n += 1;
-    }
-    return n;
-  }, [arcInboundDronesAtPlanet]);
+  const arcInboundFlyingDroneCount = useArcInboundDroneStore((s) =>
+    hasHubInboundDronesAtPlanet(s.drones, arcInboundPlanetId, true) ? 1 : 0,
+  );
 
   /** AiNpc publish와 동일 키 — 궤도 예산 useMemo 불필요 재계산 억제 */
   const arcNpcAtPlanetRenderSig = useMemo(() => {
@@ -988,41 +1017,22 @@ export default function PlanetScreen() {
   }, [battleReadyVisible, planet?.id, isPlanetRouteFocused]);
 
   /**
-   * flying→0 — dodge/peak 1차만. pending soft·settle은 trail 잔존(~1.4s) 뒤 vfx_cleared에서.
-   * (flying 직후 soft flush는 45s coalesce로 settle soft를 무효화하는 회귀가 있었음)
+   * 인바운드 웨이브 종료 회수 — 진입점 1개(E6 · 2026-10-09).
+   * trail·destroyed/impacted 잔존까지 0 — VFX 레이어 완전 이탈 후 peak 1회 + settle soft + pending flush.
+   * flying→0 트리거(hub_inbound_drone_end)는 제거: 0.5초 뒤 이 트리거와 1:1로 같은 단계를 반복했고,
+   * 고유 목적(sticky dodge 해제 신호)은 구독자 0이라 효과 없음(release 실측 52/52 웨이브).
    */
-  const prevInboundFlyingDroneCountRef = useRef(arcInboundFlyingDroneCount);
-  useEffect(() => {
-    const prevCount = prevInboundFlyingDroneCountRef.current;
-    const curCount = arcInboundFlyingDroneCount;
-    prevInboundFlyingDroneCountRef.current = curCount;
-    const pid = planet?.id;
-    if (!pid || !isPlanetRouteFocused || capitalCombatOrbitActive || battleReadyVisible) return undefined;
-    if (prevCount <= 0 || curCount !== 0) return undefined;
-    return schedulePlanetHubPostSkiaPeakReclaim(pid, 'hub_inbound_drone_end');
-  }, [
-    arcInboundFlyingDroneCount,
-    capitalCombatOrbitActive,
-    battleReadyVisible,
-    planet?.id,
-    isPlanetRouteFocused,
-  ]);
-
-  /**
-   * trail·destroyed/impacted 잔존까지 0 — VFX 레이어 완전 이탈 후 settle soft + pending flush.
-   * flying→0 시점에는 trail Canvas가 아직 마운트인 경우가 많음(시각 변경 없음).
-   */
-  const prevInboundAtPlanetCountRef = useRef(arcInboundDronesAtPlanet.length);
+  const prevInboundAtPlanetCountRef = useRef(arcInboundDronesAtPlanetCount);
   useEffect(() => {
     const prevLen = prevInboundAtPlanetCountRef.current;
-    const curLen = arcInboundDronesAtPlanet.length;
+    const curLen = arcInboundDronesAtPlanetCount;
     prevInboundAtPlanetCountRef.current = curLen;
     const pid = planet?.id;
     if (!pid || !isPlanetRouteFocused || capitalCombatOrbitActive || battleReadyVisible) return undefined;
     if (prevLen <= 0 || curLen !== 0) return undefined;
     return schedulePlanetHubPostSkiaPeakReclaim(pid, 'hub_inbound_vfx_cleared');
   }, [
-    arcInboundDronesAtPlanet.length,
+    arcInboundDronesAtPlanetCount,
     capitalCombatOrbitActive,
     battleReadyVisible,
     planet?.id,
@@ -1853,12 +1863,12 @@ export default function PlanetScreen() {
 
   useEffect(() => {
     const needsFastMirror =
-      arcInboundDronesAtPlanet.length > 0 || capitalCombatOrbitActive;
+      arcInboundDronesAtPlanetCount > 0 || capitalCombatOrbitActive;
     orbitClockJsMirrorIntervalSv.value = needsFastMirror
       ? ORBIT_CLOCK_JS_MIRROR_INTERVAL_MS
       : ORBIT_CLOCK_JS_MIRROR_IDLE_MS;
   }, [
-    arcInboundDronesAtPlanet.length,
+    arcInboundDronesAtPlanetCount,
     capitalCombatOrbitActive,
     orbitClockJsMirrorIntervalSv,
   ]);
@@ -1898,7 +1908,7 @@ export default function PlanetScreen() {
       (orbitTablePresence.length > 0 ||
         planetWorldObjects.length > 0 ||
         orbitArcShipsAtPlanet.length > 0 ||
-        arcInboundDronesAtPlanet.length > 0);
+        arcInboundDronesAtPlanetCount > 0);
     if (!needOrbitClock) {
       orbitFrame.setActive(false);
       return;
@@ -1919,7 +1929,7 @@ export default function PlanetScreen() {
     orbitTablePresence.length,
     planetWorldObjects.length,
     orbitArcShipsAtPlanet.length,
-    arcInboundDronesAtPlanet.length,
+    arcInboundDronesAtPlanetCount,
     orbitFrame,
     planet?.id,
     system?.id,
@@ -2159,7 +2169,6 @@ export default function PlanetScreen() {
           orbitClockMs={orbitClockMs}
           arcNpcShipsAtPlanet={orbitArcShipsAtPlanet}
           arcSkiaCaptionHeads={orbitArcSkiaCaptionHeads}
-          arcInboundDronesAtPlanet={arcInboundDronesAtPlanet}
           worldObjects={planetWorldObjects}
           showEdenRaidTest={capitalCombatOrbitActive}
           miningPathActive={miningSession.status === 'running' && appStateActive}

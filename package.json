@@ -1,7 +1,7 @@
 {
   "name": "arcfire-online",
   "version": "0.1.1",
-  "main": "expo-router/entry",
+  "main": "index.js",
   "scripts": {
     "postinstall": "patch-package && node tools/balance-tables/build-balance-from-csv.mjs && npm run gen:galaxy-graph",
     "ensure:balance-generated": "node tools/balance-tables/build-balance-from-csv.mjs",

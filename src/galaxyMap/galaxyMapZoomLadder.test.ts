@@ -157,14 +157,14 @@ test('content dim clamp matches 1..8192', () => {
   assert.equal(clampGalaxyMapContentDim(1200), 1200);
 });
 
-test('SVG raster — 픽셀=논리 1x (성계명 해상도 복구)', () => {
-  assert.equal(GALAXY_MAP_SVG_RASTER_SCALE, 1);
+test('SVG raster — 라벨 분리 후 0.75 · viewBox 는 논리 1x 유지 · scale 로 시각 복원', () => {
+  assert.equal(GALAXY_MAP_SVG_RASTER_SCALE, 0.75);
   const r = resolveGalaxyMapSvgRasterSize(1125, 1571);
-  assert.equal(r.rasterW, 1125);
-  assert.equal(r.rasterH, 1571);
+  assert.equal(r.rasterW, 844);
+  assert.equal(r.rasterH, 1178);
   assert.equal(r.viewBox, '0 0 1125 1571');
   const scale = r.style.transform.find((t): t is { scale: number } => 'scale' in t);
-  assert.ok(scale && scale.scale === 1);
+  assert.ok(scale && Math.abs(scale.scale - 1125 / 844) < 1e-9);
 });
 
 test('SVG raster — 줌 단이 바뀌어도 같은 cw/ch면 동일(리마운트 없음)', () => {

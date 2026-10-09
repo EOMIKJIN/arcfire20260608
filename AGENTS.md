@@ -55,7 +55,7 @@ npm run audit:mem-post-dev-recheck    # 개발 반영 후 handoff·status 갱신
 | 구독·핵심 모델 | `tools/kim-team-lead/reports/SUBSCRIPTION_RENEWAL_ANCHOR.json` → `kimTeamLeadCoreModel` |
 | API 소진 플래그 | `tools/kim-team-lead/reports/API_EXHAUST_FALLBACK_ACTIVE.flag` — Composer/Auto에 코드·로그 diff 금지 |
 
-- **김팀장 핵심**: **glock 4.7** — 개발·검수 허용
+- **김팀장 핵심**: **glock 4.7** — 배정 범위(UI·서브작업) 개발 허용 · 최종 검수·커밋은 김플레이(2026-10-09~)
 - **허용 개발 모델**: 글록 4.7(김팀장) · Fable · Sonnet · (보조) Opus — Task slug **필수**
 - **금지**: Composer · `composer-2.5*` · Cursor Auto/미지정 · Task `model` 생략 · Composer가 「김팀장」으로 코드 수정
 - **훅**: `on-session-start-paid-model-gate.cjs` · `on-before-submit-prompt-paid-model-gate.cjs`
@@ -65,40 +65,40 @@ npm run audit:mem-post-dev-recheck    # 개발 반영 후 handoff·status 갱신
 **확정 CSV·밸런스·UI/i18n 등 기존값**을 바꿀 때는 **수정 전 사용자에게 한 번 더 질문·승인** 후 작업. 신규 추가만(L11~15 행 추가 등)이고 L1~N 기존 행을 건드리지 않으면 생략.  
 정본: `.cursor/rules/arcfire-existing-value-change-confirm.mdc`
 
-## 메인 개발 · 팀 구조 (2026-06-19 단일 지휘)
+## 메인 개발 · 팀 구조 (2026-10-09 조직 개편 · 대표님 1순위 지시)
 
-| 에이전트 | 호출 | 역할 | 코드 |
-|---------|------|------|------|
-| **김팀장** | `@김팀장` · 「김팀장」 | **유일한 사용자 지시** — 핵심 모델 **glock 4.7** · Skia·UI·STAGE·arcCore·일일배치·메모리·버그 **런타임** | **O** |
-| **Fable** | `@Fable` · `@페이블` | **Table-First 구현 핵심** — CSV·시드·점유·카탈로그·registry·72단계 (김팀장 Task 위임) | **O (해당 축)** |
-| **김경제** (팀원) | `@김경제` · 「김경제」 | **김팀장 배정만** — 감시·**메모리 프로파일링**·`audit:balance-ops` **점검·리포트** · **개발 업데이트 시 메모리 즉각 재검수·보고** | **X** |
-| **김클로드** (보조) | `@김클로드` · Cursor ✱ / `claude` | **초안 구현** — handoff 후 **김팀장 검수·커밋** | **초안만 (커밋 X)** |
-| **김플레이** (전담) | `@김플레이` · 「김플레이」 | **플레이봇 직접 수정** · **게임 학습 로그** (`devPlayVerbLog` · `[PLAY_VERB]`). 김클로드 플레이봇 업무 이관 (대표님 직접 지시 · 2026-10-06~) | **O (플레이봇 경로 · 학습 로그)** |
+> **김플레이 = 메인리더 · 김클로드 = 서브리더 · 김경제 · 김팀장 · Fable = 팀원.** 김플레이가 김팀장 업무를 전부 인수했다. 김팀장은 UI와 간단한 서브작업 위주로 일한다. 정본: `.cursor/rules/arcfire-main-lead-agent.mdc`
 
-> 사용자는 **김팀장 대화창 하나**에만 게임 개발을 지시한다. 김경제 별도 창 = 감시·점검 전용. 플레이봇·학습 로그는 **김플레이 창**.
-> **김플레이 (2026-10-06)**: 플레이봇(`tools/play-bot-console/**` · `docs/playbot/**`)은 직접 수정한다. 게임에 들어가는 학습 로그도 김플레이가 고친다. 그 외 게임 본체 문제는 보고만 하고 김팀장에게 넘긴다. 김팀장은 플레이봇·학습 로그를 구현하지 않는다.
-> **김클로드** 산출물은 `tools/kim-team-lead/reports/kim-claude-handoff-pending.md` → **김팀장 재검수·최종 커밋** 필수 (`CLAUDE.md` · `.cursor/rules/arcfire-main-lead-agent.mdc`).
+| 에이전트 | 호출 | 역할 | 코드 | 커밋 |
+|---------|------|------|------|------|
+| **김플레이** (메인리더) | `@김플레이` · 「김플레이」 | **대표님 지시 수신** · 전 영역 개발 총괄(Skia·STAGE·arcCore·일일배치·경제 런타임·메모리·크래시) · 플레이봇·학습 로그 · 팀원 산출물 최종 검수·실기 재측 | **O** | **O (유일)** |
+| **김클로드** (서브리더) | `@김클로드` · Cursor ✱ / `claude` | 초안·다파일 구현 · 원인 분석 → handoff 후 **김플레이 검수** | **O (초안)** | X |
+| **김팀장** (팀원) | `@김팀장` · 「김팀장」 | **UI(`.tsx` 화면·레이아웃·오버레이) · 간단한 서브작업** — 김플레이 배정분만 · 모델 glock 4.7 | **O (배정 범위)** | X |
+| **Fable** (팀원) | `@Fable` · `@페이블` | Table-First 구현 — CSV·시드·점유·카탈로그·registry·72단계 (김플레이 배정) | **O (해당 축)** | X |
+| **김경제** (팀원) | `@김경제` · 「김경제」 | **김플레이 배정** — 감시·메모리 프로파일링·`audit:balance-ops` 점검·리포트 · 개발 업데이트 시 메모리 즉각 재검수·보고 | **X** | X |
 
-### 김클로드 → 김팀장 검수 (2026-07-04~)
+> 대표님은 **김플레이 세션**에 개발을 지시한다. 김경제 별도 창 = 감시·점검 전용. 김팀장 창 = 김플레이가 배정한 UI·서브작업.
+> 전투 틱·Skia 루프·STAGE·arcCore·일일 배치·메모리 구조 같은 게임 본체 대형 작업은 김팀장에게 배정하지 않는다.
+> **김클로드·김팀장·Fable** 산출물은 `tools/kim-team-lead/reports/kim-claude-handoff-pending.md`(김팀장·Fable은 `kim-team-lead-*.md`) → **김플레이 재검수·최종 커밋** 필수.
+
+### 팀원 → 김플레이 검수 (2026-10-09~ · 이전 김클로드→김팀장 게이트를 대체)
 
 ```text
-[김클로드] 구현 → handoff PENDING
-[김팀장 Cursor] diff·audit·수정 → verdict → 커밋(사용자 요청 시) → mem-post-dev-recheck
+[김클로드 / 김팀장 / Fable] 구현 → handoff PENDING
+[김플레이] diff·audit·실기 재측·수정 → verdict → 커밋(대표님 요청 시) → mem-post-dev-recheck
 ```
 
-handoff `PENDING` 시 김팀장 sessionStart 훅이 검수 리마인드.
-
 - **협업 워크플로**: `docs/team/KIM_TEAM_ECONOMY_WORKFLOW.md`
-- **김팀장 일일 검수**: `npm run audit:team-lead:daily` → `tools/kim-team-lead/reports/daily-review-latest.md`
-- **김경제 handoff**: `tools/kim-team-lead/reports/kim-economy-handoff.md` — **`## [관측]`** · retention FAIL → **김팀장 본 세션 코드 반영**
+- **일일 검수 (김플레이)**: `npm run audit:team-lead:daily` → `tools/kim-team-lead/reports/daily-review-latest.md`
+- **김경제 handoff**: `tools/kim-team-lead/reports/kim-economy-handoff.md` — **`## [관측]`** · retention FAIL → **김플레이 코드 반영**
 - **프로파일러**: `tools/memory-profiler/` · `npm run audit:memory:retention` · `npm run audit:memory:session-floor` (최근 7일 STAIRCASE만 FAIL · `audit:memory:all` 미포함)
-- **김팀장 규칙**: `.cursor/rules/arcfire-main-lead-agent.mdc` · `docs/team/KIM_TEAM_LEAD_AGENT.md`
+- **메인리더 규칙**: `.cursor/rules/arcfire-main-lead-agent.mdc` · 김팀장 UI 팀원 운영 참고 `docs/team/KIM_TEAM_LEAD_AGENT.md`
 - **김경제 규칙**: `.cursor/rules/arcfire-economy-specialist-agent.mdc` · `docs/team/KIM_ECONOMY_AGENT.md`
 
 ## 장기 메모리·안정화 감시 (상시 · 개발과 독립) — **기본 장기앱 실행 테스트 (2026-06-19)**
 
 > **`ensure-always-on-watch-stack.ps1`** 멱등 가동 — **앱 무영향**: PC(adb) 전용 · `MONITOR_APP_ZERO_IMPACT.md`
-> 이상 시 **코드 자동픽스 핸드오프**(incident·retention) → 김팀장 P0 · 앱 force-stop은 `monitor-paused.flag` 없을 때만(throttle)
+> 이상 시 **코드 자동픽스 핸드오프**(incident·retention) → 김플레이 P0 · 앱 force-stop은 `monitor-paused.flag` 없을 때만(throttle)
 > 정본: `tools/long-run-monitor/logs/WATCH_README.md` · `docs/team/KIM_ECONOMY_AGENT.md`
 
 ```powershell
@@ -106,7 +106,7 @@ npm run monitor:ensure-always-on   # watch-30m + retention(60m) + 08:00 보고 (
 npm run monitor:ensure-daily-8am   # 08:00 스케줄러만 확인
 ```
 
-### 상시 가동 — **이상탐지 → 김팀장 handoff (P0)**
+### 상시 가동 — **이상탐지 → 김플레이 handoff (P0)**
 
 | # | 구성 | 주기 | 역할 |
 |---|------|------|------|
@@ -131,7 +131,7 @@ npm run monitor:dashboard           # logs/MONITOR_DASHBOARD_LATEST.html
 
 ### 데일리 08:00 KST 상시 보고 (필수 · 2026-06-27~)
 
-- **매일 08:00 KST 무조건 보고** — 김팀장·김경제 동일 · 앱 on/off 무관
+- **매일 08:00 KST 무조건 보고** — 김플레이·김경제 동일 · 앱 on/off 무관
 - **adb 미연결·데이터 없음 → FAIL** 기록 · 변경 없어도 보고서·ledger 생성
 - **중단**은 `tools/long-run-monitor/logs/schedule-8am-report-DISABLED.flag` **명시 시에만**
 - 산출: `overnight-final-report-YYYYMMDD-0800.md` · `DAILY_8AM_REPORT_LATEST.md` · `daily-8am-report-ledger.csv`
@@ -141,13 +141,13 @@ npm run monitor:dashboard           # logs/MONITOR_DASHBOARD_LATEST.html
 - **60분** retention audit · `[MEM_PROFILE]` logcat (`ensure-profiler-extras.ps1`)
 - **코드 자동픽스**: incident handoff + Cursor triage 훅 · 앱 재시작은 `monitor-paused` 없을 때만
 - **김경제(감시)**: 상시 스택 · retention · incident **탐지·보고만** (코드 수정 없음)
-- **김팀장**: handoff·`latest-retention-audit.md` FAIL → STAGE·Skia·reclaim **코드 수정**
-- **김팀장**: incident·audit FAIL **코드 조치** · 자동조치 정책 · Skia/허브/STAGE 패치
+- **김플레이**: handoff·`latest-retention-audit.md` FAIL → STAGE·Skia·reclaim **코드 수정**
+- **김플레이**: incident·audit FAIL **코드 조치** · 자동조치 정책 · Skia/허브/STAGE 패치
 - **P0 집중(2026-06-23~):** release **5h+ soak** · GL/PSS floor 계단식 상승 후 **은하계 지도(worldmap) 진입·전투 복귀** 크래시 — `PLAYTEST_WATCH.md` · `WATCH_README.md` §집중 검사 항목
 
 ## AI 페르소나·모델 자동 라우팅 (Auto)
 
-- **정본**: `.cursor/rules/gemini-code-agent-routing.mdc` — `alwaysApply`, 매 턴 @김팀장/@김경제/@Fable/@Opus/@Sonnet **없이** 자동 선별 (김팀장 세션 내부 라우팅).
+- **정본**: `.cursor/rules/gemini-code-agent-routing.mdc` — `alwaysApply`, 매 턴 @김팀장/@김경제/@Fable/@Opus/@Sonnet **없이** 자동 선별 (Cursor 세션 내부 라우팅 · 김팀장=UI 팀원 · 런타임 대형 작업은 김플레이).
 - **원본 기획**: `.cursor/rules/gemini-code-1781406772084.md`
 - **세션 훅**: `.cursor/hooks/on-session-start-agent-routing.cjs` (`sessionStart`)
 - **Task 위임 model**: **김팀장(글록 4.7)** `grok-4.7-xhigh-fast` · **Fable** `claude-fable-5-thinking-high` · 김경제(감시만) `claude-fable-5-thinking-high` · Sonnet `claude-4.6-sonnet-medium-thinking` · (보조 `@Opus`) `claude-opus-4-8-thinking-high`

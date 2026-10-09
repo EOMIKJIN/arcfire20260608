@@ -1,4 +1,4 @@
-# Daily audit — 2026-10-08T15:00:12.442Z
+# Daily audit — 2026-10-09T15:00:12.555Z
 
 ## TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -62,8 +62,8 @@ PASS — buy_goods/defeat_enemy 배치·tq_* materialize·tq_anom 월드이벤�
 - 127,324 — `src/i18n/locales/ko.ts`
 - 121,265 — `src/data/generated/csvMainStorySpine.ts`
 - 116,198 — `src/i18n/locales/en.ts`
-- 106,314 — `app/(game)/worldmap.tsx`
-- 101,222 — `app/(game)/planet.tsx`
+- 107,360 — `app/(game)/worldmap.tsx`
+- 102,154 — `app/(game)/planet.tsx`
 - 90,835 — `src/data/generated/csvBarPatronage.ts`
 - 71,316 — `src/data/balance/generated/csvSynthSystemColonization.ts`
 - 71,074 — `src/data/generated/csvWeapons.ts`
@@ -74,6 +74,7 @@ PASS — buy_goods/defeat_enemy 배치·tq_* materialize·tq_anom 월드이벤�
 
 - OK — no eager combat barrel in `planet.tsx`
 
+- `src/arcCore/devArcHitchLog.ts`
 - `src/combat/useCapitalRealtimeDuelOutcome.ts`
 - `src/components/bar/BarPatronagePerformView.tsx`
 - `src/components/combat/TransitCombatSkiaParallaxBackdrop.tsx`
@@ -83,6 +84,7 @@ PASS — buy_goods/defeat_enemy 배치·tq_* materialize·tq_anom 월드이벤�
 - `src/components/planet/SkiaPlanetNebulaShaderBackdrop.tsx`
 - `src/components/shipyard/ShipyardMineralUpgradeTab.tsx`
 - `src/game/combat/CombatStanceRow.tsx`
+- `src/game/devMemoryProfileBridge.ts`
 - `src/game/planetHub/usePlanetHubInterval.ts`
 - `src/missions/useMissionTimeLimitNow.ts`
 - `src/systems/mining/useMiningDriver.ts`

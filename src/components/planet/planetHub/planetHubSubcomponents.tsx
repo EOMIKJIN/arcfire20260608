@@ -24,7 +24,6 @@ import { usePlanetNebulaStore } from '../../../store/planetNebulaStore';
 import { usePlayerStore } from '../../../store/playerStore';
 import { useClanWarFoundationStore } from '../../../store/clanWarFoundationStore';
 import type { ArcNpcTrafficShip } from '../../../store/arcNpcTrafficStore';
-import type { ArcInboundDrone } from '../../../store/arcInboundDroneStore';
 import { PlanetCorePortraitWithTempAdminOverride } from '../PlanetCorePortraitWithTempAdminOverride';
 import { resolveArcadiaGlobeBakeSource } from '../../../game/tempAdminArcadiaGlobeBake';
 import { PlanetAtmosphereBoundaryRing } from '../PlanetAtmosphereBoundaryRing';
@@ -41,10 +40,7 @@ import { resolvePlanetAtmosphereRingHex } from '../../../game/planetNebulaProfil
 import { resolveMainStageSkiaBackdrop } from '../../../game/mainStageSkiaBackdrop';
 import { useCapitalRealtimeCombatSimContext } from '../../../combat';
 import { resolvePlanetNebulaBakedSource } from '../../../game/planetNebulaBakedAssets';
-import { subscribeHubSkiaNativeReclaim } from '../../../game/nativeReclaim/hubSkiaNativeReclaimSignal';
 import { subscribeHubBackdropNativeRemount } from '../../../game/nativeReclaim/hubBackdropNativeRemountSignal';
-import { HUB_DODGE_OVERLAY_UNMOUNT_DEBOUNCE_MS } from '../../../game/nativeReclaim/processMemoryBudgetPolicy';
-import { emitMemProfileMarker } from '../../../game/devMemoryProfileBridge';
 import { useDevSkiaMountAllowed } from '../../../hooks/useDevSkiaMountAllowed';
 import { resolveDefenseSatelliteCombatStatsForObject } from '../../../systems/planetaryDefense/resolveDefenseSatelliteCombatStats';
 import { computeTableNpcOrbitXY } from '../planetOrbitHubWorklets';
@@ -324,7 +320,6 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   orbitClockMs,
   arcNpcShipsAtPlanet,
   arcSkiaCaptionHeads,
-  arcInboundDronesAtPlanet,
   worldObjects,
   showEdenRaidTest,
   miningPathActive,
@@ -349,7 +344,6 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   orbitClockMs: SharedValue<number>;
   arcNpcShipsAtPlanet: ArcNpcTrafficShip[];
   arcSkiaCaptionHeads: string[];
-  arcInboundDronesAtPlanet: ArcInboundDrone[];
   worldObjects: WorldObject[];
   showEdenRaidTest: boolean;
   /** 채굴 활성 중에는 Skia 궤도 대신 정적 마커로 안전 모드 렌더 */
@@ -382,8 +376,6 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
   const [hubSkiaDodgeNebulaReady, setHubSkiaDodgeNebulaReady] = useState(false);
   /** deep reclaim — RN Image remount key only (Skia dodge sticky — key remount 금지) */
   const [hubRnBackdropRemountGen, setHubRnBackdropRemountGen] = useState(0);
-  const inboundDroneSkiaDodgeLatchRef = useRef(false);
-  inboundDroneSkiaDodgeLatchRef.current = inboundDroneSkiaDodgeLatch;
   const handleSkiaDodgeNebulaReady = useCallback(() => setHubSkiaDodgeNebulaReady(true), []);
   const handleSkiaDodgeNebulaLost = useCallback(() => setHubSkiaDodgeNebulaReady(false), []);
   const hubDodgeTimeMsRef = useRef(0);
@@ -416,32 +408,18 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
     };
   }, [dodgeBridgeAliveSv, dodgeFxBridgeActive, dodgeBridgeLastSyncMs]);
   /**
-   * latch ON → sticky mount (SIGSEGV 회피).
-   * latch OFF → 즉시 언마운트 금지 · 디바운스 후 언마운트해 useImage EGL 상주 해제
-   * (이전: soft reclaim/ blur 전까지 sticky → EGL~2× 스파이크가 수분 고정).
+   * latch ON → 허브 체류 동안 Canvas 1장 유지.
+   * 웨이브마다 언마운트하면 Skia GL 표면이 회수되지 않고 PSS가 1000MB를 넘었다(2026-10-08 GL 294).
+   * 해제는 행성 변경·허브 이탈에서만.
    */
   useEffect(() => {
     dodgeFxBridgeActive.value = inboundDroneSkiaDodgeLatch ? 1 : 0;
-    if (inboundDroneSkiaDodgeLatch) {
-      setHubDodgeSkiaOverlayMounted(true);
-      // latch ON 직후 reaction은 ms 변경 전까지 fire 안 함 → JS 미러 1회 동기
-      const nowMs = readPlanetOrbitClockMs();
-      dodgeBridgeLastSyncMs.value = nowMs;
-      bridgeNoteHubDodgeTimeMs(nowMs);
-      return undefined;
-    }
-    const timer = setTimeout(() => {
-      if (!dodgeStageMountedRef.current) return;
-      if (inboundDroneSkiaDodgeLatchRef.current) return;
-      setHubDodgeSkiaOverlayMounted(false);
-      setHubSkiaDodgeNebulaReady(false);
-      emitMemProfileMarker({
-        stage: 'planet_hub',
-        event: 'manual',
-        detail: 'hub_dodge_overlay_unmount_debounce',
-      });
-    }, HUB_DODGE_OVERLAY_UNMOUNT_DEBOUNCE_MS);
-    return () => clearTimeout(timer);
+    if (!inboundDroneSkiaDodgeLatch) return;
+    setHubDodgeSkiaOverlayMounted(true);
+    // latch ON 직후 reaction은 ms 변경 전까지 fire 안 함 → JS 미러 1회 동기
+    const nowMs = readPlanetOrbitClockMs();
+    dodgeBridgeLastSyncMs.value = nowMs;
+    bridgeNoteHubDodgeTimeMs(nowMs);
   }, [inboundDroneSkiaDodgeLatch, dodgeFxBridgeActive, dodgeBridgeLastSyncMs, bridgeNoteHubDodgeTimeMs]);
   useAnimatedReaction(
     () => orbitClockMs.value,
@@ -475,18 +453,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
     dodgeBridgeLastSyncMs.value = 0;
   }, [hubStageSkiaActive, dodgeBridgeLastSyncMs, dodgeFxBridgeActive]);
 
-  /** releasePlanetMainStageSession — focus race 무관 Skia 강제 해제 */
-  useEffect(() => {
-    return subscribeHubSkiaNativeReclaim(() => {
-      dodgeFxBridgeActive.value = 0;
-      setInboundDroneSkiaDodgeLatch(false);
-      setHubDodgeSkiaOverlayMounted(false);
-      setHubSkiaDodgeNebulaReady(false);
-      dodgeBridgeLastSyncMs.value = 0;
-    });
-  }, [dodgeFxBridgeActive, dodgeBridgeLastSyncMs]);
-
-  /** 주기 deep reclaim — RN 성운 Image remount만 (Skia dodge는 sticky, key cycle 금지) */
+  /** 주기 deep reclaim — RN 성운 Image remount만 (Skia dodge는 허브 체류 중 유지) */
   useEffect(() => {
     return subscribeHubBackdropNativeRemount(() => {
       setHubRnBackdropRemountGen((g) => g + 1);
@@ -820,7 +787,7 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
                   combatGray={hubCapitalCombatMute}
                 />
               </View>
-              {hubStageSkiaActive && (tableOrbitSlotCount > 0 || arcNpcShipsAtPlanet.length > 0 || arcInboundDronesAtPlanet.length > 0) ? (
+              {hubStageSkiaActive ? (
                 <View
                   style={bgStyles.orbitLayerShips}
                   pointerEvents="none"
@@ -839,10 +806,10 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
                     arcCaptionHeads={arcSkiaCaptionHeads}
                     combatGray={hubCapitalCombatMute}
                   />
-                  {!showEdenRaidTest && arcInboundDronesAtPlanet.length > 0 ? (
+                  {!showEdenRaidTest ? (
                     <PlanetHubInboundDroneLayer
                       orbitClockMs={orbitClockMs}
-                      drones={arcInboundDronesAtPlanet}
+                      planetId={planetId}
                       onSkiaDodgeBackdropLatch={handleInboundDroneSkiaDodgeLatch}
                     />
                   ) : null}

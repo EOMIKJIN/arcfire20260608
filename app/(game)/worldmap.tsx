@@ -133,9 +133,12 @@ import {
   paintGalaxyMapTerritoryVoronoiModel,
   tessellateGalaxyMapTerritoryVoronoiModel,
 } from '../../src/galaxyMap/computeGalaxyMapTerritoryVoronoiModel';
-import { GalaxyMapTerritoryOccupationLabelsSvg } from '../../src/galaxyMap/GalaxyMapTerritoryOccupationLabelsSvg';
+import {
+  GalaxyMapTerritoryOccupationLabelsOverlay,
+  GalaxyMapTerritoryOccupationLabelsSvg,
+} from '../../src/galaxyMap/GalaxyMapTerritoryOccupationLabelsSvg';
 import { GalaxyMapTerritoryVoronoiSvg } from '../../src/galaxyMap/GalaxyMapTerritoryVoronoiSvg';
-import { GalaxyMapSystemsSvg } from '../../src/galaxyMap/GalaxyMapSystemsSvg';
+import { GalaxyMapSystemLabelsOverlay, GalaxyMapSystemsSvg } from '../../src/galaxyMap/GalaxyMapSystemsSvg';
 import { useGalaxyMapQuestAcceptMarks } from '../../src/galaxyMap/useGalaxyMapQuestAcceptMarks';
 import { GalaxyMapUndiscoveredStarlightSvg } from '../../src/galaxyMap/GalaxyMapUndiscoveredStarlightSvg';
 import { buildGalaxyMapAmbientStarlightSites } from '../../src/galaxyMap/galaxyMapStarlightPaths';
@@ -2470,6 +2473,25 @@ export default function WorldMapScreen() {
                     nationLabelBySide={territoryNationLabels}
                   />
                 </Svg>
+                {/* 글자는 SVG 비트맵 밖 RN Text — 래스터 배율과 무관하게 선명 (GALAXY_MAP_LABELS_AS_RN_TEXT) */}
+                <GalaxyMapSystemLabelsOverlay
+                  systems={fogVisibleSystemsList}
+                  currentId={shipTransit ? '' : (mapPresentSystemId ?? player.currentSystemId)}
+                  selectedId={
+                    selectedSystemId && travelFogRevealedIds.has(selectedSystemId)
+                      ? selectedSystemId
+                      : ''
+                  }
+                  visitedIds={visitedSystemIds}
+                  reachableIds={reachableIds}
+                  unlockedIds={unlockedSystemIds}
+                  toScreen={toScreen}
+                  locale={locale}
+                />
+                <GalaxyMapTerritoryOccupationLabelsOverlay
+                  labels={territoryVoronoiModel.occupationLabels}
+                  nationLabelBySide={territoryNationLabels}
+                />
                 <GalaxyMapColonizeHubPulseOverlay
                   systems={fogVisibleSystemsList}
                   toScreen={toScreen}

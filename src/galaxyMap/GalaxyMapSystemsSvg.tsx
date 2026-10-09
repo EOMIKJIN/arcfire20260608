@@ -1,4 +1,5 @@
 import React, { memo, useMemo } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import { Circle, G, Path, Text as SvgText } from 'react-native-svg';
 import type { StarSystem } from '../types';
 import type { AppLocale } from '../i18n/types';
@@ -126,6 +127,139 @@ function shortName(name: string): string {
   return name.length > 10 ? `${name.slice(0, 9)}…` : name;
 }
 
+/**
+ * 성계명·점령 국가명을 SVG 비트맵 밖(RN Text)으로 뺀다.
+ * Android SvgView 는 지도 판 전체를 비트맵 1장으로 굽는다(4610×5034 ≈ 88MB + GPU 사본).
+ * 글자를 빼야 래스터 배율을 낮춰도 글자가 선명하다(galaxyMapZoomLadder RASTER_SCALE 주석).
+ * 배경 그림(성운 등)도 SVG 안에 넣지 말고 별도 이미지 층으로 둔다 — SVG 안에 넣으면 같은 비트맵에 구워진다.
+ * 복구: false → 예전처럼 SvgText.
+ */
+export const GALAXY_MAP_LABELS_AS_RN_TEXT = true;
+
+const SYSTEM_LABEL_FONT_SIZE = 8;
+const SYSTEM_LABEL_LINE_H = 10;
+/** SvgText y(기준선) → RN Text top. lineHeight 10 · fontSize 8 기준 기준선 위치 */
+const SYSTEM_LABEL_BASELINE_FROM_TOP = 7.5;
+const SYSTEM_LABEL_BOX_W = 120;
+
+type GalaxyMapSystemLabelModel = {
+  id: string;
+  x: number;
+  /** 기준선 y (SvgText y 와 같음) */
+  baselineY: number;
+  text: string;
+  color: string;
+};
+
+type SystemLabelContext = {
+  currentId: string;
+  selectedId: string;
+  visitedSet: Set<string>;
+  reachableSet: Set<string>;
+  unlockedSet: Set<string>;
+  toScreen: (pos: { x: number; y: number }) => { x: number; y: number };
+  locale: AppLocale;
+};
+
+/** SvgText 와 RN Text 가 같은 규칙을 쓴다 — 라벨 노출·실명·색·위치 */
+function resolveSystemLabel(sys: StarSystem, ctx: SystemLabelContext): GalaxyMapSystemLabelModel | null {
+  const isCurrent = sys.id === ctx.currentId;
+  const isSelected = sys.id === ctx.selectedId;
+  const isVisited = ctx.visitedSet.has(sys.id);
+  const isReachable = ctx.reachableSet.has(sys.id);
+  const isGameplay = ctx.unlockedSet.has(sys.id);
+  if (!shouldShowGalaxyMapSystemLabel(isGameplay, isSelected)) return null;
+  const pos = ctx.toScreen(sys.position);
+  const r = isCurrent ? NODE_R_CURRENT : NODE_R;
+  const opacity = isGameplay
+    ? (isVisited || isCurrent || isReachable ? 1 : 0.75)
+    : 0.55;
+  const nameRevealed = isGalaxyMapSystemNameRevealed(isVisited, isCurrent);
+  const rawLabel = resolveGalaxyMapSystemDisplayLabel(sys, ctx.locale, nameRevealed);
+  const labelFill = nameRevealed
+    ? (isGameplay ? '#FFFFFF' : '#7F93B8')
+    : GALAXY_MAP_UNIDENTIFIED_LABEL_FILL;
+  const labelOpacity = isGameplay ? 0.95 : 0.75;
+  return {
+    id: sys.id,
+    x: pos.x,
+    baselineY: pos.y + r + 10,
+    text: nameRevealed ? shortName(rawLabel) : rawLabel,
+    color: withSvgPaintAlpha(labelFill, opacity * labelOpacity),
+  };
+}
+
+export type GalaxyMapSystemLabelsOverlayProps = {
+  systems: StarSystem[];
+  currentId: string;
+  selectedId: string;
+  visitedIds: string[];
+  reachableIds: string[];
+  unlockedIds: string[];
+  toScreen: (pos: { x: number; y: number }) => { x: number; y: number };
+  locale: AppLocale;
+};
+
+/** 성계명 RN Text — 지도 카메라 View 아래 1x 좌표. 줌·팬은 부모 transform 이 맞춘다. */
+export const GalaxyMapSystemLabelsOverlay = memo(function GalaxyMapSystemLabelsOverlay({
+  systems,
+  currentId,
+  selectedId,
+  visitedIds,
+  reachableIds,
+  unlockedIds,
+  toScreen,
+  locale,
+}: GalaxyMapSystemLabelsOverlayProps) {
+  const visitedSet = useMemo(() => new Set(visitedIds), [visitedIds]);
+  const reachableSet = useMemo(() => new Set(reachableIds), [reachableIds]);
+  const unlockedSet = useMemo(() => new Set(unlockedIds), [unlockedIds]);
+  const labels = useMemo(() => {
+    const ctx: SystemLabelContext = { currentId, selectedId, visitedSet, reachableSet, unlockedSet, toScreen, locale };
+    const out: GalaxyMapSystemLabelModel[] = [];
+    for (let i = 0; i < systems.length; i++) {
+      const label = resolveSystemLabel(systems[i]!, ctx);
+      if (label) out.push(label);
+    }
+    return out;
+  }, [systems, currentId, selectedId, visitedSet, reachableSet, unlockedSet, toScreen, locale]);
+
+  if (!GALAXY_MAP_LABELS_AS_RN_TEXT || labels.length === 0) return null;
+  return (
+    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+      {labels.map((label) => (
+        <Text
+          key={label.id}
+          allowFontScaling={false}
+          numberOfLines={1}
+          style={[
+            labelStyles.systemLabel,
+            {
+              left: label.x - SYSTEM_LABEL_BOX_W / 2,
+              top: label.baselineY - SYSTEM_LABEL_BASELINE_FROM_TOP,
+              color: label.color,
+            },
+          ]}
+        >
+          {label.text}
+        </Text>
+      ))}
+    </View>
+  );
+});
+
+const labelStyles = StyleSheet.create({
+  systemLabel: {
+    position: 'absolute',
+    width: SYSTEM_LABEL_BOX_W,
+    textAlign: 'center',
+    fontFamily: FONTS.mono,
+    fontSize: SYSTEM_LABEL_FONT_SIZE,
+    lineHeight: SYSTEM_LABEL_LINE_H,
+    includeFontPadding: false,
+  },
+});
+
 /** 점유 확정(블루/레드) vs 미결정 — 방문 노드 안쪽 점 색 */
 function resolveOccupiedNodeInnerFill(clanOwnerColor: string | undefined): string {
   return clanOwnerColor ?? '#FFFFFF';
@@ -215,6 +349,7 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
   }, [routePreviewSystemIds, systemById, toScreen]);
 
   const nodes = useMemo(() => {
+    const labelCtx: SystemLabelContext = { currentId, selectedId, visitedSet, reachableSet, unlockedSet, toScreen, locale };
     return systems.map((sys) => {
       const pos = toScreen(sys.position);
       const isCurrent = sys.id === currentId;
@@ -229,15 +364,8 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
       const opacity = isGameplay
         ? (isVisited || isCurrent || isReachable ? 1 : 0.75)
         : 0.55;
-      const nameRevealed = isGalaxyMapSystemNameRevealed(isVisited, isCurrent);
-      const rawLabel = resolveGalaxyMapSystemDisplayLabel(sys, locale, nameRevealed);
-      const label = nameRevealed ? shortName(rawLabel) : rawLabel;
-      const labelFill = nameRevealed
-        ? (isGameplay ? '#FFFFFF' : '#7F93B8')
-        : GALAXY_MAP_UNIDENTIFIED_LABEL_FILL;
-      const showLabel = shouldShowGalaxyMapSystemLabel(isGameplay, isSelected);
+      const svgLabel = GALAXY_MAP_LABELS_AS_RN_TEXT ? null : resolveSystemLabel(sys, labelCtx);
       const tint = (color: string) => withSvgPaintAlpha(color, opacity);
-      const labelOpacity = isGameplay ? 0.95 : 0.75;
 
       let body: React.ReactNode;
       if (!isGameplay) {
@@ -312,17 +440,18 @@ export const GalaxyMapSystemsSvg = memo(function GalaxyMapSystemsSvg({
             Views: 잠금 전체 라벨은 생략. 개방 성계는 미확인/실명 라벨 유지.
             실명은 도착(방문·현재) 후에만 — 선택/도달만으로는 본명 노출 금지.
             opacity는 글자 fill에 넣는다. SvgText opacity는 지도 전체 비트맵을 만든다.
+            기본은 GalaxyMapSystemLabelsOverlay(RN Text). 아래는 복구 스위치 OFF 때만.
           */}
-          {showLabel ? (
+          {svgLabel ? (
             <SvgText
-              x={pos.x}
-              y={pos.y + r + 10}
-              fill={withSvgPaintAlpha(labelFill, opacity * labelOpacity)}
-              fontSize={8}
+              x={svgLabel.x}
+              y={svgLabel.baselineY}
+              fill={svgLabel.color}
+              fontSize={SYSTEM_LABEL_FONT_SIZE}
               fontFamily={FONTS.mono}
               textAnchor="middle"
             >
-              {label}
+              {svgLabel.text}
             </SvgText>
           ) : null}
         </G>

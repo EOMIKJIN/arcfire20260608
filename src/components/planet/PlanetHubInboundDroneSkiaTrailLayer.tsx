@@ -47,6 +47,12 @@ import { registerSkPictureFrameInvalidate } from '../../game/skia/skiaPictureFra
 import { registerGpuLayer, unregisterGpuLayer } from '../../game/planetStageGpuSupervisor';
 
 const SCENE_SIZE = PLANET_MAIN_ORBIT_SCENE_SIZE;
+
+// TEMP-DIAG kim-claude 20261009 [arc-hitch-split] — 부모 드론 레이어가 globalThis 로 연결한 누적기에 ms 를 더한다. 계측 후 삭제.
+const TRAIL_DIAG = typeof __DEV__ !== 'undefined' && __DEV__;
+function noteTrailDiag(kind: 'render' | 'layout', ms: number): void {
+  (globalThis as { __arcfireDroneLayerDiag?: (k: 'render' | 'layout', ms: number) => void }).__arcfireDroneLayerDiag?.(kind, ms);
+}
 const TRAIL_BRIDGE_INTERVAL_MS = HUB_WORKLET_JS_BRIDGE_INTERVAL_MS;
 
 function recordInboundDroneVfxPicture(input: {
@@ -78,6 +84,7 @@ function recordInboundDroneVfxPicture(input: {
     if (!pathPool[i]) pathPool[i] = Skia.Path.Make();
     const path = pathPool[i]!;
     resetSkPath(path);
+    path.setIsVolatile(true);
 
     const wrote = writeInboundDroneTaperedTrailFillPath(
       path,
@@ -138,6 +145,7 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
   edgeR: number;
   impactR: number;
 }) {
+  const diagRenderT0 = TRAIL_DIAG ? performance.now() : 0; // TEMP-DIAG kim-claude 20261009 — 계측 후 삭제
   const mountedRef = useRef(true);
   const liveFrameRef = useRef<SkPicture | null>(null);
   const geomRef = useRef({ center, edgeR, impactR });
@@ -187,6 +195,8 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
     // 비행 중 Picture 를 매 프레임 만들면 Hermes 힙이 웨이브마다 4MB씩 남는다.
     // 꼬리는 경로 1개를 rewind 하고, Picture 는 짧은 화염 FX 에만 쓴다.
     resetSkPath(trailPath);
+    // rewind 가 volatile 을 끈다 — 매번 다시 켠다. 끄면 GPU 가 프레임마다 꼬리 모양을 캐시해 웨이브당 GL ~45MB가 남는다(Skia 2.2.12 · 2026-10-09 실기).
+    trailPath.setIsVolatile(true);
     let drewTrail = false;
     let maxAlpha = 0;
     for (let i = 0; i < droneCount; i += 1) {
@@ -285,12 +295,14 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
   }, []);
 
   useLayoutEffect(() => {
+    const diagT0 = TRAIL_DIAG ? performance.now() : 0; // TEMP-DIAG
     trailFlatRef.current = trailFlatJsRef.current;
     trailCountRef.current = trailCountJsRef.current;
     pendingOrbitMsRef.current = readPlanetOrbitClockMs();
     hitFxActiveSv.value = hitFxRef.current.length > 0 ? 1 : 0;
     scheduleFlush();
-  }, [droneIds, hitFxTick, trailFlatJsRef, trailCountJsRef, scheduleFlush, hitFxRef, hitFxActiveSv]);
+    if (TRAIL_DIAG) noteTrailDiag('layout', performance.now() - diagT0);
+  },[droneIds, hitFxTick, trailFlatJsRef, trailCountJsRef, scheduleFlush, hitFxRef, hitFxActiveSv]);
 
   useAnimatedReaction(
     () => ({
@@ -351,6 +363,7 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
     };
   }, [trailBridgeAliveSv, trailPaint, trailPath]);
 
+  if (TRAIL_DIAG) noteTrailDiag('render', performance.now() - diagRenderT0); // TEMP-DIAG
   return (
     <Canvas style={styles.canvas} pointerEvents="none">
       <Path path={trailPathSv} paint={trailPaint} />

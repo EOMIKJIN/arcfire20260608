@@ -25,6 +25,8 @@ export class ArcCoreSpySubCore extends BaseArcSubCore {
   private lastPlanetId: string | null = null;
   private lastSpyKey = '';
   private cachedSpyIds: readonly string[] = [];
+  /** cachedSpyIds.join(',') — lookup(1초) 때만 만든다. 매 프레임 join 금지. */
+  private cachedSpyKey = '';
   /** 세션 내 스파이별 정보원 알림 1회 — `${planetId}:${captainId}` */
   private readonly notifiedSpyKeys = new Set<string>();
   private static readonly LOOKUP_INTERVAL_SEC = 1;
@@ -43,6 +45,7 @@ export class ArcCoreSpySubCore extends BaseArcSubCore {
     this.lastPlanetId = null;
     this.lastSpyKey = '';
     this.cachedSpyIds = [];
+    this.cachedSpyKey = '';
     this.notifiedSpyKeys.clear();
     resetArcCoreSpyIntelAlertStore();
     resetPlanetHubSpyIntelDialogSchedule();
@@ -54,6 +57,7 @@ export class ArcCoreSpySubCore extends BaseArcSubCore {
     this.lastPlanetId = null;
     this.lastSpyKey = '';
     this.cachedSpyIds = [];
+    this.cachedSpyKey = '';
     this.notifiedSpyKeys.clear();
     resetArcCoreSpyIntelAlertStore();
     resetPlanetHubSpyIntelDialogSchedule();
@@ -70,6 +74,7 @@ export class ArcCoreSpySubCore extends BaseArcSubCore {
       this.lastPlanetId = null;
       this.lastSpyKey = '';
       this.cachedSpyIds = [];
+      this.cachedSpyKey = '';
       return;
     }
 
@@ -80,6 +85,7 @@ export class ArcCoreSpySubCore extends BaseArcSubCore {
       this.lastPlanetId = planetId;
       this.lastSpyKey = '';
       this.cachedSpyIds = [];
+      this.cachedSpyKey = '';
       this.notifiedSpyKeys.clear();
     }
 
@@ -89,7 +95,10 @@ export class ArcCoreSpySubCore extends BaseArcSubCore {
       this.lookupAccSec = 0;
       const nextIds = listActiveArcCoreSpyCaptainIdsAtPlanet(planetId, arcShips);
       const nextKey = nextIds.join(',');
-      if (nextKey !== this.lastSpyKey) this.cachedSpyIds = nextIds;
+      if (nextKey !== this.lastSpyKey) {
+        this.cachedSpyIds = nextIds;
+        this.cachedSpyKey = nextKey;
+      }
     }
     const spyIds = this.cachedSpyIds;
     if (spyIds.length === 0) {
@@ -98,7 +107,7 @@ export class ArcCoreSpySubCore extends BaseArcSubCore {
       return;
     }
 
-    const spyKey = spyIds.join(',');
+    const spyKey = this.cachedSpyKey;
     if (spyKey !== this.lastSpyKey) {
       const prevIds = this.lastSpyKey ? this.lastSpyKey.split(',') : [];
       const prevSet = new Set(prevIds);
