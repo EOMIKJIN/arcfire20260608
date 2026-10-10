@@ -10,5 +10,6 @@ export const CapitalShipTradePricePolicy_FROM_BALANCE_CSV = [
   { "key": "demand_low_mul", "value": "0.92", "notesKo": "수요 low — TradeEngine 2차 적용 참고" },
   { "key": "demand_normal_mul", "value": "1.0", "notesKo": "수요 normal" },
   { "key": "demand_high_mul", "value": "1.08", "notesKo": "수요 high" },
+  { "key": "starter_tier_base_price_credits", "value": "100000", "notesKo": "지급 등급(가격 0) 함선의 무역소 기준가 — 이전 코드값(프리깃 개량형 25만 × 0.4) 그대로" },
 ] as const;
 export type CapitalShipTradePricePolicyRow = (typeof CapitalShipTradePricePolicy_FROM_BALANCE_CSV)[number];

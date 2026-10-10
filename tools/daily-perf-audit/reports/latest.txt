@@ -1,4 +1,4 @@
-Daily audit — 2026-10-09T15:00:12.555Z
+Daily audit — 2026-10-10T15:00:05.932Z
 
 TypeScript (`npx tsc --noEmit -p tsconfig.client.json`)
 
@@ -18,7 +18,7 @@ Content tables (`npm run build:content-tables`)
 [rebalance-weapon-ttk] updated 0 weapons in weapon_list.csv
 weapon_trade_listing_policy: shop=82 excluded_npc_clone=21
 tradePortListed sync: canonical=82 TRUE=82 demoted=0
-patched D:\arcfire20260607\tables\content\item_defs.csv (290 data rows)
+patched D:\arcfire20260607\tables\content\item_defs.csv (320 data rows)
 patched missions.csv + mission_objectives.csv
 patched 0 npc ship name_en rows
 patched planets.csv
@@ -54,20 +54,20 @@ Largest TS/TSX under `src/` + `app/` (bytes)
 - 685,808 — `src/data/generated/galaxySystems100.generated.ts`
 - 520,504 — `src/data/generated/csvNpcCaptains.ts`
 - 512,714 — `src/data/generated/csvStoryScenes.ts`
-- 502,112 — `src/data/generated/csvNpcCapitalShips.ts`
-- 383,336 — `src/data/generated/csvItemDefs.ts`
+- 502,210 — `src/data/generated/csvNpcCapitalShips.ts`
+- 414,347 — `src/data/generated/csvItemDefs.ts`
 - 200,040 — `src/data/generated/csvNpcCapitalShipEquipSlots.ts`
-- 178,730 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
+- 175,536 — `src/components/planet/PlanetEdenRaidTestLayer.tsx`
 - 161,657 — `src/data/generated/csvMissions.ts`
-- 127,324 — `src/i18n/locales/ko.ts`
+- 161,542 — `src/data/balance/generated/csvHullUpgradeCost.ts`
+- 128,847 — `src/i18n/locales/ko.ts`
 - 121,265 — `src/data/generated/csvMainStorySpine.ts`
-- 116,198 — `src/i18n/locales/en.ts`
-- 107,360 — `app/(game)/worldmap.tsx`
-- 102,154 — `app/(game)/planet.tsx`
+- 117,573 — `src/i18n/locales/en.ts`
+- 107,418 — `app/(game)/worldmap.tsx`
+- 102,390 — `app/(game)/planet.tsx`
 - 90,835 — `src/data/generated/csvBarPatronage.ts`
+- 73,642 — `src/data/generated/csvWeapons.ts`
 - 71,316 — `src/data/balance/generated/csvSynthSystemColonization.ts`
-- 71,074 — `src/data/generated/csvWeapons.ts`
-- 65,404 — `src/data/balance/generated/csvCapitalShipMaxUpgradeValue.ts`
 - 63,013 — `src/data/generated/csvStellaQuestAside.ts`
 
 Planet hub eager `src/combat` import (should be absent)
@@ -113,6 +113,7 @@ Planet hub eager `src/combat` import (should be absent)
 - `src/galaxyMap/GalaxyMapContestedZoneRingOverlay.tsx`
 - `src/game/nativeReclaim/nativeReclaimBootstrap.ts`
 - `src/missions/unidentifiedAnomaly/unidentifiedAnomalyTestRotationWatch.ts`
+- `src/navigation/useSafeRouterBack.ts`
 - `src/ui/overlay/ArcCoreAgentSurfaceHost.tsx`
 - `app/(game)/planet.tsx`
 - `app/(game)/worldmap.tsx`

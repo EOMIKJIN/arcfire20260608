@@ -15,7 +15,7 @@
     {
       "id": "PB-G1",
       "lane": 3,
-      "owner": "김팀장",
+      "owner": "김플레이",
       "title": "교역 순익 추정 거리 배율 이중 적용 (PB-G 1차 · 김팀장 지시 15:02)",
       "since": "2026-10-06T12:10:00+09:00",
       "doneWhen": {
@@ -56,7 +56,7 @@
     {
       "id": "PB-G4",
       "lane": 3,
-      "owner": "김팀장",
+      "owner": "김클로드",
       "title": "전설 일격 무기 w_laser_arc_029 피해 999 — 진열·적 tcl17 무장에서 빼기 (PB-G 2차 · 대표님 승인 18:33)",
       "since": "2026-10-06T18:33:00+09:00",
       "doneWhen": {
@@ -64,13 +64,14 @@
         "paths": [
           "tables/content/weapon_list.csv"
         ]
-      }
+      },
+      "done": true
     },
     {
       "id": "PB-G5",
       "lane": 3,
-      "owner": "김팀장",
-      "title": "함선 등급 성능 곡선 — 등급·레벨 따라 상승, 같은 등급은 파이터·레인저 성향만 차이 (PB-G 2차 · 대표님 승인 18:33)",
+      "owner": "김클로드",
+      "title": "함선 등급 성능 곡선 — 등급·레벨 따라 상승, 같은 등급은 파이터·레인저 성향만 차이 (PB-G 2차 · 대표님 승인 18:33) — 재측정 필요: 광물 강화 함선별·트윈 반영(A-11) 이후 곡선 다시 잴 것",
       "since": "2026-10-06T18:33:00+09:00",
       "doneWhen": {
         "kind": "manual"
@@ -79,7 +80,7 @@
     {
       "id": "PB-G6",
       "lane": 3,
-      "owner": "김팀장",
+      "owner": "김플레이",
       "title": "기함 파괴 시 장착 복원 · 내구도 0 장비 소멸 차단 (PB-G 2차 · 대표님 승인 18:33)",
       "since": "2026-10-06T18:33:00+09:00",
       "doneWhen": {
@@ -88,22 +89,24 @@
           "src/game/playerSurvivalPod.ts",
           "src/game/durability/durabilityModel.ts"
         ]
-      }
+      },
+      "done": true
     },
     {
       "id": "PB-G7",
       "lane": 3,
-      "owner": "김팀장",
+      "owner": "김플레이",
       "title": "가격 0 해소 — 요격미사일 · battlecruiser_max (PB-G 2차 · 대표님 승인 18:33 · 금액은 김팀장 제안 후 대표님 확인)",
       "since": "2026-10-06T18:33:00+09:00",
       "doneWhen": {
         "kind": "manual"
-      }
+      },
+      "done": true
     },
     {
       "id": "PB-S0",
       "lane": 3,
-      "owner": "김팀장",
+      "owner": "김플레이",
       "title": "김플레이 전체 설계안 일괄 검수 — 스텔라 0단계·O1·O2 코드 커밋 포함 (kim-play-review-request-all-designs-20261006.md)",
       "since": "2026-10-06T20:05:00+09:00",
       "doneWhen": {
@@ -113,27 +116,30 @@
           "src/store/arcCoreChatStore.ts",
           "src/arcCore/chat/stellaLifePack.ts"
         ]
-      }
+      },
+      "done": true
     },
     {
       "id": "PB-P0a",
       "lane": 3,
-      "owner": "김팀장",
+      "owner": "김플레이",
       "title": "P0 릴리즈 SIGSEGV 재발 — mqt_v_js WorkletRuntime::executeSync → ShareableWorklet (6월 수정 스택 재발 · 대표님 우선 지시 17:47 · kim-play-request-p0-crash-drok-20261007.md)",
       "since": "2026-10-07T17:47:00+09:00",
       "doneWhen": {
         "kind": "manual"
-      }
+      },
+      "done": true
     },
     {
       "id": "PB-P0b",
       "lane": 3,
-      "owner": "김팀장",
+      "owner": "김플레이",
       "title": "P0 미네르바 드록 한 퀘스트 전투 무한 반복 — questCombatLock이 세부미션 순서 무시(obj_story_002_c 선락) (대표님 우선 지시 17:47 · kim-play-request-p0-crash-drok-20261007.md)",
       "since": "2026-10-07T17:47:00+09:00",
       "doneWhen": {
         "kind": "manual"
-      }
+      },
+      "done": true
     },
     {
       "id": "A-10",
@@ -153,7 +159,8 @@
       "since": "2026-10-06T12:10:00+09:00",
       "doneWhen": {
         "kind": "manual"
-      }
+      },
+      "done": true
     },
     {
       "id": "A-7a",
@@ -163,7 +170,8 @@
       "since": "2026-10-06T11:30:00+09:00",
       "doneWhen": {
         "kind": "manual"
-      }
+      },
+      "done": true
     },
     {
       "id": "A-7b",
@@ -173,7 +181,8 @@
       "since": "2026-10-06T11:30:00+09:00",
       "doneWhen": {
         "kind": "manual"
-      }
+      },
+      "done": true
     },
     {
       "id": "A-7c",
@@ -181,6 +190,58 @@
       "owner": "김플레이",
       "title": "트윈 개척 금고 비용 정합",
       "since": "2026-10-06T11:30:00+09:00",
+      "doneWhen": {
+        "kind": "manual"
+      }
+    },
+    {
+      "id": "A-11",
+      "lane": 1,
+      "owner": "김플레이",
+      "title": "트윈 광물 강화 — 확률 채굴 광물 종류별 적재 → 조선소 실기 비용·상한 강화 · 함선별(구매·격침 시 0) (대표님 결정 2026-10-10)",
+      "since": "2026-10-10T18:00:00+09:00",
+      "doneWhen": {
+        "kind": "manual"
+      },
+      "done": true
+    },
+    {
+      "id": "BAL-S1",
+      "lane": 1,
+      "owner": "김플레이",
+      "title": "밸런싱 안정화 S1 — 기준축(progression_spine) · 함선 사다리·가격 규칙 · 장비 4·5등급 · 후반 스킬 · 감시 경보 3개 (대표님 승인 2026-10-10)",
+      "since": "2026-10-10T20:00:00+09:00",
+      "doneWhen": {
+        "kind": "manual"
+      },
+      "done": true
+    },
+    {
+      "id": "BAL-PERF",
+      "lane": 3,
+      "owner": "대표님",
+      "title": "함선 성능 규칙 vs 광물 강화 — A %형 강화(권장) / B 규칙 완화 / C 피해 강화만 축소 (kim-play-hull-progression-apply-20261010.md §2)",
+      "since": "2026-10-10T20:00:00+09:00",
+      "doneWhen": {
+        "kind": "manual"
+      }
+    },
+    {
+      "id": "BAL-EQPRICE",
+      "lane": 3,
+      "owner": "대표님",
+      "title": "장비 1~3등급 가격을 기준축 규칙(시간당 수입×30분)으로 맞출지 — 4등급과 가격 절벽",
+      "since": "2026-10-10T20:00:00+09:00",
+      "doneWhen": {
+        "kind": "manual"
+      }
+    },
+    {
+      "id": "BAL-S2",
+      "lane": 2,
+      "owner": "대표님",
+      "title": "시간축 실기 보정 — 대표님 플레이 레벨별 실제 시간 기록",
+      "since": "2026-10-10T20:00:00+09:00",
       "doneWhen": {
         "kind": "manual"
       }

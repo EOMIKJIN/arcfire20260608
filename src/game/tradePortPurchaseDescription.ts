@@ -9,7 +9,7 @@ import {
 import type { ItemDef } from '../types';
 import type { AppLocale } from '../i18n/types';
 import { resolveItemDescription, resolveItemFeatureDescription } from '../i18n/itemText';
-import { formatShipEquipmentStatSummary } from './shipEquipment';
+import { formatShipEquipmentEffectNotice, formatShipEquipmentStatSummary } from './shipEquipment';
 import { useAppSettingsStore } from '../store/appSettingsStore';
 
 function resolveNpcCapitalShipIdFromItem(itemDef: ItemDef): string | null {
@@ -35,6 +35,11 @@ export function resolveTradePortPurchaseDescription(
   const statSummary = formatShipEquipmentStatSummary(itemDef, loc === 'en' ? 'en' : 'ko');
   if (statSummary) {
     body = body ? `${body}\n${statSummary}` : statSummary;
+  }
+  // 장비 고지 — 실제 효과·여러 개 장착 시 합산·상한(두 개 = 두 배 오해 방지)
+  const notice = formatShipEquipmentEffectNotice(itemDef, loc === 'en' ? 'en' : 'ko');
+  if (notice) {
+    body = body ? `${body}\n${notice}` : notice;
   }
 
   if (identityBlock && body) return `${identityBlock}\n\n${body}`;

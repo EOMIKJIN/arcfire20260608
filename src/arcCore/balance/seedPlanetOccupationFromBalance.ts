@@ -70,6 +70,8 @@ function shouldSkipOccupationSeedReconcile(hold: PlanetClanHold): boolean {
   if (hold.kind === 'player_independent') return true;
   // 플레이어 정찰 개척 hold — 시드 파이프가 덮어쓰면 purge 구분이 무너진다
   if (hold.occupationOrigin === 'player_colonize') return true;
+  // 플레이어 스텔리움 편입 — 원래 국가(CSV 시드)로 되돌리지 않는다. 바뀌는 건 영토 작전(전투)뿐.
+  if (hold.occupationOrigin === 'player_annex') return true;
   // Player-owned hold (non-AI)  do not overwrite
   if (hold.homePlayerUid && !isAiClanOccupier(hold.occupierClanId)) return true;
   return false;

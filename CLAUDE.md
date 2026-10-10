@@ -51,6 +51,12 @@ React Native · Expo · Firebase **싱글플레이** 우주 전략. 상세 헌�
 **기능·수정 전 메모리/PSS 리스크 먼저.** STAGE 이탈 dispose · Skia 루프 할당 · tick/persist/부트 동기 실행 여부 확인 후 코딩.  
 self-check: `npx tsc --noEmit -p tsconfig.client.json` · Skia 변경 시 `npm run audit:skia-memory`.
 
+## 빌드 프로세스 (대표님 지시 · 2026-10-10~)
+
+- **구현** = 개발 빌드(`npm run android` + Metro). 기능 확인용. 메모리·성능 수치는 판정에 쓰지 않는다.
+- **테스트·검수** = release 측정 빌드 `powershell -ExecutionPolicy Bypass -File tools/dev/build-release-perf.ps1`(측정 플래그 2개 · 번들 강제 재생성 · 설치까지). 김플레이 검수·실기 재측은 이 빌드 기준.
+- **출시 빌드** 전에는 로컬 매니페스트 `<profileable>` 제거 + `-Plain` 빌드(`차기_업무_목록.md` `REL-PROFILEABLE`).
+
 ## 절대 금지 (Top 5)
 
 1. STAGE 전환 `navigate()` — **`replace()`만**

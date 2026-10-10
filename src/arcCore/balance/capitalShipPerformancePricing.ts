@@ -65,8 +65,8 @@ export function resolveCapitalShipPerformanceBasePrice(npcShipId: string): numbe
   const tierRow = getCapitalHullPurchaseRow(tier);
   let tierBase = parseNum(tierRow?.purchaseCredits, 0);
   if (tierBase <= 0) {
-    const upgraded = getCapitalHullPurchaseRow('frigate_upgraded');
-    tierBase = Math.floor(parseNum(upgraded?.purchaseCredits, 250_000) * 0.4);
+    // 지급 등급(가격 0) 함선의 무역소 기준가 — capital_ship_trade_price_policy.csv
+    tierBase = policyNum('starter_tier_base_price_credits', 0);
   }
 
   const perf = combatPerformanceScore(ship);

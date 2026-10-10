@@ -17,7 +17,7 @@ import { PlayScenarioZonePlanets_FROM_BALANCE_CSV } from '../../../src/data/bala
 import { ENEMY_TEMPLATES_FROM_CSV } from '../../../src/data/generated/csvEnemyTemplates';
 import type { WorldState } from './types';
 import { hopsBetween, lookupHasShipyard, lookupHasTrade, lookupSystemId } from './catalog';
-import { chooseHullShipId, STARTER_HULL_SHIP_ID } from './liveCombat';
+import { playerCombatPower, playerCombatSig, STARTER_HULL_SHIP_ID, strongerHullShipId } from './liveCombat';
 import { atomicWriteFile } from './learnedIo';
 import { learnedDir } from './policy';
 
@@ -37,19 +37,20 @@ type EffBand = {
   credits: number;
 };
 
+// 구매 사다리 — capital_hull_purchase_policy.csv ladderListed·ladderStep 순(실기 무역소 진열과 같은 기준 · 2026-10-10)
 const HULLS: HullStep[] = [];
-for (let i = 0; i < CapitalHullPurchasePolicy_FROM_BALANCE_CSV.length; i += 1) {
-  const row = CapitalHullPurchasePolicy_FROM_BALANCE_CSV[i];
-  const csvPrice = Number(row.purchaseCredits) || 0;
-  if (row.hullTierKey.includes('_wave')) continue;
-    if (csvPrice <= 0 && row.hullTierKey !== 'frigate_default') continue;
-  const price = csvPrice > 0 ? csvPrice : 0;
+const ladderRows = CapitalHullPurchasePolicy_FROM_BALANCE_CSV
+  .filter((row) => String(row.ladderListed ?? '').trim().toUpperCase() === 'TRUE' && String(row.ladderStep ?? '').trim() !== '')
+  .slice()
+  .sort((a, b) => Number(a.ladderStep) - Number(b.ladderStep));
+for (let i = 0; i < ladderRows.length; i += 1) {
+  const row = ladderRows[i];
   HULLS.push({
     key: row.hullTierKey,
     name: row.labelKo,
     rank: HULLS.length,
     levelReq: Number(row.requiredPilotLevelMin) || 1,
-    price,
+    price: Math.max(0, Number(row.purchaseCredits) || 0),
   });
 }
 
@@ -106,12 +107,73 @@ export function liveMineralUnitPrice(planetId: string, level: number): number {
   return ORE_SELL.get(ore) ?? 10;
 }
 
-export function nextHullStep(world: WorldState): HullStep | null {
+/**
+ * A-9a: 함선 가치 하한. 지금 함선 대비 전투력(playerCombatPower) 상승이 이 비율 미만인 등급은 목표로 삼지 않는다.
+ * 근거: 현 CSV에서 frigate_upgraded(Player_frigate_mk2)는 시작 함선의 약 0.58배, destroyer~battlecruiser_max 는 0.9~1.1배
+ * (감사 R2 · PB-G5 보류). 약한 함선을 사서 잃기를 반복(10-06 하네스 66회)하던 원인.
+ */
+export const HULL_MIN_POWER_GAIN = 0.25;
+
+let hullKey = '';
+let hullPick: HullStep | null = null;
+let hullPickGain = 0;
+let hullPickWorth = false;
+
+function hullStepGain(world: WorldState, step: HullStep, base: number): number {
+  return playerCombatPower(world, { hullShipId: strongerHullShipId(world, step.key) }) / base - 1;
+}
+
+/**
+ * 목표 함선:
+ * 1) 레벨이 열린 상위 등급 중 전투력 상승 ≥ HULL_MIN_POWER_GAIN 인 가장 낮은 등급 → 구매 목표.
+ * 2) 없으면 바로 위 등급(예전과 같은 한 단계) → 자금 목표만. 사지는 않는다.
+ *    자금 목표는 교역로 자금 루프(earnForShip)를 그대로 돌리기 위함 — 없애면 개발비로 잔액을 소진하고
+ *    빈곤 루프(아르카디아↔베가 왕복 매도)에 빠져 레벨이 후퇴했다(시드 3·4 L17/18, 리포트 §4).
+ */
+function refreshHullTarget(world: WorldState): void {
+  const key = `${playerCombatSig(world)}|${world.hullRank ?? 0}`;
+  if (key === hullKey) return;
+  hullKey = key;
+  hullPick = null;
+  hullPickGain = 0;
+  hullPickWorth = false;
   const rank = world.hullRank ?? 0;
+  const base = Math.max(1e-6, playerCombatPower(world));
   for (let i = 0; i < HULLS.length; i += 1) {
-    if (HULLS[i].rank === rank + 1) return HULLS[i];
+    const step = HULLS[i];
+    if (step.rank <= rank || step.price <= 0 || world.level < step.levelReq) continue;
+    const gain = hullStepGain(world, step, base);
+    if (gain < HULL_MIN_POWER_GAIN) continue;
+    hullPick = step;
+    hullPickGain = gain;
+    hullPickWorth = true;
+    return;
   }
-  return null;
+  for (let i = 0; i < HULLS.length; i += 1) {
+    if (HULLS[i].rank !== rank + 1) continue;
+    hullPick = HULLS[i];
+    hullPickGain = hullStepGain(world, HULLS[i], base);
+    return;
+  }
+}
+
+/** 다음 함선(구매 목표 또는 한 단계 위 자금 목표). 없으면 null. */
+export function nextHullStep(world: WorldState): HullStep | null {
+  refreshHullTarget(world);
+  return hullPick;
+}
+
+/** 다음 함선이 살 가치(전투력 상승 ≥ 하한)가 있는가. */
+export function nextHullWorthBuying(world: WorldState): boolean {
+  refreshHullTarget(world);
+  return hullPickWorth;
+}
+
+/** 구매 목표 함선의 전투력 상승÷가격. 자금 목표뿐이거나 레벨이 안 되면 0. */
+export function hullValuePerCredit(world: WorldState): number {
+  const next = nextHullStep(world);
+  if (!next || !hullPickWorth || next.price <= 0 || world.level < next.levelReq) return 0;
+  return hullPickGain / next.price;
 }
 
 /** 지금 탄 함선의 실기 구매가. 기본 프리깃은 0. */
@@ -125,10 +187,17 @@ export function currentHullValue(world: WorldState): number {
 }
 
 /** 레벨은 열렸는데 실기 가격이 부족하면 그 차액. 아니면 0. */
+/**
+ * 다음 함선 자금은 구매 가능 레벨 이만큼 전부터 모은다(사람도 몇 레벨 앞서 저축).
+ * 2026-10-10 사다리(첫 구매 L16) 이후, 레벨이 열린 뒤에만 모으면 L7~15 동안 교역로 돈벌이가 꺼져
+ * 연료·장비 자금이 바닥나고 정체됐다(벤치 L32→24 · 정체 28). 트윈 행동 상수.
+ */
+const HULL_FUND_LEAD_LEVELS = 8;
+
 export function hullFundGap(world: WorldState): number {
   const next = nextHullStep(world);
   if (!next || next.price <= 0) return 0;
-  if (world.level < next.levelReq) return 0;
+  if (world.level < next.levelReq - HULL_FUND_LEAD_LEVELS) return 0;
   return Math.max(0, next.price + 800 - world.credits);
 }
 
@@ -157,6 +226,8 @@ export function revertFlagshipToStarter(world: WorldState): boolean {
   world.hullTierKey = 'frigate_default';
   world.hullName = '프리깃(기본 지급)';
   world.hullShipId = STARTER_HULL_SHIP_ID;
+  // 함선별 광물 강화 — 잃은 함선의 강화는 사라진다(넘겨주지 않음)
+  world.hullUpgrades = undefined;
   return true;
 }
 
@@ -173,6 +244,7 @@ export function gearCreditReserve(world: WorldState): number {
 export function hullMarketPlanet(world: WorldState): string | null {
   const next = nextHullStep(world);
   if (!next || next.price <= 0) return null;
+  if (!nextHullWorthBuying(world)) return null;
   if (world.level < next.levelReq) return null;
   if (world.credits < next.price + 800) return null;
   if (lookupHasTrade(world.currentPlanetId) && lookupHasShipyard(world.currentPlanetId)) return null;
@@ -196,15 +268,19 @@ export function hullMarketPlanet(world: WorldState): string | null {
 export function tryBuyNextHull(world: WorldState): string | null {
   const next = nextHullStep(world);
   if (!next || next.price <= 0) return null;
+  // A-9a: 지금 함선보다 전투력이 충분히 오르지 않는 함선은 사지 않는다(약한 함선을 사서 잃는 반복 차단).
+  if (!nextHullWorthBuying(world)) return null;
   if (world.level < next.levelReq) return null;
   if (world.credits < next.price + 800) return null;
   if (!lookupHasTrade(world.currentPlanetId) || !lookupHasShipyard(world.currentPlanetId)) return null;
-  const shipId = chooseHullShipId(next.key, world.tick);
+  const shipId = strongerHullShipId(world, next.key);
   world.credits -= next.price;
   world.hullRank = next.rank;
   world.hullTierKey = next.key;
   world.hullName = next.name;
   world.hullShipId = shipId;
+  // 새 함선은 광물 강화 0부터(함선별 · 넘겨주지 않음)
+  world.hullUpgrades = undefined;
   world.hullJustBought = true;
   noteObs(world, 'ship', obsDetail.ship(shipId));
   world.gearBuys += 1;

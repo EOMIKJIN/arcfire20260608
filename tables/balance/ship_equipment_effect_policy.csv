@@ -1,0 +1,25 @@
+key,value,notesKo
+stat_hp_pct_per_armor_pct,1.5,장갑 보너스 1%당 최대 HP +1.5% (함선 스탯 단일 적용 · 조선소 표시와 전투 동일)
+stat_hp_pct_per_power_efficiency_pct,0.8,동력효율 1%당 최대 HP +0.8%
+cap_shield_pct,40,실드 보너스 합산 상한(%) — 같은 효과 장비 여러 개는 합산 후 이 값까지
+cap_armor_pct,35,장갑 보너스 합산 상한(%)
+cap_damage_reduction_pct,35,피해감소 합산 상한(%)
+cap_cooldown_reduction_pct,30,재장전 단축 합산 상한(%)
+cap_detect_range_pct,45,탐지 범위 합산 상한(%)
+cap_speed_pct,25,속도 합산 상한(%)
+cap_maneuver_pct,30,기동(선회) 합산 상한(%)
+conv_detect_per_link_stability,0.35,링크 안정 1% → 탐지 환산
+conv_detect_per_stealth_detect,0.5,은밀탐지 1% → 탐지 환산
+conv_cooldown_per_overheat,0.6,과열완화 1% → 재장전 단축 환산
+conv_cooldown_per_power_efficiency,0.35,동력효율 1% → 재장전 단축 환산
+conv_cooldown_per_overheat_post_sum,0.25,합산 후 과열완화 1% → 재장전 단축 추가 환산
+runtime_speed_motion_mul,0.85,속도 보너스 → 전투 이동속도 반영 비율
+runtime_maneuver_motion_mul,0.9,기동 보너스 → 전투 선회 반영 비율
+runtime_cooldown_factor_min,0.72,장비 재장전 배수 하한
+runtime_cooldown_floor_ms,40,장비 적용 후 재장전 최소 ms
+knob_evasion_pct_per_ac,4,회피 4%당 방어도(AC) +1
+knob_incoming_damage_mul_floor,0.65,피해감소 적용 후 받는 피해 배수 하한
+knob_missile_miss_max,0.42,ECM·미끼 미사일 회피 확률 상한
+knob_missile_miss_per_pct,0.85,ECM+미끼 1% → 미사일 회피 0.85%
+knob_hull_regen_min_per_tick,0.02,나노수리 최소 틱당 회복량
+knob_hull_regen_ticks_per_sec,20,나노수리 초당 틱 수

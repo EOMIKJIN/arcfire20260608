@@ -14,6 +14,12 @@ export interface PlayerHangarShip {
   acquiredAt: number;
   /** 선체 내구도 0~100. 미설정 시 100% */
   durabilityPct?: number;
+  /** 조선소 광물 강화 — statId → 레벨. 이 함선 전용(다른 함선으로 넘기지 않음 · 2026-10-10) */
+  mineralUpgrades?: Record<string, number>;
+  /** 이 함선의 진행 중 광물 강화 job — statId → job */
+  mineralUpgradeJobs?: Record<string, MineralUpgradeJob>;
+  /** 이 함선 강화에 쓴 크레딧 환산 누적(광물은 매도가) — 판매가 반영(upgrade_sale_value_share · 2026-10-10) */
+  mineralUpgradeInvestedCredits?: number;
 }
 
 /** 파일럿 레벨 연동 전투 숙련도 — `arcfire_player_v1` 영속 */
@@ -91,9 +97,12 @@ export interface Player {
   inventorySlots: (CargoItem | null)[];
   /** 계정 레벨 연동 전투 숙련도 */
   combatProficiency: PlayerCombatProficiency;
-  /** 조선소 광물 업그레이드 — statId(mineralUpgradeModel) → 강화 레벨. 계정 귀속 진행 데이터. */
+  /**
+   * @deprecated 구세이브 전용 — 계정 귀속 광물 강화. 로드 시 탑승 함선 격납고 항목으로 이전 후 삭제
+   * (`migrateLegacyMineralUpgradesToActiveShip`). 신규 코드는 `PlayerHangarShip.mineralUpgrades`.
+   */
   mineralUpgrades?: Record<string, number>;
-  /** 조선소 광물 업그레이드 진행 중 작업 — statId → 강화 job(행성개발 게이지와 동일 진행 표시). */
+  /** @deprecated 구세이브 전용 — `PlayerHangarShip.mineralUpgradeJobs` 로 이전 */
   mineralUpgradeJobs?: Record<string, MineralUpgradeJob>;
   /** 잔해 수색 일일 한도 — KST YYYY-MM-DD. 계정 귀속. */
   salvageSearchDayKey?: string;
@@ -180,9 +189,10 @@ export interface PlanetClanHold {
   neutralizedAt?: number | null;
   /**
    * 점유 유래 — `player_colonize` 만 계정 purge 시 시드/중립으로 되돌린다.
+   * `player_annex` — 플레이어 스텔리움 편입(블루). 부트 CSV 국가 시드 복구에서 제외(2026-10-10).
    * 시드·영토전투 hold 는 비움(월드 축).
    */
-  occupationOrigin?: 'player_colonize' | null;
+  occupationOrigin?: 'player_colonize' | 'player_annex' | null;
 }
 
 /** 행성 주둔/공격 편대로 배치된 전함(테이블 asset id 또는 추후 플레이어 거대함 id) */
@@ -605,6 +615,10 @@ export interface NpcCapitalCombatStats {
    * `ShipPerformanceCalculator` 숙련도 편향 입력.
    */
   capitalShipArchetype?: CapitalShipArchetype;
+  /** 무기 계열별 타격 피해 배수 — 함선 강화(레이저 공격력 %). 레이저 계열 무기 타격에만 */
+  laserDamageMul?: number;
+  /** 무기 계열별 타격 피해 배수 — 함선 강화(미사일 공격력 %). 미사일 계열 무기 타격에만 */
+  missileDamageMul?: number;
 }
 
 /** D&D3 스타일 전함 클래스 구분 — npc_ai_ships.csv `capitalShipArchetype` */
@@ -638,6 +652,10 @@ export interface NpcCapitalShip {
    * 무역소 아이템(`item_defs` 병합)으로 진열할지 — `false`이면 무역 목록·인도 상품에서 제외.
    */
   tradePortListed: boolean;
+  /** 특수 용도 — CSV `specialUse`(없으면 운영 함선). `wave_test` = 웨이브 디펜스 테스트함 */
+  specialUse?: 'concept' | 'npc_clone' | 'wave_test';
+  /** 테스트 강제 거래가 — CSV `testTradePriceCredits`(없으면 정상 가격식) */
+  testTradePriceCredits?: number;
   /**
    * 전함 실사 포트레이트 — `assets/images/...` 경로 문자열.
    * Metro 번들은 `resolveNpcCapitalShipPortraitSource` 정적 맵에 키를 등록해야 한다.
@@ -938,6 +956,12 @@ export interface Skill {
   levelRequired: number;
   effect: SkillEffect;
   icon: string;
+  /** 스킬 트리 열(0=좌 · 1=중 · 2=우) — skills.csv `treeColumn` */
+  treeColumn?: number;
+  /** 효과 연동 완성도(UI 배지) — skills.csv `runtimeStatus` */
+  runtimeStatus?: 'complete' | 'partial' | 'undeveloped';
+  /** 부분 완성 안내 i18n 키 — skills.csv `runtimeNoteKey` */
+  runtimeNoteKey?: string;
 }
 
 export interface SkillEffect {

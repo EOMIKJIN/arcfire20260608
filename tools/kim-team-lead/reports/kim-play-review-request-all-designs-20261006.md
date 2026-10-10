@@ -109,14 +109,18 @@
 
 잠금 2 가드 · D1 (봇과 앱이 같은 행동 문자열) — 상세·self-check 는 `kim-play-handoff-stella-o1o2-20261006.md` §5-A. 커밋 묶음 ① 에 함께 넣으면 된다 (`src/game/playerObserve/playerObserveDetail.ts` · `src/store/arcCoreChatPersistGuard*.ts` 추가).
 
-## verdict (김팀장 기입)
+## verdict (2026-10-10 조직 개편으로 김플레이가 인수 · 기입)
+
+> 김팀장 검수 미기입 상태로 8번 코드는 10-07 데일리 스냅샷(`0ea9a58`)에 반영됐다. 10-10 김플레이 재검수.
 
 | # | 판정 | 메모 |
 |---|------|------|
-| 1 | | |
-| 2 | | |
-| 4 | | |
-| 5 | | |
-| 6 | | |
-| 7 | | |
-| 8 | | |
+| 1 | PASS(후속 반영) | A-9 · A-7a/b 10-10 반영(`kim-play-playbot-review-20261010.md` §3-2) · A-7c 보류 · A-10 미처리 |
+| 2 | PASS | 3단 감시판 가동 · 10-10 벤치 후퇴 판정·해시 정합 보완 |
+| 4 | 보류 | 인게임 오토모드 = K 트랙 보류 그대로 |
+| 5 | 보류 | Part C 채널(O5)은 대표님 결정 대기 |
+| 6 | 참고 | 대표님 결정 사항 |
+| 7 | PASS | `[pss-pre-dev]` PASS 유지 |
+| 8 | PASS | 커밋 반영됨 · 테스트 58/58 PASS(playerObserveSink · stellaLifePack/Resolve/Ask · stellaObserveSituations · stellaMessageNotice · arcCoreChatPersistGuard) · 실기 확인은 다음 개발 빌드 플레이에서 |
+
+- status: **REVIEWED**

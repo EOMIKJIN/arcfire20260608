@@ -4,10 +4,11 @@
  * npx tsx tools/play-bot-console/process-board.ts --bench    벤치 강제 실행 후 갱신
  * npx tsx tools/play-bot-console/process-board.ts --ack-mirror   게임 변경을 트윈에 반영했음
  * npx tsx tools/play-bot-console/process-board.ts --done A-7a    수동 항목 완료
+ * npx tsx tools/play-bot-console/process-board.ts --bench-baseline --bench   트윈 규칙을 실기에 맞춘 뒤 새 비교 기준으로 벤치
  */
 import fs from 'node:fs';
 import { FQA_CARD_RAISE_HOLD } from './src/fqaReview';
-import { ackMirror, defaultProcessPaths, runDailyBench, runProcessBoard, worstState } from './src/processBoard';
+import { ackMirror, defaultProcessPaths, runDailyBench, runProcessBoard, setBenchBaseline, worstState } from './src/processBoard';
 
 function markDone(id: string): void {
   const p = defaultProcessPaths();
@@ -21,6 +22,7 @@ function markDone(id: string): void {
 function main(): void {
   const args = process.argv.slice(2);
   if (args.includes('--ack-mirror')) ackMirror();
+  if (args.includes('--bench-baseline')) setBenchBaseline();
   const doneAt = args.indexOf('--done');
   if (doneAt >= 0 && args[doneAt + 1]) markDone(args[doneAt + 1]);
   if (args.includes('--bench')) runDailyBench(defaultProcessPaths(), Date.now(), true);

@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useEffect, useMemo } from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets, type Edge } from 'react-native-safe-area-context';
 import { useStageAssetPrewarm } from '../assetPipeline/useStageAssetPrewarm';
@@ -7,6 +7,7 @@ import { COLORS } from '../utils/theme';
 import type { StageRouteName } from './types';
 import { getStageByRouteName } from './registry';
 import { STAGE_TOP_INSET_PX, STAGE_BOTTOM_MIN_INSET_PX } from './layout';
+import { clearFacilityExitTeardown, useFacilityExitTeardown } from '../navigation/facilityExitTeardown';
 
 type Props = {
   routeName: StageRouteName;
@@ -50,6 +51,13 @@ function StageShellInner({
   const insets = useSafeAreaInsets();
   /** 시스템 inset만 쓰면(내비 숨김 등) 하단이 0에 가까워질 때, 최소 공백만큼 보충 */
   const foregroundBottomPad = Math.max(0, STAGE_BOTTOM_MIN_INSET_PX - insets.bottom);
+  /** 시설 나가기·STAGE 출발 — 전환 전에 내용 전체를 언마운트(Fabric 정상 삭제), 배경색 View만 남긴다 */
+  const facilityExiting = useFacilityExitTeardown(routeName);
+  /** 이 화면이 실제로 내려가면 표시 해제 — 빠른 재진입 시 빈 화면 방지 */
+  useEffect(() => () => clearFacilityExitTeardown(routeName), [routeName]);
+  if (facilityExiting) {
+    return <View style={[styles.safe, { backgroundColor: safeAreaBackgroundColor ?? COLORS.bg_primary }]} />;
+  }
 
   return (
     <SafeAreaView

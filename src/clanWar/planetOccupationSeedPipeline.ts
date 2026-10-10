@@ -89,6 +89,49 @@ export function repairRuntimeNeutralizedHoldsFromOperations(
   return { holds: next, changed };
 }
 
+const PLAYER_ANNEX_OP_SOURCE = 'player_stellium_annex';
+
+/**
+ * 소급 수리 — `player_annex` 마커 도입(2026-10-10) 이전에 플레이어가 편입(블루)했다가
+ * 부트 시드 복구로 원래 국가(레드 등)로 되돌려진 hold를 작전 기록으로 복원한다.
+ * 조건: 행성의 **가장 최근 resolved 작전**이 플레이어 편입(newSide BLUE)이고, 현재 hold가 그와 다른
+ * 국가 시드 clan_hold(증서·거점 없음)일 때만. 편입 뒤 실제 영토 작전으로 바뀐 경우(더 최신 작전 존재)는 보존.
+ * idempotent — 복원 후에는 마커가 있어 시드 복구·재수리 모두 skip.
+ */
+export function repairPlayerAnnexHoldsFromOperations(
+  holds: Record<string, PlanetClanHold>,
+  operations: readonly ClanWarOperation[],
+): { holds: Record<string, PlanetClanHold>; changed: boolean; repairedPlanetIds: string[] } {
+  const latestOpByPlanetId = new Map<string, ClanWarOperation>();
+  for (const op of operations) {
+    if (op.phase !== 'resolved' || !op.targetPlanetId) continue;
+    const prev = latestOpByPlanetId.get(op.targetPlanetId);
+    if (!prev || op.startedAt > prev.startedAt) latestOpByPlanetId.set(op.targetPlanetId, op);
+  }
+  const next = { ...holds };
+  const repairedPlanetIds: string[] = [];
+  for (const [planetId, op] of latestOpByPlanetId) {
+    const ext = (op.ext ?? {}) as Record<string, unknown>;
+    if (String(ext.source ?? '') !== PLAYER_ANNEX_OP_SOURCE) continue;
+    if (String(ext.newSide ?? '').toUpperCase() !== 'BLUE') continue;
+    const cur = next[planetId];
+    if (!cur) continue;
+    if (cur.occupierClanId === ARC_CORE_SEED_BLUE_CLAN_ID && cur.occupationOrigin === 'player_annex') continue;
+    if (cur.kind !== 'clan_hold' || !isNationSeedClanId(cur.occupierClanId)) continue;
+    if (cur.deedOwnerClanId?.trim() || cur.homePlayerUid?.trim()) continue;
+    next[planetId] = {
+      ...cur,
+      occupierClanId: ARC_CORE_SEED_BLUE_CLAN_ID,
+      kind: 'clan_hold',
+      capturedAt: op.startedAt,
+      neutralizedAt: null,
+      occupationOrigin: 'player_annex',
+    };
+    repairedPlanetIds.push(planetId);
+  }
+  return { holds: repairedPlanetIds.length > 0 ? next : holds, changed: repairedPlanetIds.length > 0, repairedPlanetIds };
+}
+
 /** loadLocalClanWarFoundation · syncNpcAiClanTerritory 후처리 공용 — idempotent */
 export function applyPlanetOccupationSeedPipeline(
   existingHolds: Record<string, PlanetClanHold>,

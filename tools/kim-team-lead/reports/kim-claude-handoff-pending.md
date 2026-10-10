@@ -1,6 +1,7 @@
 # 김클로드 → 김팀장 검수 handoff
 
-## ⏳ PENDING — E6 회수 패스 1단계 (중단 작업 복구 기록) · 2026-10-09
+## REVIEWED — E6 회수 패스 1단계 (중단 작업 복구 기록) · 2026-10-09
+> **[김플레이 최종 verdict 2026-10-10] PASS** — release 실기 검증 완료(야간 7시간 43분 누적 없음 · 압박 플레이 3회). 근거 `kim-play-memory-structure-analysis-20261009.md` §5-2~5-6. 커밋은 대표님 요청 시(데일리 스냅샷 포함).
 
 ```text
 task_id=e6-hub-reclaim-dedupe-step1-20261009
@@ -22,7 +23,8 @@ status=PENDING · reviewer=김플레이 · commit=금지
 - 김플레이 승인 여부는 기록을 찾지 못했다. 미승인 상태라면 원복 판단도 김플레이에게 맡긴다.
 - **[김플레이 verdict 22:5x] PARTIAL** — 변경은 김플레이가 직접 반영한 것이다(`kim-play-efficiency-audit-20261009.md` §3-2). flying→0 트리거 제거 「미착수」는 사실과 다르다 → planet.tsx에서 이미 제거했다. audit 31/31과 정책 테스트 2건은 실행 완료. 원복하지 않는다. 실기 검증은 `kim-play-memory-structure-analysis-20261009.md` §6 M3 빌드에서 진행한다. status는 PENDING을 유지한다(실기 전).
 
-## ⏳ PENDING — dev 빌드 안정화: React DevTools 렌더러 연결 기본 OFF + 모니터 EXIT SELF 분류 · 2026-10-09
+## REVIEWED — dev 빌드 안정화: React DevTools 렌더러 연결 기본 OFF + 모니터 EXIT SELF 분류 · 2026-10-09
+> **[김플레이 최종 verdict 2026-10-10] PASS** — RDT OFF 30분 GC 직후 alloc 평탄 · 리로드 → 프로세스 재시작(EXIT_SELF) 실측. 2026-10-10부터 「구현 = 개발 빌드 / 테스트·검수 = release 측정 빌드(`tools/dev/build-release-perf.ps1`)」 프로세스로 전환.
 
 ```text
 task_id=dev-build-stabilization-rdt-off-20261009
@@ -42,7 +44,8 @@ status=PENDING · reviewer=김플레이 · commit=금지
 - 후속 수정(19:4x): report-watch.ps1에서 실기 exit-info가 `EXIT_SELF`(밑줄)라 공백 비교가 실패했다 → reason·subreason의 `_`를 공백으로 정규화. 29186 황색 확인. 모니터 콘솔 재시작 반영(김플레이).
 - 남은 항목: 드론 레이어 동기 렌더(release 측정 후 판단) · 회수 패스 일원화(E6) · meminfo Unknown(hades 확보량) 57 → 80(GC 직후 alloc은 평탄이라 우선순위 낮음).
 
-## ⏳ PENDING — 효율화 E2·E3·E4 (서브코어 틱) 분석 + 1안 · 2026-10-09 15:40
+## REVIEWED — 효율화 E2·E3·E4 (서브코어 틱) 분석 + 1안 · 2026-10-09 15:40
+> **[김플레이 최종 verdict 2026-10-10] PASS** — 반영분 실측 개선(convoy_plan −87% · ai_npc −93% · spy 0.2/분). TEMP-DIAG `[arc-hitch-split]`(ArcInboundDroneSubCore · PlanetHubInboundDroneLayer · PlanetHubInboundDroneSkiaTrailLayer)는 2026-10-10 김플레이가 삭제함(tsc 0 · audit 31/31). 드론 레이어 동기 렌더(publish 25~75ms) 후속은 다음 작업 목록으로 이관.
 
 ```text
 task_id=efficiency-audit-e2-e4-subcore-tick-20261009

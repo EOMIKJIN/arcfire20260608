@@ -39,7 +39,8 @@ test('존 TCL 정본 — 시나리오 1·5·14·21', () => {
 test('레벨링 Zone21 행 — 제네시스 권장 Lv60', () => {
   const row = getPlanetLevelingRowForZone(21);
   assert.equal(Number(row.recommendedPilotLevel), 60);
-  assert.equal(String(row.recommendedHullTierKey), 'battlecruiser_max');
+  // 2026-10-10 함선 사다리(대표님 승인): L60 = 드레드노트 목표 구매 — progression_spine 이 정렬
+  assert.equal(String(row.recommendedHullTierKey), 'dreadnought');
 });
 
 test('무역 진열 상한 24 — 도전 키트 예약 여유', () => {

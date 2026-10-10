@@ -21,6 +21,8 @@ import {
   applyMineralUpgradeToShipPerformance,
   calculateShipPerformance,
 } from '../../combat/ShipPerformanceCalculator';
+import { getActiveShipMineralUpgrades } from '../../game/shipyardMineralUpgrade/shipMineralUpgradeState';
+import { findHullTierKeyForListedShip } from '../balance/capitalShipTradeListingPolicy';
 import { normalizePlayerCombatProficiency } from '../../combat/playerCombatProficiency';
 import { applyShipEquipmentToShipPerformance } from '../../game/shipEquipment/shipEquipmentCombatBridge';
 import {
@@ -48,6 +50,9 @@ export type ArcCoreShadowShipSnapshot = {
     damageDiceCount: number;
     damageDiceSides: number;
     damageDiceBonus: number;
+    /** 함선 강화 계열별 피해 배수(구 스냅샷 미기입 = 1) */
+    laserDamageMul?: number;
+    missileDamageMul?: number;
     capitalShipArchetype?: CapitalShipArchetype;
   };
   runtime: {
@@ -105,7 +110,7 @@ export function buildLocalArcCoreShadowShipSnapshot(): ArcCoreShadowShipSnapshot
     { level: player.level, proficiencyMultiplier: proficiency.proficiencyMultiplier },
     runtimeBase,
   );
-  perf = applyMineralUpgradeToShipPerformance(perf, player.mineralUpgrades);
+  perf = applyMineralUpgradeToShipPerformance(perf, getActiveShipMineralUpgrades(player), findHullTierKeyForListedShip(npcShipId));
   perf = applyShipEquipmentToShipPerformance(perf, player.ship.equipSlots);
   const equipmentBonuses = aggregateShipEquipmentBonuses(player.ship.equipSlots);
   const knobs = resolveShipEquipmentAgentKnobs(perf.combat.maxHp, equipmentBonuses);
@@ -129,6 +134,8 @@ export function buildLocalArcCoreShadowShipSnapshot(): ArcCoreShadowShipSnapshot
       damageDiceCount: perf.combat.damageDice.count,
       damageDiceSides: perf.combat.damageDice.sides,
       damageDiceBonus: perf.combat.damageDice.bonus,
+      laserDamageMul: perf.combat.laserDamageMul ?? 1,
+      missileDamageMul: perf.combat.missileDamageMul ?? 1,
       capitalShipArchetype: perf.combat.capitalShipArchetype,
     },
     runtime: {
@@ -188,6 +195,8 @@ export function parseArcCoreShadowShipSnapshot(
       damageDiceCount: Math.max(1, num(combat?.damageDiceCount, 1)),
       damageDiceSides: Math.max(2, num(combat?.damageDiceSides, 6)),
       damageDiceBonus: num(combat?.damageDiceBonus, 0),
+      laserDamageMul: Math.max(1, num(combat?.laserDamageMul, 1)),
+      missileDamageMul: Math.max(1, num(combat?.missileDamageMul, 1)),
       capitalShipArchetype:
         arch === 'fighter' || arch === 'ranger' || arch === 'survival' || arch === 'special' || arch === 'neutral'
           ? arch
@@ -232,6 +241,8 @@ export function shadowSnapshotToCombatStats(
       sides: snap.combat.damageDiceSides,
       bonus: snap.combat.damageDiceBonus,
     },
+    laserDamageMul: snap.combat.laserDamageMul ?? 1,
+    missileDamageMul: snap.combat.missileDamageMul ?? 1,
     capitalShipArchetype: snap.combat.capitalShipArchetype,
   };
 }

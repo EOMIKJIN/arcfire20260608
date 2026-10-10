@@ -67,16 +67,10 @@ export function inspectPlanetDevJobSchedule(
 function earliestMineralUpgradeAtMs(): number | null {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { usePlayerStore } = require('../../store/playerStore') as typeof import('../../store/playerStore');
-  const jobs = usePlayerStore.getState().player?.mineralUpgradeJobs;
-  if (!jobs) return null;
-  const keys = Object.keys(jobs);
-  let earliest: number | null = null;
-  for (let i = 0; i < keys.length; i += 1) {
-    const at = readDevJobCompleteAtMs(jobs[keys[i]!]);
-    if (at == null) continue;
-    if (earliest == null || at < earliest) earliest = at;
-  }
-  return earliest;
+  // 함선별 강화 — 격납고 전 함선의 진행 job 중 가장 이른 완료
+  const { resolveEarliestShipMineralUpgradeCompleteAtMs } =
+    require('../shipyardMineralUpgrade/shipMineralUpgradeState') as typeof import('../shipyardMineralUpgrade/shipMineralUpgradeState');
+  return resolveEarliestShipMineralUpgradeCompleteAtMs(usePlayerStore.getState().player);
 }
 
 function completeDuePlanet(planetId: string): void {

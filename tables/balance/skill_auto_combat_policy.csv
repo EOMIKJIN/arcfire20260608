@@ -34,3 +34,17 @@ star_pathfinder_uncharted_pct,15,미방문 성계 캡 후 추가 절감
 wormhole_generator_skip_hops,1,웜홀 생성=홉 1 스킵(영구포탈 HOLD)
 monopoly_buy_pct,30,시장독점 개인 매입 할인
 contraband_detect_confiscate,1,밀수 발각 시 거래 취소
+damage_reduction_cap_pct,40,스킬 피해감소 합산 상한(%)
+incoming_damage_mul_floor,0.6,스킬 적용 후 받는 피해 배수 하한
+crit_range_min,2,치명 범위 하한(주사위 눈)
+shield_pen_cap_pct,80,실드 관통 합산 상한(%)
+weapon_haste_cap_pct,40,무기 가속(weapon_haste) 합산 상한(%)
+cooldown_reduction_cap_pct,30,재장전 단축(cooldown_reduction) 합산 상한(%)
+weapon_cooldown_mul_floor,0.6,스킬 재장전 배수 하한
+weapon_haste_missile_salvo_bonus,1,weapon_haste 스킬 보유 시 미사일 살보 +N
+aura_ally_hit_bonus,4,aura_effect 스킬 보유 시 아군 명중 +N
+aura_enemy_hit_penalty,4,aura_effect 스킬 보유 시 적 명중 -N
+stat_multiplier_requires_stats,party_attack_bonus|auto_escape,stat_multiplier(전술 링크) 발동 조건 — 함께 보유해야 하는 효과 스탯
+weapon_cooldown_floor_laser_ms,120,스킬 적용 후 레이저 재장전 최소 ms
+weapon_cooldown_floor_missile_ms,900,스킬 적용 후 미사일 재장전 최소 ms
+weapon_cooldown_floor_close_ms,420,스킬 적용 후 근접 무장 재장전 최소 ms

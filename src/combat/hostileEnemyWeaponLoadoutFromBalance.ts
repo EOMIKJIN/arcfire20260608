@@ -26,11 +26,9 @@ function policyWeaponId(key: string, fallback: string): string {
 
 let curveByFamily: Map<WeaponFamily, CurveEntry[]> | null = null;
 
-function isCurveEligibleWeaponId(id: string): boolean {
-  if (id.includes('wave') || id.includes('vmock')) return false;
-  // 전설 일격(arc_029, 피해 999)은 진열·적 곡선에서 제외. 행은 콘셉트용으로 남긴다.
-  if (id === 'w_laser_arc_029') return false;
-  return true;
+/** 운영 무기만 적 곡선에 — weapon_list.csv specialUse(concept·npc_clone·wave_test) 행은 제외 */
+function isCurveEligibleWeapon(row: { specialUse: string }): boolean {
+  return row.specialUse === '';
 }
 
 function getWeaponCurve(family: WeaponFamily): CurveEntry[] {
@@ -43,9 +41,8 @@ function getWeaponCurve(family: WeaponFamily): CurveEntry[] {
     const ids = Object.keys(CAPITAL_WEAPON_LIST_FROM_CSV);
     for (let i = 0; i < ids.length; i += 1) {
       const id = ids[i]!;
-      if (!isCurveEligibleWeaponId(id)) continue;
       const row = CAPITAL_WEAPON_LIST_FROM_CSV[id];
-      if (!row) continue;
+      if (!row || !isCurveEligibleWeapon(row)) continue;
       const fam = row.familyKind;
       if (fam !== 'laser' && fam !== 'missile' && fam !== 'rocket') continue;
       built.get(fam)!.push({

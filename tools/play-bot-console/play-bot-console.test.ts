@@ -70,9 +70,14 @@ import { clampPlayIntelligence, defaultPlayIntelligence } from './src/playIntell
 import type { GameIssue } from './src/gameIssues';
 import { pickCreditExchange, starterGemBalance, takeCreditExchange, gemExchangeCap } from './src/bmWallet';
 import { alreadyLanded, stepAction, fightHere, earnCredits, trainOrRelocate, winChance, TRAIN_STREAK_CAP } from './src/actions';
-import { fightOdds, hopFuelCredits, transitEncounterChance } from './src/liveCombat';
+import { fightOdds, hopFuelCredits, resolveFightPay, transitEncounterChance } from './src/liveCombat';
+import { resolvePlayerCombatSkillBind } from '../../src/game/playerOwnedSkillCombatBind';
 import { buildDailyTriage } from './src/dailyUrgentTriage';
 import { createRng } from './src/rng';
+import { CapitalHullPurchasePolicy_FROM_BALANCE_CSV } from '../../src/data/balance/generated/csvCapitalHullPurchasePolicy';
+import { addOre, applyMineralUpgrade, bestAffordableMineralUpgrade, pickOreToSell, removeSoldOre } from './src/mineralUpgrade';
+import { playerCombatPower } from './src/liveCombat';
+import { revertFlagshipToStarter } from './src/combatEfficiency';
 import { BOT_OBSERVE_COVERAGE, obsDetail, takeObs } from './src/observeVocab';
 import {
   forEachRecentPlayerObserve,
@@ -101,7 +106,7 @@ import {
 } from './src/earlyFeel';
 import { recordLearning, loadLearning, resetLearningCacheForTest } from './src/learn';
 import { adaptPolicy, decideAdaptPeriodDays, getLearnExploreRate, getLiveWeights, getPolicyHealth, learnedDir, loadPolicy, resetPolicyForTest, savePolicy, setLearnedRootForTest } from './src/policy';
-import { enableCombatEfficiencyMemory, liveMineralUnitPrice, needsHullFund, nextHullStep, progressWall, rememberCombatDay, tryBuyNextHull } from './src/combatEfficiency';
+import { enableCombatEfficiencyMemory, liveMineralUnitPrice, needsHullFund, nextHullStep, nextHullWorthBuying, progressWall, rememberCombatDay, tryBuyNextHull } from './src/combatEfficiency';
 import { campaignDaysForHarness, inCampaignLearnWindow, isAdaptExcludedCode, isNewRunForScore, isTwinLearnCode, nextCampaignSeed, shouldLoopNextCampaign, shouldRollbackScore, windowHangarDelta } from './src/learnGate';
 import {
   ADB_DATE_ARGS,
@@ -364,8 +369,9 @@ test('전함 파괴 시 격납고 재탑승', () => {
   w.currentPlanetId = 'sirius_border';
   w.currentSystemId = 'sirius';
   const lose = createRng(1);
+  // 2026-10-10 전투 관문: 안전하지 않은 수련은 하지 않음 → 피할 수 없는 조우로 파괴·재탑승을 검증
   for (let i = 0; i < 24; i += 1) {
-    fightHere(w, lose, '수련');
+    fightHere(w, lose, '조우');
     if (w.shipDestroys >= 1) break;
   }
   assert.ok(w.shipDestroys >= 1 && w.combatLosses >= 1);
@@ -1530,7 +1536,8 @@ test('블루 승리 는 영토를 유지하고 레드 승리만 중립이 된다
   assert.ok(redId);
   w.currentPlanetId = redId;
   w.currentSystemId = lookupSystemId(redId) ?? w.currentSystemId;
-  const redWin = fightHere(w, () => 0, '수련');
+  // 적 행성 공략 = 도전(전선) — 2026-10-10 전투 관문: 평소 수련은 안전선 이상만
+  const redWin = fightHere(w, () => 0, '전선');
   assert.equal(redWin.kind, 'COMBAT');
   assert.equal(w.planets[redId]?.occupierClanId, NEUTRAL_CLAN);
   assert.equal(w.planets[redId]?.kind, 'neutral');
@@ -1871,6 +1878,8 @@ test('돈이 바닥이면 퀘스트로 벌고 퀘스트가 없으면 채굴한�
   const mine = earnCredits(mined, () => 0.1);
   assert.equal(mine.kind, 'MINE');
   assert.equal(mined.mineralCargo, 1);
+  // 종류 미기록 적재 8 = 매도 대상(강화 몫 예약은 종류별 적재만 · A-11)
+  mined.oreCargo = {};
   mined.mineralCargo = 8;
   const hub = nearestTradePlanet(mined.currentPlanetId);
   assert.ok(hub);
@@ -1991,7 +2000,9 @@ test('우회한 퀘스트는 보류하고 본편을 진행한다', () => {
   w.lastQuestPlanetId = 'eternal_throne';
   w.activeQuest = { missionId: 'sandbox_001', title: '관문', objIndex: 0, acceptedDay: 1 };
   let last = '';
-  for (let i = 0; i < 40; i += 1) {
+  // 산 함선(hullRank 1)은 위험 항로 퀘스트 이동을 3일(48틱) 막힌 뒤에야 도전한다(2026-10-10) — 그만큼 여유를 둔다
+  for (let i = 0; i < 120; i += 1) {
+    w.tick += 1; // 시뮬레이션 루프처럼 시간이 흐른다(시간 기준 규칙이 동작하도록)
     last = stepAction(w, () => 0.99, 'mixed_ref', { allowSides: true }).line;
     if (w.activeQuest?.missionId.startsWith('story_')) break;
   }
@@ -2097,26 +2108,29 @@ test('구간 함선은 한 단계씩 사고 웨이브 시험 무기는 후보에
   assert.ok(gear.some((g) => g.slot.startsWith('weapon_')));
   const w = seedWorld({ runId: 'hull-step', persona: 'mixed_ref' });
   w.currentPlanetId = 'solar_station';
-  w.level = 6;
-  w.credits = 999999;
-  assert.equal(tryBuyNextHull(w), null);
-  w.level = 7;
+  // 2026-10-10 사다리(대표님 승인): L1~15 지급 함선 → L16 구축함 첫 구매 가능
+  w.level = 15;
+  w.credits = 99_999_999;
+  assert.equal(tryBuyNextHull(w), null, 'L15 까지는 지급 함선');
+  w.level = 16;
   w.credits = 10000;
-  assert.equal(nextHullStep(w)?.price, 250000);
+  const destroyerRow = CapitalHullPurchasePolicy_FROM_BALANCE_CSV.find((r) => r.hullTierKey === 'destroyer')!;
+  assert.equal(nextHullStep(w)?.key, 'destroyer');
+  assert.equal(nextHullStep(w)?.price, Number(destroyerRow.purchaseCredits));
+  // 2026-10-10 함선 곡선(본 등급 능력치 ×1.83) — 구축함은 시작 함선보다 충분히 강해 구매 목표
+  assert.equal(nextHullWorthBuying(w), true);
   assert.equal(needsHullFund(w), true);
-  assert.equal(bestAffordableGear(w), null);
-  assert.equal(tryBuyNextHull(w), null);
-  w.credits = 20000;
-  assert.equal(tryBuyNextHull(w), null);
-  w.credits = 250800;
-  const line = tryBuyNextHull(w);
-  assert.ok(line);
-  assert.match(line, /프리깃 개량형/);
-  assert.match(line, /-250000cr/);
+  assert.equal(tryBuyNextHull(w), null, '돈이 모자라면 사지 않는다');
+  w.credits = Number(destroyerRow.purchaseCredits) + 800;
+  const bought = tryBuyNextHull(w);
+  assert.ok(bought, '돈이 모이면 산다');
   assert.equal(w.hullRank, 1);
   assert.equal(w.credits, 800);
-  const boughtShip = w.hullShipId;
-  assert.ok(boughtShip && !boughtShip.includes('wave'));
+  assert.equal(w.hullUpgrades, undefined, '새 함선은 강화 0부터');
+  const boughtShip = 'Player_frigate_mk2';
+  w.hullRank = 1;
+  w.hullTierKey = 'frigate_upgraded';
+  w.hullShipId = boughtShip;
   const hi = winChance(w, 8);
   w.hullRank = 0;
   const sameShip = winChance(w, 8);
@@ -2159,7 +2173,8 @@ test('구간 함선은 한 단계씩 사고 웨이브 시험 무기는 후보에
   const crBefore = broke.credits;
   const expBefore = broke.totalExp;
   const effBefore = broke.effExp;
-  const lost = fightHere(broke, () => 0.99, '자금');
+  // 2026-10-10 전투 관문: 위험한 자금 전투는 하지 않음 → 피할 수 없는 조우로 산 함선 상실을 검증
+  const lost = fightHere(broke, () => 0.99, '조우');
   assert.equal(broke.hullRank, 0);
   assert.equal(broke.hullTierKey, 'frigate_default');
   assert.equal(broke.hullShipId, 'Player_npc_red_fleet_1');
@@ -2193,6 +2208,30 @@ test('구간 함선은 한 단계씩 사고 웨이브 시험 무기는 후보에
   assert.equal(mined.kind, 'MINE');
   const fuel = hopFuelCredits('arcadia', 'solar_port', 'frigate_default', 1);
   assert.ok(fuel >= 50);
+});
+
+test('A-9: 전멸시키면 파괴가 아니고, 방어 장비·숙련·스킬이 생존 시간을 늘린다', () => {
+  const w = seedWorld({ runId: 'a9-odds', persona: 'mixed_ref' });
+  w.level = 10;
+  const planet = 'eden_city';
+  const tcl = w.planets[planet]?.tcl ?? 12;
+  for (let i = 0; i < 20; i += 1) {
+    const pay = resolveFightPay(w, planet, tcl, i / 20);
+    if (!pay.win) assert.ok(pay.killed < pay.fleet, `lose ${pay.killed}/${pay.fleet} roll ${i / 20}`);
+  }
+  const bare = fightOdds(w, planet, tcl).liveSec;
+  w.equipped.ARMOR = 'eq_def_ablative_plate_1';
+  const plated = fightOdds(w, planet, tcl).liveSec;
+  assert.ok(plated > bare, `plate ${plated} bare ${bare}`);
+  delete w.equipped.ARMOR;
+  w.level = 30;
+  assert.ok(fightOdds(w, planet, tcl).liveSec > bare, 'proficiency hp');
+  w.level = 10;
+  const drSkill = listSkills().find((s) => resolvePlayerCombatSkillBind([s.id]).incomingDamageMul < 1);
+  assert.ok(drSkill, 'damage_reduction skill exists');
+  w.learnedSkills = [drSkill.id];
+  w.learnedLookup = { [drSkill.id]: true };
+  assert.ok(fightOdds(w, planet, tcl).liveSec > bare, 'skill dr');
 });
 
 function expEdge(w: ReturnType<typeof seedWorld>, planetId: string): number {
@@ -2309,20 +2348,23 @@ test('초반 성장 정체가 생기던 시드(목적지 왕복·레벨게이트
   }
 });
 
-test('함선 자금 벽에서 교역로 왕복으로 첫 상위 함선을 산다', () => {
+test('함선 자금 벽에서 교역로 왕복으로 첫 상위 함선 값을 모은다(약한 함선은 사지 않는다)', () => {
   let sells = 0;
-  let bought = false;
+  let funded = false;
+  let weakBought = false;
   runSimulation({
     persona: 'mixed_ref', days: 300, seed: 2, runId: 'tg-hull', allowSides: true, stronger: false,
     hooks: {
       onEntry: (w, e) => {
         if (e.line.startsWith('교역 매도 ')) sells += 1;
-        if ((w.hullRank ?? 0) >= 1) bought = true;
+        if (w.credits >= 250_800) funded = true;
+        if (w.hullTierKey === 'frigate_upgraded') weakBought = true;
       },
     },
   });
   assert.ok(sells > 0, '교역 매도 없음');
-  assert.ok(bought, '300일 안에 상위 함선 미구매');
+  assert.ok(funded, '300일 안에 상위 함선 값 미달');
+  assert.equal(weakBought, false, 'A-9a: 시작 함선보다 약한 프리깃 개량형을 샀다');
 });
 
 function processInput(over: Partial<ProcessInput> = {}): ProcessInput {
@@ -2584,4 +2626,41 @@ test('교역로 계획은 경로 손실 위험을 순익에서 뺀다', () => {
   assert.equal(risky, null);
   const some = pickTgPlan(w, 800, () => 100);
   assert.ok(some && some.profit <= safe!.profit);
+});
+
+// A-11 광물 강화 — 함선별 · 사람과 같은 과정(채굴 → 조선소 강화)
+test('광물 강화: 실기 비용으로 지금 함선만 오르고, 함선이 바뀌면 0부터', () => {
+  const w = seedWorld({ runId: 'mu', persona: 'mixed_ref' });
+  w.level = 20;
+  w.credits = 2_000_000;
+  for (let i = 0; i < 30; i += 1) addOre(w, 'ore_ferrite');
+  for (let i = 0; i < 30; i += 1) addOre(w, 'ore_silicate');
+  const before = playerCombatPower(w);
+  const pick = bestAffordableMineralUpgrade(w);
+  assert.ok(pick, '강화 후보');
+  const line = applyMineralUpgrade(w);
+  assert.ok(line && line.startsWith('광물 강화 '));
+  assert.equal(w.hullUpgrades?.[pick!.statId], 1);
+  assert.ok(playerCombatPower(w) > before, '전투력 상승');
+  assert.equal(w.mineralCargo, 60 - pick!.cost.ores.reduce((s, c) => s + c.qty, 0));
+  // 다른 함선 비교는 강화 0 기준(넘겨주지 않음)
+  const otherHull = 'Player_destroyer_mk1';
+  assert.equal(
+    playerCombatPower(w, { hullShipId: otherHull }),
+    playerCombatPower(w, { hullShipId: otherHull, mineralUpgrades: {} }),
+  );
+  w.hullRank = 1;
+  revertFlagshipToStarter(w);
+  assert.equal(w.hullUpgrades, undefined);
+});
+
+test('광물 매도: 강화에 쓸 광물은 남기고 여유분부터 판다', () => {
+  const w = seedWorld({ runId: 'mu-sell', persona: 'mixed_ref' });
+  w.level = 20;
+  addOre(w, 'ore_ferrite');
+  addOre(w, 'ore_unused_test');
+  assert.equal(pickOreToSell(w), 'ore_unused_test');
+  removeSoldOre(w, 'ore_unused_test');
+  w.mineralCargo -= 1;
+  assert.equal(pickOreToSell(w), null, '목표 강화 몫(철 12개)보다 적으면 팔지 않는다');
 });

@@ -1,38 +1,33 @@
 /**
- * 무역소 제외 규칙 — NPC 슬롯용 번호 복제(vmock·wave)만 제외.
- * 경량 레이저(w_laser_light_01) 등 실제 게임 무기·NPC 기본 무장은 판매 대상.
+ * 무역소 진열 규칙 — 판단 근거는 weapon_list.csv `specialUse` 열(Table-First · 2026-10-10).
+ * 코드에 무기 id·id 패턴을 두지 않는다. 새 특수·테스트 무기는 CSV 행의 specialUse 로만 지정.
+ *
+ *   (빈칸)     운영 무기
+ *   concept    콘셉트 무기 — 진열·적 무장 곡선 제외, 행은 유지(예: 피해 999 전설)
+ *   npc_clone  NPC 슬롯 복제·테스트 — 진열·적 곡선·TTK 재조정 제외
+ *   wave_test  웨이브 디펜스 테스트 — 전 무역소 상시 진열(pinned) · testTradePriceCredits 가격 · 적 곡선·TTK 제외
  */
 
-/**
- * 웨이브 디펜스 테스트 무기 — 테스트 단계 한정 상점 판매 허용(예외).
- * `_wave$`/등급 '웨이브'·'테스트' 일괄 제외 규칙에서 이 2종만 되돌린다.
- * (재생성해도 유지) 운영 무기 풀에는 영향 없음.
- */
-export const WAVE_TEST_TRADE_ALLOWLIST = new Set(['w_laser_wave', 'w_missile_wave']);
+export const WEAPON_SPECIAL_USES = new Set(['', 'concept', 'npc_clone', 'wave_test']);
 
-export function isWaveTestTradeWeapon(id) {
-  return WAVE_TEST_TRADE_ALLOWLIST.has(String(id ?? '').trim().toLowerCase());
+export function readWeaponSpecialUse(raw) {
+  const v = String(raw ?? '').trim().toLowerCase();
+  if (!WEAPON_SPECIAL_USES.has(v)) throw new Error(`weapon_list.csv specialUse 값 오류: "${raw}"`);
+  return v;
 }
 
-export function isNpcSlotCloneWeapon(id, tierLabel = '') {
-  const normalized = String(id ?? '').trim().toLowerCase();
-  if (isWaveTestTradeWeapon(normalized)) return false;
-  const tier = String(tierLabel ?? '').trim();
-  if (!normalized.startsWith('w_')) return false;
-  if (/_vmock_/.test(normalized)) return true;
-  if (/_wave$/.test(normalized)) return true;
-  if (tier === '웨이브' || tier === '테스트') return true;
-  return false;
+export function isWaveTestTradeWeapon(specialUse) {
+  return specialUse === 'wave_test';
 }
 
-/** 콘셉트 무기 — 진열·적 곡선에서 뺀다. 행과 피해 999는 유지. */
-const TRADE_PORT_CONCEPT_EXCLUSION = new Set(['w_laser_arc_029']);
+/** TTK 재조정·NPC 복제 판정 대상 밖(테스트 무기) */
+export function isTestOnlyWeapon(specialUse) {
+  return specialUse === 'npc_clone' || specialUse === 'wave_test';
+}
 
-export function isTradePortEligibleWeapon(id, tierLabel = '') {
-  const normalized = String(id ?? '').trim();
-  if (TRADE_PORT_CONCEPT_EXCLUSION.has(normalized)) return false;
-  if (!normalized.startsWith('w_')) return false;
-  return !isNpcSlotCloneWeapon(normalized, tierLabel);
+export function isTradePortEligibleWeapon(id, specialUse) {
+  if (!String(id ?? '').trim().startsWith('w_')) return false;
+  return specialUse === '' || specialUse === 'wave_test';
 }
 
 /** 입문 기본 무장 — 전 무역소 상시 진열(등급라벨 기본) */

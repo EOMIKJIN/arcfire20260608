@@ -5,7 +5,7 @@
  */
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { isTradePortEligibleWeapon } from './weapon-trade-listing-rules.mjs';
+import { isTradePortEligibleWeapon, readWeaponSpecialUse } from './weapon-trade-listing-rules.mjs';
 
 const ROOT = resolve(process.cwd());
 const WEAPON_CSV = resolve(ROOT, 'tables', 'content', 'weapon_list.csv');
@@ -98,7 +98,7 @@ const weaponRows = parseCsv(readFileSync(WEAPON_CSV, 'utf8').trim());
 const hdr = weaponRows[0].map((h) => String(h).replace(/^\uFEFF/, ''));
 let idIdx = hdr.indexOf('id');
 let listedIdx = hdr.indexOf('tradePortListed');
-const tierIdx = hdr.findIndex((h) => h === 'tierLabel' || h === '등급라벨');
+const specialUseIdx = hdr.indexOf('specialUse');
 if (idIdx < 0) {
   console.error('weapon_list.csv missing id column');
   process.exit(1);
@@ -115,9 +115,9 @@ for (const cols of weaponRows.slice(1)) {
   const next = [...cols];
   while (next.length < hdr.length) next.push('');
   const id = String(next[idIdx] ?? '').trim();
-  const tierLabel = String(next[tierIdx] ?? '').trim();
+  const specialUse = readWeaponSpecialUse(specialUseIdx >= 0 ? next[specialUseIdx] : '');
   const inPolicy = canonicalIds.has(id);
-  const eligible = isTradePortEligibleWeapon(id, tierLabel);
+  const eligible = isTradePortEligibleWeapon(id, specialUse);
   const shouldList = inPolicy && eligible;
   const was = String(next[listedIdx] ?? '').toUpperCase() === 'TRUE';
   next[listedIdx] = shouldList ? 'TRUE' : 'FALSE';

@@ -9,10 +9,9 @@ import React, { memo, useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import {
   BlendMode,
-  Canvas,
   PaintStyle,
-  Picture,
   Skia,
+  SkiaPictureView,
   StrokeCap,
   StrokeJoin,
   useImage,
@@ -1318,9 +1317,15 @@ export const PlanetEdenRaidOrbitSkiaCombat = memo(function PlanetEdenRaidOrbitSk
 
   return (
     <View style={{ width: orbitSize, height: orbitSize, position: 'relative' }} pointerEvents="none">
-      <Canvas style={{ width: orbitSize, height: orbitSize }}>
-        {picture ? <Picture picture={picture} /> : null}
-      </Canvas>
+      {/*
+        SkiaPictureView — 그림을 네이티브 View에 JSI로 직접 전달(최신 1장만 보유).
+        <Canvas><Picture/> 는 커밋마다 Recorder·UI 런타임 재생을 거쳐 지난 그림이 UI 런타임 GC까지
+        남았다(2026-10-10 허브 전투 종료 후 Native +20~50 지연 해제). dispose 없음.
+      */}
+      <SkiaPictureView
+        style={{ width: orbitSize, height: orbitSize }}
+        picture={picture ?? undefined}
+      />
       {labelEls}
     </View>
   );

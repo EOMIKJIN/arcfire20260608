@@ -83,11 +83,23 @@ import {
   resolvePlayerShipDurabilityPct,
 } from '../game/durability';
 import {
-  getMineralUpgradeOreCost,
+  getMineralUpgradeCost,
+  mineralUpgradeCostCreditValue,
   getFinalMineralUpgradeCap,
   isMineralUpgradeStatId,
   resolveMineralUpgradeDurationSec,
 } from '../game/shipyardMineralUpgrade/mineralUpgradeModel';
+import {
+  getActiveShipMineralUpgradeJobs,
+  getActiveShipMineralUpgrades,
+  migrateLegacyMineralUpgradesToActiveShip,
+  patchActiveShipHangarEntry,
+  sanitizeHangarMineralUpgradeJobs,
+  sanitizeHangarMineralUpgrades,
+  settleShipMineralUpgradeJobs,
+} from '../game/shipyardMineralUpgrade/shipMineralUpgradeState';
+import { findHullTierKeyForListedShip } from '../arcCore/balance/capitalShipTradeListingPolicy';
+import { resolveMineralCatalogSellPrice } from '../arcCore/economy/mineralTradePricing';
 import { useAccountProfileStore } from './accountProfileStore';
 import { useUserSessionStore } from './userSessionStore';
 import { useSkillDbStore } from './skillDbStore';
@@ -278,6 +290,11 @@ function normalizeShipHangar(raw: unknown): PlayerHangarShip[] {
         durabilityPct: resolveDurabilityPct(
           typeof o.durabilityPct === 'number' ? o.durabilityPct : undefined,
         ),
+        mineralUpgrades: sanitizeHangarMineralUpgrades(o.mineralUpgrades),
+        mineralUpgradeJobs: sanitizeHangarMineralUpgradeJobs(o.mineralUpgradeJobs),
+        mineralUpgradeInvestedCredits: typeof o.mineralUpgradeInvestedCredits === 'number' && o.mineralUpgradeInvestedCredits > 0
+          ? Math.floor(o.mineralUpgradeInvestedCredits)
+          : undefined,
       });
     }
   }
@@ -471,7 +488,7 @@ function ensurePlayerHasDefaultShip(player: Player): Player {
     normalizedShip,
   );
   const shipWithIndices = backfillEquipSlotInventoryIndices(normalizedShip, normalizedInventory);
-  return {
+  return migrateLegacyMineralUpgradesToActiveShip({
     ...player,
     shipId: safeShipId,
     ship: shipWithIndices,
@@ -484,7 +501,7 @@ function ensurePlayerHasDefaultShip(player: Player): Player {
     combatProficiency: normalizePlayerCombatProficiency(player.combatProficiency, player.level),
     stats: normalizePlayerSocialStats(player.stats, player.pilotProfile?.professionId),
     pilotProfile: normalizePlayerPilotProfile(player.pilotProfile),
-  };
+  });
 }
 
 const PLAYER_PERSIST_COALESCE_MS = 1500;
@@ -887,37 +904,52 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     const { player } = get();
     if (!player) return { ok: false, reason: 'no_player' };
     if (!isMineralUpgradeStatId(statId)) return { ok: false, reason: 'bad_stat' };
+    // 강화는 탑승 함선(격납고 항목) 전용 — 생존포드·미등록 함선은 불가
+    const shipUpgrades = getActiveShipMineralUpgrades(player);
+    const shipJobs = getActiveShipMineralUpgradeJobs(player);
+    if (!patchActiveShipHangarEntry(player, (e) => e)) return { ok: false, reason: 'no_ship' };
     // 진행 중 job이 있으면 중복 강화 금지(게이지 진행 중)
-    if (player.mineralUpgradeJobs?.[statId]) return { ok: false, reason: 'in_progress' };
-    const current = Math.max(0, Math.floor(player.mineralUpgrades?.[statId] ?? 0));
+    if (shipJobs?.[statId]) return { ok: false, reason: 'in_progress' };
+    const current = Math.max(0, Math.floor(shipUpgrades?.[statId] ?? 0));
     const combatLevel = player.combatProficiency?.combatLevel ?? player.level ?? 1;
-    const cap = getFinalMineralUpgradeCap(combatLevel, shipyardLevel ?? 0);
+    // 함선 등급별 상한·비용(hull_upgrade_tier_policy · hull_upgrade_cost)
+    const hullTierKey = findHullTierKeyForListedShip(player.ship.portraitNpcCapitalShipId);
+    const cap = getFinalMineralUpgradeCap(combatLevel, shipyardLevel ?? 0, hullTierKey);
     if (current >= cap) return { ok: false, reason: 'cap' };
     const targetLevel = current + 1;
-    const cost = getMineralUpgradeOreCost(statId, targetLevel);
+    const cost = getMineralUpgradeCost(hullTierKey, statId, targetLevel);
+    if (!cost) return { ok: false, reason: 'no_ship' };
     let slots = normalizeInventorySlots(player.inventorySlots);
-    // 1) 전체 비용 충족 선검사(부분 차감 방지)
-    for (const c of cost) {
+    // 1) 전체 비용 충족 선검사(부분 차감 방지) — 크레딧 + 광물
+    if (player.credits < cost.credits) return { ok: false, reason: 'insufficient_credits' };
+    for (const c of cost.ores) {
       if (countGoodInInventory(slots, c.oreId) < c.qty) return { ok: false, reason: 'insufficient' };
     }
-    // 2) ore 차감(트랜잭션) — 착수 시점에 소비(행성개발 설치 job과 동일)
-    for (const c of cost) {
+    // 2) 차감(트랜잭션) — 착수 시점에 소비(행성개발 설치 job과 동일)
+    for (const c of cost.ores) {
       const next = removeGoodFromInventorySlots(slots, c.oreId, c.qty);
       if (!next) return { ok: false, reason: 'deduct_failed' };
       slots = next;
     }
+    // 강화 투자액(크레딧 환산) — 강화한 함선 판매가 반영(upgrade_sale_value_share)
+    const investedCredits = mineralUpgradeCostCreditValue(cost, (oreId) => resolveMineralCatalogSellPrice(oreId) ?? 0);
     // 3) 즉시 완료가 아니라 강화 job 시작(레벨은 완료 시 반영)
     const nowMs = Date.now();
     const durationSec = resolveMineralUpgradeDurationSec(statId, targetLevel);
-    const mineralUpgradeJobs = {
-      ...(player.mineralUpgradeJobs ?? {}),
-      [statId]: {
-        targetLevel,
-        startedAtMs: nowMs,
-        completeAtMs: nowMs + Math.max(0, durationSec) * 1000,
+    const withJob = patchActiveShipHangarEntry({ ...player, inventorySlots: slots, credits: player.credits - cost.credits }, (entry) => ({
+      ...entry,
+      mineralUpgradeInvestedCredits: (entry.mineralUpgradeInvestedCredits ?? 0) + investedCredits,
+      mineralUpgradeJobs: {
+        ...(entry.mineralUpgradeJobs ?? {}),
+        [statId]: {
+          targetLevel,
+          startedAtMs: nowMs,
+          completeAtMs: nowMs + Math.max(0, durationSec) * 1000,
+        },
       },
-    };
-    set({ player: { ...player, inventorySlots: slots, mineralUpgradeJobs } });
+    }));
+    if (!withJob) return { ok: false, reason: 'no_ship' };
+    set({ player: withJob });
     get().schedulePersist();
     try {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -933,33 +965,10 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   settleMineralUpgradeJobs: (nowMs = Date.now()) => {
     const { player } = get();
     if (!player) return false;
-    const jobs = player.mineralUpgradeJobs;
-    if (!jobs) return false;
-    const statIds = Object.keys(jobs);
-    if (statIds.length === 0) return false;
-    let changed = false;
-    const completed: { statId: string; targetLevel: number }[] = [];
-    const nextJobs: Record<string, NonNullable<typeof jobs>[string]> = {};
-    const nextUpgrades = { ...(player.mineralUpgrades ?? {}) };
-    for (const statId of statIds) {
-      const job = jobs[statId]!;
-      if (nowMs >= job.completeAtMs) {
-        const prevLv = Math.max(0, Math.floor(nextUpgrades[statId] ?? 0));
-        nextUpgrades[statId] = Math.max(prevLv, job.targetLevel);
-        completed.push({ statId, targetLevel: job.targetLevel });
-        changed = true;
-      } else {
-        nextJobs[statId] = job;
-      }
-    }
-    if (!changed) return false;
-    set({
-      player: {
-        ...player,
-        mineralUpgrades: nextUpgrades,
-        mineralUpgradeJobs: Object.keys(nextJobs).length > 0 ? nextJobs : undefined,
-      },
-    });
+    const settled = settleShipMineralUpgradeJobs(player, nowMs);
+    if (!settled) return false;
+    const { completed } = settled;
+    set({ player: settled.player });
     get().schedulePersist();
     try {
       // eslint-disable-next-line @typescript-eslint/no-require-imports

@@ -1,0 +1,11 @@
+key,value,notesKo
+hull_price_share_main,0.6,본 등급 함선가 = 직전 본 등급 목표 구매 Lv → 이 등급 목표 구매 Lv 사이 목표 누적 수입 × 이 값(함선:무기 6:4 · play_scenario_economy)
+hull_price_share_half,0.25,반 단계(_upgraded) 함선가 = 직전 본 등급 가격 + (직전 본 등급 목표 구매 Lv → 이 단계 목표 구매 Lv 사이 목표 누적 수입 × 이 값)
+hull_price_round_credits,10000,함선가 반올림 단위
+equipment_item_play_minutes,30,장비 4·5등급 가격 = 요구 레벨 목표 시간당 수입 × 이 분
+upgrade_full_stat_mul,1.6,강화 완료 = 그 함선 원래 능력치(HP·실드·화력)의 160% (대표님 2026-10-10)
+upgrade_cap_ratio_of_next,0.875,강화 완료 = 다음 본 등급 기본형의 87.5% → 본 등급 한 단계 능력치 배수 = upgrade_full_stat_mul ÷ 이 값
+upgrade_cost_ratio_of_next_price,0.8,강화 총비용(크레딧 환산) = 다음 본 등급 구매가 × 이 값 (대표님 2026-10-10 「새로 사는 것의 80%」) · 마지막 등급은 자기 가격 기준
+upgrade_ore_qty_per_level,10,강화 재료 광물 = 목표 레벨 × 이 수(등급 구간 주력·부가 광물 반반) — 채굴 관문 · 금액 대부분은 크레딧
+upgrade_turn_pct_at_cap,0.3,선회 강화 완료 시 +30%(전투력 지표 밖 · 기동 체감용)
+upgrade_sale_value_share,0.4,강화한 함선 판매가에 강화 투자(크레딧 환산)의 이 비율을 더함 (대표님 2026-10-10)

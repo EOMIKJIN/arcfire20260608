@@ -1,0 +1,9 @@
+hullTierKey,upgradeCap,hpPctPerLevel,shieldPctPerLevel,damagePctPerLevel,fireRateCooldownMulPerLevel,turnPctPerLevel,totalCostCredits,primaryOreId,secondaryOreId,notesKo
+frigate_default,5,0.12000,0.12000,0.05298,0.95409,0.06000,712000,ore_ferrite,ore_ferrite,강화 완료 능력치 ×1.6 · 총비용 = destroyer 가격 × 0.8
+destroyer,8,0.07500,0.07500,0.03311,0.97105,0.03750,2152000,ore_silicate,ore_carbon,강화 완료 능력치 ×1.6 · 총비용 = cruiser 가격 × 0.8
+destroyer_upgraded,8,0.07500,0.07500,0.03311,0.97105,0.03750,2152000,ore_carbon,ore_nickel,강화 완료 능력치 ×1.6 · 총비용 = cruiser 가격 × 0.8
+cruiser,10,0.06000,0.06000,0.02649,0.97677,0.03000,8552000,ore_carbon,ore_nickel,강화 완료 능력치 ×1.6 · 총비용 = battlecruiser 가격 × 0.8
+cruiser_upgraded,10,0.06000,0.06000,0.02649,0.97677,0.03000,8552000,ore_nickel,ore_titanium,강화 완료 능력치 ×1.6 · 총비용 = battlecruiser 가격 × 0.8
+battlecruiser,12,0.05000,0.05000,0.02208,0.98061,0.02500,27120000,ore_crystal,ore_platinum,강화 완료 능력치 ×1.6 · 총비용 = dreadnought 가격 × 0.8
+battlecruiser_max,12,0.05000,0.05000,0.02208,0.98061,0.02500,27120000,ore_platinum,ore_orichalcum,강화 완료 능력치 ×1.6 · 총비용 = dreadnought 가격 × 0.8
+dreadnought,15,0.04000,0.04000,0.01766,0.98446,0.02000,27120000,ore_platinum,ore_orichalcum,강화 완료 능력치 ×1.6 · 총비용 = 자기 가격 × 0.8

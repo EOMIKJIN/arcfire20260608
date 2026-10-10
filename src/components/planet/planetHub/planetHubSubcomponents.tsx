@@ -453,6 +453,19 @@ export const PlanetStageBackground = memo(function PlanetStageBackground({
     dodgeBridgeLastSyncMs.value = 0;
   }, [hubStageSkiaActive, dodgeBridgeLastSyncMs, dodgeFxBridgeActive]);
 
+  /**
+   * 허브 전투(orbit) 시작 — sticky dodge 오버레이·성운 준비 상태 해제.
+   * 이전에는 전투 경계의 허브 서브트리 재마운트가 이 상태를 초기화했다(PlanetCapitalCombatRoot 트리 고정 후 명시 유지).
+   */
+  useEffect(() => {
+    if (!showEdenRaidTest) return;
+    dodgeFxBridgeActive.value = 0;
+    setInboundDroneSkiaDodgeLatch(false);
+    setHubDodgeSkiaOverlayMounted(false);
+    setHubSkiaDodgeNebulaReady(false);
+    dodgeBridgeLastSyncMs.value = 0;
+  }, [showEdenRaidTest, dodgeBridgeLastSyncMs, dodgeFxBridgeActive]);
+
   /** 주기 deep reclaim — RN 성운 Image remount만 (Skia dodge는 허브 체류 중 유지) */
   useEffect(() => {
     return subscribeHubBackdropNativeRemount(() => {

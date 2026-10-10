@@ -1,4 +1,4 @@
-import { trimNativeBitmapCachesAsync } from 'arcfire-native-memory';
+import { scheduleNativeHeapPurgeAfterSettle, trimNativeBitmapCachesAsync } from 'arcfire-native-memory';
 
 import { emitMemProfileMarker } from '../devMemoryProfileBridge';
 import { runGalaxyMapResidentDeepReclaimPass } from './runGalaxyMapResidentDeepReclaimPass';
@@ -48,6 +48,9 @@ export function consumeGalaxyMapIngressReclaim(): void {
       );
     }
   });
+
+  /** 허브·전투 화면이 내려간 뒤 빈 페이지 반환 */
+  scheduleNativeHeapPurgeAfterSettle();
 
   emitMemProfileMarker({
     stage: 'galaxy_map',

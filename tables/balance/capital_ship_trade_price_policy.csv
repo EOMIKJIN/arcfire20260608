@@ -9,3 +9,4 @@ perf_ratio_max,1.14,체급 기준가 대비 성능 비율 상한
 demand_low_mul,0.92,수요 low — TradeEngine 2차 적용 참고
 demand_normal_mul,1.0,수요 normal
 demand_high_mul,1.08,수요 high
+starter_tier_base_price_credits,100000,지급 등급(가격 0) 함선의 무역소 기준가 — 이전 코드값(프리깃 개량형 25만 × 0.4) 그대로

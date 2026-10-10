@@ -126,13 +126,32 @@ test('5b) INDEPENDENT hold + 적대 인접 없음(동맹 BLUE만) → ineligible
   assert.equal(cls, 'ineligible');
 });
 
-test('6) BLUE hold + 적대(RED)만 인접(아군 인접 없음) → adjBlue&&adjRed 미충족이라 ineligible(스펙 리터럴)', () => {
+test('6) BLUE hold + 적대(RED)만 인접(아군 인접 없음) → 적 포위 고립 거점 = eligible_front (2026-10-10)', () => {
   const cls = classifyContestedEligibility({
     holdSide: 'BLUE',
     adjacency: { blue: 0, red: 1 },
     hasAdjacentHostile: true,
   });
-  assert.equal(cls, 'ineligible');
+  assert.equal(cls, 'eligible_front');
+});
+
+test('6b) crimson_base 실측 — BLUE hold + 1홉 RED 4 · 아군 0 → eligible_front(분쟁 로테이션 후보)', () => {
+  const cls = classifyContestedEligibility({
+    holdSide: 'BLUE',
+    adjacency: { blue: 0, red: 4 },
+    hasAdjacentHostile: true,
+  });
+  assert.equal(cls, 'eligible_front');
+  assert.equal(isContestedPoolEligibleClass(cls), true);
+});
+
+test('6c) RED hold + BLUE만 인접(대칭) → eligible_front', () => {
+  const cls = classifyContestedEligibility({
+    holdSide: 'RED',
+    adjacency: { blue: 2, red: 0 },
+    hasAdjacentHostile: true,
+  });
+  assert.equal(cls, 'eligible_front');
 });
 
 test('7) RED hold + 적대(INDEPENDENT)만 인접, BLUE 없음 → NOT SAFE(hasAdjacentHostile=true)지만 adjRed 자기자신 카운트 아니므로 ineligible', () => {

@@ -4,7 +4,7 @@
 
 import type { StarSystem } from '../types';
 import { getItemDef } from '../data/itemRegistry';
-import { sumOwnedSkillStatBonus } from './ownedSkillStatBonus';
+import { ownsSkillWithStat, sumOwnedSkillStatBonus } from './ownedSkillStatBonus';
 import { resolveSkillAutoCombatPolicy } from './skillAutoCombatPolicy';
 
 const MARKET_SENSE_SKU_FALLBACK = ['food', 'minerals', 'tech'] as const;
@@ -28,6 +28,11 @@ function readOwnedSkillIds(ownedSkillIds?: readonly string[]): readonly string[]
 
 function owns(id: string, ownedSkillIds?: readonly string[]): boolean {
   return readOwnedSkillIds(ownedSkillIds).includes(id);
+}
+
+/** 스킬 보유 — skills.csv effectStat 기준(Table-First 2026-10-10) */
+function ownsStat(key: string, ownedSkillIds?: readonly string[]): boolean {
+  return ownsSkillWithStat(key, readOwnedSkillIds(ownedSkillIds));
 }
 
 function stat(key: string, ownedSkillIds?: readonly string[]): number {
@@ -62,13 +67,14 @@ export function applyPostCapNavFuelDiscount(
   let jumpBoost = false;
   let uncharted = false;
 
-  const finder = owns('wormhole_finder', owned) || stat('shortcut_find', owned) > 0;
+  const finder = ownsStat('shortcut_find', owned);
   if (finder && !input.hopSkipped && policy.wormholeFinderPostcapPct > 0) {
     next = Math.max(0, Math.round(next * (1 - policy.wormholeFinderPostcapPct / 100)));
     wormhole = true;
   }
 
   const dest = String(input.destSystemId ?? '').trim();
+  // 고지: star_pathfinder 는 effectStat(fuel_efficiency)이 워프안정기·궤도슬링과 같아 스탯으로 구분 불가 → skills.csv 효과 스탯 분리 전까지 id 판정 유지
   if (owns('star_pathfinder', owned) && dest) {
     const visited = input.visitedSystemIds ?? [];
     let seen = false;
@@ -98,7 +104,7 @@ export function applyJumpBoostToTransitMs(
 }
 
 export function resolveWormholeGeneratorSkipHops(ownedSkillIds?: readonly string[]): number {
-  if (!owns('wormhole_generator', ownedSkillIds)) return 0;
+  if (!ownsStat('gate_creation', ownedSkillIds)) return 0;
   return resolveSkillAutoCombatPolicy().wormholeGeneratorSkipHops;
 }
 
@@ -120,7 +126,7 @@ export function resolveWormholeFinderSkipHops(input: {
   destSystemId?: string | null;
 }): number {
   if (input.hopCount < 2) return 0;
-  if (!owns('wormhole_finder', input.ownedSkillIds) && stat('shortcut_find', input.ownedSkillIds) <= 0) {
+  if (!ownsStat('shortcut_find', input.ownedSkillIds)) {
     return 0;
   }
   const chance = Math.max(0, Math.min(80, stat('shortcut_find', input.ownedSkillIds) || 15));
@@ -131,7 +137,7 @@ export function resolveWormholeFinderSkipHops(input: {
 }
 
 export function playerOwnsSensorArray(ownedSkillIds?: readonly string[]): boolean {
-  return owns('sensor_array', ownedSkillIds) || stat('sensor_range', ownedSkillIds) > 0;
+  return ownsStat('sensor_range', ownedSkillIds);
 }
 
 /** 이동 안개 추가 홉. sensor_range 20 → 1 */

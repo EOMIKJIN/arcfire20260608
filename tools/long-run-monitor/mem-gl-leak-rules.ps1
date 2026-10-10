@@ -23,6 +23,58 @@ $script:MEM_PSS_SOFT_CEILING_MB = 800
 $script:MEM_VIEWS_RETENTION_WARN = 450
 $script:MEM_NATIVE_HEAP_WARN_MB = 420
 
+# ── 빌드별 상한 (대표님 지시 2026-10-10) ──────────────────────────────
+# release: 대표님 기준 「600까지 허용 · 800~900 위험」 → soft 600 · hard 800.
+#          (10-10 release 실측: 허브 400~450 · 전환 최고 562 · 야간 7h43m 누적 없음)
+# 개발 빌드: 정상 플레이에서도 790~990(번들 비압축·개발 도구로 부풀림) → soft 1000 · hard 1300.
+#          950 하드 상한이 정상 개발 플레이를 강제 재시작시켰다(10-10 14:06 PSS 992).
+# GL 하드 상한(200)은 두 빌드 공통 유지. 판별: 설치 패키지 flags 의 DEBUGGABLE(2분 캐시).
+function Get-ArcfireBuildVariant {
+  $cache = Join-Path $PSScriptRoot 'logs/.build-variant.txt'
+  try {
+    if (Test-Path $cache) {
+      $item = Get-Item $cache
+      if (((Get-Date) - $item.LastWriteTime).TotalSeconds -lt 120) {
+        $v = (Get-Content $cache -Raw).Trim()
+        if ($v -in @('debug', 'release')) { return $v }
+      }
+    }
+    $flags = (adb shell dumpsys package com.arcfire.online 2>$null | Select-String 'flags=\[' | Select-Object -First 1).Line
+    if (-not $flags) { return 'unknown' }
+    $variant = if ($flags -match 'DEBUGGABLE') { 'debug' } else { 'release' }
+    Set-Content -Path $cache -Value $variant -Encoding ascii
+    return $variant
+  } catch {
+    return 'unknown'
+  }
+}
+
+$script:MEM_BUILD_VARIANT = 'unknown'
+# 장시간 루프(run-monitor 등)는 이 파일을 시작 시 1회만 dot-source 한다 → 판정 함수가 호출될 때마다 갱신(2분 캐시).
+function Update-MemBuildCeilings {
+  $variant = Get-ArcfireBuildVariant
+  if ($variant -eq $script:MEM_BUILD_VARIANT) { return }
+  $script:MEM_BUILD_VARIANT = $variant
+  switch ($variant) {
+    'release' {
+      $script:MEM_PSS_SOFT_CEILING_MB = 600
+      $script:MEM_PSS_HARD_CEILING_MB = 800
+      $script:MEM_VIEWS_RETENTION_WARN = 600
+      $script:MEM_NATIVE_HEAP_WARN_MB = 300
+    }
+    'debug' {
+      $script:MEM_PSS_SOFT_CEILING_MB = 1000
+      $script:MEM_PSS_HARD_CEILING_MB = 1300
+      $script:MEM_VIEWS_RETENTION_WARN = 600
+      $script:MEM_NATIVE_HEAP_WARN_MB = 650
+    }
+    default {
+      # 판별 실패(기기 미연결 등) — 직전 값 유지
+    }
+  }
+}
+Update-MemBuildCeilings
+
 function Test-MemHubActivationTransition {
   param(
     [double]$PrevGlMb,
@@ -91,6 +143,7 @@ function Test-MemHardCeilingBreach {
     [double]$GlMb,
     [double]$PssMb
   )
+  Update-MemBuildCeilings
   return ($GlMb -ge $script:MEM_GL_HARD_CEILING_MB) -or ($PssMb -ge $script:MEM_PSS_HARD_CEILING_MB)
 }
 
@@ -111,6 +164,7 @@ function Test-MemPssOnlyHardCeilingCombatGrace {
 
 function Test-MemPssSoftCeilingBreach {
   param([double]$PssMb)
+  Update-MemBuildCeilings
   return ($PssMb -ge $script:MEM_PSS_SOFT_CEILING_MB) -and ($PssMb -lt $script:MEM_PSS_HARD_CEILING_MB)
 }
 

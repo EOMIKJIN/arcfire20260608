@@ -1,6 +1,6 @@
 # Skia worklet memory audit
 
-Generated: 2026-10-09T12:38:51.465Z
+Generated: 2026-10-10T11:11:40.538Z
 
 **31/31** passed
 
@@ -20,7 +20,7 @@ Generated: 2026-10-09T12:38:51.465Z
 | PASS | policy: no intercept_enabled runtime flag | planetDefenseSatellitePolicy.ts |
 | PASS | combat: path spare pool + recorder reuse | PlanetEdenRaidOrbitSkiaCombat.tsx |
 | PASS | combat: rAF-coalesced Picture + loop stop on unmount | PlanetEdenRaidOrbitSkiaCombat.tsx |
-| PASS | combat: single Canvas + single Picture (no Path.map) | PlanetEdenRaidOrbitSkiaCombat.tsx |
+| PASS | combat: single picture surface — SkiaPictureView 1장(2026-10-10 UI 런타임 재생 제거) (no Path.map) | PlanetEdenRaidOrbitSkiaCombat.tsx |
 | PASS | nebula dodge: Picture batch (no per-FX Group.map) | SkiaPlanetNebulaShaderBackdrop.tsx |
 | PASS | nebula: skiaLoopsActive + delayed Picture dispose | SkiaPlanetNebulaShaderBackdrop.tsx |
 | PASS | shared skiaMemoryLifecycle helpers | skiaMemoryLifecycle.ts |

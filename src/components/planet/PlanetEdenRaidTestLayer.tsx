@@ -100,6 +100,8 @@ import {
   applyMineralUpgradeToShipPerformance,
   calculateShipPerformance,
 } from '../../combat/ShipPerformanceCalculator';
+import { getActiveShipMineralUpgrades } from '../../game/shipyardMineralUpgrade/shipMineralUpgradeState';
+import { findHullTierKeyForListedShip } from '../../arcCore/balance/capitalShipTradeListingPolicy';
 import { normalizePlayerCombatProficiency } from '../../combat/playerCombatProficiency';
 import { resolveWeaponAffinityDamageMultiplier } from '../../combat/weaponAffinityFromBalance';
 import {
@@ -175,7 +177,7 @@ import {
   PLAYER_WINGMAN_CAPTAIN_ID,
   resolvePlayerCombatSkillBind,
 } from '../../game/playerOwnedSkillCombatBind';
-import { resolveSkillAutoCombatPolicy, skillTurnMs } from '../../game/skillAutoCombatPolicy';
+import { resolveSkillAutoCombatPolicy, skillCombatPolicyNum, skillTurnMs } from '../../game/skillAutoCombatPolicy';
 import { SKILL_PROC_LABEL } from '../../game/skillProcBanner';
 import {
   applyMultiLockExtraHits,
@@ -2038,7 +2040,7 @@ function resolvePlayerFlagshipCombatBinding(): PlayerFlagshipCombatBinding | nul
     { level: player.level, proficiencyMultiplier: proficiency.proficiencyMultiplier },
     runtimeBase,
   );
-  perf = applyMineralUpgradeToShipPerformance(perf, player.mineralUpgrades);
+  perf = applyMineralUpgradeToShipPerformance(perf, getActiveShipMineralUpgrades(player), findHullTierKeyForListedShip(npcShipId));
   perf = applyShipEquipmentToShipPerformance(perf, player.ship.equipSlots);
   const equipmentBonuses = aggregateShipEquipmentBonuses(player.ship.equipSlots);
   const equipmentAgentKnobs = resolveShipEquipmentAgentKnobs(perf.combat.maxHp, equipmentBonuses);
@@ -2379,17 +2381,27 @@ function createCapitalAgentBase(
   const diceBonus = combatStats?.damageDice.bonus ?? 0;
   const baseMinDamage = diceCount + diceBonus;
   const baseMaxDamage = diceCount * diceSides + diceBonus;
+  // 함선 강화 계열별 피해 배수(%) — 장착 무기의 전투 계열(laser/missile) 타격 전체(선체 주사위 + 무기 피해)에 곱한다
+  const familyMul = (kind: 'laser' | 'missile' | undefined): number =>
+    kind === 'laser'
+      ? (combatStats?.laserDamageMul ?? 1)
+      : kind === 'missile'
+        ? (combatStats?.missileDamageMul ?? 1)
+        : 1;
   const laserDamageBonus = hasLaserWeapon ? Math.max(1, laserWeapon?.damage ?? DEFAULT_LASER_DMG_FALLBACK) : 0;
   const missileDamageBonus = hasMissileWeapon ? Math.max(1, missileWeapon?.damage ?? DEFAULT_MISSILE_DMG_FALLBACK) : 0;
   const closeRangeDamageBonus = hasCloseRangeWeapon
     ? Math.max(1, closeRangeWeapon?.damage ?? DEFAULT_MISSILE_DMG_FALLBACK)
     : 0;
-  const laserMinDamage = Math.max(1, baseMinDamage + laserDamageBonus);
-  const laserMaxDamage = Math.max(laserMinDamage, baseMaxDamage + laserDamageBonus);
-  const missileMinDamage = Math.max(1, baseMinDamage + missileDamageBonus);
-  const missileMaxDamage = Math.max(missileMinDamage, baseMaxDamage + missileDamageBonus);
-  const closeRangeMinDamage = Math.max(1, baseMinDamage + closeRangeDamageBonus);
-  const closeRangeMaxDamage = Math.max(closeRangeMinDamage, baseMaxDamage + closeRangeDamageBonus);
+  const laserMul = familyMul(laserWeapon?.kind);
+  const missileMul = familyMul(missileWeapon?.kind);
+  const closeMul = familyMul(closeRangeWeapon?.kind);
+  const laserMinDamage = Math.max(1, Math.round((baseMinDamage + laserDamageBonus) * laserMul));
+  const laserMaxDamage = Math.max(laserMinDamage, Math.round((baseMaxDamage + laserDamageBonus) * laserMul));
+  const missileMinDamage = Math.max(1, Math.round((baseMinDamage + missileDamageBonus) * missileMul));
+  const missileMaxDamage = Math.max(missileMinDamage, Math.round((baseMaxDamage + missileDamageBonus) * missileMul));
+  const closeRangeMinDamage = Math.max(1, Math.round((baseMinDamage + closeRangeDamageBonus) * closeMul));
+  const closeRangeMaxDamage = Math.max(closeRangeMinDamage, Math.round((baseMaxDamage + closeRangeDamageBonus) * closeMul));
   const missileSalvoCount = hasMissileWeapon
     ? resolveMissileSalvoCount(missileWeaponId)
     : 0;
@@ -2421,12 +2433,12 @@ function createCapitalAgentBase(
   const armorStatResolved = armorStat + combatSkill.armorBonus;
   const attackBonusResolved = Math.round(attackBonusStat * statMul) + combatSkill.partyAttackBonus;
   const shieldMaxResolved = Math.max(0, Math.round(maxShieldHp * combatSkill.shieldMaxMul));
-  const laserCd = Math.max(120, Math.round(laserRechargeMs * combatSkill.weaponCooldownMul));
+  const laserCd = Math.max(skillCombatPolicyNum('weapon_cooldown_floor_laser_ms'), Math.round(laserRechargeMs * combatSkill.weaponCooldownMul));
   const missileCd = Number.isFinite(missileFireIntervalMs)
-    ? Math.max(900, Math.round(missileFireIntervalMs * combatSkill.weaponCooldownMul))
+    ? Math.max(skillCombatPolicyNum('weapon_cooldown_floor_missile_ms'), Math.round(missileFireIntervalMs * combatSkill.weaponCooldownMul))
     : missileFireIntervalMs;
   const closeCd = Number.isFinite(closeRangeFireIntervalMs)
-    ? Math.max(420, Math.round(closeRangeFireIntervalMs * combatSkill.weaponCooldownMul))
+    ? Math.max(skillCombatPolicyNum('weapon_cooldown_floor_close_ms'), Math.round(closeRangeFireIntervalMs * combatSkill.weaponCooldownMul))
     : closeRangeFireIntervalMs;
   const salvoResolved = hasMissileWeapon
     ? missileSalvoCount + combatSkill.missileSalvoBonus
@@ -3444,6 +3456,8 @@ export function usePlanetEdenRaidSim(
           const pendingDestroy = hubOrbitCombatResultSession.pendingDestroyAlert;
           const outcome = pendingDestroy || winnerTeam !== 'blue' ? 'lose' : 'win';
           const leaderCaptainId = resolveHubOrbitLeaderCaptainId(agents);
+          /** 종료 홀드(await) 중 orbit 비활성 정리가 세션을 리셋할 수 있어 미리 받아 둔다 */
+          const questOrbit = hubOrbitCombatResultSession.questOrbit;
           queueMicrotask(() => {
             void (async () => {
               useOrbitCapitalCombatUiStore.getState().setEndHoldActive(true);
@@ -3463,7 +3477,7 @@ export function usePlanetEdenRaidSim(
                   outcome,
                   expEarned,
                   enemyName,
-                  questOrbit: hubOrbitCombatResultSession.questOrbit,
+                  questOrbit,
                 },
                 missionClearEnabled: outcome === 'win',
                 notice: pendingDestroy ? resolveCombatShipDestroyedNotice() : null,

@@ -6,33 +6,11 @@ import { getItemDef } from '../../data/goods';
 import type { PlayerShip, ShipyardEquipSlotId } from '../../types';
 import { COMBAT_WEAPON_SLOT_IDS, isEquipSlotFilled } from '../combatWeaponSlots';
 import { SHIPYARD_EQUIP_SLOT_DEFS } from '../shipyardEquipSlots';
+import { shipEquipmentPolicy as P } from './shipEquipmentEffectPolicy';
 
 export const SHIP_EQUIPMENT_NON_WEAPON_SLOT_IDS = SHIPYARD_EQUIP_SLOT_DEFS
   .map((d) => d.id)
   .filter((id) => !(COMBAT_WEAPON_SLOT_IDS as readonly string[]).includes(id));
-
-/** equipmentLineKey → 조선소 슬롯 (1:1, 동일 슬롯은 상호 교체) */
-const EQUIPMENT_LINE_TO_SLOT: Record<string, ShipyardEquipSlotId> = {
-  eq_prop_ion_booster: 'ENGINE',
-  eq_prop_fusion_core: 'SYSTEM',
-  eq_prop_vector_thruster: 'EX_01',
-  eq_def_molecular_armor: 'ARMOR',
-  eq_def_shield_amp: 'EX_02',
-  eq_def_ablative_plate: 'ARMOR',
-  eq_sens_long_scan: 'EX_03',
-  eq_sens_secure_comms: 'EX_04',
-  eq_sens_passive_array: 'FIGHTER',
-  eq_ew_ecm_jammer: 'EX_01',
-  eq_ew_tac_datalink: 'EX_02',
-  eq_ew_decoy_launcher: 'EX_03',
-  eq_sup_nano_repair: 'EX_04',
-  eq_sup_fire_control: 'SYSTEM',
-  eq_sup_hull_patch: 'FIGHTER',
-  eq_nav_ai_assist: 'SYSTEM',
-  eq_nav_tac_processor: 'EX_04',
-  eq_nav_jump_calc: 'FIGHTER',
-  eq_mining_drone: 'FIGHTER',
-};
 
 export type ShipEquipmentCombatBonuses = {
   /** maxShield % 가산 (합산 후 cap) */
@@ -96,17 +74,17 @@ function parsePct(attrs: Record<string, unknown>, key: string): number {
   return 0;
 }
 
-function parseLineKey(attrs: Record<string, unknown>): string {
-  const raw = attrs.equipmentLineKey;
-  return typeof raw === 'string' ? raw.trim() : '';
+const SHIP_EQUIPMENT_SLOT_IDS = new Set<string>(SHIP_EQUIPMENT_NON_WEAPON_SLOT_IDS);
+
+function readEffectPending(attrs: Record<string, unknown> | undefined): boolean {
+  return attrs?.effectPending === true || attrs?.effectPending === 'true';
 }
 
+/** 효과가 구현된 장비만 집계 — item_defs attrs.effectPending=true(미구현)는 제외 */
 function isActiveShipEquipmentDef(itemDefId: string): boolean {
   const def = getItemDef(itemDefId);
   if (!def || def.type !== 'ship_equipment') return false;
-  const cat = String(def.attrs?.equipmentCategory ?? '').trim().toLowerCase();
-  if (cat === 'mining') return false;
-  return true;
+  return !readEffectPending(def.attrs as Record<string, unknown> | undefined);
 }
 
 export function isShipEquipmentItemId(itemDefId: string): boolean {
@@ -116,32 +94,13 @@ export function isShipEquipmentItemId(itemDefId: string): boolean {
   return def?.type === 'ship_equipment' && def.kind === 'equipment';
 }
 
+/** 장착 칸 — item_defs.csv attrsJson `equipmentSlot`(Table-First · 2026-10-10). 없거나 잘못되면 장착 불가(null) */
 export function resolveShipEquipmentSlotForItemDef(itemDefId: string): ShipyardEquipSlotId | null {
   const def = getItemDef(itemDefId);
   if (!def || def.type !== 'ship_equipment') return null;
-  const lineKey = parseLineKey(def.attrs ?? {});
-  if (lineKey && EQUIPMENT_LINE_TO_SLOT[lineKey]) {
-    return EQUIPMENT_LINE_TO_SLOT[lineKey];
-  }
-  const cat = String(def.attrs?.equipmentCategory ?? '').trim().toLowerCase();
-  switch (cat) {
-    case 'propulsion':
-      return 'ENGINE';
-    case 'defense':
-      return 'ARMOR';
-    case 'sensor':
-      return 'EX_03';
-    case 'ew':
-      return 'EX_01';
-    case 'support':
-      return 'EX_04';
-    case 'navigation':
-      return 'SYSTEM';
-    case 'mining':
-      return 'FIGHTER';
-    default:
-      return null;
-  }
+  const raw = def.attrs?.equipmentSlot;
+  const slot = typeof raw === 'string' ? raw.trim() : '';
+  return SHIP_EQUIPMENT_SLOT_IDS.has(slot) ? (slot as ShipyardEquipSlotId) : null;
 }
 
 export function listEquippedShipEquipmentItemIds(
@@ -176,11 +135,11 @@ export function aggregateShipEquipmentBonuses(
     acc.speedBonusPct += parsePct(attrs, 'speedBonusPct');
     acc.maneuverBonusPct += parsePct(attrs, 'maneuverBonusPct');
     acc.detectRangeBonusPct += parsePct(attrs, 'detectRangeBonusPct')
-      + parsePct(attrs, 'linkStabilityPct') * 0.35
-      + parsePct(attrs, 'stealthDetectBonusPct') * 0.5;
+      + parsePct(attrs, 'linkStabilityPct') * P('conv_detect_per_link_stability')
+      + parsePct(attrs, 'stealthDetectBonusPct') * P('conv_detect_per_stealth_detect');
     acc.cooldownReductionPct += parsePct(attrs, 'cooldownReductionPct')
-      + parsePct(attrs, 'overheatReductionPct') * 0.6
-      + parsePct(attrs, 'powerEfficiencyPct') * 0.35;
+      + parsePct(attrs, 'overheatReductionPct') * P('conv_cooldown_per_overheat')
+      + parsePct(attrs, 'powerEfficiencyPct') * P('conv_cooldown_per_power_efficiency');
     acc.evasionBonusPct += parsePct(attrs, 'evasionBonusPct');
     acc.hullRepairPerMinPct += parsePct(attrs, 'hullRepairPerMinPct');
     acc.powerEfficiencyPct += parsePct(attrs, 'powerEfficiencyPct');
@@ -190,18 +149,25 @@ export function aggregateShipEquipmentBonuses(
     acc.miningYieldBonusPct += parsePct(attrs, 'miningYieldBonusPct');
   }
 
-  acc.damageReductionPct = Math.min(35, acc.damageReductionPct);
-  acc.cooldownReductionPct = Math.min(30, acc.cooldownReductionPct + acc.overheatReductionPct * 0.25);
-  acc.detectRangeBonusPct = Math.min(45, acc.detectRangeBonusPct);
-  acc.speedBonusPct = Math.min(25, acc.speedBonusPct);
-  acc.maneuverBonusPct = Math.min(30, acc.maneuverBonusPct);
-  acc.shieldBonusPct = Math.min(40, acc.shieldBonusPct);
-  acc.armorBonusPct = Math.min(35, acc.armorBonusPct);
+  // 같은 효과 장비 여러 개 = 합산 후 상한(ship_equipment_effect_policy.csv cap_*)
+  acc.damageReductionPct = Math.min(P('cap_damage_reduction_pct'), acc.damageReductionPct);
+  acc.cooldownReductionPct = Math.min(
+    P('cap_cooldown_reduction_pct'),
+    acc.cooldownReductionPct + acc.overheatReductionPct * P('conv_cooldown_per_overheat_post_sum'),
+  );
+  acc.detectRangeBonusPct = Math.min(P('cap_detect_range_pct'), acc.detectRangeBonusPct);
+  acc.speedBonusPct = Math.min(P('cap_speed_pct'), acc.speedBonusPct);
+  acc.maneuverBonusPct = Math.min(P('cap_maneuver_pct'), acc.maneuverBonusPct);
+  acc.shieldBonusPct = Math.min(P('cap_shield_pct'), acc.shieldBonusPct);
+  acc.armorBonusPct = Math.min(P('cap_armor_pct'), acc.armorBonusPct);
 
   return acc;
 }
 
-/** PlayerShip 기본 스탯 대비 %·flat 보너스 (조선소·HUD) */
+/**
+ * 장비 스탯 보너스(HP·실드·장갑·속도) — **유일한 적용식**(2026-10-10 이중 적용 정리).
+ * 플레이어: shipStatPipeline 이 선체 기준으로 1회 더한다(조선소 표시 = 전투). NPC·트윈: applyShipEquipmentStatBonusToCombat.
+ */
 export function resolveShipEquipmentFlatStatBonus(
   baseShip: PlayerShip,
   equipSlots: PlayerShip['equipSlots'] | undefined,
@@ -214,8 +180,8 @@ export function resolveShipEquipmentFlatStatBonus(
 
   const bonusShield = Math.round(baseShield * (b.shieldBonusPct / 100));
   const bonusArmor = Math.round(baseArmor * (b.armorBonusPct / 100));
-  const bonusHp = Math.round(baseHp * (b.armorBonusPct * 0.015))
-    + Math.round(baseHp * (b.powerEfficiencyPct * 0.008));
+  const bonusHp = Math.round(baseHp * (b.armorBonusPct * P('stat_hp_pct_per_armor_pct') / 100))
+    + Math.round(baseHp * (b.powerEfficiencyPct * P('stat_hp_pct_per_power_efficiency_pct') / 100));
   const bonusSpeed = Math.round(baseSpeed * (b.speedBonusPct / 100));
 
   return { bonusHp, bonusShield, bonusArmor, bonusSpeed };
@@ -225,17 +191,38 @@ export function resolveShipEquipmentAgentKnobs(
   maxHullHp: number,
   bonuses: ShipEquipmentCombatBonuses,
 ): ShipEquipmentAgentKnobs {
-  const dr = Math.min(0.35, bonuses.damageReductionPct / 100);
-  const ecmDecoy = Math.min(0.42, (bonuses.ecmStrengthPct + bonuses.decoyStrengthPct) / 100 * 0.85);
+  const dr = Math.min(P('cap_damage_reduction_pct'), bonuses.damageReductionPct) / 100;
+  const ecmDecoy = Math.min(
+    P('knob_missile_miss_max'),
+    (bonuses.ecmStrengthPct + bonuses.decoyStrengthPct) / 100 * P('knob_missile_miss_per_pct'),
+  );
   const regenPerMin = bonuses.hullRepairPerMinPct / 100;
   const hullRegenPerTick = maxHullHp > 0 && regenPerMin > 0
-    ? Math.max(0.02, (maxHullHp * regenPerMin) / 60 / 20)
+    ? Math.max(P('knob_hull_regen_min_per_tick'), (maxHullHp * regenPerMin) / 60 / P('knob_hull_regen_ticks_per_sec'))
     : 0;
 
   return {
-    acBonus: Math.floor(bonuses.evasionBonusPct / 4),
-    incomingDamageMul: Math.max(0.65, 1 - dr),
+    acBonus: Math.floor(bonuses.evasionBonusPct / P('knob_evasion_pct_per_ac')),
+    incomingDamageMul: Math.max(P('knob_incoming_damage_mul_floor'), 1 - dr),
     hullRegenPerTick,
     missileMissChance: ecmDecoy,
+  };
+}
+
+/** NPC·플레이봇 트윈 — 선체 전투 스탯에 장비 스탯 보너스를 1회 더한다(플레이어 shipStatPipeline 과 같은 식·같은 순서: 숙련 전). */
+export function applyShipEquipmentStatBonusToCombat<T extends { maxHp: number; maxShield: number; armor: number }>(
+  combat: T,
+  equipSlots: PlayerShip['equipSlots'] | undefined,
+): T {
+  const flat = resolveShipEquipmentFlatStatBonus(
+    { maxHp: combat.maxHp, maxShield: combat.maxShield, armor: combat.armor, speed: 0 } as PlayerShip,
+    equipSlots,
+  );
+  if (flat.bonusHp === 0 && flat.bonusShield === 0 && flat.bonusArmor === 0) return combat;
+  return {
+    ...combat,
+    maxHp: Math.max(1, combat.maxHp + flat.bonusHp),
+    maxShield: Math.max(0, combat.maxShield + flat.bonusShield),
+    armor: Math.max(0, combat.armor + flat.bonusArmor),
   };
 }

@@ -1,4 +1,4 @@
-import { trimNativeBitmapCachesAsync } from 'arcfire-native-memory';
+import { scheduleNativeHeapPurgeAfterSettle, trimNativeBitmapCachesAsync } from 'arcfire-native-memory';
 
 import { resolveActivePlanetSessionAnchorId } from './singlePlanetSessionKeep';
 import {
@@ -48,4 +48,6 @@ export function consumePlanetHubIngressReclaim(): void {
       );
     }
   });
+  /** 지도·전투 화면이 내려간 뒤 빈 페이지 반환(드론 웨이브가 없는 허브는 이전엔 purge 0회) */
+  scheduleNativeHeapPurgeAfterSettle();
 }

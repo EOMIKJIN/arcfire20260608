@@ -6,6 +6,8 @@
 import { useCallback, useRef, useState } from 'react';
 import { InteractionManager } from 'react-native';
 
+import { beginStageExitTeardown, clearFacilityExitTeardown } from './facilityExitTeardown';
+
 /** Reanimated performOperations drain — worldmap/전투/허브 공통 */
 export const DEFAULT_STAGE_NAV_DRAIN_MS = 64;
 
@@ -80,16 +82,23 @@ export function runStageNavAfterTeardown(opts: {
   /** isMounted=false 로 navigate 가 스킵될 때 — StageNavGate.reset 등 */
   onAborted?: () => void;
   drainMs?: number;
+  /**
+   * 떠나는 화면의 StageShell route — teardown 직후 내용을 내려 다음 화면과 겹치지 않게 한다
+   * (2026-10-10 전환 순간 PSS 최고치 대책). StageShell 언마운트 시 자동 해제.
+   */
+  exitRoute?: string;
 }): void {
   // SVG/Skia gate-off 직후 React unmount 2프레임 대기 — teardown 선행 시 Native heap 잔류(worldmap 6/25~26)
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       opts.teardown();
+      if (opts.exitRoute) beginStageExitTeardown(opts.exitRoute);
       const task = runStageUiAfterIdle(() => {
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             setTimeout(() => {
               if (opts.isMounted && !opts.isMounted()) {
+                if (opts.exitRoute) clearFacilityExitTeardown(opts.exitRoute);
                 opts.onAborted?.();
                 return;
               }

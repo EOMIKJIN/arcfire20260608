@@ -1,36 +1,6 @@
 {
-  "lastUpdated": "2026-10-08T15:04:21.850Z",
+  "lastUpdated": "2026-10-09T15:03:31.839Z",
   "snapshots": [
-    {
-      "timestamp": "2026-08-20T15:00:44.826Z",
-      "ciContractOnly": false,
-      "dailyPolicyOk": true,
-      "dailyPolicy": {
-        "ok": true,
-        "enabled": true,
-        "timeZone": "Asia/Seoul",
-        "batchRunHour": 12,
-        "batchRunMinute": 0,
-        "observationWindowHours": 24,
-        "allPasses": true,
-        "notesKo": "벽시계 24h 관측·수집 후 정오 1회 일괄 분석·재배치·밸런스·가격미세조정"
-      },
-      "dailyViolations": [],
-      "whaleF2pRatio": 3.119195108748942,
-      "kpiStatus": "ok",
-      "deltaId": "2026-07-02-1782976813591",
-      "maxGapPercent": 21074,
-      "warnBandCount": 4,
-      "balanceAuditExit": 0,
-      "planetEconomyExit": 1,
-      "planetEconomyOverall": "unknown",
-      "fiscalOverall": "warn",
-      "fiscalMaxRatio": 3.09,
-      "fiscalGini": 0.379,
-      "priceElasticity": 0,
-      "realtimePriceDisabled": true,
-      "overall": "FAIL"
-    },
     {
       "timestamp": "2026-08-21T15:00:48.364Z",
       "ciContractOnly": false,
@@ -1440,13 +1410,43 @@
       "priceElasticity": 0,
       "realtimePriceDisabled": true,
       "overall": "WARN"
+    },
+    {
+      "timestamp": "2026-10-09T15:03:31.839Z",
+      "ciContractOnly": false,
+      "dailyPolicyOk": true,
+      "dailyPolicy": {
+        "ok": true,
+        "enabled": true,
+        "timeZone": "Asia/Seoul",
+        "batchRunHour": 12,
+        "batchRunMinute": 0,
+        "observationWindowHours": 24,
+        "allPasses": true,
+        "notesKo": "벽시계 24h 관측·수집 후 정오 1회 일괄 분석·재배치·밸런스·가격미세조정"
+      },
+      "dailyViolations": [],
+      "whaleF2pRatio": 3.119195108748942,
+      "kpiStatus": "ok",
+      "deltaId": "2026-07-02-1782976813591",
+      "maxGapPercent": 958.7,
+      "warnBandCount": 3,
+      "balanceAuditExit": 0,
+      "planetEconomyExit": 0,
+      "planetEconomyOverall": "WARN",
+      "fiscalOverall": "warn",
+      "fiscalMaxRatio": 2.99,
+      "fiscalGini": 0.251,
+      "priceElasticity": 0,
+      "realtimePriceDisabled": true,
+      "overall": "WARN"
     }
   ],
   "lastInsights": [
     {
       "kind": "planet_fiscal",
       "severity": "warn",
-      "message": "Planet fiscal WARN — max fee/upkeep 3.02× gini=0.297",
+      "message": "Planet fiscal WARN — max fee/upkeep 2.99× gini=0.251",
       "action": "monitor_fiscal_closed_loop"
     }
   ],
@@ -1454,7 +1454,7 @@
     {
       "kind": "planet_fiscal",
       "severity": "warn",
-      "message": "Planet fiscal WARN — max fee/upkeep 3.02× gini=0.297",
+      "message": "Planet fiscal WARN — max fee/upkeep 2.99× gini=0.251",
       "action": "monitor_fiscal_closed_loop"
     }
   ],

@@ -10,6 +10,7 @@ import {
 } from './seedPlanetOccupationFromBalance';
 import {
   applyPlanetOccupationSeedPipeline,
+  repairPlayerAnnexHoldsFromOperations,
   repairRuntimeNeutralizedHoldsFromOperations,
 } from '../../clanWar/planetOccupationSeedPipeline';
 import { resolveEffectiveMapOccupierClanId } from '../../clanWar/planetOwnershipModel';
@@ -41,6 +42,87 @@ test('omega_hub AI클랜 — 분쟁·영토 프로세스 대상이라 시드 RED
     omega_hub: aiClanHold('omega_hub', 'omega_station'),
   });
   assert.equal(holds.omega_hub?.occupierClanId, 'ai_clan_npc_cpt_ai_clan_neutral_01');
+});
+
+// ── 2026-10-10 회귀: 플레이어 편입(블루)이 재시작 시 CSV 국가 시드(레드)로 되돌려지던 버그 ──
+function annexBlueHold(capturedAt: number): PlanetClanHold {
+  return {
+    planetId: 'perseus_memorial',
+    systemId: 'perseus',
+    occupierClanId: ARC_CORE_SEED_BLUE_CLAN_ID,
+    deedOwnerClanId: null,
+    homePlayerUid: null,
+    kind: 'clan_hold',
+    capturedAt,
+    neutralizedAt: null,
+    occupationOrigin: 'player_annex',
+  };
+}
+
+function annexOp(startedAt: number): ClanWarOperation {
+  return {
+    id: `op_annex_${startedAt}`,
+    attackerClanId: ARC_CORE_SEED_BLUE_CLAN_ID,
+    defenderClanId: null,
+    targetPlanetId: 'perseus_memorial',
+    phase: 'resolved',
+    startedAt,
+    updatedAt: startedAt,
+    ext: { source: 'player_stellium_annex', decision: 'stellium_annex', previousSide: 'NEUTRAL', newSide: 'BLUE' },
+  };
+}
+
+test('perseus_memorial 플레이어 편입 BLUE(player_annex) — 부트 시드 파이프라인이 RED로 되돌리지 않음', () => {
+  const { holds } = seedPlanetOccupationHoldsFromBalance({ perseus_memorial: annexBlueHold(1000) });
+  assert.equal(holds.perseus_memorial?.occupierClanId, ARC_CORE_SEED_BLUE_CLAN_ID);
+  assert.equal(holds.perseus_memorial?.occupationOrigin, 'player_annex');
+});
+
+test('마커 도입 전 편입 → RED로 되돌려진 hold — 최신 작전이 편입이면 BLUE로 소급 복원', () => {
+  const revertedRed: PlanetClanHold = {
+    planetId: 'perseus_memorial',
+    systemId: 'perseus',
+    occupierClanId: ARC_CORE_SEED_RED_CLAN_ID,
+    deedOwnerClanId: null,
+    homePlayerUid: null,
+    kind: 'clan_hold',
+    capturedAt: 1000,
+  };
+  const r = repairPlayerAnnexHoldsFromOperations({ perseus_memorial: revertedRed }, [annexOp(1000)]);
+  assert.equal(r.changed, true);
+  assert.deepEqual(r.repairedPlanetIds, ['perseus_memorial']);
+  assert.equal(r.holds.perseus_memorial?.occupierClanId, ARC_CORE_SEED_BLUE_CLAN_ID);
+  assert.equal(r.holds.perseus_memorial?.occupationOrigin, 'player_annex');
+  // 복원 후 시드 파이프라인을 다시 거쳐도 BLUE 유지(idempotent)
+  const piped = seedPlanetOccupationHoldsFromBalance(r.holds);
+  assert.equal(piped.holds.perseus_memorial?.occupierClanId, ARC_CORE_SEED_BLUE_CLAN_ID);
+  const again = repairPlayerAnnexHoldsFromOperations(piped.holds, [annexOp(1000)]);
+  assert.equal(again.changed, false);
+});
+
+test('편입 뒤 실제 영토 작전으로 RED 함락 — 최신 작전이 편입이 아니면 복원하지 않음', () => {
+  const capturedRed: PlanetClanHold = {
+    planetId: 'perseus_memorial',
+    systemId: 'perseus',
+    occupierClanId: ARC_CORE_SEED_RED_CLAN_ID,
+    deedOwnerClanId: null,
+    homePlayerUid: null,
+    kind: 'clan_hold',
+    capturedAt: 2000,
+  };
+  const redCaptureOp: ClanWarOperation = {
+    id: 'op_red_2000',
+    attackerClanId: ARC_CORE_SEED_RED_CLAN_ID,
+    defenderClanId: ARC_CORE_SEED_BLUE_CLAN_ID,
+    targetPlanetId: 'perseus_memorial',
+    phase: 'resolved',
+    startedAt: 2000,
+    updatedAt: 2000,
+    ext: { source: 'arc_core_territorial', decision: 'battle', previousSide: 'BLUE', newSide: 'RED' },
+  };
+  const r = repairPlayerAnnexHoldsFromOperations({ perseus_memorial: capturedRed }, [redCaptureOp, annexOp(1000)]);
+  assert.equal(r.changed, false);
+  assert.equal(r.holds.perseus_memorial?.occupierClanId, ARC_CORE_SEED_RED_CLAN_ID);
 });
 
 test('perseus_memorial neutral → RED 시드', () => {

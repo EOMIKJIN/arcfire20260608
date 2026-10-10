@@ -7,10 +7,11 @@ import { resolveTradePortWeaponIdsForZone } from '../arcCore/balance/weaponTrade
 import { resolveCombatWeaponSlotForWeaponId } from '../game/combatWeaponSlots';
 import { isWeaponItemId } from '../game/weaponItemId';
 import {
-  WAVE_TEST_TRADE_PRICE_CREDITS,
   isWaveTestTradeItemDef,
   isWaveTestTradeShipId,
   isWaveTestTradeWeaponId,
+  resolveWaveTestShipTradePrice,
+  resolveWaveTestWeaponTradePrice,
 } from './waveDefenseTestTradeItems';
 
 const WAVE_LASER_ITEM = 'weapon_item_w_laser_wave';
@@ -24,7 +25,12 @@ test('웨이브 테스트 3종 — itemDef·가격 화이트리스트', () => {
   assert.equal(isWaveTestTradeItemDef(getItemDef(WAVE_LASER_ITEM)), true);
   assert.equal(isWaveTestTradeItemDef(getItemDef(WAVE_MISSILE_ITEM)), true);
   assert.equal(isWaveTestTradeItemDef(getItemDef(WAVE_SHIP_ITEM)), true);
-  assert.equal(WAVE_TEST_TRADE_PRICE_CREDITS, 1);
+  // CSV testTradePriceCredits — 테스트 강제가 1 · 운영 무기·전함은 null(정상 가격식)
+  assert.equal(resolveWaveTestWeaponTradePrice('w_laser_wave'), 1);
+  assert.equal(resolveWaveTestWeaponTradePrice('w_missile_wave'), 1);
+  assert.equal(resolveWaveTestShipTradePrice('player_wave_ship'), 1);
+  assert.equal(resolveWaveTestWeaponTradePrice('w_laser_light_01'), null);
+  assert.equal(resolveWaveTestShipTradePrice('Player_scout_ship'), null);
 });
 
 test('무역소 구매 광물 싱크 — CSV 비움 · 웨이브·운영 전부 null', () => {

@@ -1,120 +1,100 @@
 // ============================================================
-// 조선소 광물 업그레이드 — 정본 모델 (기존 CSV 테이블 인라인 동기)
-//   tables/content/mineral_upgrade_level_caps.csv  (강화 상한)
-//   tables/content/mineral_upgrade_stats.csv       (강화 스탯 9종·효과)
-//   tables/content/mineral_upgrade_cost_lines.csv  (스탯별 ore 비용)
-//   tables/content/mineral_upgrade_ore_pools.csv   (ore 분류)
-// 빌드 스크립트 미연동 → 인라인 유지(수정 시 CSV 동기). 기획안 v1은 UI 참고.
+// 조선소 함선 강화(광물 강화) — 정본 모델 (Table-First · 2026-10-10)
+//   tables/content/mineral_upgrade_level_caps.csv   (파일럿 레벨 상한)
+//   tables/content/mineral_upgrade_stats.csv        (강화 스탯·노출·소요시간)
+//   tables/balance/hull_upgrade_tier_policy.csv     (함선 등급별 강화 상한·레벨당 효과 %)
+//   tables/balance/hull_upgrade_cost.csv            (등급·스탯·목표 레벨별 크레딧·광물)
+//   → 등급 표는 tools/balance-tables/derive-hull-upgrade-ladder.mjs 가 규칙으로 생성
+// 대표님 결정(10-10): 강화 완료 = 그 함선 원래 능력치의 160% · 다음 본 등급 기본형의 87.5%
+//                    · 강화 총비용 = 다음 본 등급 구매가의 80% · 함선별 저장(넘겨주지 않음)
 // 스탯 적용은 ShipPerformanceCalculator.applyMineralUpgradeToShipPerformance 경유.
 // ============================================================
 
 import { resolveShipyardMineralUpgradeCapForLevel } from '../../arcCore/balance/facilityShipyardLevelPolicy';
+import {
+  MINERAL_UPGRADE_LEVEL_CAPS_FROM_CSV,
+  MINERAL_UPGRADE_STATS_FROM_CSV,
+  type MineralUpgradeStatCsvRow,
+} from '../../data/generated/csvMineralUpgrade';
+import { HullUpgradeTierPolicy_FROM_BALANCE_CSV } from '../../data/balance/generated/csvHullUpgradeTierPolicy';
+import { HullUpgradeCost_FROM_BALANCE_CSV } from '../../data/balance/generated/csvHullUpgradeCost';
 
 /** 강화 효과 종류 — ShipPerformanceCalculator 에서 해석 */
-export type MineralUpgradeEffectKind =
-  | 'ship_bonus_max_hp'
-  | 'ship_bonus_max_shield'
-  | 'ship_turn_rate_mul_per_level'
-  | 'weapon_damage_flat'
-  | 'weapon_fire_rate_cooldown'
-  | 'weapon_range_flat';
+export type MineralUpgradeEffectKind = MineralUpgradeStatCsvRow['effectKind'];
 
-export type MineralUpgradeGroup = 'ship' | 'weapon_laser' | 'weapon_missile';
+export type MineralUpgradeGroup = MineralUpgradeStatCsvRow['upgradeGroup'];
 
-export type MineralUpgradeStatDef = {
-  statId: string;
-  label: string;
-  upgradeGroup: MineralUpgradeGroup;
-  sortOrder: number;
-  perLevelHint: string;
-  effectKind: MineralUpgradeEffectKind;
-  /** 레벨당 효과량(flat은 가산, mul/cooldown은 배수, per level 누적) */
-  effectValuePerLevel: number;
-  /** cooldown 류 하한(ms 등) */
-  effectFloor: number;
+export type MineralUpgradeStatDef = MineralUpgradeStatCsvRow;
+
+/** 강화 목록 — upgradeEnabled=FALSE(효과 미구현 등) 행 제외 */
+export const MINERAL_UPGRADE_STATS: readonly MineralUpgradeStatDef[] = MINERAL_UPGRADE_STATS_FROM_CSV
+  .filter((s) => s.upgradeEnabled)
+  .slice()
+  .sort((a, b) => a.sortOrder - b.sortOrder);
+
+const MINERAL_UPGRADE_LEVEL_CAPS = MINERAL_UPGRADE_LEVEL_CAPS_FROM_CSV;
+
+export type HullUpgradeTier = {
+  hullTierKey: string;
+  upgradeCap: number;
+  hpPctPerLevel: number;
+  shieldPctPerLevel: number;
+  damagePctPerLevel: number;
+  fireRateCooldownMulPerLevel: number;
+  turnPctPerLevel: number;
+  totalCostCredits: number;
 };
 
-export type MineralUpgradeCostLine = { statId: string; oreId: string; qtyPerTargetLevel: number };
+const TIER_BY_KEY = new Map<string, HullUpgradeTier>(
+  HullUpgradeTierPolicy_FROM_BALANCE_CSV.map((r) => [
+    String(r.hullTierKey),
+    {
+      hullTierKey: String(r.hullTierKey),
+      upgradeCap: Number(r.upgradeCap) || 0,
+      hpPctPerLevel: Number(r.hpPctPerLevel) || 0,
+      shieldPctPerLevel: Number(r.shieldPctPerLevel) || 0,
+      damagePctPerLevel: Number(r.damagePctPerLevel) || 0,
+      fireRateCooldownMulPerLevel: Number(r.fireRateCooldownMulPerLevel) || 1,
+      turnPctPerLevel: Number(r.turnPctPerLevel) || 0,
+      totalCostCredits: Number(r.totalCostCredits) || 0,
+    },
+  ]),
+);
 
-/** mineral_upgrade_stats.csv 정본 동기 */
-/** label/perLevelHint = EN fallback; UI uses `mineralStat.label.*` / `mineralStat.hint.*` */
-export const MINERAL_UPGRADE_STATS: readonly MineralUpgradeStatDef[] = [
-  { statId: 'ship_hull_hp', label: 'Hull Durability (HP)', upgradeGroup: 'ship', sortOrder: 1, perLevelHint: '+50 Max HP', effectKind: 'ship_bonus_max_hp', effectValuePerLevel: 50, effectFloor: 0 },
-  { statId: 'ship_shield', label: 'Shield', upgradeGroup: 'ship', sortOrder: 2, perLevelHint: '+30 Max Shield', effectKind: 'ship_bonus_max_shield', effectValuePerLevel: 30, effectFloor: 0 },
-  { statId: 'ship_turn_speed', label: 'Turn Speed', upgradeGroup: 'ship', sortOrder: 3, perLevelHint: '+3% Turn Rate', effectKind: 'ship_turn_rate_mul_per_level', effectValuePerLevel: 0.03, effectFloor: 0 },
-  { statId: 'weapon_laser_damage', label: 'Laser Damage', upgradeGroup: 'weapon_laser', sortOrder: 4, perLevelHint: '+1 DMG', effectKind: 'weapon_damage_flat', effectValuePerLevel: 1, effectFloor: 0 },
-  { statId: 'weapon_laser_fire_rate', label: 'Laser Fire Rate', upgradeGroup: 'weapon_laser', sortOrder: 5, perLevelHint: 'Cooldown -5%', effectKind: 'weapon_fire_rate_cooldown', effectValuePerLevel: 0.95, effectFloor: 120 },
-  { statId: 'weapon_laser_range', label: 'Laser Range', upgradeGroup: 'weapon_laser', sortOrder: 6, perLevelHint: '+8 px', effectKind: 'weapon_range_flat', effectValuePerLevel: 8, effectFloor: 0 },
-  { statId: 'weapon_missile_damage', label: 'Missile Damage', upgradeGroup: 'weapon_missile', sortOrder: 7, perLevelHint: '+1 DMG', effectKind: 'weapon_damage_flat', effectValuePerLevel: 1, effectFloor: 0 },
-  { statId: 'weapon_missile_fire_rate', label: 'Missile Fire Rate', upgradeGroup: 'weapon_missile', sortOrder: 8, perLevelHint: 'Cooldown -5%', effectKind: 'weapon_fire_rate_cooldown', effectValuePerLevel: 0.95, effectFloor: 120 },
-  { statId: 'weapon_missile_range', label: 'Missile Range', upgradeGroup: 'weapon_missile', sortOrder: 9, perLevelHint: '+10 px', effectKind: 'weapon_range_flat', effectValuePerLevel: 10, effectFloor: 0 },
-];
-
-/** mineral_upgrade_cost_lines.csv 정본 동기 — N강 비용 = qtyPerTargetLevel × N */
-export const MINERAL_UPGRADE_COST_LINES: readonly MineralUpgradeCostLine[] = [
-  { statId: 'ship_hull_hp', oreId: 'ore_ferrite', qtyPerTargetLevel: 12 },
-  { statId: 'ship_hull_hp', oreId: 'ore_silicate', qtyPerTargetLevel: 8 },
-  { statId: 'ship_shield', oreId: 'ore_ferrite', qtyPerTargetLevel: 11 },
-  { statId: 'ship_shield', oreId: 'ore_silicate', qtyPerTargetLevel: 7 },
-  { statId: 'ship_turn_speed', oreId: 'ore_ferrite', qtyPerTargetLevel: 8 },
-  { statId: 'ship_turn_speed', oreId: 'ore_silicate', qtyPerTargetLevel: 4 },
-  { statId: 'ship_turn_speed', oreId: 'ore_crystal', qtyPerTargetLevel: 2 },
-  { statId: 'weapon_laser_damage', oreId: 'ore_ferrite', qtyPerTargetLevel: 9 },
-  { statId: 'weapon_laser_damage', oreId: 'ore_silicate', qtyPerTargetLevel: 6 },
-  { statId: 'weapon_laser_fire_rate', oreId: 'ore_ferrite', qtyPerTargetLevel: 9 },
-  { statId: 'weapon_laser_fire_rate', oreId: 'ore_silicate', qtyPerTargetLevel: 5 },
-  { statId: 'weapon_laser_fire_rate', oreId: 'ore_crystal', qtyPerTargetLevel: 1 },
-  { statId: 'weapon_laser_range', oreId: 'ore_ferrite', qtyPerTargetLevel: 7 },
-  { statId: 'weapon_laser_range', oreId: 'ore_silicate', qtyPerTargetLevel: 5 },
-  { statId: 'weapon_missile_damage', oreId: 'ore_ferrite', qtyPerTargetLevel: 11 },
-  { statId: 'weapon_missile_damage', oreId: 'ore_silicate', qtyPerTargetLevel: 7 },
-  { statId: 'weapon_missile_fire_rate', oreId: 'ore_ferrite', qtyPerTargetLevel: 10 },
-  { statId: 'weapon_missile_fire_rate', oreId: 'ore_silicate', qtyPerTargetLevel: 6 },
-  { statId: 'weapon_missile_fire_rate', oreId: 'ore_crystal', qtyPerTargetLevel: 1 },
-  { statId: 'weapon_missile_range', oreId: 'ore_ferrite', qtyPerTargetLevel: 8 },
-  { statId: 'weapon_missile_range', oreId: 'ore_silicate', qtyPerTargetLevel: 6 },
-];
-
-/** mineral_upgrade_level_caps.csv 정본 동기 */
-const MINERAL_UPGRADE_LEVEL_CAPS: readonly { combatLevelMaxInclusive: number; maxUpgradeLevel: number }[] = [
-  { combatLevelMaxInclusive: 14, maxUpgradeLevel: 5 },
-  { combatLevelMaxInclusive: 30, maxUpgradeLevel: 8 },
-  { combatLevelMaxInclusive: 50, maxUpgradeLevel: 12 },
-  { combatLevelMaxInclusive: 999, maxUpgradeLevel: 15 },
-];
+/** 함선 등급 강화 규칙 — 표에 없는 등급(사다리 밖)은 null(강화 불가) */
+export function getHullUpgradeTier(hullTierKey: string | null | undefined): HullUpgradeTier | null {
+  return TIER_BY_KEY.get(String(hullTierKey ?? '').trim()) ?? null;
+}
 
 export function resolveMineralUpgradeMaxLevel(combatLevel: number): number {
   const lv = Math.max(1, Math.floor(Number.isFinite(combatLevel) ? combatLevel : 1));
   for (const row of MINERAL_UPGRADE_LEVEL_CAPS) {
     if (lv <= row.combatLevelMaxInclusive) return row.maxUpgradeLevel;
   }
-  return 15;
+  return MINERAL_UPGRADE_LEVEL_CAPS[MINERAL_UPGRADE_LEVEL_CAPS.length - 1]?.maxUpgradeLevel ?? 0;
 }
 
-/** combatLevel 캡 × 조선소 mineralUpgradeCap — §2-3 설계 정본 */
-export function getFinalMineralUpgradeCap(combatLevel: number, shipyardLevel: number): number {
+/** 최종 상한 = min(파일럿 레벨 상한, 조선소 상한, 함선 등급 상한) */
+export function getFinalMineralUpgradeCap(
+  combatLevel: number,
+  shipyardLevel: number,
+  hullTierKey?: string | null,
+): number {
   const combatCap = resolveMineralUpgradeMaxLevel(combatLevel);
   const shipyardCap = shipyardLevel > 0
     ? resolveShipyardMineralUpgradeCapForLevel(shipyardLevel)
     : combatCap;
-  return Math.min(combatCap, shipyardCap);
+  const tier = hullTierKey === undefined ? null : getHullUpgradeTier(hullTierKey);
+  const hullCap = hullTierKey === undefined ? combatCap : (tier?.upgradeCap ?? 0);
+  return Math.min(combatCap, shipyardCap, hullCap);
 }
 
-/**
- * 강화 소요시간 기본값(초) — 행성개발 게이지와 동일한 진행 표시를 위한 디폴트.
- * 조건·수치(스탯·목표레벨별 차등, 조선소 레벨 단축 등)는 향후 조절 예정.
- */
-export const MINERAL_UPGRADE_DEFAULT_DURATION_SEC = 60;
-
-/**
- * statId·목표레벨 기준 강화 소요시간(초). 현재는 기본 디폴트만 반환하며,
- * 향후 스탯 그룹·레벨·조선소 등급에 따른 차등을 이 함수에 확장한다.
- */
+/** statId·목표레벨 기준 강화 소요시간(초) — CSV `durationSec` */
 export function resolveMineralUpgradeDurationSec(
-  _statId: string,
+  statId: string,
   _targetLevel: number,
 ): number {
-  return MINERAL_UPGRADE_DEFAULT_DURATION_SEC;
+  return STAT_ALL_BY_ID.get(statId)?.durationSec ?? 0;
 }
 
 /** job 진행률(0~100) — 시작·완료 시각 기반. 게이지 표시에 사용. */
@@ -129,6 +109,9 @@ export function resolveMineralUpgradeJobProgressPct(
   return Math.max(0, Math.min(100, Math.round((elapsed / total) * 100)));
 }
 
+/** 효과 해석용 — 숨긴 행 포함(기존 저장 레벨 해석) */
+const STAT_ALL_BY_ID = new Map(MINERAL_UPGRADE_STATS_FROM_CSV.map((s) => [s.statId, s]));
+/** 강화 가능(노출) 스탯 */
 const STAT_BY_ID = new Map(MINERAL_UPGRADE_STATS.map((s) => [s.statId, s]));
 
 export function listMineralUpgradeStats(): readonly MineralUpgradeStatDef[] {
@@ -136,43 +119,78 @@ export function listMineralUpgradeStats(): readonly MineralUpgradeStatDef[] {
 }
 
 export function getMineralUpgradeStatDef(statId: string): MineralUpgradeStatDef | undefined {
-  return STAT_BY_ID.get(statId);
+  return STAT_ALL_BY_ID.get(statId);
 }
 
 export function isMineralUpgradeStatId(statId: string): boolean {
   return STAT_BY_ID.has(statId);
 }
 
-/** statId 의 N강(목표 레벨) 달성에 필요한 ore 비용 목록 — qtyPerTargetLevel × targetLevel */
-export function getMineralUpgradeOreCost(
+export type MineralUpgradeCost = { credits: number; ores: { oreId: string; qty: number }[] };
+
+const COST_BY_KEY = new Map<string, MineralUpgradeCost>();
+for (const r of HullUpgradeCost_FROM_BALANCE_CSV) {
+  const key = `${r.hullTierKey}|${r.statId}|${r.targetLevel}`;
+  const c = COST_BY_KEY.get(key) ?? { credits: 0, ores: [] };
+  c.credits += Number(r.credits) || 0;
+  const qty = Number(r.oreQty) || 0;
+  if (r.oreId && qty > 0) {
+    // 같은 광물은 합친다(검사·차감 일치)
+    const same = c.ores.find((o) => o.oreId === String(r.oreId));
+    if (same) same.qty += qty;
+    else c.ores.push({ oreId: String(r.oreId), qty });
+  }
+  COST_BY_KEY.set(key, c);
+}
+
+/** 함선 등급·스탯·목표 레벨 강화 비용(크레딧 + 광물). 표에 없으면 null(강화 불가). */
+export function getMineralUpgradeCost(
+  hullTierKey: string | null | undefined,
   statId: string,
   targetLevel: number,
-): { oreId: string; qty: number }[] {
-  const lv = Math.max(1, Math.floor(targetLevel));
-  return MINERAL_UPGRADE_COST_LINES
-    .filter((c) => c.statId === statId)
-    .map((c) => ({ oreId: c.oreId, qty: c.qtyPerTargetLevel * lv }));
+): MineralUpgradeCost | null {
+  return COST_BY_KEY.get(`${String(hullTierKey ?? '').trim()}|${statId}|${Math.max(1, Math.floor(targetLevel))}`) ?? null;
+}
+
+/** 광물 단가로 환산한 강화 1회 투자액(크레딧) — 함선 판매가 반영용 */
+export function mineralUpgradeCostCreditValue(
+  cost: MineralUpgradeCost,
+  orePrice: (oreId: string) => number,
+): number {
+  let v = cost.credits;
+  for (const o of cost.ores) v += o.qty * Math.max(0, orePrice(o.oreId));
+  return Math.round(v);
 }
 
 /**
- * statId 의 현재 레벨 효과량.
- * - flat 류(hp/shield/damage/range): value × level
- * - mul per level(turn): (1 + perLevel)^level 배수
- * - cooldown: perLevel^level 배수(하한은 적용 시 effectFloor 로 클램프)
+ * statId 의 현재 레벨 효과량(함선 등급별 · hull_upgrade_tier_policy).
+ * - ship_hp_pct / ship_shield_pct / weapon_damage_pct: 1 + 레벨 × 레벨당% (배수)
+ * - ship_turn_rate_mul_per_level: 1 + 레벨 × 레벨당% (배수)
+ * - weapon_fire_rate_cooldown: 레벨당 배수^레벨 (하한은 적용 시 effectFloor)
+ * 등급 표가 없으면 효과 없음(배수 1).
  */
-export function computeMineralUpgradeEffectScalar(statId: string, level: number): number {
-  const def = STAT_BY_ID.get(statId);
-  if (!def) return 0;
+export function computeMineralUpgradeEffectScalar(
+  statId: string,
+  level: number,
+  hullTierKey?: string | null,
+): number {
+  const def = STAT_ALL_BY_ID.get(statId);
+  const tier = getHullUpgradeTier(hullTierKey);
   const lv = Math.max(0, Math.floor(level));
-  if (lv <= 0) {
-    return def.effectKind === 'ship_turn_rate_mul_per_level' || def.effectKind === 'weapon_fire_rate_cooldown' ? 1 : 0;
-  }
+  if (!def || !tier || lv <= 0) return 1;
+  const capped = Math.min(lv, tier.upgradeCap);
   switch (def.effectKind) {
+    case 'ship_hp_pct':
+      return 1 + capped * tier.hpPctPerLevel;
+    case 'ship_shield_pct':
+      return 1 + capped * tier.shieldPctPerLevel;
+    case 'weapon_damage_pct':
+      return 1 + capped * tier.damagePctPerLevel;
     case 'ship_turn_rate_mul_per_level':
-      return Math.pow(1 + def.effectValuePerLevel, lv);
+      return 1 + capped * tier.turnPctPerLevel;
     case 'weapon_fire_rate_cooldown':
-      return Math.pow(def.effectValuePerLevel, lv);
+      return Math.pow(tier.fireRateCooldownMulPerLevel, capped);
     default:
-      return def.effectValuePerLevel * lv;
+      return 1;
   }
 }

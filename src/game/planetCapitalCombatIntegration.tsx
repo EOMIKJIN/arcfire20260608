@@ -57,7 +57,12 @@ export const PlanetCapitalCombatRoot = memo(function PlanetCapitalCombatRoot({
     };
   }, [active]);
 
-  if (!active || !Binder) {
+  /**
+   * Binder를 한 번 불러온 뒤에는 비활성이어도 계속 감싼다(루프 정지·버퍼 비움 상태, :Binder active=false).
+   * Fragment ↔ Binder로 바꾸면 요소 타입이 달라져 전투 종료마다 허브 서브트리 전체가 재마운트되고,
+   * 이전 Skia 뷰·이미지가 GC 전까지 이중으로 남았다(2026-10-10 허브 전투 1회당 Native +20~25 잔류).
+   */
+  if (!Binder) {
     return <>{children}</>;
   }
 

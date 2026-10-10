@@ -23,6 +23,7 @@ import {
   lookupTcl,
 } from './catalog';
 import { EPOCH_MS, TICKS_PER_DAY } from './clock';
+import { getBlueTeamVaultSeedCredits } from '../../../src/arcCore/economy/planetUpkeepPolicy';
 import { starterGemBalance } from './bmWallet';
 import { hullFundGap } from './combatEfficiency';
 import { STARTER_HULL_SHIP_ID } from './liveCombat';
@@ -88,7 +89,8 @@ export function seedWorld(input: { runId: string; persona: PersonaId }): WorldSt
     level: 1,
     totalExp: 0,
     credits: 5000,
-    blueVault: 16000,
+    // 실기 블루팀 공용 금고 시드(arc_core_planet_upkeep_policy.csv · Table-First) — 예전 하드코딩 16000
+    blueVault: getBlueTeamVaultSeedCredits(),
     combatWins: 0,
     combatLosses: 0,
     trades: 0,

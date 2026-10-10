@@ -73,6 +73,21 @@ export function scheduleNativeHeapPurgeAfterStageExit(): void {
   }, 900);
 }
 
+let settlePurgeTimer: ReturnType<typeof setTimeout> | null = null;
+
+/**
+ * STAGE 진입 직후 — 이전 화면 언마운트·해제가 끝난 뒤(기본 2.5초) 한 번 반환.
+ * 진입 순간 purge는 이전 화면이 아직 살아 있어 반환할 페이지가 거의 없다.
+ * 연속 호출은 마지막 1회로 합친다.
+ */
+export function scheduleNativeHeapPurgeAfterSettle(delayMs = 2500): void {
+  if (settlePurgeTimer) clearTimeout(settlePurgeTimer);
+  settlePurgeTimer = setTimeout(() => {
+    settlePurgeTimer = null;
+    void purgeNativeHeapAsync().then((r) => logNativeHeapPurge(r.ok));
+  }, delayMs);
+}
+
 /** Android — 런처 액티비티 재시작. iOS·미지원 환경은 ok:false */
 export async function restartNativeAppAsync(): Promise<RestartAppResult> {
   const mod = getNativeModule();

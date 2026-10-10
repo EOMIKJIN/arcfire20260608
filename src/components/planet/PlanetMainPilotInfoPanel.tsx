@@ -30,6 +30,8 @@ const EXPAND_ANIM_MS = 280;
 
 const PASSPORT_DOC_HEADER_PX = 22;
 
+const HEADER_HIT_SLOP = { top: 8, bottom: 8, left: 0, right: 0 } as const;
+
 const PASSPORT = {
   docHeaderBg: 'rgba(24, 28, 36, 0.98)',
   photoColumnBg: 'rgba(16, 20, 28, 0.92)',
@@ -87,6 +89,7 @@ export const PlanetMainPilotInfoPanel = memo(function PlanetMainPilotInfoPanel({
 }: Props) {
   const t = useT();
   const [expanded, setExpanded] = useState(false);
+  const [headerPressed, setHeaderPressed] = useState(false);
   const expandAnim = useRef(new Animated.Value(0)).current;
 
   const photoColumnWidthPx = resolvePassportIdentityPhotoWidthPx();
@@ -172,21 +175,27 @@ export const PlanetMainPilotInfoPanel = memo(function PlanetMainPilotInfoPanel({
             </View>
           </View>
         </Animated.View>
-        <Pressable
-          style={({ pressed }) => [
+        <View
+          style={[
             styles.headerBtn,
             expanded && styles.headerBtnExpanded,
-            pressed && styles.headerBtnPressed,
+            headerPressed && styles.headerBtnPressed,
           ]}
-          onPress={() => setExpanded((v) => !v)}
-          accessibilityRole="button"
-          accessibilityState={{ expanded }}
-          accessibilityLabel={t('pilotPanel.a11y')}
-          hitSlop={8}
         >
           <Text style={styles.headerText}>{t('pilotPanel.header')}</Text>
           <Text style={styles.chevron}>{expanded ? '▼' : '▲'}</Text>
-        </Pressable>
+          {/* 좌우 무역소·출발 오터치 방지 — 가로 3등분 중 가운데만 터치 */}
+          <Pressable
+            style={styles.headerHitCenter}
+            onPress={() => setExpanded((v) => !v)}
+            onPressIn={() => setHeaderPressed(true)}
+            onPressOut={() => setHeaderPressed(false)}
+            accessibilityRole="button"
+            accessibilityState={{ expanded }}
+            accessibilityLabel={t('pilotPanel.a11y')}
+            hitSlop={HEADER_HIT_SLOP}
+          />
+        </View>
       </View>
     </View>
   );
@@ -332,6 +341,13 @@ const styles = StyleSheet.create({
   },
   headerBtnPressed: {
     opacity: 0.9,
+  },
+  headerHitCenter: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: '33.333%',
+    width: '33.334%',
   },
   headerText: {
     fontFamily: FONTS.mono,

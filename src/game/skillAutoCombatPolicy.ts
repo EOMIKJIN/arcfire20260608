@@ -96,6 +96,28 @@ export function resolveSkillAutoCombatPolicy(): SkillAutoCombatPolicy {
   return cached;
 }
 
+let rawKv: Map<string, string> | null = null;
+
+function readRawKv(): Map<string, string> {
+  if (!rawKv) {
+    const m = new Map<string, string>();
+    for (const row of SkillAutoCombatPolicy_FROM_BALANCE_CSV) m.set(String(row.key).trim(), String(row.value).trim());
+    rawKv = m;
+  }
+  return rawKv;
+}
+
+/** 스킬 전투 정책 수치 — 코드 기본값 없음(키 누락은 테스트로 차단 · NaN) */
+export function skillCombatPolicyNum(key: string): number {
+  const raw = readRawKv().get(key);
+  return raw == null || raw === '' ? Number.NaN : Number(raw);
+}
+
+/** 스킬 전투 정책 문자열(파이프 목록 등) */
+export function skillCombatPolicyStr(key: string): string {
+  return readRawKv().get(key) ?? '';
+}
+
 export function skillTurnMs(): number {
   return resolveSkillAutoCombatPolicy().turnSec * 1000;
 }

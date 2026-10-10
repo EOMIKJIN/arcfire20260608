@@ -5,9 +5,11 @@
  * 30분 FQA 루프에서 1회씩 돈다. 앱·게임 코드는 읽기만 한다.
  */
 import { execFileSync, spawnSync } from 'node:child_process';
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { toolRoot } from './io';
+import { checkContentBands, checkHullBuyWindow, checkLevelCliffs } from './progressionChecks';
 
 export type StageState = 'OK' | 'RUN' | 'WAIT' | 'HOLD' | 'RISK' | 'STOP';
 
@@ -39,7 +41,17 @@ export type ProcessItem = {
 
 export type BenchRecord = {
   at: string;
-  avg: { level: number; quests: number; story: number; hullRank: number; fuel: number };
+  avg: {
+    level: number;
+    quests: number;
+    story: number;
+    hullRank: number;
+    fuel: number;
+    /** 밸런싱 안정화(2026-10-10) — 첫 상위 함선 구매 레벨 · 구매 시드 수 · 레벨 시간 절벽 */
+    hullBuyLevel?: number;
+    hullBuySeeds?: number;
+    cliffs?: string[];
+  };
   total: { hardStalls: number; sectionStalls: number };
 };
 
@@ -62,6 +74,8 @@ export type ProcessInput = {
   handoffMs: number | null;
   items: { item: ProcessItem; done: boolean; changedMs: number | null }[];
   mirrorChanged: { path: string; ms: number }[];
+  /** 트윈 규칙을 실기에 맞춘 기준 시각 — 이전 벤치는 「최고 대비 후퇴」 비교에서 제외 */
+  benchBaselineMs?: number;
 };
 
 const HOUR = 3600_000;
@@ -187,8 +201,32 @@ export function evaluateProcess(input: ProcessInput): StageCheck[] {
     benchState = 'RISK';
     benchDetail += ` — 직전 대비 후퇴 (L${prev.avg.level}·본편 ${prev.avg.story}·퀘스트 ${prev.avg.quests})`;
   }
+  // 직전 1회 비교만으로는 하루 떨어진 뒤 낮은 값끼리 비교해 OK가 된다(2026-10-08 L29→25 를 3일간 놓침).
+  // 최근 7일 최고 기록보다 낮으면 회복할 때까지 RISK 유지.
+  if (last) {
+    // 트윈 규칙을 의도적으로 실기에 맞춘 날(--bench-baseline) 이전 기록은 비교에서 뺀다.
+    const weekAgo = Math.max(Date.parse(last.at) - 7 * 24 * HOUR, input.benchBaselineMs ?? 0);
+    const recent = input.bench.filter((b) => Date.parse(b.at) >= weekAgo);
+    const best = recent.reduce<BenchRecord | null>((acc, b) => {
+      if (!acc) return b;
+      const score = (r: BenchRecord) => r.avg.story * 1e6 + r.avg.quests * 1e3 + r.avg.level;
+      return score(b) > score(acc) ? b : acc;
+    }, null);
+    if (best && best !== last && (last.avg.story < best.avg.story || last.avg.quests < best.avg.quests || last.avg.level < best.avg.level)) {
+      benchState = 'RISK';
+      benchDetail += ` — 7일 최고 대비 후퇴 (L${best.avg.level}·본편 ${best.avg.story}·퀘스트 ${best.avg.quests} @ ${best.at.slice(0, 10)})`;
+    }
+  }
   if (benchState === 'OK' && benchAgeH > 26) benchState = 'WAIT';
   push({ id: 'bot:bench', lane: 1, label: '봇 성능 벤치 (1,200일 × 4시드 · 일 1회)', state: benchState, owner: '김플레이', detail: benchDetail });
+
+  // ── 밸런싱 안정화(대표님 2026-10-10): 레벨 = 플레이 시간 기준 절벽·정체·공백 ──
+  const hullWin = last ? checkHullBuyWindow(last.avg) : { state: 'WAIT' as const, detail: '벤치 기록 없음' };
+  push({ id: 'bal:hull-window', lane: 1, label: '함선 첫 구매 레벨 — 사다리 목표 창', state: hullWin.state, owner: '김플레이', detail: hullWin.detail });
+  const cliff = checkLevelCliffs(last?.avg.cliffs);
+  push({ id: 'bal:level-cliff', lane: 1, label: '레벨 시간 절벽(이웃 대비 설계비×1.5 초과)', state: cliff.state, owner: '김플레이', detail: cliff.detail });
+  const bands = checkContentBands();
+  push({ id: 'bal:content-bands', lane: 1, label: '5레벨 구간별 새 성장 요소(함선·무기·장비·스킬)', state: bands.state, owner: '김플레이', detail: bands.detail });
 
   // ── 등록 항목 (1단 김플레이 · 3단 김팀장·대표님) ──
   for (const { item, done, changedMs } of input.items) {
@@ -273,7 +311,26 @@ export function renderBoard(checks: StageCheck[], nowMs: number): string {
   return lines.join('\n') + '\n';
 }
 
-type BoardState = { version: 1; states: Record<string, StageState>; mirrorAckMs: number; lastAlertMs: number };
+type BoardState = {
+  version: 1;
+  states: Record<string, StageState>;
+  mirrorAckMs: number;
+  lastAlertMs: number;
+  /** 반영 확인 시점의 파일 내용 해시 — 수정 시각만 바뀐 경우(데일리 커밋 재기록 등) 오탐 방지 (2026-10-10) */
+  mirrorAckHashes?: Record<string, string>;
+  /** `--bench-baseline` 시각 — 이전 벤치는 최고 대비 비교에서 제외 */
+  benchBaselineMs?: number;
+};
+
+/** 줄바꿈 차이를 무시한 내용 해시. 없는 파일은 null. */
+function contentHash(file: string): string | null {
+  try {
+    const text = fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n');
+    return crypto.createHash('sha1').update(text).digest('hex');
+  } catch {
+    return null;
+  }
+}
 
 /** 이전 판정과 비교해 알릴 변화만 고른다. 나빠진 것과 풀린 것. */
 export function stateChanges(prev: Record<string, StageState>, checks: StageCheck[]): { worse: StageCheck[]; cleared: StageCheck[] } {
@@ -398,7 +455,10 @@ export function collectProcessInput(p: ProcessPaths, nowMs: number, cardRaiseHol
   const mirrorChanged: { path: string; ms: number }[] = [];
   for (const f of mirrorPaths) {
     const ms = mtimeMs(path.join(p.root, f));
-    if (ms != null && ms > board.mirrorAckMs) mirrorChanged.push({ path: f, ms });
+    if (ms == null || ms <= board.mirrorAckMs) continue;
+    const ackHash = board.mirrorAckHashes?.[f];
+    if (ackHash && ackHash === contentHash(path.join(p.root, f))) continue;
+    mirrorChanged.push({ path: f, ms });
   }
 
   let handoffStatus: string | null = null;
@@ -434,6 +494,7 @@ export function collectProcessInput(p: ProcessPaths, nowMs: number, cardRaiseHol
       handoffMs,
       items,
       mirrorChanged,
+      benchBaselineMs: board.benchBaselineMs,
     },
   };
 }
@@ -528,14 +589,37 @@ export function runProcessBoard(opts: { paths?: ProcessPaths; nowMs?: number; ca
   }
   fs.writeFileSync(
     path.join(p.learned, 'process-board-state.json'),
-    JSON.stringify({ version: 1, states: nextStates, mirrorAckMs: state.mirrorAckMs, lastAlertMs: alerted ? nowMs : state.lastAlertMs }, null, 2),
+    JSON.stringify({
+      version: 1,
+      states: nextStates,
+      mirrorAckMs: state.mirrorAckMs,
+      lastAlertMs: alerted ? nowMs : state.lastAlertMs,
+      mirrorAckHashes: state.mirrorAckHashes,
+      benchBaselineMs: state.benchBaselineMs,
+    }, null, 2),
     'utf8',
   );
   return { checks, alerted, boardFile };
 }
 
+/** 김플레이가 트윈 규칙을 실기에 맞춰 바꿨음 — 이후 벤치를 새 비교 기준으로 쓴다. */
+export function setBenchBaseline(p: ProcessPaths = defaultProcessPaths(), nowMs = Date.now()): void {
+  const state = readBoardState(p.learned);
+  fs.writeFileSync(path.join(p.learned, 'process-board-state.json'), JSON.stringify({ ...state, benchBaselineMs: nowMs }, null, 2), 'utf8');
+}
+
 /** 김플레이가 게임 변경을 트윈에 반영했다고 확인. */
 export function ackMirror(p: ProcessPaths = defaultProcessPaths(), nowMs = Date.now()): void {
   const state = readBoardState(p.learned);
-  fs.writeFileSync(path.join(p.learned, 'process-board-state.json'), JSON.stringify({ ...state, mirrorAckMs: nowMs }, null, 2), 'utf8');
+  const reg = readJson<{ twinMirrorPaths?: string[] }>(p.itemsFile) ?? {};
+  const mirrorAckHashes: Record<string, string> = {};
+  for (const f of reg.twinMirrorPaths ?? []) {
+    const h = contentHash(path.join(p.root, f));
+    if (h) mirrorAckHashes[f] = h;
+  }
+  fs.writeFileSync(
+    path.join(p.learned, 'process-board-state.json'),
+    JSON.stringify({ ...state, mirrorAckMs: nowMs, mirrorAckHashes }, null, 2),
+    'utf8',
+  );
 }

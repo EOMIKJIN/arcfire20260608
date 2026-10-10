@@ -30,6 +30,7 @@ import { npcCaptainLeaderUid, normalizeAiClanId } from '../clanWar/aiNpcClanIds'
 import { listAiClanTerritoryHubClans } from '../clanWar/aiClanRegistry';
 import {
   applyPlanetOccupationSeedPipeline,
+  repairPlayerAnnexHoldsFromOperations,
   repairRuntimeNeutralizedHoldsFromOperations,
 } from '../clanWar/planetOccupationSeedPipeline';
 import {
@@ -222,10 +223,23 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
       const demotedCombatDisabled = await demoteOccupationCombatDisabledDynamicZones();
       const loaded = await loadClanWarFoundationDb();
       // 소급 수리 — 마커 도입 전 전투 승리·반란 중립화가 시드 복구로 되돌려진 hold 복원
-      const repaired = repairRuntimeNeutralizedHoldsFromOperations(
+      const repairedNeutral = repairRuntimeNeutralizedHoldsFromOperations(
         loaded.planetHolds,
         loaded.operations,
       );
+      // 소급 수리 — 플레이어 편입(블루)이 시드 복구로 원래 국가로 되돌려진 hold 복원(2026-10-10)
+      const repairedAnnex = repairPlayerAnnexHoldsFromOperations(
+        repairedNeutral.holds,
+        loaded.operations,
+      );
+      if (repairedAnnex.changed && typeof __DEV__ !== 'undefined' && __DEV__) {
+        // eslint-disable-next-line no-console
+        console.log(`[territorial] 편입 hold 소급 복원: ${repairedAnnex.repairedPlanetIds.join(',')}`);
+      }
+      const repaired = {
+        holds: repairedAnnex.holds,
+        changed: repairedNeutral.changed || repairedAnnex.changed,
+      };
       const piped = applyPlanetOccupationSeedPipeline(repaired.holds, loaded.clans);
       set({
         clans: piped.clans,
@@ -655,6 +669,8 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
     }
 
     const now = Date.now();
+    /** 플레이어 편입(블루) — 부트 시드 복구가 원래 국가로 되돌리지 않게 표시(2026-10-10 페르세우스) */
+    const playerAnnex = operationMeta.source === 'player_stellium_annex' && factionSide === 'BLUE';
     const nextHold: PlanetClanHold = {
       planetId,
       systemId,
@@ -664,6 +680,7 @@ export const useClanWarFoundationStore = create<ClanWarFoundationState>((set, ge
       kind,
       capturedAt: now,
       neutralizedAt: markPlayerNeutralized ? now : null,
+      occupationOrigin: playerAnnex ? 'player_annex' : null,
     };
 
     const attackerClanId =

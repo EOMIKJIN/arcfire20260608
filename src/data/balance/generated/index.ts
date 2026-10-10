@@ -33,7 +33,6 @@ export { CapitalShipDurabilityPolicy_FROM_BALANCE_CSV } from './csvCapitalShipDu
 export { CapitalShipHullTierMapping_FROM_BALANCE_CSV } from './csvCapitalShipHullTierMapping';
 export { CapitalShipInstanceClass_FROM_BALANCE_CSV } from './csvCapitalShipInstanceClass';
 export { CapitalShipLoadoutProfile_FROM_BALANCE_CSV } from './csvCapitalShipLoadoutProfile';
-export { CapitalShipMaxUpgradeValue_FROM_BALANCE_CSV } from './csvCapitalShipMaxUpgradeValue';
 export { CapitalShipTradeListingPolicy_FROM_BALANCE_CSV } from './csvCapitalShipTradeListingPolicy';
 export { CapitalShipTradePricePolicy_FROM_BALANCE_CSV } from './csvCapitalShipTradePricePolicy';
 export { CapitalShipWaveTierClass_FROM_BALANCE_CSV } from './csvCapitalShipWaveTierClass';
@@ -65,6 +64,8 @@ export { GemExchangeCatalog_FROM_BALANCE_CSV } from './csvGemExchangeCatalog';
 export { GemPackCatalog_FROM_BALANCE_CSV } from './csvGemPackCatalog';
 export { GemSpendCatalog_FROM_BALANCE_CSV } from './csvGemSpendCatalog';
 export { HostileEnemyWeaponLoadoutPolicy_FROM_BALANCE_CSV } from './csvHostileEnemyWeaponLoadoutPolicy';
+export { HullUpgradeCost_FROM_BALANCE_CSV } from './csvHullUpgradeCost';
+export { HullUpgradeTierPolicy_FROM_BALANCE_CSV } from './csvHullUpgradeTierPolicy';
 export { ItemDurabilityWearPolicy_FROM_BALANCE_CSV } from './csvItemDurabilityWearPolicy';
 export { LevelBandTargets_FROM_BALANCE_CSV } from './csvLevelBandTargets';
 export { MiningDropWeightPolicy_FROM_BALANCE_CSV } from './csvMiningDropWeightPolicy';
@@ -101,7 +102,10 @@ export { PlanetWaveDefensePolicy_FROM_BALANCE_CSV } from './csvPlanetWaveDefense
 export { PlayScenarioEconomy_FROM_BALANCE_CSV } from './csvPlayScenarioEconomy';
 export { PlayScenarioZonePlanets_FROM_BALANCE_CSV } from './csvPlayScenarioZonePlanets';
 export { PopulationDomeWdiStability_FROM_BALANCE_CSV } from './csvPopulationDomeWdiStability';
+export { ProgressionLadderPolicy_FROM_BALANCE_CSV } from './csvProgressionLadderPolicy';
+export { ProgressionSpine_FROM_BALANCE_CSV } from './csvProgressionSpine';
 export { RewardTierBruPolicy_FROM_BALANCE_CSV } from './csvRewardTierBruPolicy';
+export { ShipEquipmentEffectPolicy_FROM_BALANCE_CSV } from './csvShipEquipmentEffectPolicy';
 export { SkillAutoCombatPolicy_FROM_BALANCE_CSV } from './csvSkillAutoCombatPolicy';
 export { StelliumAnnexPolicy_FROM_BALANCE_CSV } from './csvStelliumAnnexPolicy';
 export { StelliumColonizePolicy_FROM_BALANCE_CSV } from './csvStelliumColonizePolicy';

@@ -28,6 +28,7 @@ import { usePlayerStore } from '../store/playerStore';
 import { reversePlanetTradeTransactionFee } from '../arcCore/economy/applyPlanetTradeTransactionFee';
 import { useMissionStore } from '../store/missionStore';
 import { generateMarketByItemIds, getBuyPrice, getSellPrice } from '../engine/TradeEngine';
+import { ProgressionLadderPolicy_FROM_BALANCE_CSV } from '../data/balance/generated/csvProgressionLadderPolicy';
 import {
   applyBlackMarketBossToCatalogIds,
   applyPlayerTradeBuyUnitPrice,
@@ -226,6 +227,18 @@ export function resolveTradeBuyPickerMaxQty(listing: MarketListing): number {
   return Math.max(1, listing.stock);
 }
 
+/** 팔리는 함선(같은 종류 중 먼저 들어온 격납고 항목 = removeHangarShipByNpcId 순서)의 강화 투자 반영분 */
+export function resolveCapitalShipUpgradeSaleBonus(itemDef: ItemDef): number {
+  const npcId = typeof itemDef.attrs?.npcCapitalShipId === 'string' ? itemDef.attrs.npcCapitalShipId.trim() : '';
+  if (!npcId) return 0;
+  const entry = usePlayerStore.getState().player?.shipHangar.find((h) => h.npcCapitalShipId === npcId);
+  const invested = entry?.mineralUpgradeInvestedCredits ?? 0;
+  if (invested <= 0) return 0;
+  const row = ProgressionLadderPolicy_FROM_BALANCE_CSV.find((r) => r.key === 'upgrade_sale_value_share');
+  const share = Number(row?.value);
+  return Number.isFinite(share) && share > 0 ? Math.floor(invested * share) : 0;
+}
+
 export function resolveInventorySellPrice(
   planetId: string,
   goodId: string,
@@ -235,6 +248,11 @@ export function resolveInventorySellPrice(
   qty = 1,
 ): number {
   const itemDef = resolveItemDefById(goodId);
+  if (itemDef?.type === 'capital_ship' && listing) {
+    // 강화한 함선 — 판매가에 강화 투자 × upgrade_sale_value_share(대표님 2026-10-10). 강화 자체는 넘기지 않음.
+    const base = applyPlayerTradeSellUnitPrice(getSellPrice(listing, { planetId, goodId }), undefined, qty);
+    return base + resolveCapitalShipUpgradeSaleBonus(itemDef);
+  }
   if (itemDef?.type === 'trade_route') {
     const tgSell = resolveTradeRoutePlayerSellUnit(planetId, goodId, inventoryBuyUnitPrice);
     if (tgSell > 0) return applyPlayerTradeSellUnitPrice(tgSell, undefined, qty);

@@ -1,0 +1,29 @@
+diff --git a/node_modules/@shopify/react-native-skia/android/cpp/rnskia-android/OpenGLContext.h b/node_modules/@shopify/react-native-skia/android/cpp/rnskia-android/OpenGLContext.h
+--- a/node_modules/@shopify/react-native-skia/android/cpp/rnskia-android/OpenGLContext.h
++++ b/node_modules/@shopify/react-native-skia/android/cpp/rnskia-android/OpenGLContext.h
+@@ -194,6 +194,9 @@ private:
+     if (_directContext == nullptr) {
+       throw std::runtime_error("GrDirectContexts::MakeGL failed");
+     }
++    // Arcfire: GPU resource cache ceiling (Skia default 256MB) so textures of
++    // previous stages/systems do not stay resident after transitions.
++    _directContext->setResourceCacheLimit(64 * 1024 * 1024);
+   }
+ };
+
+diff --git a/node_modules/@shopify/react-native-skia/android/cpp/rnskia-android/OpenGLWindowContext.cpp b/node_modules/@shopify/react-native-skia/android/cpp/rnskia-android/OpenGLWindowContext.cpp
+--- a/node_modules/@shopify/react-native-skia/android/cpp/rnskia-android/OpenGLWindowContext.cpp
++++ b/node_modules/@shopify/react-native-skia/android/cpp/rnskia-android/OpenGLWindowContext.cpp
+@@ -55,6 +55,12 @@ void OpenGLWindowContext::present() {
+   _glContext->makeCurrent(_glSurface.get());
+   _directContext->flushAndSubmit();
+   _glSurface->present();
++  // Arcfire: every 120 presents (~2s) purge GPU resources unused for 10s+ so
++  // closed dialogs / previous stage textures do not stay resident.
++  static thread_local uint32_t arcPresentCount = 0;
++  if (++arcPresentCount % 120 == 0) {
++    _directContext->performDeferredCleanup(std::chrono::seconds(10));
++  }
+ }
+
+ } // namespace RNSkia

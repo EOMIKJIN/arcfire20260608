@@ -31,9 +31,10 @@ export type ClassifyContestedEligibilityInput = {
  * 분류 우선순위:
  * 1. SAFE_HINTERLAND — holdSide ∈ {BLUE,RED} AND 적대 인접=0 (완전 포위) → 분쟁 로테이션 제외
  * 2. ELIGIBLE_FRONT — 1홉에 블루·레드 둘 다 존재(holdSide 무관) → 맞닿은 전선
+ *    또는 BLUE/RED hold + 1홉에 상대 진영(아군 인접 0이어도) → 적 포위 고립 거점(2026-10-10)
  * 3. ELIGIBLE_STRATEGIC_NEUTRAL — holdSide=NEUTRAL + 한쪽만 인접 → 전략적 불리 중립
  * 4. ELIGIBLE_INDEPENDENT_FRONT — holdSide=INDEPENDENT + 적대 인접 有
- * 5. INELIGIBLE — 그 외(비중립 hold가 적대 인접은 있으나 아군 인접은 없는 경우 등)
+ * 5. INELIGIBLE — 그 외(BLUE/RED hold가 독립국만 적대 인접인 경우 · 고립 중립 등)
  */
 export function classifyContestedEligibility(
   input: ClassifyContestedEligibilityInput,
@@ -46,6 +47,9 @@ export function classifyContestedEligibility(
     return 'safe_hinterland';
   }
   if (adjBlue && adjRed) return 'eligible_front';
+  // 적 포위 고립 거점(대표님 2026-10-10 · crimson_base BLUE + 1홉 RED 4) — 자기 hold가 한쪽 진영이고
+  // 상대 진영이 1홉에 맞닿으면 아군 인접이 0이어도 맞닿은 전선이다. 독립국만 인접한 경우는 해당 없음.
+  if ((holdSide === 'BLUE' && adjRed) || (holdSide === 'RED' && adjBlue)) return 'eligible_front';
   if (holdSide === 'NEUTRAL' && adjBlue !== adjRed) return 'eligible_strategic_neutral';
   if (holdSide === 'INDEPENDENT' && hasAdjacentHostile) return 'eligible_independent_front';
   return 'ineligible';

@@ -1,5 +1,5 @@
 import type { Mission, MissionObjective } from '../../../src/types';
-import type { JournalEntry, WorldState } from './types';
+import type { ActiveQuest, JournalEntry, WorldState } from './types';
 import {
   CRIMSON_CAPITAL_PLANET_ID,
   CRIMSON_CAPITAL_SYSTEM_ID,
@@ -23,11 +23,14 @@ import {
   pickBalancedDev,
 } from './facilityTwin';
 import { markSkillLearned, paintOf, sumDevLevels } from './world';
-import { gearCreditReserve } from './combatEfficiency';
+import { gearCreditReserve, hullValuePerCredit, needsHullFund } from './combatEfficiency';
+import { playerCombatPower, playerCombatSig } from './liveCombat';
 import { noteObs, obsDetail } from './observeVocab';
 
 export function markQuestPlanet(world: WorldState, planetId: string | null | undefined): void {
-  if (planetId && planetId.length > 0) world.lastQuestPlanetId = planetId;
+  if (!planetId || planetId.length === 0) return;
+  world.lastQuestPlanetId = planetId;
+  if (world.activeQuest) world.activeQuest.lastPlanetId = planetId;
 }
 
 export function nearestFightablePlanet(world: WorldState): string | null {
@@ -54,16 +57,21 @@ export function nearestFightablePlanet(world: WorldState): string | null {
   return null;
 }
 
-export function questFightPlanet(world: WorldState, mission: Mission, obj: MissionObjective): string {
+export function questFightPlanet(
+  world: WorldState,
+  mission: Mission,
+  obj: MissionObjective,
+  quest: ActiveQuest | null = world.activeQuest,
+): string {
   const explicit = objectivePlanetId(obj.type, obj.targetId);
   if (explicit) return explicit;
+  // 행성이 안 적힌 격파 목표 — 이 퀘스트의 직전 목표 행성 → 의뢰 행성(전투 가능할 때) → 마지막 퀘스트 행성.
+  // 다른 퀘스트의 행성(예: core_prime tcl56)으로 판단하면 보류 퀘스트가 영영 복귀하지 못한다.
+  if (quest?.missionId === mission.id && quest.lastPlanetId) return quest.lastPlanetId;
+  if (mission.offerPlanetId && world.planets[mission.offerPlanetId]?.combatEnabled) return mission.offerPlanetId;
   if (world.lastQuestPlanetId) return world.lastQuestPlanetId;
   if (world.currentPlanetId) return world.currentPlanetId;
   return mission.offerPlanetId || FOCUS_PLANET_ID;
-}
-
-export function fightPowerBonus(world: WorldState): number {
-  return Math.min(0.22, world.gearScore / 1800 + world.learnedSkills.length * 0.006);
 }
 
 export function nextPlayableMissionId(world: WorldState): string | null {
@@ -108,22 +116,63 @@ export function canLearnAny(world: WorldState): boolean {
   return false;
 }
 
-export function bestAffordableGear(world: WorldState): ReturnType<typeof listGearCandidates>[number] | null {
-  const reserve = gearCreditReserve(world);
-  const budget = world.credits - reserve;
-  if (budget < 200) return null;
+type GearCandidate = ReturnType<typeof listGearCandidates>[number];
+type GearGain = { g: GearCandidate; gain: number };
+
+/** 장착 후보별 전투력 상승률. 장착·레벨·함선·스킬이 바뀔 때만 다시 잰다(매 틱 intent 호출). */
+let gainKey = '';
+let gainRows: GearGain[] = [];
+/** 이 미만 상승은 전투 가치 없음(센서·채굴 등 승률 무관 장비). */
+const GEAR_MIN_GAIN = 0.005;
+
+function gearGains(world: WorldState): GearGain[] {
+  const key = playerCombatSig(world);
+  if (key === gainKey) return gainRows;
+  gainKey = key;
+  const base = Math.max(1e-6, playerCombatPower(world));
   const rows = listGearCandidates();
-  let best = null as ReturnType<typeof listGearCandidates>[number] | null;
+  const out: GearGain[] = [];
   for (let i = 0; i < rows.length; i += 1) {
     const g = rows[i];
     if (g.levelReq > world.level) continue;
-    if (g.price > budget) continue;
-    const curId = world.equipped[g.slot];
-    const curScore = curId ? gearScoreOf(curId) : 0;
-    if (g.score <= curScore + 0.01) continue;
-    if (!best || g.score > best.score) best = g;
+    if (world.equipped[g.slot] === g.id) continue;
+    const gain = playerCombatPower(world, { equipped: { ...world.equipped, [g.slot]: g.id } }) / base - 1;
+    if (gain < GEAR_MIN_GAIN) continue;
+    out.push({ g, gain });
   }
-  return best;
+  out.sort((a, b) => b.gain - a.gain || a.g.price - b.g.price);
+  gainRows = out;
+  return out;
+}
+
+/**
+ * A-9a: 살 수 있는 장비 중 전투력 상승이 가장 큰 것. 예전 점수(등급·가격 가중)는 승률과 무관한 장비도 샀다.
+ * 함선 예비금은 목표 함선의 「상승÷가격」이 이 장비보다 클 때만 건다. 장비가 더 값지면 무기·장비 먼저.
+ */
+/**
+ * 함선 자금을 모으는 중(교역로 자금 루프)에는 장비를 사고도 이만큼은 남긴다 = 교역 운전자금.
+ * 시작 잔액(seedWorld 5000)과 같은 크기. 없으면 장비로 잔액을 비워 교역로를 못 타고 수련만 반복한다
+ * (테스트 「레벨게이트 정체 400틱」에서 교역 매입 0 재현).
+ */
+const GEAR_TRADE_WORKING_CAPITAL = 5000;
+
+export function bestAffordableGear(world: WorldState): GearCandidate | null {
+  const floor = needsHullFund(world) ? GEAR_TRADE_WORKING_CAPITAL : 800;
+  const budget = world.credits - floor;
+  if (budget < 200) return null;
+  const rows = gearGains(world);
+  let pick: GearGain | null = null;
+  for (let i = 0; i < rows.length; i += 1) {
+    if (rows[i].g.price > budget) continue;
+    pick = rows[i];
+    break;
+  }
+  if (!pick) return null;
+  const hullVpc = hullValuePerCredit(world);
+  if (hullVpc > 0 && pick.gain / pick.g.price < hullVpc && world.credits - pick.g.price < gearCreditReserve(world)) {
+    return null;
+  }
+  return pick.g;
 }
 
 export function canBuyBetterGear(world: WorldState): boolean {
@@ -138,6 +187,9 @@ export function canDevelop(world: WorldState): boolean {
 export function tryLearnSkill(world: WorldState, ev: (kind: JournalEntry['kind'], line: string) => JournalEntry): JournalEntry {
   const skills = listSkills();
   let pick = null as (typeof skills)[number] | null;
+  // A-9b(R6): 전투 가치(실기 스킬 바인드가 바꾸는 전투력) 큰 순. 같으면 요구 레벨 낮은 순(예전 기준).
+  const base = Math.max(1e-6, playerCombatPower(world));
+  let pickGain = -1;
   for (let i = 0; i < skills.length; i += 1) {
     const s = skills[i];
     if (world.learnedLookup[s.id]) continue;
@@ -152,7 +204,12 @@ export function tryLearnSkill(world: WorldState, ev: (kind: JournalEntry['kind']
       }
     }
     if (!ok) continue;
-    if (!pick || s.levelRequired < pick.levelRequired) pick = s;
+    const raw = playerCombatPower(world, { skills: [...world.learnedSkills, s.id] }) / base - 1;
+    const gain = raw < GEAR_MIN_GAIN ? 0 : raw;
+    if (!pick || gain > pickGain || (gain === pickGain && s.levelRequired < pick.levelRequired)) {
+      pick = s;
+      pickGain = gain;
+    }
   }
   if (!pick) {
     return ev('SKILL', `습득 대기 SP${world.skillPoints} / ${world.learnedSkills.length}/${skills.length}`);

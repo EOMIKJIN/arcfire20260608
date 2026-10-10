@@ -7,13 +7,19 @@ import { usePlayerStore } from '../../store/playerStore';
 import { countGoodInInventory, normalizeInventorySlots } from '../../game/playerInventory';
 import { normalizePlayerCombatProficiency } from '../../combat/playerCombatProficiency';
 import {
-  getMineralUpgradeOreCost,
+  getHullUpgradeTier,
+  getMineralUpgradeCost,
   getFinalMineralUpgradeCap,
   listMineralUpgradeStats,
   resolveMineralUpgradeMaxLevel,
   resolveMineralUpgradeJobProgressPct,
   type MineralUpgradeGroup,
 } from '../../game/shipyardMineralUpgrade/mineralUpgradeModel';
+import {
+  getActiveShipMineralUpgradeJobs,
+  getActiveShipMineralUpgrades,
+} from '../../game/shipyardMineralUpgrade/shipMineralUpgradeState';
+import { findHullTierKeyForListedShip } from '../../arcCore/balance/capitalShipTradeListingPolicy';
 import { PLANET_DEV_ACTIVE_JOB_UI_POLL_MS } from '../../game/planetDevelopment/planetDevUiPollPolicy';
 import { resolvePlanetShipyardLevelForMineralCap } from '../../game/planetDevelopment/planetOrbitShipyardMineralCap';
 import { showArcAlert } from '../../utils/showArcAlert';
@@ -24,6 +30,18 @@ import { planetFacilityScreenStyles as fs, PlanetFacilityCardTitleBlock } from '
 import { ArcButton } from '../../ui/overlay/ArcButton';
 import { PlanetHubDigitalGauge } from '../planet/PlanetHubActionGaugeSlot';
 
+/** 등급별 레벨당 효과(%) 문구 값 */
+function hintPct(kind: string, tier: ReturnType<typeof getHullUpgradeTier>): string {
+  if (!tier) return '0';
+  const pct = kind === 'ship_hp_pct' ? tier.hpPctPerLevel
+    : kind === 'ship_shield_pct' ? tier.shieldPctPerLevel
+      : kind === 'weapon_damage_pct' ? tier.damagePctPerLevel
+        : kind === 'ship_turn_rate_mul_per_level' ? tier.turnPctPerLevel
+          : kind === 'weapon_fire_rate_cooldown' ? 1 - tier.fireRateCooldownMulPerLevel
+            : 0;
+  return (pct * 100).toFixed(1);
+}
+
 export const ShipyardMineralUpgradeTab = memo(function ShipyardMineralUpgradeTab() {
   const t = useT();
   const player = usePlayerStore((s) => s.player);
@@ -31,7 +49,8 @@ export const ShipyardMineralUpgradeTab = memo(function ShipyardMineralUpgradeTab
   const settleMineralUpgradeJobs = usePlayerStore((s) => s.settleMineralUpgradeJobs);
   const [, setNowTick] = useState(0);
 
-  const jobs = player?.mineralUpgradeJobs;
+  // 강화는 탑승 함선 전용(함선별 저장 · 다른 함선으로 넘기지 않음)
+  const jobs = getActiveShipMineralUpgradeJobs(player);
   const hasActiveJob = !!jobs && Object.keys(jobs).length > 0;
 
   // 활성 강화 job이 있을 때만 폴링(게이지 진행·완료 정산). 주기는 행성개발과 동일(2s).
@@ -56,9 +75,12 @@ export const ShipyardMineralUpgradeTab = memo(function ShipyardMineralUpgradeTab
     [player?.currentPlanetId],
   );
   const combatCap = combatProficiency ? resolveMineralUpgradeMaxLevel(combatProficiency.combatLevel) : 0;
-  const cap = combatProficiency ? getFinalMineralUpgradeCap(combatProficiency.combatLevel, shipyardLevel) : 0;
+  // 함선 등급별 상한·효과·비용(hull_upgrade_tier_policy · hull_upgrade_cost)
+  const hullTierKey = findHullTierKeyForListedShip(player?.ship?.portraitNpcCapitalShipId);
+  const tier = getHullUpgradeTier(hullTierKey);
+  const cap = combatProficiency ? getFinalMineralUpgradeCap(combatProficiency.combatLevel, shipyardLevel, hullTierKey) : 0;
   const slots = useMemo(() => normalizeInventorySlots(player?.inventorySlots), [player?.inventorySlots]);
-  const upgrades = player?.mineralUpgrades ?? {};
+  const upgrades = getActiveShipMineralUpgrades(player) ?? {};
 
   if (!player) return null;
 
@@ -85,6 +107,7 @@ export const ShipyardMineralUpgradeTab = memo(function ShipyardMineralUpgradeTab
         })}
       </Text>
       <Text style={[fs.sectionMeta, styles.introGap]}>{t('shipyard.up.intro')}</Text>
+      <Text style={fs.sectionMeta}>{t('shipyard.up.perShipNote', { ship: player.ship.name })}</Text>
 
       {groups.map((group) => (
         <View key={group} style={fs.stackCard}>
@@ -97,8 +120,10 @@ export const ShipyardMineralUpgradeTab = memo(function ShipyardMineralUpgradeTab
               const lv = Math.max(0, Math.floor(upgrades[stat.statId] ?? 0));
               const atCap = lv >= cap;
               const nextLv = lv + 1;
-              const cost = atCap ? [] : getMineralUpgradeOreCost(stat.statId, nextLv);
-              const affordable = !atCap && cost.every((c) => countGoodInInventory(slots, c.oreId) >= c.qty);
+              const cost = atCap ? null : getMineralUpgradeCost(hullTierKey, stat.statId, nextLv);
+              const ores = cost?.ores ?? [];
+              const creditsOk = (cost?.credits ?? 0) <= player.credits;
+              const affordable = !atCap && cost != null && creditsOk && ores.every((c) => countGoodInInventory(slots, c.oreId) >= c.qty);
               const job = jobs?.[stat.statId];
               const upgrading = !!job;
               const jobProgressPct = upgrading ? resolveMineralUpgradeJobProgressPct(job) : 0;
@@ -116,7 +141,7 @@ export const ShipyardMineralUpgradeTab = memo(function ShipyardMineralUpgradeTab
                     metaStyle={lv > 0 ? styles.levelOn : undefined}
                     description={
                       <>
-                        {t(`mineralStat.hint.${stat.statId}`)}
+                        {t(`mineralStat.hint.${stat.statId}`, { pct: hintPct(stat.effectKind, tier) })}
                         {atCap ? '' : t('shipyard.up.nextHint', { lv, next: nextLv })}
                       </>
                     }
@@ -124,7 +149,14 @@ export const ShipyardMineralUpgradeTab = memo(function ShipyardMineralUpgradeTab
                   >
                     {!atCap && !upgrading ? (
                       <View style={styles.costRow}>
-                        {cost.map((c) => {
+                        {cost && cost.credits > 0 ? (
+                          <View style={[fs.insetSlot, styles.costChip, !creditsOk && styles.costChipBad]}>
+                            <Text style={[styles.costChipText, creditsOk ? styles.costOk : styles.costBad]}>
+                              {t('shipyard.up.costCredits', { credits: cost.credits.toLocaleString(), mark: creditsOk ? ' ✓' : ' ✗' })}
+                            </Text>
+                          </View>
+                        ) : null}
+                        {ores.map((c) => {
                           const own = countGoodInInventory(slots, c.oreId);
                           const ok = own >= c.qty;
                           return (

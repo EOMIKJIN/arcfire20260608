@@ -3,7 +3,7 @@
 // ============================================================
 
 import type { PlanetTradeFeeBreakdown } from '../arcCore/economy/planetUpkeepPolicy';
-import { sumOwnedSkillStatBonus } from './ownedSkillStatBonus';
+import { ownsSkillWithStat, sumOwnedSkillStatBonus } from './ownedSkillStatBonus';
 import { resolveSkillAutoCombatPolicy } from './skillAutoCombatPolicy';
 
 function readOwnedSkillIds(ownedSkillIds?: readonly string[]): readonly string[] {
@@ -16,8 +16,9 @@ function resolveOwnedStat(statKey: string, ownedSkillIds?: readonly string[]): n
   return sumOwnedSkillStatBonus(statKey, readOwnedSkillIds(ownedSkillIds));
 }
 
-function owns(id: string, ownedSkillIds?: readonly string[]): boolean {
-  return readOwnedSkillIds(ownedSkillIds).includes(id);
+/** 스킬 보유 — skills.csv effectStat 기준(스킬 id 판정 금지 · Table-First 2026-10-10) */
+function ownsStat(stat: string, ownedSkillIds?: readonly string[]): boolean {
+  return ownsSkillWithStat(stat, readOwnedSkillIds(ownedSkillIds));
 }
 
 /** 매입 -N% / 매도 +N% 합산 상한. CSV 기존값 변경 없음 */
@@ -39,7 +40,7 @@ export function resolvePlayerTaxCutPct(ownedSkillIds?: readonly string[]): numbe
 }
 
 export function resolvePlayerMonopolyBuyPct(ownedSkillIds?: readonly string[]): number {
-  if (!owns('monopoly_master', ownedSkillIds)) return 0;
+  if (!ownsStat('price_control', ownedSkillIds)) return 0;
   const policy = resolveSkillAutoCombatPolicy();
   const csv = resolveOwnedStat('price_control', ownedSkillIds);
   return clampPct(csv > 0 ? csv : policy.monopolyBuyPct, policy.monopolyBuyPct);
@@ -52,15 +53,15 @@ export function resolvePlayerBulkMarginPct(qty: number, ownedSkillIds?: readonly
 }
 
 export function playerOwnsMarketSense(ownedSkillIds?: readonly string[]): boolean {
-  return owns('market_sense', ownedSkillIds) || resolveOwnedStat('market_range', ownedSkillIds) > 0;
+  return ownsStat('market_range', ownedSkillIds);
 }
 
 export function playerOwnsBlackMarketBoss(ownedSkillIds?: readonly string[]): boolean {
-  return owns('black_market_boss', ownedSkillIds) || resolveOwnedStat('trade_access', ownedSkillIds) > 0;
+  return ownsStat('trade_access', ownedSkillIds);
 }
 
 export function playerOwnsInvestorDeal(ownedSkillIds?: readonly string[]): boolean {
-  return owns('investor_deal', ownedSkillIds);
+  return ownsStat('service_fee', ownedSkillIds);
 }
 
 function applyBuyDiscounts(base: number, ownedSkillIds?: readonly string[], qty = 1): number {

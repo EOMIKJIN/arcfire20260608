@@ -6,6 +6,7 @@ import type { NpcCapitalShipCombatRuntimeConfig } from '../data/generated/csvNpc
 import { calculateShipPerformance } from '../combat/ShipPerformanceCalculator';
 import type { NpcCapitalCombatStats, NpcCapitalShip, PlayerShip } from '../types';
 import {
+  applyShipEquipmentStatBonusToCombat,
   applyShipEquipmentToShipPerformance,
   aggregateShipEquipmentBonuses,
   resolveShipEquipmentAgentKnobs,
@@ -63,8 +64,9 @@ export function resolveNpcCapitalShipCombatBinding(input: {
   }
 
   const equipSlots = resolveNpcCapitalShipEquipSlots(npcShipId);
+  // 장비 스탯은 숙련 전 1회(플레이어 shipStatPipeline 과 같은 순서) · runtime 은 아래 브리지
   let perf = calculateShipPerformance(
-    baseCombat,
+    applyShipEquipmentStatBonusToCombat(baseCombat, equipSlots),
     {
       level: readNpcCombatLevel(input.npcRow),
       proficiencyMultiplier: readNpcProficiencyMultiplier(input.npcRow),

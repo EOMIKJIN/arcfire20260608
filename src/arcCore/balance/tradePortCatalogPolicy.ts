@@ -102,10 +102,11 @@ function equipmentCategoryFromDef(def: ReturnType<typeof getItemDef>): string {
 function equipmentGradeFromDef(def: ReturnType<typeof getItemDef>): number {
   if (!def) return Number.POSITIVE_INFINITY;
   const raw = def.attrs?.equipmentGrade;
-  if (typeof raw === 'number' && Number.isFinite(raw)) return Math.max(1, Math.min(3, Math.floor(raw)));
+  // 등급 상한은 trade_port_equipment_tier_policy.csv maxEquipmentGrade 가 정한다(코드 고정 상한 없음 · 2026-10-10 4·5등급)
+  if (typeof raw === 'number' && Number.isFinite(raw)) return Math.max(1, Math.floor(raw));
   if (typeof raw === 'string') {
     const parsed = Number.parseInt(raw, 10);
-    if (Number.isFinite(parsed)) return Math.max(1, Math.min(3, parsed));
+    if (Number.isFinite(parsed)) return Math.max(1, parsed);
   }
   return 1;
 }
@@ -163,9 +164,10 @@ export function listShipEquipmentItemIdsForPlanetZone(
     : Math.max(1, Math.floor(recommendedPilotLevel));
   /** zone 티어(eq_t*) 상한 — 행성 권장 Lv와 분리, 구매 Lv는 isTradePortItemPurchasableByPlayer */
   const levelCap = tierCap;
+  // 등급 상한 = CSV maxEquipmentGrade(코드 고정 3 상한 제거 · 2026-10-10). 티어 행이 없으면 1등급만.
   const gradeCap = tierRow
-    ? Math.max(1, Math.min(3, parseNum(tierRow.maxEquipmentGrade, 3)))
-    : 3;
+    ? Math.max(1, parseNum(tierRow.maxEquipmentGrade, 1))
+    : 1;
   const categoryFilter = tierRow
     ? String(tierRow.equipmentCategoryFilter ?? '*').trim().toLowerCase()
     : '*';

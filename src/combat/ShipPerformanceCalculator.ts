@@ -142,12 +142,14 @@ function clampCooldown(value: number | undefined, factor: number, floor: number)
 /**
  * 조선소 광물 업그레이드(statId→level)를 전함 성능에 적용.
  * 정본: mineralUpgradeModel(기존 테이블). 플레이어 함선에만 적용(적 NPC 미적용).
- * v1 매핑: HP/실드(가산) · 선회율(배수) · 무기 쿨다운(배수, 하한) · 무기 데미지(damageDice.bonus 가산).
+ * 매핑(2026-10-10 %형): HP·실드(원래 값 × 배수) · 선회율(배수) · 무기 쿨다운(배수, 하한) · 무기 피해(계열별 laser/missileDamageMul).
  * 사거리(weapon_range_flat)는 per-weapon 해석이라 본 경유 미적용(후속 보완).
  */
 export function applyMineralUpgradeToShipPerformance(
   perf: ShipPerformanceResult,
   mineralUpgrades?: MineralUpgradeState,
+  /** 함선 등급(hull_upgrade_tier_policy) — 레벨당 효과 %가 등급별로 다름 */
+  hullTierKey?: string | null,
 ): ShipPerformanceResult {
   if (!mineralUpgrades) return perf;
   const entries = Object.entries(mineralUpgrades).filter(
@@ -163,27 +165,32 @@ export function applyMineralUpgradeToShipPerformance(
     ? { ...perf.runtimeConfig }
     : perf.runtimeConfig;
 
+  // 배수는 강화 전 값 기준(함선 원래 능력치 × 배수 · 2026-10-10 「강화 완료 = 원래의 160%」)
+  const baseHp = combat.maxHp;
+  const baseShield = combat.maxShield;
   for (const [statId, level] of entries) {
     const def = getMineralUpgradeStatDef(statId);
     if (!def) continue;
-    const scalar = computeMineralUpgradeEffectScalar(statId, level as number);
+    const scalar = computeMineralUpgradeEffectScalar(statId, level as number, hullTierKey);
     switch (def.effectKind) {
-      case 'ship_bonus_max_hp':
-        combat.maxHp = Math.max(1, Math.round(combat.maxHp + scalar));
+      case 'ship_hp_pct':
+        combat.maxHp = Math.max(1, Math.round(baseHp * scalar));
         break;
-      case 'ship_bonus_max_shield':
-        combat.maxShield = Math.max(0, Math.round(combat.maxShield + scalar));
+      case 'ship_shield_pct':
+        combat.maxShield = Math.max(0, Math.round(baseShield * scalar));
         break;
       case 'ship_turn_rate_mul_per_level':
         if (runtime && typeof runtime.maxTurnRateRadPerMs === 'number') {
           runtime.maxTurnRateRadPerMs = runtime.maxTurnRateRadPerMs * scalar;
         }
         break;
-      case 'weapon_damage_flat':
-        combat.damageDice = {
-          ...combat.damageDice,
-          bonus: combat.damageDice.bonus + Math.round(scalar),
-        };
+      case 'weapon_damage_pct':
+        // 무기 계열별 배수 — 레이저 강화는 레이저 타격에만, 미사일 강화는 미사일 타격에만
+        if (def.upgradeGroup === 'weapon_laser') {
+          combat.laserDamageMul = (combat.laserDamageMul ?? 1) * scalar;
+        } else if (def.upgradeGroup === 'weapon_missile') {
+          combat.missileDamageMul = (combat.missileDamageMul ?? 1) * scalar;
+        }
         break;
       case 'weapon_fire_rate_cooldown':
         if (runtime) {

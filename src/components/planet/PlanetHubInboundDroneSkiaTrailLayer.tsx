@@ -48,11 +48,6 @@ import { registerGpuLayer, unregisterGpuLayer } from '../../game/planetStageGpuS
 
 const SCENE_SIZE = PLANET_MAIN_ORBIT_SCENE_SIZE;
 
-// TEMP-DIAG kim-claude 20261009 [arc-hitch-split] — 부모 드론 레이어가 globalThis 로 연결한 누적기에 ms 를 더한다. 계측 후 삭제.
-const TRAIL_DIAG = typeof __DEV__ !== 'undefined' && __DEV__;
-function noteTrailDiag(kind: 'render' | 'layout', ms: number): void {
-  (globalThis as { __arcfireDroneLayerDiag?: (k: 'render' | 'layout', ms: number) => void }).__arcfireDroneLayerDiag?.(kind, ms);
-}
 const TRAIL_BRIDGE_INTERVAL_MS = HUB_WORKLET_JS_BRIDGE_INTERVAL_MS;
 
 function recordInboundDroneVfxPicture(input: {
@@ -145,7 +140,6 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
   edgeR: number;
   impactR: number;
 }) {
-  const diagRenderT0 = TRAIL_DIAG ? performance.now() : 0; // TEMP-DIAG kim-claude 20261009 — 계측 후 삭제
   const mountedRef = useRef(true);
   const liveFrameRef = useRef<SkPicture | null>(null);
   const geomRef = useRef({ center, edgeR, impactR });
@@ -295,13 +289,11 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
   }, []);
 
   useLayoutEffect(() => {
-    const diagT0 = TRAIL_DIAG ? performance.now() : 0; // TEMP-DIAG
     trailFlatRef.current = trailFlatJsRef.current;
     trailCountRef.current = trailCountJsRef.current;
     pendingOrbitMsRef.current = readPlanetOrbitClockMs();
     hitFxActiveSv.value = hitFxRef.current.length > 0 ? 1 : 0;
     scheduleFlush();
-    if (TRAIL_DIAG) noteTrailDiag('layout', performance.now() - diagT0);
   },[droneIds, hitFxTick, trailFlatJsRef, trailCountJsRef, scheduleFlush, hitFxRef, hitFxActiveSv]);
 
   useAnimatedReaction(
@@ -363,7 +355,6 @@ export const PlanetHubInboundDroneSkiaTrailLayer = memo(function PlanetHubInboun
     };
   }, [trailBridgeAliveSv, trailPaint, trailPath]);
 
-  if (TRAIL_DIAG) noteTrailDiag('render', performance.now() - diagRenderT0); // TEMP-DIAG
   return (
     <Canvas style={styles.canvas} pointerEvents="none">
       <Path path={trailPathSv} paint={trailPaint} />

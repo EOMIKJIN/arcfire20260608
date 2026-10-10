@@ -14,10 +14,7 @@ import { getCapitalWeaponRow } from '../game/capitalWeaponRegistry';
 import { getItemDef } from '../data/itemRegistry';
 import { weaponItemIdFromWeaponId } from '../game/weaponItemId';
 import { getEconomyCategoryPriceMul } from '../arcCore/economy/economyPriceOverlayStore';
-import {
-  WAVE_TEST_TRADE_PRICE_CREDITS,
-  isWaveTestTradeWeaponId,
-} from './waveDefenseTestTradeItems';
+import { resolveWaveTestWeaponTradePrice } from './waveDefenseTestTradeItems';
 import type { CapitalWeaponCsvRow } from '../data/generated';
 
 function clampPrice(n: number): number {
@@ -55,8 +52,9 @@ export function resolveIntegratedWeaponTradePrice(
   weaponId: string,
   cumulativeCredits = 0,
 ): number {
-  // 웨이브 디펜스 테스트 무기 — 테스트 단계 거래가 1(가격 하한 클램프 우회). 운영 무기 무관.
-  if (isWaveTestTradeWeaponId(weaponId)) return WAVE_TEST_TRADE_PRICE_CREDITS;
+  // 웨이브 디펜스 테스트 무기 — CSV testTradePriceCredits(가격 하한 클램프 우회). 운영 무기 무관.
+  const testPrice = resolveWaveTestWeaponTradePrice(weaponId);
+  if (testPrice != null) return testPrice;
 
   const weapon = getCapitalWeaponRow(weaponId);
   if (!weapon) return getWeaponTradePriceBounds().min;

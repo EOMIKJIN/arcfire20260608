@@ -7,6 +7,7 @@ import { analyzeDay, analyzeStronger } from './analyze';
 import { dayOfTick, gameNowMs, isDayBoundary, TICKS_PER_DAY } from './clock';
 import { absorbEarlyFeel, applyOpeningFeelIfNeeded } from './earlyFeel';
 import { takeObs } from './observeVocab';
+import { adjustEngageHpMulDaily } from './liveCombat';
 
 export type SimHooks = {
   onEntry?: (world: WorldState, entry: JournalEntry) => void;
@@ -49,6 +50,8 @@ export function runSimulation(input: {
     const finiteEnd = !perpetual && i + 1 === total;
     if (isDayBoundary(i + 1) || finiteEnd) {
       const terr = runTerritorialDay(world, rng);
+      // 실기 일일 배치의 통합 레벨링 보정(globalEngageHpMul) — A-7b
+      adjustEngageHpMulDaily(world);
       for (const te of terr) {
         dayBuf.push(te);
         input.hooks?.onEntry?.(world, te);

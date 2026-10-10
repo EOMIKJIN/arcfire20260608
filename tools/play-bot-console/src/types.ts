@@ -83,6 +83,12 @@ export type ActiveQuest = {
   title: string;
   objIndex: number;
   acceptedDay: number;
+  /** 이 퀘스트의 직전 목표 행성 — 행성이 안 적힌 격파 목표의 전장 */
+  lastPlanetId?: string;
+  /** 항로 위험으로 보류된 틱 한도 — 이때까지는 복귀하지 않는다 */
+  routeBlockedUntil?: number;
+  /** 항로 위험으로 처음 막힌 틱 — 퀘스트를 끝낼 때까지 유지 */
+  blockedSince?: number;
 };
 
 export type FocusStats = {
@@ -126,6 +132,10 @@ export type WorldState = {
   tgRun?: { goodId: string; supply: string; demand: string; qty: number; costUnit: number; sellNetUnit: number };
   /** 교역로 매도 이후 연속 수련 전투 수. 상한을 넘으면 교역로를 먼저 본다. */
   trainStreak?: number;
+  /** A-7b 실기 `globalEngageHpMul` — 적 유효HP 배율(0.7~1.3). 일 1회 교전 시간으로 보정. */
+  engageHpMul?: number;
+  /** 최근 교전 시간(초) 최대 20개 — 실기 listRecentMatchSummaries(20) 대응. */
+  engageSecLog?: number[];
   /** 공급지·품목별 당일 매입량. 재고 상한 근사용. */
   tgBought?: Record<string, { day: number; qty: number }>;
   gems: number;
@@ -174,6 +184,29 @@ export type WorldState = {
   hullRank: number;
   hullSaveDay: number;
   hullJustBought: boolean;
+  /** 지금 함선의 광물 강화 statId→레벨. 함선이 바뀌면 비운다(함선별 · 넘겨주지 않음 · 2026-10-10). */
+  hullUpgrades?: Record<string, number>;
+  /** 채굴·수색 광물 종류별 적재(oreId→개수). 합계 = mineralCargo. 옛 세계 파일에는 없을 수 있다. */
+  oreCargo?: Record<string, number>;
+  /** 광물 강화 횟수(벤치 지표). */
+  mineralUpgradeCount?: number;
+  /** 같은 도전(행성·행동·세팅) 파괴 횟수 — 20회면 막음(대표님 2026-10-10 인간 플레이 기준) */
+  challengeLosses?: Record<string, number>;
+  /** 파괴 뒤 이 틱까지는 도전을 쉬고 안전 전투·우회 */
+  detourUntilTick?: number;
+  /** 매복(이동 중 조우 파괴)당한 성계 → 횟수·마지막 틱·레벨. 레벨이 오르거나 며칠 지나면 잊는다(사람처럼) */
+  ambushMemory?: Record<string, { n: number; tick: number; level: number }>;
+  /** 경험치 정체 판단 — 마지막으로 본 누적 경험치와 그 틱 */
+  progressExpMark?: number;
+  progressExpTick?: number;
+  /** 목적 있는 이동이 위험 관문에 처음 막힌 틱 — 그 이동이 성공하면 지운다 */
+  purposeBlockedSince?: number;
+  /** 산 함선을 잃은 성계 → 그 틱 */
+  hullLossTick?: Record<string, number>;
+  /** 도전 전 강화 미루기 — 목표·전투력 서명과 횟수 */
+  prepDefer?: { key: string; n: number };
+  /** 정복 마무리 대상 — 중립화한 행성 · 이 틱까지 위성·편입을 먼저 */
+  conquestFocus?: { planetId: string; untilTick: number };
   /** 마지막으로 land 를 남긴 행성. 앱 landOnPlanet 의 같은 행성 재착륙 무시와 맞춘다. */
   obsLand?: string;
   /** 다음 저널 줄에 붙일 앱 형식 행동. */

@@ -97,6 +97,7 @@ import { ackDevMetroReloadMount, isDevMetroReloadPrepareInFlight, registerDevHot
 import { useStageMemory } from '../../src/hooks/useStageMemory';
 import { usePlanetStageLifecycleStore } from '../../src/game/planetStageLifecycle';
 import { resetPlanetHubNavigationThrottle } from '../../src/navigation/safePlanetHubNavigate';
+import { navigateAfterStageExitTeardown } from '../../src/navigation/facilityExitTeardown';
 import { markPlanetHubWorldOpsNotifyUnlocked } from '../../src/navigation/worldOpsNotifyPresence';
 import {
   computeTableNpcOrbitXY,
@@ -624,7 +625,7 @@ export default function PlanetScreen() {
     recordHubDeparturePlanet(departPlanetId);
     warmGalaxyDeparturePreflight(departPlanetId);
     markGalaxyMapIngressFromPlanetHub();
-    beginPlanetHubSuspendingNavigation(() => router.replace('/(game)/worldmap'), {
+    beginPlanetHubSuspendingNavigation(() => navigateAfterStageExitTeardown('planet', () => router.replace('/(game)/worldmap')), {
       preserveCombatSnapshot: false,
     });
   }, [beginPlanetHubSuspendingNavigation, t]);
@@ -640,7 +641,7 @@ export default function PlanetScreen() {
     // 웨이브 판가름 진행 중 — intent TTL이 장기 런 도중 만료돼도 퇴거하지 않는다(종료 시 승패로 처리)
     if (useWaveDefenseStore.getState().active) return;
     showArcAlert(t('worldmap.redTerritoryTitle'), t('worldmap.redTerritoryBody'));
-    beginPlanetHubSuspendingNavigation(() => router.replace('/(game)/worldmap'), {
+    beginPlanetHubSuspendingNavigation(() => navigateAfterStageExitTeardown('planet', () => router.replace('/(game)/worldmap')), {
       preserveCombatSnapshot: false,
     });
   }, [resolvedPlanetId, isPlanetRouteFocused, beginPlanetHubSuspendingNavigation, t]);
@@ -1446,7 +1447,7 @@ export default function PlanetScreen() {
           if (!pid || !resolvePlayerPlanetStayBlock(pid)) return false;
           clearPlanetAssaultIntent();
           showArcAlert(t('worldmap.redTerritoryTitle'), t('worldmap.redTerritoryBody'));
-          beginPlanetHubSuspendingNavigation(() => router.replace('/(game)/worldmap'), {
+          beginPlanetHubSuspendingNavigation(() => navigateAfterStageExitTeardown('planet', () => router.replace('/(game)/worldmap')), {
             preserveCombatSnapshot: false,
           });
           return true;

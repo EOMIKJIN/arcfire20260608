@@ -126,7 +126,7 @@ export type TgPlan = { route: TgRoute; qty: number; profit: number; hops: number
 export function pickTgPlan(
   world: WorldState,
   reserve: number,
-  riskOf?: (fromPlanetId: string, toPlanetId: string) => number,
+  riskOf?: (fromPlanetId: string, toPlanetId: string, cargoValue: number) => number,
 ): TgPlan | null {
   const list = listTgRoutes();
   const cap = stockPerDay();
@@ -143,7 +143,8 @@ export function pickTgPlan(
     const spend = world.credits - reserve - fuel;
     if (spend < r.costUnit) continue;
     const qty = Math.min(avail, Math.floor(spend / r.costUnit));
-    const risk = riskOf ? riskOf(world.currentPlanetId, r.supply) + riskOf(r.supply, r.demand) : 0;
+    // 실은 화물도 잃는다 — 매입 뒤 구간은 화물 값까지 기대 손실로 뺀다
+    const risk = riskOf ? riskOf(world.currentPlanetId, r.supply, 0) + riskOf(r.supply, r.demand, qty * r.costUnit) : 0;
     const profit = qty * r.netUnit - fuel - risk;
     if (profit <= 0) continue;
     const hops = toSupply + leg + 1;

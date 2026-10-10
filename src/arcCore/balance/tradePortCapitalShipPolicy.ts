@@ -21,8 +21,8 @@ import { resolvePlanetShipyardListingMode } from '../../game/planetDevelopment/p
 import { isPlanetCsvShipyardWorldEnabled } from '../../game/planetDevelopment/planetCsvWorldFlags';
 import { resolveNpcShipIdForHullTier } from './capitalHullPurchaseFromBalance';
 import {
-  WAVE_TEST_TRADE_PRICE_CREDITS,
   isWaveTestTradeShipId,
+  resolveWaveTestShipTradePrice,
 } from '../../economy/waveDefenseTestTradeItems';
 
 const HULL_TIER_ORDER: string[] = CapitalHullPurchasePolicy_FROM_BALANCE_CSV.map(
@@ -70,7 +70,7 @@ export function resolveHullTierKeyForListedNpcShip(npcShipId: string): string {
   let bestTier = 'frigate_default';
   let bestDist = Number.POSITIVE_INFINITY;
   for (const row of CapitalHullPurchasePolicy_FROM_BALANCE_CSV) {
-    if (row.hullTierKey === 'battlecruiser_max') continue;
+    if (!isLadderListedHullRow(row)) continue;
     const minLv = parseNum(row.requiredPilotLevelMin, 1);
     const targetHp = 400 + minLv * 8;
     const dist = Math.abs(hp - targetHp);
@@ -82,11 +82,13 @@ export function resolveHullTierKeyForListedNpcShip(npcShipId: string): string {
   return bestTier;
 }
 
+/** 구매 사다리 등급인가 — capital_hull_purchase_policy.csv `ladderListed`(Table-First · 2026-10-10) */
+function isLadderListedHullRow(row: { ladderListed?: string } | null | undefined): boolean {
+  return String(row?.ladderListed ?? '').trim().toUpperCase() === 'TRUE';
+}
+
 function isTradeListableHullTier(tierKey: string): boolean {
-  if (tierKey === 'battlecruiser_max') return false;
-  if (tierKey === 'frigate_default') return true;
-  const row = getCapitalHullPurchaseRow(tierKey);
-  return row != null && parseNum(row.purchaseCredits, 0) > 0;
+  return isLadderListedHullRow(getCapitalHullPurchaseRow(tierKey));
 }
 
 
@@ -180,8 +182,9 @@ export function resolveCapitalShipTradePrice(itemId: string, planetId?: string):
 
   if (!isCanonicalTradePortCapitalShip(npcId)) return Number.POSITIVE_INFINITY;
 
-  // 웨이브 디펜스 테스트함 — 테스트 단계 거래가 1(성능 기준가 우회). 운영 전함 무관.
-  if (isWaveTestTradeShipId(npcId)) return WAVE_TEST_TRADE_PRICE_CREDITS;
+  // 웨이브 디펜스 테스트함 — CSV testTradePriceCredits(성능 기준가 우회). 운영 전함 무관.
+  const testPrice = resolveWaveTestShipTradePrice(npcId);
+  if (testPrice != null) return testPrice;
 
   return resolveCapitalShipPerformanceBasePrice(npcId);
 }

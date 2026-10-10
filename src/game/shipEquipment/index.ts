@@ -1,5 +1,6 @@
 export {
   aggregateShipEquipmentBonuses,
+  applyShipEquipmentStatBonusToCombat,
   isShipEquipmentItemId,
   listEquippedShipEquipmentItemIds,
   resolveShipEquipmentAgentKnobs,
@@ -12,6 +13,7 @@ export {
 } from './shipEquipmentModel';
 export { applyShipEquipmentToShipPerformance } from './shipEquipmentCombatBridge';
 export {
+  formatShipEquipmentEffectNotice,
   formatShipEquipmentListingSuffix,
   formatShipEquipmentStatSummary,
   isShipEquipmentEffectPending,

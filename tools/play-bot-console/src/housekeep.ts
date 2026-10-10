@@ -33,7 +33,15 @@ const PROTECT_LOG = new Set([
   'schedule-6pm-playbot.log',
 ]);
 
+/**
+ * 플레이봇 원본이 아닌 폴더 — 1GB 계산·리셋 대상에서 제외.
+ * `soak` = 김플레이 메모리·성능 실기 측정 기록(2026-10-09~). 이 폴더가 상한에 섞여 하네스 runs 가
+ * 매일 조기 삭제되고 측정 근거까지 지워질 위험이 있었다(2026-10-10). 측정 기록은 별도 관리.
+ */
+const NON_PLAYBOT_LOG_DIRS = new Set(['soak']);
+
 function isProtectedLogName(name: string): boolean {
+  if (NON_PLAYBOT_LOG_DIRS.has(name)) return true;
   if (PROTECT_LOG.has(name)) return true;
   if (name.endsWith('.pid')) return true;
   if (name.startsWith('playbot-learning-daily-')) return true;
@@ -75,6 +83,7 @@ export function measureRawBytes(root = toolRoot()): number {
     for (let i = 0; i < ents.length; i += 1) {
       const e = ents[i];
       if (e.name === 'learned') continue;
+      if (NON_PLAYBOT_LOG_DIRS.has(e.name)) continue;
       const p = path.join(logs, e.name);
       if (e.isDirectory()) n += walkBytes(p, null);
       else n += addSize(p);

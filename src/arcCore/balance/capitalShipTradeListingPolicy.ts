@@ -200,6 +200,11 @@ export function resolveHullTierKeyForTradeCatalogShip(npcShipId: string): string
   return hullTierByNpcShipId.get(npcShipId.trim()) ?? 'frigate_upgraded';
 }
 
+/** 무역 등급표에 있는 함선(기준·대체)의 함선 등급 — 없으면 null(기본값 없음 · 함선 강화 등급 판정용) */
+export function findHullTierKeyForListedShip(npcShipId: string | null | undefined): string | null {
+  return hullTierByNpcShipId.get(String(npcShipId ?? '').trim()) ?? null;
+}
+
 export function resolveCapitalShipRequiredPilotLevel(npcShipId: string): number {
   const tier = resolveHullTierKeyForTradeCatalogShip(npcShipId);
   const hullRow = getCapitalHullPurchaseRow(tier);

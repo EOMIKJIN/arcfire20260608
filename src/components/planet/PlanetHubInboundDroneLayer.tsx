@@ -50,21 +50,6 @@ const AnimatedView = Animated.createAnimatedComponent(View);
 
 export const PLANET_HUB_INBOUND_DRONE_RENDER_MAX = 24;
 
-// TEMP-DIAG kim-claude 20261009 [arc-hitch-split] droneLayer — 드론 레이어 동기 렌더 구간 분할(효율화 2라운드). 계측 후 삭제.
-// hook 을 쓰지 않는다(모듈 변수만) — HMR hook 순서 불변.
-const DRONE_LAYER_DIAG = typeof __DEV__ !== 'undefined' && __DEV__;
-const droneLayerDiag = { renderStart: 0, renderMs: 0, trailRenderMs: 0, trailLayoutMs: 0 };
-/** Skia trail 자식이 자기 구간 ms 를 더한다 — 부모 layoutEffect 가 한 줄로 출력한다. (import 순환을 피해 globalThis 로 연결) */
-if (DRONE_LAYER_DIAG) {
-  (globalThis as { __arcfireDroneLayerDiag?: (kind: 'render' | 'layout', ms: number) => void }).__arcfireDroneLayerDiag = (
-    kind,
-    ms,
-  ) => {
-    if (kind === 'render') droneLayerDiag.trailRenderMs += ms;
-    else droneLayerDiag.trailLayoutMs += ms;
-  };
-}
-
 /** trail/dodge와 동일 — 60Hz runOnJS 장시간 PSS creep 방지 */
 const IMPACT_BRIDGE_INTERVAL_MS = HUB_WORKLET_JS_BRIDGE_INTERVAL_MS;
 
@@ -240,7 +225,6 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
   /** colorDodge는 성운 Skia 백드롭 필요 — 드론/FX 활성 동안 true */
   onSkiaDodgeBackdropLatch?: (active: boolean) => void;
 }) {
-  if (DRONE_LAYER_DIAG) droneLayerDiag.renderStart = performance.now(); // TEMP-DIAG
   const drones = useStoreWithEqualityFn(
     useArcInboundDroneStore,
     (s) => pickHubDronesAtPlanet(s.drones, planetId),
@@ -436,9 +420,6 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
   }, [inboundDrones.length, trailDrones.length]);
 
   useLayoutEffect(() => {
-    const diagT0 = DRONE_LAYER_DIAG ? performance.now() : 0; // TEMP-DIAG
-    let diagInPackMs = 0;
-    let diagTrailPackMs = 0;
     const nowMs = readPlanetOrbitClockMs();
     if (!startOrbitMsByIdRef.current) startOrbitMsByIdRef.current = new Map();
     if (!endOrbitMsByIdRef.current) endOrbitMsByIdRef.current = new Map();
@@ -493,14 +474,11 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
     }
 
     if (inboundPackSigRef.current !== inboundPackSig) {
-      const p0 = DRONE_LAYER_DIAG ? performance.now() : 0; // TEMP-DIAG
       inboundPackSigRef.current = inboundPackSig;
       droneCountSv.value = inboundDrones.length;
       flatSv.value = packInboundDronesToFloat32(inboundDrones, startOrbitMsById, nowMs);
-      if (DRONE_LAYER_DIAG) diagInPackMs = performance.now() - p0;
     }
     if (trailPackSigRef.current !== trailPackSig) {
-      const p1 = DRONE_LAYER_DIAG ? performance.now() : 0; // TEMP-DIAG
       trailPackSigRef.current = trailPackSig;
       const packed = packInboundDroneTrailFlat(
         trailDrones,
@@ -513,7 +491,6 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
         trailFlatSv.value = v;
       });
       trailCountSv.value = trailDrones.length;
-      if (DRONE_LAYER_DIAG) diagTrailPackMs = performance.now() - p1;
     }
 
     for (const id of startOrbitMsById.keys()) {
@@ -547,26 +524,6 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
       setVfxOverlayOpen(false);
       onSkiaDodgeBackdropLatchRef.current?.(false);
     }
-    if (DRONE_LAYER_DIAG) {
-      // TEMP-DIAG — 자식 Skia trail 의 render·layout 은 이 effect 보다 먼저 끝나 누적돼 있다.
-      const layoutMs = performance.now() - diagT0;
-      const d = droneLayerDiag;
-      const total = d.renderMs + layoutMs + d.trailRenderMs + d.trailLayoutMs;
-      if (total >= 10) {
-        // eslint-disable-next-line no-console
-        console.log(
-          '[arc-hitch-split] droneLayer',
-          'render', Math.round(d.renderMs),
-          'layout', Math.round(layoutMs),
-          'inPack', Math.round(diagInPackMs),
-          'trailPack', Math.round(diagTrailPackMs),
-          'trailChildRender', Math.round(d.trailRenderMs),
-          'trailChildLayout', Math.round(d.trailLayoutMs),
-        );
-      }
-      d.trailRenderMs = 0;
-      d.trailLayoutMs = 0;
-    }
   }, [
     inboundPackSig,
     trailPackSig,
@@ -589,8 +546,6 @@ export const PlanetHubInboundDroneLayer = memo(function PlanetHubInboundDroneLay
   const showVfxLayer = vfxOverlayOpen || trailCount > 0 || hitFxRef.current.length > 0;
   // 웨이브마다 Canvas 를 내리면 GL 표면이 프로세스에 남는다. 허브가 마운트된 동안 1장만 둔다.
   const keepTrailCanvas = devSkiaMountAllowed;
-
-  if (DRONE_LAYER_DIAG) droneLayerDiag.renderMs = performance.now() - droneLayerDiag.renderStart; // TEMP-DIAG
 
   if (!keepTrailCanvas && !showVfxLayer && markCount <= 0) return null;
 

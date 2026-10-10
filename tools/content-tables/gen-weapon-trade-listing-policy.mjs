@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * 무역소 무기 정본 — weapon_list.csv 전체 중
- * NPC 슬롯 번호 복제(vmock·wave)만 제외. 기본 _01·arc 성장 라인 모두 포함.
+ * weapon_list.csv specialUse(concept·npc_clone) 제외. 기본 _01·arc 성장 라인 모두 포함.
  */
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -9,6 +9,7 @@ import {
   isPinnedStarterTradeWeapon,
   isTradePortEligibleWeapon,
   isWaveTestTradeWeapon,
+  readWeaponSpecialUse,
 } from './weapon-trade-listing-rules.mjs';
 
 const ROOT = resolve(process.cwd());
@@ -93,15 +94,17 @@ const nameIdx = hdr.findIndex((h) => h === 'name' || h === '이름');
 const kindIdx = hdr.findIndex((h) => h === 'kind' || h === '종류');
 const lvIdx = hdr.findIndex((h) => h === 'requiredLevel' || h === '요구레벨');
 const tierIdx = hdr.findIndex((h) => h === 'tierLabel' || h === '등급라벨');
+const specialUseIdx = hdr.indexOf('specialUse');
 
 const candidates = weaponRows.slice(1).map((cols) => {
   const id = String(cols[idIdx] ?? '').trim();
   const tierLabel = String(cols[tierIdx] ?? '').trim();
-  if (!isTradePortEligibleWeapon(id, tierLabel)) return null;
+  const specialUse = readWeaponSpecialUse(specialUseIdx >= 0 ? cols[specialUseIdx] : '');
+  if (!isTradePortEligibleWeapon(id, specialUse)) return null;
   const requiredLevel = Number.parseInt(String(cols[lvIdx] ?? '1'), 10) || 1;
   const weaponFamilyKind = String(cols[kindIdx] ?? 'laser').trim().toLowerCase();
   const name = String(cols[nameIdx] ?? id).trim();
-  const isWaveTest = isWaveTestTradeWeapon(id);
+  const isWaveTest = isWaveTestTradeWeapon(specialUse);
   // 웨이브 테스트 무기는 전 무역소 상시(pinned). 운영 무기는 기존 규칙 유지.
   const listingAnchor = isWaveTest || isPinnedStarterTradeWeapon(tierLabel) ? 'pinned' : 'progression';
   return { id, name, requiredLevel, weaponFamilyKind, listingAnchor, isWaveTest };

@@ -50,10 +50,10 @@ export function resolveNpcShipIdForHullTier(hullTierKey: string): string | null 
   return match?.id ?? null;
 }
 
+/** 함선 등급 방어 성향 — capital_hull_purchase_policy.csv `affinityKind`(Table-First · 2026-10-10) */
 export function affinityKindFromHullTierKey(hullTierKey: string): string {
-  if (hullTierKey.startsWith('cruiser') || hullTierKey.startsWith('battlecruiser')) return 'heavy';
-  if (hullTierKey.startsWith('destroyer')) return 'shielded';
-  return 'light';
+  const raw = String(getCapitalHullPurchaseRow(hullTierKey)?.affinityKind ?? '').trim();
+  return raw || 'light';
 }
 
 function parseNum(raw: string | number | undefined, fallback = 0): number {

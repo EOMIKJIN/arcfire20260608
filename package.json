@@ -87,7 +87,6 @@
     "audit:i18n": "node tools/i18n-audit/run-i18n-audit.cjs",
     "audit:arc-self-optimize:pack": "node tools/arc-core-self-optimize/prepare-handoff.cjs",
     "audit:arc-core-chat-billing": "node tools/arc-core-chat/audit-billing-dark.cjs",
-    "sim:ship-upgrade-value": "npx tsx tools/ship-upgrade-value/run-ship-upgrade-value.ts",
     "sim:economy": "npm run verify:economy-sim-cohort && npx tsx tools/economy-sim/run-economy-sim.ts",
     "sim:arc-core:learning-merge": "node tools/arc-core-learning/merge-learning-state.cjs",
     "arc-core:rtdb:publish-policy": "node tools/arc-core-learning/publish-to-rtdb.cjs",
@@ -128,7 +127,10 @@
     "monitor:resume-overnight-exception": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/long-run-monitor/resume-after-overnight-exception.ps1",
     "verify:economy-sim-cohort": "npx tsx tools/verify-economy-sim-cohort.ts",
     "export:galaxy-map:image": "tsx tools/galaxy-map/export-galaxy-map-image.ts",
-    "test:territorial-supply": "npx tsx src/arcCore/territorial/territorialSupplyLine.test.ts"
+    "test:territorial-supply": "npx tsx src/arcCore/territorial/territorialSupplyLine.test.ts",
+    "balance:progression-spine": "node tools/balance-tables/derive-progression-spine.mjs && node tools/balance-tables/build-balance-from-csv.mjs",
+    "content:equipment-high-grades": "node tools/content-tables/gen-ship-equipment-high-grades.mjs",
+    "balance:hull-upgrade-ladder": "node tools/balance-tables/derive-hull-upgrade-ladder.mjs && node tools/balance-tables/build-balance-from-csv.mjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

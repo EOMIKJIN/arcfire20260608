@@ -156,8 +156,9 @@ checks.push(
 
 checks.push(
   check(
-    'combat: single Canvas + single Picture (no Path.map)',
-    combat.includes('<Picture picture={picture} />')
+    'combat: single picture surface — SkiaPictureView 1장(2026-10-10 UI 런타임 재생 제거) (no Path.map)',
+    (/<SkiaPictureView[\s\S]*?picture=\{picture \?\? undefined\}/.test(combat)
+      || combat.includes('<Picture picture={picture} />'))
       && !/<Path[\s\S]*\.map\(/.test(combat),
     'PlanetEdenRaidOrbitSkiaCombat.tsx',
   ),

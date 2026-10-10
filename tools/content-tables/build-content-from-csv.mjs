@@ -191,6 +191,22 @@ function readFeatureDescription(r) {
   ).trim();
 }
 
+/** 아이템 특수 용도(weapon_list·npc_ai_ships specialUse) — 코드에 id 를 두지 않는다 */
+const SPECIAL_USES = new Set(['', 'concept', 'npc_clone', 'wave_test']);
+function readSpecialUse(raw, table, id) {
+  const v = String(raw ?? '').trim().toLowerCase();
+  if (!SPECIAL_USES.has(v)) throw new Error(`${table} ${id}: specialUse 값 오류 "${raw}"`);
+  return v;
+}
+/** 테스트 강제 거래가 — 빈칸이면 null(정상 가격식) */
+function readTestTradePrice(raw) {
+  const s = String(raw ?? '').trim();
+  if (!s) return null;
+  const n = Number(s);
+  if (!Number.isFinite(n) || n < 0) throw new Error(`testTradePriceCredits 값 오류 "${raw}"`);
+  return Math.floor(n);
+}
+
 /** weapon_list.csv — 한글·영문 헤더 모두 수용 */
 function normalizeWeaponListRow(r) {
   const id = String(r.id ?? '').trim();
@@ -224,6 +240,8 @@ function normalizeWeaponListRow(r) {
     requiredLevel: Math.max(1, toInt(r.requiredLevel ?? r['요구레벨'], 1)),
     tierLabel: String(r.tierLabel ?? r['등급라벨'] ?? '').trim(),
     tradePortListed: toBool(r.tradePortListed),
+    specialUse: readSpecialUse(r.specialUse, 'weapon_list.csv', id),
+    testTradePriceCredits: readTestTradePrice(r.testTradePriceCredits),
     targeting,
     lockImpactPoint,
     hitAreaNote: String(r.hitAreaNote ?? r['타격범위'] ?? '').trim(),
@@ -480,6 +498,16 @@ ${body}
 `;
 }
 
+/** npc_ai_ships.csv specialUse·testTradePriceCredits — 값 있는 행만 필드 출력 */
+function shipSpecialUseLines(r) {
+  const use = readSpecialUse(r.specialUse, 'npc_ai_ships.csv', r.id);
+  const price = readTestTradePrice(r.testTradePriceCredits);
+  let out = '';
+  if (use) out += `\n    specialUse: ${q(use)},`;
+  if (price != null) out += `\n    testTradePriceCredits: ${price},`;
+  return out;
+}
+
 function buildNpcShips() {
   const rows = loadCsv('npc_ai_ships.csv');
   const body = rows
@@ -509,7 +537,7 @@ function buildNpcShips() {
     arcTrafficPhaseDurationMul: ${toNum(r.arcTrafficPhaseDurationMul, 2)},
     arcTrafficPlanetDwellSecMin: ${toNum(r.arcTrafficPlanetDwellSecMin, 60)},
     arcTrafficPlanetDwellSecMax: ${toNum(r.arcTrafficPlanetDwellSecMax, 600)},
-    tradePortListed: ${toBool(r.tradePortListed)},
+    tradePortListed: ${toBool(r.tradePortListed)},${shipSpecialUseLines(r)}
     ${String(r.portraitImageAssetKey ?? '').trim() ? `portraitImageAssetKey: ${q(String(r.portraitImageAssetKey).trim())},` : ''}
   }`)
     .join(',\n');
@@ -628,6 +656,7 @@ function buildWeapons() {
     requiredLevel: ${r.requiredLevel},
     tierLabel: ${q(r.tierLabel)},
     tradePortListed: ${r.tradePortListed},
+    specialUse: ${q(r.specialUse)},${r.testTradePriceCredits != null ? `\n    testTradePriceCredits: ${r.testTradePriceCredits},` : ''}
     featureDescription: ${q(r.featureDescription)},
     laserColor: ${q(r.laserColor)},
     projectileColor: ${q(r.projectileColor)},
@@ -656,6 +685,10 @@ function buildWeapons() {
   requiredLevel: number;
   tierLabel: string;
   tradePortListed: boolean;
+  /** weapon_list.csv specialUse — '' 운영 · concept · npc_clone · wave_test */
+  specialUse: '' | 'concept' | 'npc_clone' | 'wave_test';
+  /** 테스트 강제 거래가(없으면 정상 가격식) */
+  testTradePriceCredits?: number;
   featureDescription: string;
   laserColor: string;
   projectileColor: string;
@@ -1281,6 +1314,9 @@ function buildSkills() {
       description: ${q(r.effectDescription || '')},
     },
     icon: ${q(r.icon || '✦')},
+    treeColumn: ${toInt(r.treeColumn, 1)},
+    runtimeStatus: ${q(['complete', 'partial', 'undeveloped'].includes(String(r.runtimeStatus ?? '').trim()) ? String(r.runtimeStatus).trim() : 'undeveloped')},
+    ${String(r.runtimeNoteKey ?? '').trim() ? `runtimeNoteKey: ${q(String(r.runtimeNoteKey).trim())},` : ''}
   }`,
     )
     .join(',\n');
@@ -1598,6 +1634,54 @@ ${body}
 `;
 }
 
+/** 조선소 광물 강화 — mineral_upgrade_stats · level_caps (비용·효과량은 hull_upgrade_* 밸런스 표 · 2026-10-10) */
+// 효과량(레벨당 %)은 함선 등급별 — tables/balance/hull_upgrade_tier_policy.csv (2026-10-10)
+const MINERAL_UPGRADE_EFFECT_KINDS = new Set([
+  'ship_hp_pct',
+  'ship_shield_pct',
+  'ship_turn_rate_mul_per_level',
+  'weapon_damage_pct',
+  'weapon_fire_rate_cooldown',
+  'weapon_range_flat',
+]);
+const MINERAL_UPGRADE_GROUPS = new Set(['ship', 'weapon_laser', 'weapon_missile']);
+function buildMineralUpgrade() {
+  const stats = loadCsv('mineral_upgrade_stats.csv').map((r) => {
+    const statId = String(r.statId ?? '').trim();
+    const effectKind = String(r.effectKind ?? '').trim();
+    const upgradeGroup = String(r.upgradeGroup ?? '').trim();
+    if (!MINERAL_UPGRADE_EFFECT_KINDS.has(effectKind)) throw new Error(`mineral_upgrade_stats.csv ${statId}: effectKind 오류 "${effectKind}"`);
+    if (!MINERAL_UPGRADE_GROUPS.has(upgradeGroup)) throw new Error(`mineral_upgrade_stats.csv ${statId}: upgradeGroup 오류 "${upgradeGroup}"`);
+    return `  { statId: ${q(statId)}, label: ${q(String(r.label ?? '').trim())}, upgradeGroup: ${q(upgradeGroup)}, sortOrder: ${toInt(r.sortOrder)}, perLevelHint: ${q(String(r.perLevelHint ?? '').trim())}, effectKind: ${q(effectKind)}, effectValuePerLevel: ${toNum(r.effectValuePerLevel)}, effectFloor: ${toNum(r.effectFloor)}, upgradeEnabled: ${toBool(r.upgradeEnabled)}, durationSec: ${Math.max(0, toInt(r.durationSec, 60))} }`;
+  });
+  const caps = loadCsv('mineral_upgrade_level_caps.csv')
+    .map((r) => ({ lv: toInt(r.combatLevelMaxInclusive), max: toInt(r.maxUpgradeLevel) }))
+    .sort((a, b) => a.lv - b.lv)
+    .map((c) => `  { combatLevelMaxInclusive: ${c.lv}, maxUpgradeLevel: ${c.max} }`);
+  return `export type MineralUpgradeStatCsvRow = {
+  statId: string;
+  label: string;
+  upgradeGroup: 'ship' | 'weapon_laser' | 'weapon_missile';
+  sortOrder: number;
+  perLevelHint: string;
+  effectKind: 'ship_hp_pct' | 'ship_shield_pct' | 'ship_turn_rate_mul_per_level' | 'weapon_damage_pct' | 'weapon_fire_rate_cooldown' | 'weapon_range_flat';
+  effectValuePerLevel: number;
+  effectFloor: number;
+  /** FALSE = 조선소 강화 목록에서 숨김(효과 미구현 등) */
+  upgradeEnabled: boolean;
+  durationSec: number;
+};
+
+export const MINERAL_UPGRADE_STATS_FROM_CSV: readonly MineralUpgradeStatCsvRow[] = [
+${stats.join(',\n')}
+];
+
+export const MINERAL_UPGRADE_LEVEL_CAPS_FROM_CSV: readonly { combatLevelMaxInclusive: number; maxUpgradeLevel: number }[] = [
+${caps.join(',\n')}
+];
+`;
+}
+
 function writeOut(fileName, content) {
   writeFileSync(resolve(OUT_DIR, fileName), `// AUTO-GENERATED by tools/content-tables/build-content-from-csv.mjs\n${content}`, 'utf8');
 }
@@ -1616,6 +1700,7 @@ function main() {
   writeOut('csvNpcCapitalShips.ts', buildNpcShips());
   writeOut('csvNpcCapitalShipEquipSlots.ts', buildNpcCapitalShipEquipSlots());
   writeOut('csvWeapons.ts', buildWeapons());
+  writeOut('csvMineralUpgrade.ts', buildMineralUpgrade());
   writeOut('csvMissions.ts', buildMissions());
   writeFileSync(
     resolve(ROOT, 'src', 'missions', 'missionTimeLimitPolicy.ts'),

@@ -1,29 +1,50 @@
 // ============================================================
-// 웨이브 디펜스 테스트 아이템 — 상점 거래가 강제 1 (테스트 단계 한정)
+// 웨이브 디펜스 테스트 아이템 — 상점 거래가 강제 (테스트 단계 한정)
 // ------------------------------------------------------------
 // 무역소 런타임 가격은 CSV purchasePrice/infoLineSuffix가 아니라
 //  - 무기: resolveIntegratedWeaponTradePrice (min 800 클램프)
 //  - 전함: resolveCapitalShipPerformanceBasePrice (hull tier × 성능)
-// 로 계산되므로, 테스트 3종을 "거래가 1"로 노출하려면 이 화이트리스트로
-// 가격 경로에서만 1을 강제한다. 운영 아이템 가격에는 영향이 없다.
-// 정본 동기: tools/content-tables/weapon-trade-listing-rules.mjs(WAVE_TEST_TRADE_ALLOWLIST)
+// 로 계산되므로, 테스트 아이템은 가격 경로에서만 CSV 강제가를 쓴다.
+// 정본(Table-First · 2026-10-10): weapon_list.csv · npc_ai_ships.csv 의
+//   specialUse=wave_test · testTradePriceCredits. 코드에 id·가격을 두지 않는다.
 // ============================================================
 
-/** 웨이브 디펜스 테스트 무기 id(weapon_list.csv id) */
-export const WAVE_TEST_TRADE_WEAPON_IDS: ReadonlySet<string> = new Set([
-  'w_laser_wave',
-  'w_missile_wave',
-]);
+import { CAPITAL_WEAPON_LIST_FROM_CSV } from '../data/generated/csvWeapons';
+import { NPC_CAPITAL_SHIPS_FROM_CSV } from '../data/generated/csvNpcCapitalShips';
+import type { NpcCapitalShip } from '../types';
 
-/** 웨이브 디펜스 테스트 전함 id(npc_ai_ships.csv id) */
-export const WAVE_TEST_TRADE_SHIP_IDS: ReadonlySet<string> = new Set(['player_wave_ship']);
+let waveTestShipById: Map<string, NpcCapitalShip> | null = null;
+
+function waveTestShip(npcShipId: string): NpcCapitalShip | undefined {
+  if (!waveTestShipById) {
+    const m = new Map<string, NpcCapitalShip>();
+    for (let i = 0; i < NPC_CAPITAL_SHIPS_FROM_CSV.length; i += 1) {
+      const s = NPC_CAPITAL_SHIPS_FROM_CSV[i]!;
+      if (s.specialUse === 'wave_test') m.set(s.id, s);
+    }
+    waveTestShipById = m;
+  }
+  return waveTestShipById.get(npcShipId);
+}
 
 export function isWaveTestTradeWeaponId(weaponId: string | null | undefined): boolean {
-  return WAVE_TEST_TRADE_WEAPON_IDS.has(String(weaponId ?? '').trim());
+  return CAPITAL_WEAPON_LIST_FROM_CSV[String(weaponId ?? '').trim()]?.specialUse === 'wave_test';
 }
 
 export function isWaveTestTradeShipId(npcShipId: string | null | undefined): boolean {
-  return WAVE_TEST_TRADE_SHIP_IDS.has(String(npcShipId ?? '').trim());
+  return waveTestShip(String(npcShipId ?? '').trim()) != null;
+}
+
+/** 웨이브 테스트 무기 강제 거래가 — 대상 아니거나 CSV 빈칸이면 null(정상 가격식) */
+export function resolveWaveTestWeaponTradePrice(weaponId: string | null | undefined): number | null {
+  const row = CAPITAL_WEAPON_LIST_FROM_CSV[String(weaponId ?? '').trim()];
+  if (row?.specialUse !== 'wave_test') return null;
+  return row.testTradePriceCredits ?? null;
+}
+
+/** 웨이브 테스트함 강제 거래가 — 대상 아니거나 CSV 빈칸이면 null(정상 가격식) */
+export function resolveWaveTestShipTradePrice(npcShipId: string | null | undefined): number | null {
+  return waveTestShip(String(npcShipId ?? '').trim())?.testTradePriceCredits ?? null;
 }
 
 /** itemDef → 웨이브 테스트 무기/전함 (광물 싱크·헐 밴드 예외) */
@@ -49,6 +70,3 @@ export function isWaveTestTradeItemDef(itemDef: {
   }
   return false;
 }
-
-/** 테스트 단계 강제 거래가(크레딧) */
-export const WAVE_TEST_TRADE_PRICE_CREDITS = 1;

@@ -14,4 +14,13 @@ config.resolver.extraNodeModules = {
   'color-convert': path.join(nodeModules, 'color-convert'),
 };
 
+// 네이티브 빌드 산출물(android/build · .cxx · .gradle)은 감시·해석 제외 — release 빌드 중 임시 폴더가
+// 생겼다 지워지면 Metro 파일 감시기가 ENOENT로 종료됐다(2026-10-10 11:49). JS 소스는 이 폴더에 없다.
+const nativeBuildDirs = /[\\/]android[\\/](?:app[\\/])?(?:build|\.cxx|\.gradle)[\\/].*/;
+const existingBlockList = config.resolver.blockList;
+config.resolver.blockList = [
+  ...(Array.isArray(existingBlockList) ? existingBlockList : existingBlockList ? [existingBlockList] : []),
+  nativeBuildDirs,
+];
+
 module.exports = config;

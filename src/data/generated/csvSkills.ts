@@ -17,6 +17,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "자동 전투: 무기 쿨다운 -12% / 미사일 살보 +1",
     },
     icon: "⚡",
+    treeColumn: 0,
+    runtimeStatus: "complete",
+    
   },
   "shield_overload": {
     id: "shield_overload",
@@ -33,6 +36,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "자동 전투: 최대 실드 +20%",
     },
     icon: "🛡",
+    treeColumn: 2,
+    runtimeStatus: "complete",
+    
   },
   "emp_blast": {
     id: "emp_blast",
@@ -49,6 +55,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "자동 전투: 쿨타임마다 적 최대 실드의 25% 방전",
     },
     icon: "💥",
+    treeColumn: 1,
+    runtimeStatus: "complete",
+    
   },
   "armor_piercing": {
     id: "armor_piercing",
@@ -65,6 +74,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "전투 계산: 적 장갑 -5",
     },
     icon: "🎯",
+    treeColumn: 0,
+    runtimeStatus: "complete",
+    
   },
   "reactive_armor": {
     id: "reactive_armor",
@@ -81,6 +93,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "전투 계산: 대미지 15% 감소",
     },
     icon: "🩹",
+    treeColumn: 2,
+    runtimeStatus: "complete",
+    
   },
   "critical_focus": {
     id: "critical_focus",
@@ -97,6 +112,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "전투 계산: 크리티컬 범위 19-20",
     },
     icon: "💎",
+    treeColumn: 0,
+    runtimeStatus: "complete",
+    
   },
   "plasma_cannon": {
     id: "plasma_cannon",
@@ -113,6 +131,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "자동 전투: 실드 관통 10%",
     },
     icon: "🔥",
+    treeColumn: 1,
+    runtimeStatus: "complete",
+    
   },
   "fortress_mode": {
     id: "fortress_mode",
@@ -129,6 +150,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "이동 불가 상태: 방어력 +50%",
     },
     icon: "🏰",
+    treeColumn: 2,
+    runtimeStatus: "complete",
+    
   },
   "multi_lockon": {
     id: "multi_lockon",
@@ -145,6 +169,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "자동 전투: 최대 3개 타겟 동시 공격",
     },
     icon: "🎯",
+    treeColumn: 0,
+    runtimeStatus: "complete",
+    
   },
   "hull_regeneration": {
     id: "hull_regeneration",
@@ -161,6 +188,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "매 턴 감소된 체력의 5% 회복",
     },
     icon: "🧪",
+    treeColumn: 2,
+    runtimeStatus: "complete",
+    
   },
   "singularity_cannon": {
     id: "singularity_cannon",
@@ -177,6 +207,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "적 함선 밀집 유도 및 광역 대미지",
     },
     icon: "🕳",
+    treeColumn: 0,
+    runtimeStatus: "complete",
+    
   },
   "perfect_defense": {
     id: "perfect_defense",
@@ -193,6 +226,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "1턴(8초) 동안 모든 피해 무효화",
     },
     icon: "🛡",
+    treeColumn: 2,
+    runtimeStatus: "complete",
+    
   },
   "jump_boost": {
     id: "jump_boost",
@@ -209,6 +245,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "이동 속도 +30%",
     },
     icon: "🚀",
+    treeColumn: 0,
+    runtimeStatus: "complete",
+    
   },
   "sensor_array": {
     id: "sensor_array",
@@ -225,6 +264,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "탐지 범위 +20%",
     },
     icon: "📡",
+    treeColumn: 2,
+    runtimeStatus: "complete",
+    
   },
   "counterintel_array": {
     id: "counterintel_array",
@@ -241,6 +283,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "스파이·테러 감지 +15%",
     },
     icon: "🔍",
+    treeColumn: 1,
+    runtimeStatus: "complete",
+    
   },
   "arc_threat_analyzer": {
     id: "arc_threat_analyzer",
@@ -257,6 +302,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "테러 피해 완화 +12%",
     },
     icon: "🛡",
+    treeColumn: 1,
+    runtimeStatus: "complete",
+    
   },
   "stealth_drive": {
     id: "stealth_drive",
@@ -273,6 +321,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "3턴 스텔스",
     },
     icon: "👁",
+    treeColumn: 0,
+    runtimeStatus: "complete",
+    
   },
   "warp_stabilizer": {
     id: "warp_stabilizer",
@@ -289,6 +340,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "이동 시 연료 소모 -20%",
     },
     icon: "🌀",
+    treeColumn: 2,
+    runtimeStatus: "complete",
+    
   },
   "ghost_vessel": {
     id: "ghost_vessel",
@@ -305,6 +359,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "은신 후 첫 공격 대미지 +100%",
     },
     icon: "👻",
+    treeColumn: 0,
+    runtimeStatus: "complete",
+    
   },
   "wormhole_finder": {
     id: "wormhole_finder",
@@ -321,6 +378,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "웜홀 발견 확률 +15%",
     },
     icon: "🕳",
+    treeColumn: 2,
+    runtimeStatus: "complete",
+    
   },
   "gravity_swing": {
     id: "gravity_swing",
@@ -337,6 +397,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "교전 구역 내 일시적 최고 속도 +50%",
     },
     icon: "🌌",
+    treeColumn: 1,
+    runtimeStatus: "complete",
+    
   },
   "dimensional_blink": {
     id: "dimensional_blink",
@@ -353,6 +416,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "전투 중 무적 판정 이동",
     },
     icon: "✨",
+    treeColumn: 0,
+    runtimeStatus: "complete",
+    
   },
   "orbit_surge": {
     id: "orbit_surge",
@@ -369,6 +435,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "워프·항법 연료 효율 +15%",
     },
     icon: "🔥",
+    treeColumn: 1,
+    runtimeStatus: "complete",
+    
   },
   "star_pathfinder": {
     id: "star_pathfinder",
@@ -385,6 +454,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "미개척 항로 워프 시 연료 추가 절감",
     },
     icon: "🗺️",
+    treeColumn: 2,
+    runtimeStatus: "complete",
+    
   },
   "wormhole_generator": {
     id: "wormhole_generator",
@@ -401,6 +473,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "워프 시 홉 1 스킵 + 웜홀 작동",
     },
     icon: "🌀",
+    treeColumn: 1,
+    runtimeStatus: "partial",
+    runtimeNoteKey: "skilltree.runtimePartialNote.wormhole_generator",
   },
   "market_sense": {
     id: "market_sense",
@@ -417,6 +492,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "인접 성계 가격 공개",
     },
     icon: "📊",
+    treeColumn: 0,
+    runtimeStatus: "complete",
+    
   },
   "cargo_stacking": {
     id: "cargo_stacking",
@@ -433,6 +511,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "인벤토리 슬롯 +10",
     },
     icon: "📦",
+    treeColumn: 2,
+    runtimeStatus: "complete",
+    
   },
   "negotiation_pro": {
     id: "negotiation_pro",
@@ -449,6 +530,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "매입가 -5% / 매도가 +5%",
     },
     icon: "🤝",
+    treeColumn: 0,
+    runtimeStatus: "complete",
+    
   },
   "smuggler_route": {
     id: "smuggler_route",
@@ -465,6 +549,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "밀수 위험도 -50%",
     },
     icon: "🎭",
+    treeColumn: 1,
+    runtimeStatus: "complete",
+    
   },
   "bulk_trading": {
     id: "bulk_trading",
@@ -481,6 +568,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "대량 거래 시 추가 이익 +10%",
     },
     icon: "💰",
+    treeColumn: 0,
+    runtimeStatus: "complete",
+    
   },
   "tax_exemption": {
     id: "tax_exemption",
@@ -497,6 +587,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "무역 거래 세금 10% 감면",
     },
     icon: "📜",
+    treeColumn: 2,
+    runtimeStatus: "complete",
+    
   },
   "black_market_boss": {
     id: "black_market_boss",
@@ -513,6 +606,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "모든 밀수품 거래 허용 및 세금 면제",
     },
     icon: "👑",
+    treeColumn: 0,
+    runtimeStatus: "complete",
+    
   },
   "investor_deal": {
     id: "investor_deal",
@@ -529,6 +625,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "정거장 수리·이용 수수료 면제",
     },
     icon: "💎",
+    treeColumn: 2,
+    runtimeStatus: "complete",
+    
   },
   "monopoly_master": {
     id: "monopoly_master",
@@ -545,6 +644,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "개인 매입가 -30% (월드 물가 불변)",
     },
     icon: "💎",
+    treeColumn: 1,
+    runtimeStatus: "complete",
+    
   },
   "wingman_recruit": {
     id: "wingman_recruit",
@@ -561,6 +663,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "격납고 최대 함선 수 +1",
     },
     icon: "🤝",
+    treeColumn: 0,
+    runtimeStatus: "complete",
+    
   },
   "formation_basic": {
     id: "formation_basic",
@@ -577,6 +682,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "플래그십 장갑 +5",
     },
     icon: "🛡️",
+    treeColumn: 2,
+    runtimeStatus: "complete",
+    
   },
   "wingman": {
     id: "wingman",
@@ -593,6 +701,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "윙맨 소환 (3턴 유지)",
     },
     icon: "✈",
+    treeColumn: 0,
+    runtimeStatus: "complete",
+    
   },
   "repair_drone": {
     id: "repair_drone",
@@ -609,6 +720,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "비전투 시 함선 체력 저속 재생",
     },
     icon: "🛠️",
+    treeColumn: 2,
+    runtimeStatus: "complete",
+    
   },
   "wingman_synergy": {
     id: "wingman_synergy",
@@ -625,6 +739,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "무기 재장전 시간 -5%",
     },
     icon: "🔗",
+    treeColumn: 1,
+    runtimeStatus: "complete",
+    
   },
   "fleet_command": {
     id: "fleet_command",
@@ -641,6 +758,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "파티 명중 +2",
     },
     icon: "⚓",
+    treeColumn: 0,
+    runtimeStatus: "complete",
+    
   },
   "emergency_warp": {
     id: "emergency_warp",
@@ -657,6 +777,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "선체 10% 미만 시 1회 탈출(격침 없음)",
     },
     icon: "🚨",
+    treeColumn: 2,
+    runtimeStatus: "complete",
+    
   },
   "tactical_link": {
     id: "tactical_link",
@@ -673,6 +796,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "지휘·긴급 계열 스킬과 시너지 시 전투 보정 +5",
     },
     icon: "📶",
+    treeColumn: 0,
+    runtimeStatus: "complete",
+    
   },
   "carrier_command": {
     id: "carrier_command",
@@ -689,6 +815,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "최대 함대 슬롯 +2 확장",
     },
     icon: "🏗️",
+    treeColumn: 1,
+    runtimeStatus: "complete",
+    
   },
   "carrier_protocol": {
     id: "carrier_protocol",
@@ -705,6 +834,9 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "함재기·드론 피해 +50%",
     },
     icon: "🚢",
+    treeColumn: 2,
+    runtimeStatus: "complete",
+    
   },
   "overlord_presence": {
     id: "overlord_presence",
@@ -721,5 +853,236 @@ export const SKILLS_FROM_CSV: Record<string, Skill> = {
       description: "아군 명중+4 / 적 명중-4",
     },
     icon: "🔱",
+    treeColumn: 1,
+    runtimeStatus: "complete",
+    
+  },
+  "reactive_armor_2": {
+    id: "reactive_armor_2",
+    name: "반응 장갑 II",
+    description: "반응 장갑 층을 겹쳐 받는 피해를 더 줄인다.",
+    category: "combat",
+    tier: 6,
+    prerequisiteIds: ["reactive_armor"],
+    levelRequired: 34,
+    effect: {
+      type: "passive",
+      stat: "damage_reduction",
+      value: 10,
+      description: "전투 계산: 대미지 10% 추가 감소(합산 상한 정책)",
+    },
+    icon: "🛡",
+    treeColumn: 2,
+    runtimeStatus: "complete",
+    
+  },
+  "shield_overload_2": {
+    id: "shield_overload_2",
+    name: "실드 과부하 II",
+    description: "실드 발생기 한계를 한 단계 더 끌어올린다.",
+    category: "combat",
+    tier: 6,
+    prerequisiteIds: ["shield_overload"],
+    levelRequired: 42,
+    effect: {
+      type: "active",
+      stat: "shield_boost",
+      value: 15,
+      description: "자동 전투: 최대 실드 +15% 추가",
+    },
+    icon: "🛡",
+    treeColumn: 1,
+    runtimeStatus: "complete",
+    
+  },
+  "armor_piercing_2": {
+    id: "armor_piercing_2",
+    name: "장갑 관통 II",
+    description: "관통탄 코어를 강화해 적 장갑을 더 깎는다.",
+    category: "combat",
+    tier: 6,
+    prerequisiteIds: ["armor_piercing"],
+    levelRequired: 46,
+    effect: {
+      type: "passive",
+      stat: "armor_pierce",
+      value: 5,
+      description: "전투 계산: 적 장갑 -5 추가",
+    },
+    icon: "🎯",
+    treeColumn: 0,
+    runtimeStatus: "complete",
+    
+  },
+  "plasma_cannon_2": {
+    id: "plasma_cannon_2",
+    name: "플라즈마 포 II",
+    description: "플라즈마 집속으로 실드를 더 깊이 뚫는다.",
+    category: "combat",
+    tier: 7,
+    prerequisiteIds: ["plasma_cannon"],
+    levelRequired: 52,
+    effect: {
+      type: "active",
+      stat: "shield_pen",
+      value: 10,
+      description: "자동 전투: 실드 관통 10% 추가",
+    },
+    icon: "🔥",
+    treeColumn: 1,
+    runtimeStatus: "complete",
+    
+  },
+  "hull_regeneration_2": {
+    id: "hull_regeneration_2",
+    name: "나노봇 수복 II",
+    description: "수복 나노봇 군집을 증설한다.",
+    category: "combat",
+    tier: 7,
+    prerequisiteIds: ["hull_regeneration"],
+    levelRequired: 57,
+    effect: {
+      type: "passive",
+      stat: "regen_rate",
+      value: 3,
+      description: "매 턴 감소된 체력의 3% 추가 회복",
+    },
+    icon: "🔧",
+    treeColumn: 2,
+    runtimeStatus: "complete",
+    
+  },
+  "sensor_array_2": {
+    id: "sensor_array_2",
+    name: "정찰 센서 II",
+    description: "정찰 센서 배열을 넓혀 더 멀리 본다.",
+    category: "navigation",
+    tier: 6,
+    prerequisiteIds: ["sensor_array"],
+    levelRequired: 40,
+    effect: {
+      type: "passive",
+      stat: "sensor_range",
+      value: 10,
+      description: "탐지 범위 +10% 추가",
+    },
+    icon: "📡",
+    treeColumn: 2,
+    runtimeStatus: "complete",
+    
+  },
+  "negotiation_pro_2": {
+    id: "negotiation_pro_2",
+    name: "협상 전문가 II",
+    description: "거래 상대의 약점을 더 정확히 짚는다.",
+    category: "trade",
+    tier: 6,
+    prerequisiteIds: ["negotiation_pro"],
+    levelRequired: 40,
+    effect: {
+      type: "passive",
+      stat: "trade_bonus",
+      value: 3,
+      description: "매입가 -3% / 매도가 +3% 추가",
+    },
+    icon: "🤝",
+    treeColumn: 0,
+    runtimeStatus: "complete",
+    
+  },
+  "bulk_trading_2": {
+    id: "bulk_trading_2",
+    name: "대량 거래 II",
+    description: "대량 물량 계약 조건을 더 유리하게 맺는다.",
+    category: "trade",
+    tier: 7,
+    prerequisiteIds: ["bulk_trading"],
+    levelRequired: 50,
+    effect: {
+      type: "passive",
+      stat: "profit_margin",
+      value: 5,
+      description: "대량 거래 시 추가 이익 +5%",
+    },
+    icon: "📦",
+    treeColumn: 0,
+    runtimeStatus: "complete",
+    
+  },
+  "formation_heavy": {
+    id: "formation_heavy",
+    name: "중장 대형",
+    description: "기함을 감싸는 중장 대형으로 장갑을 보강한다.",
+    category: "fleet",
+    tier: 6,
+    prerequisiteIds: ["formation_basic"],
+    levelRequired: 38,
+    effect: {
+      type: "passive",
+      stat: "armor_bonus",
+      value: 5,
+      description: "플래그십 장갑 +5 추가",
+    },
+    icon: "🛡",
+    treeColumn: 2,
+    runtimeStatus: "complete",
+    
+  },
+  "fleet_command_2": {
+    id: "fleet_command_2",
+    name: "함대 지휘 II",
+    description: "사격 통제망을 정밀하게 다듬는다.",
+    category: "fleet",
+    tier: 6,
+    prerequisiteIds: ["fleet_command"],
+    levelRequired: 44,
+    effect: {
+      type: "passive",
+      stat: "party_attack_bonus",
+      value: 2,
+      description: "파티 명중 +2 추가",
+    },
+    icon: "🎖",
+    treeColumn: 0,
+    runtimeStatus: "complete",
+    
+  },
+  "wingman_synergy_2": {
+    id: "wingman_synergy_2",
+    name: "윙맨 시너지 II",
+    description: "윙맨과 장전 주기를 맞춰 재장전을 줄인다.",
+    category: "fleet",
+    tier: 6,
+    prerequisiteIds: ["wingman_synergy"],
+    levelRequired: 48,
+    effect: {
+      type: "passive",
+      stat: "cooldown_reduction",
+      value: 5,
+      description: "무기 재장전 시간 -5% 추가(합산 상한 정책)",
+    },
+    icon: "🔄",
+    treeColumn: 1,
+    runtimeStatus: "complete",
+    
+  },
+  "carrier_protocol_2": {
+    id: "carrier_protocol_2",
+    name: "항모 프로토콜 II",
+    description: "함재기·드론 공격 편대를 확장한다.",
+    category: "fleet",
+    tier: 7,
+    prerequisiteIds: ["carrier_protocol"],
+    levelRequired: 56,
+    effect: {
+      type: "passive",
+      stat: "drone_damage",
+      value: 25,
+      description: "함재기·드론 피해 +25% 추가",
+    },
+    icon: "🛩",
+    treeColumn: 2,
+    runtimeStatus: "complete",
+    
   }
 };

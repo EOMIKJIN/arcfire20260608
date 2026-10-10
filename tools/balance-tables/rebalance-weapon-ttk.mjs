@@ -10,6 +10,7 @@ import {
   loadFamilyPolicyFromRows,
   rebalanceWeaponRow,
 } from './weapon-ttk-balance-model.mjs';
+import { isTestOnlyWeapon, readWeaponSpecialUse } from '../content-tables/weapon-trade-listing-rules.mjs';
 
 const ROOT = resolve(process.cwd());
 const WEAPON_CSV = resolve(ROOT, 'tables', 'content', 'weapon_list.csv');
@@ -97,14 +98,10 @@ function col(row, ...names) {
   return '';
 }
 
-function isExcludedWeapon(id, tier) {
-  const normalized = String(id ?? '').trim().toLowerCase();
-  const t = String(tier ?? '').trim();
-  if (!normalized.startsWith('w_')) return true;
-  if (/_vmock_/.test(normalized)) return true;
-  if (/_wave$/.test(normalized)) return true;
-  if (t === '웨이브' || t === '테스트') return true;
-  return false;
+/** 테스트 무기(weapon_list.csv specialUse npc_clone·wave_test)는 TTK 재조정 밖 */
+function isExcludedWeapon(id, specialUse) {
+  if (!String(id ?? '').trim().startsWith('w_')) return true;
+  return isTestOnlyWeapon(specialUse);
 }
 
 function toWeaponModel(row) {
@@ -119,6 +116,7 @@ function toWeaponModel(row) {
     projectileSpeedPxPerSec: Number(col(row, '탄속px초', 'projectileSpeedPxPerSec')) || 64,
     requiredLevel: Number(col(row, '요구레벨', 'requiredLevel')) || 1,
     tierLabel: col(row, '등급라벨', 'tierLabel'),
+    specialUse: readWeaponSpecialUse(col(row, 'specialUse')),
   };
 }
 
@@ -145,7 +143,7 @@ function main() {
   const anchorByLevel = new Map();
 
   for (const { weapon } of models) {
-    if (isExcludedWeapon(weapon.id, weapon.tierLabel)) continue;
+    if (isExcludedWeapon(weapon.id, weapon.specialUse)) continue;
     if (weapon.familyKind !== 'laser') continue;
     if (weapon.tierLabel !== combatRef.anchorTierLabel) continue;
     const dps = computeWeaponRawDps(weapon, 'laser', combatRef, familyPolicyByKind).rawDps;
@@ -156,7 +154,7 @@ function main() {
 
   let changed = 0;
   for (const { row, weapon } of models) {
-    if (isExcludedWeapon(weapon.id, weapon.tierLabel)) continue;
+    if (isExcludedWeapon(weapon.id, weapon.specialUse)) continue;
     if (ttkRebalanceSkipIds.has(weapon.id)) continue;
     const level = weapon.requiredLevel;
     let anchor = anchorByLevel.get(level);

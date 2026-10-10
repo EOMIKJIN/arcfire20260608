@@ -1,4 +1,7 @@
+import { scheduleNativeHeapPurgeAfterSettle } from 'arcfire-native-memory';
+
 import { scheduleDeferredNativeReclaimPass } from './deferredNativeReclaimScheduler';
+import { DEFERRED_NATIVE_RECLAIM_DELAY_MS } from './processMemoryBudgetPolicy';
 import { tryBeginHubNativeReclaim } from './hubNativeReclaimCoalesce';
 import { signalHubSkiaNativeReclaim } from './hubSkiaNativeReclaimSignal';
 import { runSoftNativeReclaimPass } from './runSoftNativeReclaimPass';
@@ -38,6 +41,8 @@ export function runPlanetHubSoftNativeReclaimPass(
     reason,
     keepPlanetIds: keep,
   });
+  /** deferred(Fresco trim) 뒤 빈 페이지 반환 — 웨이브 없는 허브의 5분 주기 반환 경로 */
+  scheduleNativeHeapPurgeAfterSettle(DEFERRED_NATIVE_RECLAIM_DELAY_MS + 1000);
   if (typeof __DEV__ !== 'undefined' && __DEV__) {
     const gpuLayers = debugPlanetGpuLayerSnapshot().map((l) => l.id).join(',') || '-';
     // eslint-disable-next-line no-console

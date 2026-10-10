@@ -519,6 +519,7 @@ export default function WorldMapScreen() {
       isMounted: () => isMountedRef.current,
       onAborted: () => hubNavGate.reset(),
       drainMs: HUB_NAV_POST_TEARDOWN_DELAY_MS,
+      exitRoute: 'worldmap',
     });
   }, [hubNavGate, stopGalaxyMapInteractionLoops, shipTransitX, shipTransitY]);
 
@@ -554,6 +555,7 @@ export default function WorldMapScreen() {
       isMounted: () => isMountedRef.current,
       onAborted: () => hubNavGate.reset(),
       drainMs: HUB_NAV_POST_TEARDOWN_DELAY_MS,
+      exitRoute: 'worldmap',
     });
   }, [hubNavGate, stopGalaxyMapInteractionLoops, shipTransitX, shipTransitY]);
 

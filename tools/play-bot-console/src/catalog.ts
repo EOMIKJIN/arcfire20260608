@@ -9,6 +9,8 @@ import { SKILLS_FROM_CSV } from '../../../src/data/generated/csvSkills';
 import { ITEM_DEFS_FROM_CSV } from '../../../src/data/generated/csvItemDefs';
 import { CAPITAL_WEAPON_LIST_FROM_CSV } from '../../../src/data/generated/csvWeapons';
 import { listAdjacentSystemIds } from '../../../src/arcCore/territorial/territorialSupplyLine';
+import { resolveCombatWeaponSlotForWeaponId } from '../../../src/game/combatWeaponSlots';
+import { resolveShipEquipmentSlotForItemDef } from '../../../src/game/shipEquipment/shipEquipmentModel';
 import type { Mission, Skill } from '../../../src/types';
 import { galaxyBfsNext, galaxyHops, galaxyPrimaryPlanet, galaxySystemOf } from './galaxyGraph';
 
@@ -348,6 +350,24 @@ export type GearCandidate = {
 
 let gearCache: GearCandidate[] | null = null;
 
+/**
+ * 무기 장착 칸 — 실기 `resolveCombatWeaponSlotForWeaponId`(combatWeaponSlots.ts:46) WEAPON_1..4 를
+ * 트윈 함선 무장 키(liveCombat hullGunSlots)로 옮긴다. 레이저=1 · 미사일=2 · 로켓=3 · 그 외=4.
+ * 예전 트윈은 무기 아이템을 'weapon' 칸에 따로 둬 함선 기본 4문 위에 5번째 포로 더했다(과대).
+ * 장비는 실기 `resolveShipEquipmentSlotForItemDef`(shipEquipmentModel.ts:119) 칸 — 장갑판·외장장갑=ARMOR, 실드증폭=EX_02.
+ */
+const WEAPON_SLOT_KEY: Record<string, string> = {
+  WEAPON_1: 'weapon_laser',
+  WEAPON_2: 'weapon_missile',
+  WEAPON_3: 'weapon_close',
+  WEAPON_4: 'weapon_aux',
+};
+
+function weaponGearSlot(weaponId: string): string {
+  const slot = resolveCombatWeaponSlotForWeaponId(weaponId);
+  return (slot && WEAPON_SLOT_KEY[slot]) || 'weapon_aux';
+}
+
 export function listGearCandidates(): GearCandidate[] {
   if (gearCache) return gearCache;
   const out: GearCandidate[] = [];
@@ -358,10 +378,13 @@ export function listGearCandidates(): GearCandidate[] {
     if (!it.capitalShipMountable || !it.tradeable) continue;
     if (it.kind !== 'equipment' && it.type !== 'weapon_module' && it.type !== 'ship_equipment') continue;
     const attrs = it.attrs ?? {};
-    const slot = String(attrs.equipmentCategory ?? (it.type === 'weapon_module' ? 'weapon' : 'module'));
+    const isWeapon = it.type === 'weapon_module';
+    const slot = isWeapon
+      ? weaponGearSlot(String(attrs.weaponId ?? it.id.replace(/^weapon_item_/, '')))
+      : resolveShipEquipmentSlotForItemDef(it.id) ?? String(attrs.equipmentCategory ?? 'module');
     const grade = Number(attrs.equipmentGrade) || 1;
     const mul = Number(attrs.equipmentPerformanceMul) || 1;
-    const levelReq = Number(attrs.equipmentRequiredLevel) || 1;
+    const levelReq = Number(isWeapon ? attrs.weaponRequiredLevel : attrs.equipmentRequiredLevel) || 1;
     const extra = Number(attrs.speedBonusPct ?? attrs.firepower ?? 0) || 0;
     out.push({
       id: it.id,
@@ -381,7 +404,7 @@ export function listGearCandidates(): GearCandidate[] {
     out.push({
       id: w.id,
       name: w.name,
-      slot: `weapon_${w.kind}`,
+      slot: weaponGearSlot(w.id),
       price: Math.max(1, w.purchasePrice | 0),
       score: dps * 12 + w.requiredLevel * 4 + w.rangePx / 40,
       levelReq: w.requiredLevel || 1,
